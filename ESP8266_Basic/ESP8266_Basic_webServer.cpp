@@ -121,7 +121,7 @@ void ESP8266_Basic_webServer::rootPageHandler()
   " <tr>"
   " <tr>"
   "  <td>Password</td>"
-  "  <td><input type='text' id='apPassword' name='apPassword' value='" + String(cfg->wifiSSID) + "' size='30' maxlength='40' placeholder='Password'></td>"
+  "  <td><input type='text' id='apPassword' name='apPassword' value='" + String(cfg->apPassword) + "' size='30' maxlength='40' placeholder='Password'></td>"
   " </tr>"
   " <tr>"
 

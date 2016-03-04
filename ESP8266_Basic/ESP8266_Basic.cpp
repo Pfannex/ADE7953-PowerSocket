@@ -197,7 +197,7 @@ void ESP8266_Basic::pubConfig(){
   pub(0,2,2, cfg.wifiIP);
   pub(0,3,0, cfg.mqttServer);
   pub(0,3,1, cfg.mqttPort);
-  pub(0,3,2, cfg.mqttDeviceName);  
+  //pub(0,3,2, cfg.mqttDeviceName);  
 }
 
 //===============================================================================
