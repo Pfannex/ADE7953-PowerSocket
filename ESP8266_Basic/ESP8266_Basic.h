@@ -9,13 +9,16 @@
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
   Date    : 04.03.2016                            *****      *   *
-  Version : alpha 0.10                                      *   *
+  Version : alpha 0.101                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
 /*
 ToDo
-
+Version in WEB if
+WEB config with password
+wenn Connect mit "alten" Daten dann cfg mit WiFi daten füllen
+sowhol in wifi start als auch in new config
 Reset nach nicht geänderter Config wird nicht durchgeführt
 WEB-Status Tabelle rechts
 TopicTree 
@@ -57,7 +60,7 @@ public:
   void start_WiFi_connections();
   void handle_connections();
   void cfgChange_Callback();
-  void mqttBroker_callback(char* topic, byte* payload, unsigned int length);
+  void mqttBroker_Callback(char* topic, byte* payload, unsigned int length);
 
 private:
   WiFiClient wifi_client;
@@ -98,8 +101,8 @@ private:
 
   
   //Prüfen ob noch benötigt
-  bool shouldSaveConfig;
-  String TopicHeader = "999";
+  //bool shouldSaveConfig;
+  //String TopicHeader = "999";
   
   //helpers----------------------------
   void checkFlash();

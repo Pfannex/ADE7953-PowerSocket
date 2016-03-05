@@ -9,7 +9,7 @@
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
   Date    : 04.03.2016                            *****      *   *
-  Version : alpha 0.10                                      *   *
+  Version : alpha 0.101                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
@@ -18,8 +18,9 @@
 ESP8266_Basic::ESP8266_Basic() : webServer(), 
                                  mqtt_client(wifi_client)
 								 {
-								 
+  //Callbacks								 
   webServer.set_saveConfig_Callback(std::bind(&ESP8266_Basic::cfgChange_Callback, this));
+  mqtt_client.setCallback(std::bind(&ESP8266_Basic::mqttBroker_Callback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
 //===============================================================================
@@ -81,7 +82,7 @@ String ESP8266_Basic::buildE4(int e1, int e2, int e3, int 43){
 */
 
 //===> incomming subscribe <---------------------------------------------------
-void ESP8266_Basic::mqttBroker_callback(char* topic, byte* payload, unsigned int length) {
+void ESP8266_Basic::mqttBroker_Callback(char* topic, byte* payload, unsigned int length) {
 
   char value[50] = "";
 
@@ -310,9 +311,11 @@ bool WiFiOK = false;
     Serial.println("");
     Serial.print("WiFi connected with IP:    ");Serial.println(WiFi.localIP());
 	strcpy( cfg.wifiIP, IPtoString(WiFi.localIP()).c_str()  );
+	strcpy( cfg.wifiSSID, WiFi.SSID().c_str() );
+	strcpy( cfg.wifiPSK, WiFi.psk().c_str() );
 	
-    IPAddress ip = WiFi.localIP();
-    TopicHeader = ip[3];
+    //IPAddress ip = WiFi.localIP();
+    //TopicHeader = ip[3];
   }  
   return WiFiOK; 
 }
@@ -325,8 +328,7 @@ bool MQTTOK = false;
   Serial.print(cfg.mqttServer);Serial.print(":");Serial.println(cfg.mqttPort);
   
   mqtt_client.setServer(charToIP(cfg.mqttServer), atoi(cfg.mqttPort)); 
-  mqtt_client.setCallback(std::bind(&ESP8266_Basic::mqttBroker_callback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-
+ 
   if (mqtt_client.connect(cfg.mqttDeviceName)) {
     Serial.println("MQTT connected");
 	strcpy(cfg.mqttStatus, "connected");
@@ -376,9 +378,14 @@ void  ESP8266_Basic::read_cfg(){
     strcpy(cfg.apName, str.c_str());
     strcpy(cfg.apPassword, "ESP8266config");
 	
-    strcpy(cfg.wifiSSID, "");
-    strcpy(cfg.wifiPSK, "");
+    //strcpy(cfg.wifiSSID, "");
+    //strcpy(cfg.wifiPSK, "");
     strcpy(cfg.wifiIP, "");
+	
+	//strcpy( cfg.wifiIP, IPtoString(WiFi.localIP()).c_str()  );
+	strcpy( cfg.wifiSSID, WiFi.SSID().c_str() );
+	strcpy( cfg.wifiPSK, WiFi.psk().c_str() );
+	
     strcpy(cfg.mqttServer, "");
     strcpy(cfg.mqttPort, "1883");
     strcpy(cfg.mqttDeviceName, cfg.apName);
@@ -390,11 +397,11 @@ void  ESP8266_Basic::read_cfg(){
 //===> WIFI Manager <----------------------------------------------------------
 void ESP8266_Basic::write_cfg() {
  
-  IPAddress ip = WiFi.localIP();
-  TopicHeader = ip[3];
-  String MQTT_DeviceName = TopicHeader;
-  MQTT_DeviceName += "/AktSen";
-  strcpy(cfg.mqttDeviceName, MQTT_DeviceName.c_str());
+  //IPAddress ip = WiFi.localIP();
+  //TopicHeader = ip[3];
+  //String MQTT_DeviceName = TopicHeader;
+  //MQTT_DeviceName += "/AktSen";
+  //strcpy(cfg.mqttDeviceName, MQTT_DeviceName.c_str());
 }
 
 //===> Reset Settings <--------------------------------------------------------

@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FRAME GUID="2FB25471-B62C-4EE6-BD43-F819C095ACF8" FORMAT="0000" APP_VERSION="2.2.0.8" CHECKSUM="767E82E9A9A2E84C">
+  <PROJECT FORMAT="1.00" NAME="ESP8266_Basic" AUTHOR="Pf@nne" CREATED="2016.03.04 23:35:11" MODIFIED="2016.03.05 00:08:05">
+    <DIAGRAMS>
+      <DIAGRAM FORMAT="1.00" ID="0" NAME="ESP8266_Basic" CREATED="2016.03.04 23:35:29" MODIFIED="2016.03.05 00:08:05">
+        <LAYOUT FORMAT="1.00" COLUMNS="3" ROWS="13">
+          <ENTRIES>
+            <ENTRY COLUMN="0" ROW="0" ANCHOR="True">
+              <FIGURE SUBTYPE="PapTitle" FORMAT="1.00" ID="0">
+                <TEXT><![CDATA[ESP8266_Basic]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="1">
+              <FIGURE SUBTYPE="PapStart" FORMAT="1.00" ID="1">
+                <TEXT><![CDATA[Start]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="2">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="8">
+                <TEXT><![CDATA[Start WiFi-Connections]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="3">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="35">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="4">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="14">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="5">
+              <FIGURE SUBTYPE="PapCondition" FORMAT="1.00" ID="6">
+                <TEXT><![CDATA[read CFG-File?]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="7">
+              <FIGURE SUBTYPE="PapCondition" FORMAT="1.00" ID="19">
+                <TEXT><![CDATA[start WiFi?]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="8">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="22">
+                <TEXT><![CDATA[start configserver]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="9">
+              <FIGURE SUBTYPE="PapLoopStart" FORMAT="1.00" ID="38" ASSOCIATE="40">
+                <TEXT><![CDATA[main loop]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="10">
+              <FIGURE SUBTYPE="PapCondition" FORMAT="1.00" ID="59">
+                <TEXT><![CDATA[check connections?]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="11">
+              <FIGURE SUBTYPE="PapLoopEnd" FORMAT="1.00" ID="40" ASSOCIATE="38">
+                <TEXT><![CDATA[loop]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="12">
+              <FIGURE SUBTYPE="PapEnd" FORMAT="1.00" ID="2">
+                <TEXT><![CDATA[Ende]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="4">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="12">
+                <TEXT><![CDATA[set standard values]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="5">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="10">
+                <TEXT><![CDATA[create new config]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="10">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="63">
+                <TEXT><![CDATA[handle connections]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="2" ROW="3">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="32">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="2" ROW="4">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="28">
+                <TEXT><![CDATA[reboot]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="2" ROW="5">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="27">
+                <TEXT><![CDATA[write config]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="2" ROW="6">
+              <FIGURE SUBTYPE="PapInput" FORMAT="1.00" ID="57">
+                <TEXT><![CDATA[config values]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="2" ROW="7">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="21">
+                <TEXT><![CDATA[start accesspoint
+start configserver]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="2" ROW="10">
+              <FIGURE SUBTYPE="PapCondition" FORMAT="1.00" ID="64">
+                <TEXT><![CDATA[WiFi connect?]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="2" ROW="11">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="83">
+                <TEXT><![CDATA[MQTT connect]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+          </ENTRIES>
+        </LAYOUT>
+        <CONNECTIONS>
+          <CONNECTION FORMAT="1.00" ID="20" FROM="19" TO="22" TEXT="OK" />
+          <CONNECTION FORMAT="1.00" ID="3" FROM="1" TO="8" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="15" FROM="14" TO="6" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="11" FROM="6" TO="10" TEXT="not OK" />
+          <CONNECTION FORMAT="1.00" ID="13" FROM="10" TO="12" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="9" FROM="8" TO="35" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="16" FROM="12" TO="14" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="7" FROM="6" TO="19" TEXT="OK" />
+          <CONNECTION FORMAT="1.00" ID="23" FROM="22" TO="38" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="24" FROM="19" TO="21" TEXT="not OK" />
+          <CONNECTION FORMAT="1.00" ID="58" FROM="57" TO="27" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="29" FROM="21" TO="57" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="31" FROM="27" TO="28" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="33" FROM="28" TO="32" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="37" FROM="32" TO="35" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="36" FROM="35" TO="14" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="41" FROM="40" TO="2" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="62" FROM="59" TO="63" TEXT="not OK" />
+          <CONNECTION FORMAT="1.00" ID="39" FROM="38" TO="59" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="60" FROM="59" TO="40" TEXT="OK" />
+          <CONNECTION FORMAT="1.00" ID="65" FROM="63" TO="64" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="85" FROM="83" TO="40" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="84" FROM="64" TO="83" TEXT="yes" />
+          <CONNECTION FORMAT="1.00" ID="82" FROM="64" TO="21" TEXT="no" />
+        </CONNECTIONS>
+      </DIAGRAM>
+    </DIAGRAMS>
+  </PROJECT>
+</FRAME>

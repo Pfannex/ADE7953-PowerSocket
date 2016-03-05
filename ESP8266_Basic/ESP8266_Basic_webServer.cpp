@@ -9,7 +9,7 @@
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
   Date    : 04.03.2016                            *****      *   *
-  Version : alpha 0.10                                      *   *
+  Version : alpha 0.101                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
@@ -186,7 +186,7 @@ void ESP8266_Basic_webServer::rootPageHandler()
 
   "</table>"
 
-  "<font size='-2'>&copy; by Pf@nne/16</font>"
+  "<font size='-2'>&copy; by Pf@nne/16   |   " + String(cfg->version) + "</font>"
   "</body bgcolor> </body></font>"
   "</html>"  
   ;
