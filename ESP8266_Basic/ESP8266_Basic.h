@@ -9,7 +9,7 @@
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
   Date    : 04.03.2016                            *****      *   *
-  Version : alpha 0.101                                     *   *
+  Version : alpha 0.102                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
@@ -62,6 +62,10 @@ public:
   void cfgChange_Callback();
   void mqttBroker_Callback(char* topic, byte* payload, unsigned int length);
 
+  bool pub(int e1, char* Payload);
+  bool pub(int e1, int e2, char* Payload);
+  bool pub(int e1, int e2, int e3, char* Payload);
+  
 private:
   WiFiClient wifi_client;
   PubSubClient mqtt_client;
@@ -91,9 +95,6 @@ private:
   String buildE2(int e1, int e2);
   String buildE3(int e1, int e2, int e3);
   //String buildE4(int e1, int e2, int e3, int e4);
-  bool pub(int e1, char* Payload);
-  bool pub(int e1, int e2, char* Payload);
-  bool pub(int e1, int e2, int e3, char* Payload);
   //bool pub(int e1, int e2, int e3, int e4, char* Payload);
   TdissectResult dissectPayload(String subTopic, String subValue);
   

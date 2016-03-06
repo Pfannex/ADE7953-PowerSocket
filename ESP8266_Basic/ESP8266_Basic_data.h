@@ -9,7 +9,7 @@
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
   Date    : 04.03.2016                            *****      *   *
-  Version : alpha 0.101                                     *   *
+  Version : alpha 0.102                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
@@ -79,7 +79,7 @@ private:
 
 // Config struct
   typedef struct CFG{
-    char version[15] = "alpha V0.101";
+    char version[15] = "alpha V0.102";
     char webUser[40];
     char webPassword[40];
     char apName[40];
