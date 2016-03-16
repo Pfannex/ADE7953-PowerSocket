@@ -8,8 +8,8 @@
   Last modification by:                        *   *       *   *   ****    *
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
-  Date    : 04.03.2016                            *****      *   *
-  Version : alpha 0.102                                     *   *
+  Date    : 16.03.2016                            *****      *   *
+  Version : alpha 0.110                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
@@ -32,15 +32,19 @@ Topics::Topics(){
    ¦  ¦  ¦-[020] SSID
    ¦  ¦  ¦-[021] Password
    ¦  ¦  +-[022] IP
-   ¦  +-[03] MQTT
-   ¦     ¦-[030] Server
-   ¦     ¦-[031] Port
-   ¦     +-[032] Status
+   ¦  ¦-[03] MQTT
+   ¦  ¦  ¦-[030] Server
+   ¦  ¦  ¦-[031] Port
+   ¦  ¦  +-[032] Status
+   ¦  +-[04] UpdateServer
+   ¦     ¦-[040] Server
+   ¦     +-[041] FilePath
    ¦     
    ¦-[1] Control
    ¦  ¦-[10] ESP8266
    ¦  ¦  ¦-[100] Reboot
    ¦  ¦  +-[101] ShowConfig   
+   ¦  ¦  +-[102] Update Firmware   
 */
 
   sub.E1.count = sub_e1;
@@ -62,11 +66,15 @@ Topics::Topics(){
   sub.E3.item[0][3][0] = "Server";
   sub.E3.item[0][3][1] = "Port";
   sub.E3.item[0][3][2] = "Status";
+  sub.E2.item[0][4] = "UpdateServer";
+  sub.E3.item[0][4][0] = "Server";
+  sub.E3.item[0][4][1] = "FilePath";
   
   sub.E1.item[1] = "Control";
   sub.E2.item[1][0] = "ESP8266";
   sub.E3.item[1][0][0] = "Reboot";
   sub.E3.item[1][0][1] = "ShowConfig";
+  sub.E3.item[1][0][2] = "updateFirmware";
 
 
 /* MQTT publish TopicTree struct   !!define TreeDepht in .h!!!
@@ -83,10 +91,13 @@ Topics::Topics(){
    ¦  ¦  ¦-[020] SSID
    ¦  ¦  ¦-[021] Password
    ¦  ¦  +-[022] IP
-   ¦  +-[03] MQTT
-   ¦     ¦-[030] Server
-   ¦     ¦-[031] Port
-   ¦     +-[032] Status
+   ¦  ¦-[03] MQTT
+   ¦  ¦  ¦-[030] Server
+   ¦  ¦  ¦-[031] Port
+   ¦  ¦  +-[032] Status
+   ¦  +-[04] UpdateServer
+   ¦     ¦-[040] Server
+   ¦     +-[041] FilePath
    ¦     
    ¦-[1] Control
    ¦  ¦-[10] Status
@@ -113,10 +124,14 @@ Topics::Topics(){
   pub.E3.item[0][3][0] = "Server";
   pub.E3.item[0][3][1] = "Port";
   pub.E3.item[0][3][2] = "Status";
+  sub.E2.item[0][4] = "UpdateServer";
+  sub.E3.item[0][4][0] = "Server";
+  sub.E3.item[0][4][1] = "FilePath";
   
   pub.E1.item[1] = "Control";
   pub.E2.item[1][0] = "Status";
   pub.E3.item[1][0][0] = "WiFi";
   pub.E3.item[1][0][1] = "MQTT";
+  sub.E3.item[1][0][2] = "updateFirmware";
 
 }

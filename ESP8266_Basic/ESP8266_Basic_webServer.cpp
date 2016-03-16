@@ -8,8 +8,8 @@
   Last modification by:                        *   *       *   *   ****    *
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
-  Date    : 04.03.2016                            *****      *   *
-  Version : alpha 0.102                                     *   *
+  Date    : 16.03.2016                            *****      *   *
+  Version : alpha 0.110                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
@@ -49,7 +49,22 @@ void ESP8266_Basic_webServer::set_cfgPointer(CFG *p){
 void ESP8266_Basic_webServer::set_saveConfig_Callback(CallbackFunction c){
   saveConfig_Callback = c;
 }
-
+//===> Update Firmware <-------------------------------------------------------
+void ESP8266_Basic_webServer::updateFirmware(){
+  Serial.print("Updating Firmware to Version: "); Serial.println(Version);
+  t_httpUpdate_return ret = ESPhttpUpdate.update(cfg->updateServer, 80, cfg->filePath);
+  switch(ret) {
+    case HTTP_UPDATE_FAILED:
+        Serial.println("[update] Update failed.");
+        break;
+    case HTTP_UPDATE_NO_UPDATES:
+        Serial.println("[update] Update no Update.");
+        break;
+    case HTTP_UPDATE_OK:
+        Serial.println("[update] Update ok."); // may not called we reboot the ESP
+        break;
+  }
+}
 
 //===============================================================================
 //  HTML handling
@@ -69,6 +84,8 @@ void ESP8266_Basic_webServer::rootPageHandler()
   if (webServer.hasArg("mqttServer")) strcpy(cfg->mqttServer, webServer.arg("mqttServer").c_str());
   if (webServer.hasArg("mqttPort")) strcpy(cfg->mqttPort, webServer.arg("mqttPort").c_str());
   if (webServer.hasArg("mqttDeviceName")) strcpy(cfg->mqttDeviceName, webServer.arg("mqttDeviceName").c_str());
+  if (webServer.hasArg("updateServer")) strcpy(cfg->updateServer, webServer.arg("updateServer").c_str());
+  if (webServer.hasArg("filePath")) strcpy(cfg->filePath, webServer.arg("filePath").c_str());
   
 
   String rm = ""
@@ -158,6 +175,20 @@ void ESP8266_Basic_webServer::rootPageHandler()
   " </tr>"
 
   " <tr>"
+  "  <td><b><font size='+1'>UpdateServer</font></b></td>"
+  "  <td></td>"
+  " </tr>"
+  " <tr>"
+  "  <td>Broker IP</td>"
+  "  <td><input type='text' id='updateServer' name='updateServer' value='" + String(cfg->updateServer) + "' size='30' maxlength='40' placeholder='IP Address'></td>"
+  " </tr>"
+  " <tr>"
+  " <tr>"
+  "  <td>Port</td>"
+  "  <td><input type='text' id='filePath' name='filePath' value='" + String(cfg->filePath) + "' size='30' maxlength='40' placeholder='Path'></td>"
+  " </tr>"
+
+  " <tr>"
   "  <td><p></p> </td>"
   "  <td>  </td>"
   " </tr>"
@@ -165,6 +196,15 @@ void ESP8266_Basic_webServer::rootPageHandler()
   "  <td></td>"
   "  <td><input type='submit' value='Configuration sichern' style='height:30px; width:200px' > </font></form> </td>"
   " </tr>"
+
+ " <tr>"
+ "  <td></td>"
+ "  <td>  </td>"
+ " </tr>"
+ " <tr>"
+ "  <td></td>"
+ "  <td><input type='submit' value='Update Firmware' id='update' name='update' value='' style='height:30px; width:200px' ></td>"
+ " </tr>"
 
   " <tr>"
   "  <td></td>"
@@ -190,81 +230,6 @@ void ESP8266_Basic_webServer::rootPageHandler()
   "</body bgcolor> </body></font>"
   "</html>"  
   ;
-  
-  
-  
-  
-/*
- 
-  rm += "<!doctype html> <html>";
-  rm += "<head> <meta charset=\"utf-8\"><title>ESP8266 Configuration</title></head>";
-  rm += "<body><body bgcolor=\"#F0F0F0\"><font face=\"VERDANA,ARIAL,HELVETICA\"> <form> <font face=\"VERDANA,ARIAL,HELVETICA\">";
-  rm += "<b><h1>ESP8266 Configuration</h1></b>";
-  if (WiFi.status() == WL_CONNECTED){
-    rm += "ESP8266 connected to: "; rm += WiFi.SSID(); rm += "<br>";
-    rm += "DHCP IP: "; rm += String(IPtoString(WiFi.localIP())); rm += "<p></p>";
-  }else{
-    rm += "ESP8266 ist not connected!"; rm += "<p></p>";
-  }	
-  
-  String str = String(cfg->mqttStatus);
-  if (str == "connected"){
-    rm += "ESP8266 connected to MQTT-Broker: "; rm += cfg->mqttServer; rm += "<br>";
-  }
-  
-  rm += "<table width=\"35%\" border=\"0\" cellpadding=\"0\" cellspacing=\"2\">";
-  
-  rm += " <tr><td> <b><h3> WEB Server </h3></b> </td></tr>";
-  rm += " <tr><td> Username </td><td> <input type=\"text\" id=\"webUser\" name=\"webUser\" value=\"";
-  rm += cfg->webUser;
-  rm += "\" size=\"30\" maxlength=\"40\" placeholder=\"Username\"></td></tr>";
-  rm += "<tr><td> Password </td><td> <input type=\"text\" id=\"webPassword\" name=\"webPassword\" value=\"";
-
-  rm += cfg->webPassword;
-  rm += "\" size=\"30\" maxlength=\"40\" placeholder=\"Password\"></td></tr>";
-  
-  rm += " <tr><td> <b><h3> Accesspoint </h3></b> </td><td>";
-  rm += " <tr><td> SSID </td><td> <input type=\"text\" id=\"apName\" name=\"apName\" value=\"";
-  rm += cfg->apName;  
-  rm += "\" size=\"30\" maxlength=\"40\" placeholder=\"SSID\"></td></tr>";
-  rm += " <tr><td> Password </td><td> <input type=\"text\" id=\"apPassword\" name=\"apPassword\" value=\"";
-  rm += cfg->apPassword;  
-  rm += "\" size=\"30\" maxlength=\"40\" placeholder=\"Password\"></td></tr>";
-  
-  rm += " <tr><td> <b><h3> WiFi </h3></b></td></tr>";
-  rm += " <tr><td> SSID </td><td> <input type=\"text\" id=\"wifiSSID\" name=\"wifiSSID\" value=\"";
-  rm += cfg->wifiSSID;  
-  rm += "\" size=\"30\" maxlength=\"40\" placeholder=\"SSID\"></td></tr>";
-  rm += " <tr><td> Password </td><td> <input type=\"text\" id=\"wifiPSK\" name=\"wifiPSK\" value=\"";
-  rm += cfg->wifiPSK;  
-  rm += "\" size=\"30\" maxlength=\"40\" placeholder=\"Password\"></td></tr>";
-  
-  rm += " <tr><td><b><h3>MQTT</h3></b></td>";
-  rm += " <tr><td> Broker IP </td><td> <input type=\"text\" id=\"mqttServer\" name=\"mqttServer\" value=\"";
-  rm += cfg->mqttServer;  
-  rm += "\" size=\"30\" maxlength=\"40\" placeholder=\"IP Address\"></td></tr>";
-  rm += " <tr><td> Port </td><td><input type=\"text\" id=\"mqttPort\" name=\"mqttPort\" value=\"";
-  rm += cfg->mqttPort;  
-  rm += "\" size=\"30\" maxlength=\"40\" placeholder=\"Port\"></td></tr>";
-  rm += " <tr><td> Devicename </td><td> <input type=\"text\" id=\"mqttDeviceName\" name=\"mqttDeviceName\" value=\"";
-  rm += cfg->mqttDeviceName;  
-  rm += "\" size=\"30\" maxlength=\"40\" placeholder=\"Devicename\"></td></tr>";
-  
-  rm += " <td><p></p></td><td></td></tr>";
-  rm += " <tr><td></td><td> <input type=\"submit\" value=\"Configuration sichern\" style=\"height:30px; width:200px\" > </font></form> </td></tr>";
-
-  rm += "<tr><td></td><td></td></tr>";
-  rm += "<tr><td></td><td><input type=\"submit\" value=\"RESET\" id=\"reset\" name=\"reset\" value=\"\" style=\"height:30px; width:200px\" >  </font></form> </td></tr>";
-
-  rm += "<tr><td></td><td></td></tr>";
-  rm += "<tr><td></td><td><input type=\"button\" onclick=\"location.href='/update';\" value=\"Flash Firmware\" style=\"height:30px; width:200px\" >  </font></form> </td> </tr>";
-
-  rm += "</table>";
-
-  rm += " <p></p></body bgcolor></body></font></html>  ";  
-  rm += "<font size=\"-2\">&copy; by Pf@nne/16</font>";
-  
-*/  
 
   webServer.send(200, "text/html", rm);
  
@@ -274,6 +239,7 @@ void ESP8266_Basic_webServer::rootPageHandler()
      Serial.println("null");
 	 
   if (webServer.hasArg("reset")) ESP.restart();
+  if (webServer.hasArg("update")) updateFirmware();
 }
 
 //#############################################################################

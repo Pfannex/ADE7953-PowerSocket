@@ -8,19 +8,20 @@
   Last modification by:                        *   *       *   *   ****    *
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
-  Date    : 04.03.2016                            *****      *   *
-  Version : alpha 0.102                                     *   *
+  Date    : 16.03.2016                            *****      *   *
+  Version : alpha 0.110                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
 #pragma once
+#define Version "alpha V0.116"
  
   typedef char* topicField; 
 
 //publish struct
   const int pub_e1 = 2;			//define TreeDepht here!!!
-  const int pub_e2 = 4;
-  const int pub_e3 = 3;
+  const int pub_e2 = 5;
+  const int pub_e3 = 4;
   const int pub_e4 = 0;
   
   typedef struct Tpub_topicE1{
@@ -44,8 +45,8 @@
   
 //subscribe struct
   const int sub_e1 = 2;			//define TreeDepht here!!!
-  const int sub_e2 = 4;
-  const int sub_e3 = 3;
+  const int sub_e2 = 5;
+  const int sub_e3 = 4;
   const int sub_e4 = 0;
   
   typedef struct Tsub_topicE1{
@@ -79,7 +80,7 @@ private:
 
 // Config struct
   typedef struct CFG{
-    char version[15] = "alpha V0.102";
+    char version[15] = Version;
     char webUser[40];
     char webPassword[40];
     char apName[40];
@@ -91,6 +92,8 @@ private:
     char mqttPort[6];
     char mqttDeviceName[20];
 	char mqttStatus[20];
+	char updateServer[20];
+	char filePath[40];
   };
   
   typedef struct TdissectResult{

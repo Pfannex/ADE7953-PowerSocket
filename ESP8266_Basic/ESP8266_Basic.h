@@ -8,26 +8,22 @@
   Last modification by:                        *   *       *   *   ****    *
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
-  Date    : 04.03.2016                            *****      *   *
-  Version : alpha 0.102                                     *   *
+  Date    : 16.03.2016                            *****      *   *
+  Version : alpha 0.110                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
 /*
 ToDo
-Version in WEB if
+
+Wenn cfg und WiFi.SSID() gleich dann ohne Vorgabe starten, soll schneller gehen 
 WEB config with password
-wenn Connect mit "alten" Daten dann cfg mit WiFi daten füllen
-sowhol in wifi start als auch in new config
 Reset nach nicht geänderter Config wird nicht durchgeführt
 WEB-Status Tabelle rechts
 TopicTree 
 OTA WEB
 OTA Arduino
 OTA onDemand
-WEBServer Seite in function mit übergabe Variablen und ''' 
-
-
 */  
   
 
@@ -51,7 +47,6 @@ WEBServer Seite in function mit übergabe Variablen und '''
 //ESP8266_Basic
   #include <ESP8266_Basic_webServer.h>
   #include <ESP8266_Basic_data.h>
-  
   
 class ESP8266_Basic{
 

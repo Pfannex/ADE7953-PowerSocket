@@ -8,8 +8,8 @@
   Last modification by:                        *   *       *   *   ****    *
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
-  Date    : 04.03.2016                            *****      *   *
-  Version : alpha 0.102                                     *   *
+  Date    : 16.03.2016                            *****      *   *
+  Version : alpha 0.110                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
@@ -22,6 +22,7 @@
   #include <WiFiClient.h> 
   #include <DNSServer.h>
   #include <ESP8266HTTPUpdateServer.h>
+  #include <ESP8266httpUpdate.h>
 
   #include <ESP8266_Basic_data.h>
   #include <functional>
@@ -37,7 +38,8 @@ public:
   
   void set_cfgPointer(CFG *p);  
   void set_saveConfig_Callback(CallbackFunction c);
-    
+  void updateFirmware();
+  
 private:
   ESP8266WebServer webServer;
   ESP8266HTTPUpdateServer httpUpdater;

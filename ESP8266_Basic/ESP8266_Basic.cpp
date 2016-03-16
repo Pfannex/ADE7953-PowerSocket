@@ -8,8 +8,8 @@
   Last modification by:                        *   *       *   *   ****    *
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
-  Date    : 04.03.2016                            *****      *   *
-  Version : alpha 0.102                                     *   *
+  Date    : 16.03.2016                            *****      *   *
+  Version : alpha 0.110                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
@@ -101,11 +101,15 @@ void ESP8266_Basic::mqttBroker_Callback(char* topic, byte* payload, unsigned int
   if (dissectResult.found){
     if (dissectResult.itemPath == "1/0/0"){
 	  if (strcmp(value, "Reboot") == 0){
-	    ESP.reset();
+	    ESP.restart();
 	  }
 	}
     if (dissectResult.itemPath == "1/0/1"){
 	  pubConfig();
+	}
+    if (dissectResult.itemPath == "1/0/2"){
+	  //UpdateFirmware()
+	  webServer.updateFirmware();
 	}
   }
 }
@@ -198,6 +202,8 @@ void ESP8266_Basic::pubConfig(){
   pub(0,2,2, cfg.wifiIP);
   pub(0,3,0, cfg.mqttServer);
   pub(0,3,1, cfg.mqttPort);
+  pub(0,4,0, cfg.updateServer);
+  pub(0,4,1, cfg.filePath);
   //pub(0,3,2, cfg.mqttDeviceName);  
 }
 
@@ -417,6 +423,8 @@ void ESP8266_Basic::resetSettings(){
   strcpy(cfg.mqttServer, "");
   strcpy(cfg.mqttPort, "1883");
   strcpy(cfg.mqttDeviceName, "");
+  strcpy(cfg.updateServer, "");
+  strcpy(cfg.filePath, "");
   
   write_cfgFile();
 }
@@ -465,6 +473,8 @@ bool ESP8266_Basic::read_cfgFile(){
           strcpy(cfg.mqttServer, json["mqttServer"]);
           strcpy(cfg.mqttPort, json["mqttPort"]);
           strcpy(cfg.mqttDeviceName, json["mqttDeviceName"]);
+          strcpy(cfg.updateServer, json["updateServer"]);
+          strcpy(cfg.filePath, json["filePath"]);
 
 		  readOK = true;
 
@@ -506,6 +516,8 @@ void ESP8266_Basic::write_cfgFile(){
   json["mqttServer"] = cfg.mqttServer;
   json["mqttPort"] = cfg.mqttPort;
   json["mqttDeviceName"] = cfg.mqttDeviceName;
+  json["updateServer"] = cfg.updateServer;
+  json["filePath"] = cfg.filePath;
 
   File cfgFile = SPIFFS.open("/config.json", "w");
   if (!cfgFile) {
@@ -569,6 +581,9 @@ void ESP8266_Basic::printCFG(){
   Serial.print("MQTT-Server IP:   "); Serial.println(cfg.mqttServer);
   Serial.print("MQTT-Server Port: "); Serial.println(cfg.mqttPort);
   Serial.print("MQTT-DeviceName:  "); Serial.println(cfg.mqttDeviceName);
+  Serial.println("----------------------------------------");
+  Serial.print("Update-Server IP: "); Serial.println(cfg.updateServer);
+  Serial.print("FilePath:         "); Serial.println(cfg.filePath);
   Serial.println("########################################");
 
 };
