@@ -9,7 +9,7 @@
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
   Date    : 16.03.2016                            *****      *   *
-  Version : alpha 0.110                                     *   *
+  Version : alpha 0.116                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
@@ -179,12 +179,12 @@ void ESP8266_Basic_webServer::rootPageHandler()
   "  <td></td>"
   " </tr>"
   " <tr>"
-  "  <td>Broker IP</td>"
+  "  <td>Server IP</td>"
   "  <td><input type='text' id='updateServer' name='updateServer' value='" + String(cfg->updateServer) + "' size='30' maxlength='40' placeholder='IP Address'></td>"
   " </tr>"
   " <tr>"
   " <tr>"
-  "  <td>Port</td>"
+  "  <td>FilePath</td>"
   "  <td><input type='text' id='filePath' name='filePath' value='" + String(cfg->filePath) + "' size='30' maxlength='40' placeholder='Path'></td>"
   " </tr>"
 
