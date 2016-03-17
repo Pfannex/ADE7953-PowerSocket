@@ -9,17 +9,17 @@
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
   Date    : 16.03.2016                            *****      *   *
-  Version : alpha 0.110                                     *   *
+  Version : alpha 0.116                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
 #pragma once
-#define Version "alpha V0.116"
+#define Version "alpha V0.001"
  
   typedef char* topicField; 
 
 //publish struct
-  const int pub_e1 = 2;			//define TreeDepht here!!!
+  const int pub_e1 = 3;			//define TreeDepht here!!!
   const int pub_e2 = 5;
   const int pub_e3 = 4;
   const int pub_e4 = 0;

@@ -9,7 +9,7 @@
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
   Date    : 16.03.2016                            *****      *   *
-  Version : alpha 0.110                                     *   *
+  Version : alpha 0.116                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
@@ -100,9 +100,15 @@ Topics::Topics(){
    ¦     +-[041] FilePath
    ¦     
    ¦-[1] Control
-   ¦  ¦-[10] Status
-   ¦  ¦  ¦-[100] WiFi
-   ¦  ¦  +-[101] MQTT   
+   ¦  +-[10] Status
+   ¦     ¦-[100] WiFi
+   ¦     ¦-[101] MQTT
+   ¦     +-[101] update Firmware   
+   ¦
+   ¦-[2] Sensor
+   ¦  ¦-[20] temperatur
+   ¦  ¦  ¦-[200] T1
+   ¦  ¦  +-[201] T2   
 */
 
   pub.E1.count = pub_e1;
@@ -133,5 +139,10 @@ Topics::Topics(){
   pub.E3.item[1][0][0] = "WiFi";
   pub.E3.item[1][0][1] = "MQTT";
   sub.E3.item[1][0][2] = "updateFirmware";
+
+  pub.E1.item[2] = "Sensor";
+  pub.E2.item[2][0] = "temperatur";
+  pub.E3.item[2][0][0] = "T1";
+  pub.E3.item[2][0][1] = "T2";
 
 }
