@@ -1,23 +1,23 @@
 /******************************************************************************
 
-  ProjectName: ESP8266 Basic                      ***** *****
-  SubTitle   : Basic template                    *     *     ************
+  ProjectName: ESP8266_Basic                      ***** *****
+  SubTitle   : ESP8266 Template                  *     *     ************
                                                 *   **   **   *           *
   Copyright by Pf@nne                          *   *   *   *   *   ****    *
                                                *   *       *   *   *   *   *
   Last modification by:                        *   *       *   *   ****    *
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
-  Date    : 16.03.2016                            *****      *   *
-  Version : alpha 0.116                                     *   *
+  Date    : 29.03.2016                            *****      *   *
+  Version : alpha 0.200                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
 
-#include <ESP8266_Basic.h>
+#include "ESP8266_Basic.h"
 ESP8266_Basic espClient;
- 
-void setup() {
+
+void setup() {  
   Serial.begin(115200); 
   Serial.println("");
   
@@ -26,6 +26,7 @@ void setup() {
 
 void loop() {
   espClient.handle_connections(); 
+  espClient.handle_Measurement();
 }
 
 

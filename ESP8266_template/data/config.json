@@ -1,0 +1,14 @@
+{
+  "webUser":        "ESPuser",
+  "webPassword":    "ESPpass",
+  "apName":         "ESP8266_402658",
+  "apPassword":     "ESP8266config",
+  "wifiSSID":       "Pf@nne-NET",
+  "wifiPSK":        "Pf@nneNETwlan_ACCESS",
+  "wifiIP":         "",
+  "mqttServer":     "192.168.1.203",
+  "mqttPort":       "1883",
+  "mqttDeviceName": "ESP8266_402658",
+  "updateServer":   "192.168.1.3",
+  "filePath":       "/bin/ESP8266_AktSen.ino.bin"
+}

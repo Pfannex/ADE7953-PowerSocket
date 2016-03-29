@@ -1,20 +1,20 @@
 /******************************************************************************
 
-  ProjectName: ESP8266 Basic                      ***** *****
-  SubTitle   : Data structs                      *     *     ************
+  ProjectName: ESP8266_Basic                      ***** *****
+  SubTitle   : ESP8266 Template                  *     *     ************
                                                 *   **   **   *           *
   Copyright by Pf@nne                          *   *   *   *   *   ****    *
                                                *   *       *   *   *   *   *
   Last modification by:                        *   *       *   *   ****    *
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
-  Date    : 16.03.2016                            *****      *   *
-  Version : alpha 0.116                                     *   *
+  Date    : 29.03.2016                            *****      *   *
+  Version : alpha 0.200                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
 #include <Arduino.h>
-#include <ESP8266_Basic_data.h>
+#include "ESP8266_Basic_data.h"
 
 Topics::Topics(){ 
 
@@ -75,6 +75,7 @@ Topics::Topics(){
   sub.E3.item[1][0][0] = "Reboot";
   sub.E3.item[1][0][1] = "ShowConfig";
   sub.E3.item[1][0][2] = "updateFirmware";
+  sub.E3.item[1][0][3] = "MeasureTime";
 
   sub.E1.item[3] = "File";
   sub.E2.item[3][0] = "Read";
@@ -148,9 +149,37 @@ Topics::Topics(){
   pub.E3.item[1][0][2] = "updateFirmware";
 
   pub.E1.item[2] = "Sensor";
-  pub.E2.item[2][0] = "temperatur";
-  pub.E3.item[2][0][0] = "T1";
-  pub.E3.item[2][0][1] = "T2";
+  pub.E2.item[2][1] = "temperature";
+  pub.E3.item[2][1][0] = "T1";
+  pub.E3.item[2][1][1] = "T2";
+  pub.E3.item[2][1][2] = "T3";
+  pub.E3.item[2][1][3] = "T4";
+  pub.E3.item[2][1][4] = "T5";
+  pub.E3.item[2][1][5] = "T6";
+  pub.E3.item[2][1][6] = "T7";
+  pub.E3.item[2][1][7] = "T8";
+  pub.E3.item[2][1][8] = "T9";
+  pub.E3.item[2][1][9] = "T10";
+  pub.E3.item[2][1][10] = "T11";
+  pub.E3.item[2][1][11] = "T12";
+  pub.E3.item[2][1][12] = "T13";
+  pub.E3.item[2][1][13] = "T14";
+  pub.E3.item[2][1][14] = "T15";
+  pub.E3.item[2][1][15] = "T16";
+  pub.E3.item[2][1][16] = "T17";
+  pub.E3.item[2][1][17] = "T18";
+  pub.E3.item[2][1][18] = "T19";
+  pub.E3.item[2][1][19] = "T20";
+  pub.E3.item[2][1][20] = "T21";
+  pub.E3.item[2][1][21] = "T22";
+  pub.E3.item[2][1][22] = "T23";
+  pub.E3.item[2][1][23] = "T24";
+  pub.E3.item[2][1][24] = "T25";
+  pub.E3.item[2][1][25] = "T26";
+  pub.E3.item[2][1][26] = "T27";
+  pub.E3.item[2][1][27] = "T28";
+  pub.E3.item[2][1][28] = "T29";
+  pub.E3.item[2][1][29] = "T30";
 
 
 }

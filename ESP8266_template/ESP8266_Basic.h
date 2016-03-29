@@ -1,29 +1,29 @@
 /******************************************************************************
 
-  ProjectName: ESP8266 Basic                      ***** *****
-  SubTitle   : Basic Library                     *     *     ************
+  ProjectName: ESP8266_Basic                      ***** *****
+  SubTitle   : ESP8266 Template                  *     *     ************
                                                 *   **   **   *           *
   Copyright by Pf@nne                          *   *   *   *   *   ****    *
                                                *   *       *   *   *   *   *
   Last modification by:                        *   *       *   *   ****    *
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
-  Date    : 16.03.2016                            *****      *   *
-  Version : alpha 0.116                                     *   *
+  Date    : 29.03.2016                            *****      *   *
+  Version : alpha 0.200                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
 /*
 ToDo
-
+FS Abfrage ob Feld vorhanden, sonst ggf. format
 Wenn cfg und WiFi.SSID() gleich dann ohne Vorgabe starten, soll schneller gehen 
 WEB config with password
-Reset nach nicht geänderter Config wird nicht durchgeführt
+Erledigt: Reset nach nicht geänderter Config wird nicht durchgeführt
 WEB-Status Tabelle rechts
 TopicTree 
-OTA WEB
+Erledigt: OTA WEB
 OTA Arduino
-OTA onDemand
+Erledigt: OTA onDemand
 */  
   
 
@@ -45,9 +45,14 @@ OTA onDemand
   #include <PubSubClient.h>
   
 //ESP8266_Basic
-  #include <ESP8266_Basic_webServer.h>
-  #include <ESP8266_Basic_data.h>
+  #include "ESP8266_Basic_webServer.h"
+  #include "ESP8266_Basic_data.h"
   
+//Sensoren
+  //1Wire direct
+  #include "OneWire.h"
+  #include <DallasTemperature.h>
+
 class ESP8266_Basic{
 
 public:
@@ -61,12 +66,20 @@ public:
   bool pub(int e1, int e2, char* Payload);
   bool pub(int e1, int e2, int e3, char* Payload);
   
+  //AktSen
+  void handle_Measurement();
+  
 private:
   WiFiClient wifi_client;
   PubSubClient mqtt_client;
   File cfgFile;
   ESP8266_Basic_webServer webServer;  
   
+  //AktSen
+  long lastMeasure_time;
+  long updateMeasure_time = 2000;
+  void run_oneWire();
+ 
   //WiFi-Manager-Control---------------
   void startConfigServer();
   void startAccessPoint();
@@ -99,11 +112,6 @@ private:
   TdissectResult dissectPayload(String subTopic, String subValue);
   
   void pubConfig();
-
-  
-  //Prüfen ob noch benötigt
-  //bool shouldSaveConfig;
-  //String TopicHeader = "999";
   
   //helpers----------------------------
   void checkFlash();

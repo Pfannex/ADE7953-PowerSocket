@@ -1,27 +1,27 @@
 ﻿/******************************************************************************
 
-  ProjectName: ESP8266 Basic                      ***** *****
-  SubTitle   : Data structs                      *     *     ************
+  ProjectName: ESP8266_Basic                      ***** *****
+  SubTitle   : ESP8266 Template                  *     *     ************
                                                 *   **   **   *           *
   Copyright by Pf@nne                          *   *   *   *   *   ****    *
                                                *   *       *   *   *   *   *
   Last modification by:                        *   *       *   *   ****    *
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
-  Date    : 16.03.2016                            *****      *   *
-  Version : alpha 0.116                                     *   *
+  Date    : 29.03.2016                            *****      *   *
+  Version : alpha 0.200                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
 #pragma once
-#define Version "alpha V0.116"
+#define Version "ESP_Basic alpha V0.200"
  
   typedef char* topicField; 
 
 //publish struct
   const int pub_e1 = 4;			//define TreeDepht here!!!
   const int pub_e2 = 5;
-  const int pub_e3 = 4;
+  const int pub_e3 = 30;
   const int pub_e4 = 0;
   
   typedef struct Tpub_topicE1{
@@ -80,7 +80,7 @@ private:
 
 // Config struct
   typedef struct CFG{
-    char version[15] = Version;
+    char version[25] = Version;
     char webUser[40];
     char webPassword[40];
     char apName[40];

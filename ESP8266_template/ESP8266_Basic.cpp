@@ -1,19 +1,19 @@
 /******************************************************************************
 
-  ProjectName: ESP8266 Basic                      ***** *****
-  SubTitle   : Basic Library                     *     *     ************
+  ProjectName: ESP8266_Basic                      ***** *****
+  SubTitle   : ESP8266 Template                  *     *     ************
                                                 *   **   **   *           *
   Copyright by Pf@nne                          *   *   *   *   *   ****    *
                                                *   *       *   *   *   *   *
   Last modification by:                        *   *       *   *   ****    *
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
                                                  *   *        *   *******
-  Date    : 16.03.2016                            *****      *   *
-  Version : alpha 0.116                                     *   *
+  Date    : 29.03.2016                            *****      *   *
+  Version : alpha 0.200                                     *   *
   Revison :                                                *****
 
 ********************************************************************************/
-#include <ESP8266_Basic.h>
+#include "ESP8266_Basic.h"
 
 ESP8266_Basic::ESP8266_Basic() : webServer(), 
                                  mqtt_client(wifi_client)
@@ -21,6 +21,34 @@ ESP8266_Basic::ESP8266_Basic() : webServer(),
   //Callbacks								 
   webServer.set_saveConfig_Callback(std::bind(&ESP8266_Basic::cfgChange_Callback, this));
   mqtt_client.setCallback(std::bind(&ESP8266_Basic::mqttBroker_Callback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+}
+
+//===============================================================================
+//  AktSen Control 
+//===============================================================================
+//===> updateMeasurement <-----------------------------------------------------
+void ESP8266_Basic::handle_Measurement(){
+  if (mqtt_client.connected()){
+    long now = millis();
+    if (now - lastMeasure_time > updateMeasure_time) {
+      lastMeasure_time = now;
+      run_oneWire();
+    }
+  }
+}
+//===> run 1Wire <-----------------------------------------------------
+void ESP8266_Basic::run_oneWire(){
+  OneWire oneWire(2);                   //GPIO2
+  DallasTemperature DS18B20(&oneWire);
+  DS18B20.begin();
+
+  DS18B20.requestTemperatures(); 
+  for (int i = 0; i < DS18B20.getDeviceCount(); i++) {
+    String str_temp = String(DS18B20.getTempCByIndex(i));
+	char temp[7];
+    strcpy(temp, str_temp.c_str());  
+	pub(2,1,i, temp);
+  }
 }
 
 //===============================================================================
@@ -116,6 +144,7 @@ void ESP8266_Basic::mqttBroker_Callback(char* topic, byte* payload, unsigned int
 	  //Write Field_01
 	  strcpy(myFile.Field_01, value);
 	  write_MyFile();
+	  updateMeasure_time = String(value).toInt();
 	}
     if (dissectResult.itemPath == "3/0/0"){
 	  //Read Field_01
@@ -229,6 +258,7 @@ void ESP8266_Basic::start_WiFi_connections(){
   config_running = true;
   
   read_cfg();
+  read_MyFile();
 
   if (start_WiFi()){
     WiFi.mode(WIFI_STA);     //exit AP-Mode if set once
@@ -455,13 +485,13 @@ bool ESP8266_Basic::read_MyFile(){
 
   //read configuration from FS json
   Serial.println("");
-  Serial.println("mounting FS...");
+  Serial.println("mounting FS...for MyFile");
 
   if (SPIFFS.begin()) {
     Serial.println("mounted file system");
     if (SPIFFS.exists("/MyFile.json")) {
       //file exists, reading and loading
-      Serial.println("reading config file");
+      Serial.println("reading Myfile");
       MyFile = SPIFFS.open("/MyFile.json", "r");
       if (MyFile) {
         Serial.println("opened MyFile");
@@ -474,11 +504,16 @@ bool ESP8266_Basic::read_MyFile(){
         JsonObject& json = jsonBuffer.parseObject(buf.get());
         //json.printTo(Serial);
         if (json.success()) {
-          Serial.println("json success");
+          Serial.println("json success to MyFile");
           
 		  //Get Data from File
           strcpy(myFile.Field_01, json["Field_01"]);
           strcpy(myFile.Field_02, json["Field_02"]);
+		  
+	      updateMeasure_time = String(myFile.Field_01).toInt();
+          Serial.print("Update Time = ");
+          Serial.println(updateMeasure_time);
+
 
 		  readOK = true;
 
