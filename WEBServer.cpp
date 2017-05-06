@@ -1,58 +1,53 @@
-/******************************************************************************
+#include "WEBServer.h"
 
-  ProjectName: ESP8266_Basic                      ***** *****
-  SubTitle   : ESP8266 Template                  *     *     ************
-                                                *   **   **   *           *
-  Copyright by Pf@nne                          *   *   *   *   *   ****    *
-                                               *   *       *   *   *   *   *
-  Last modification by:                        *   *       *   *   ****    *
-  - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
-                                                 *   *        *   *******
-  Date    : 29.03.2016                            *****      *   *
-  Version : alpha 0.200                                     *   *
-  Revison :                                                *****
-
-********************************************************************************/
-#include "ESP8266_Basic_webServer.h"
-
-ESP8266_Basic_webServer::ESP8266_Basic_webServer() : webServer(80){ 
+WEBIF::WEBIF() : webServer(80){ 
 
   httpUpdater.setup(&webServer); 
  
-  webServer.on("/", std::bind(&ESP8266_Basic_webServer::rootPageHandler, this));
-  webServer.on("/sensor", std::bind(&ESP8266_Basic_webServer::sensorPageHandler, this));
+  //webServer.on("/", std::bind(&WEBIF::rootPageHandler, this));
+  //webServer.on("/sensoren", std::bind(&WEBIF::sensorPageHandler, this));
   
-  webServer.on("/wlan_config", std::bind(&ESP8266_Basic_webServer::wlanPageHandler, this));
-  webServer.on("/gpio", std::bind(&ESP8266_Basic_webServer::gpioPageHandler, this));
-  //webServer.on("/cfg", std::bind(&ESP8266_Basic_webServer::cfgPageHandler, this));
-  webServer.onNotFound(std::bind(&ESP8266_Basic_webServer::handleNotFound, this));
+  //webServer.on("/wlan_config", std::bind(&WEBIF::wlanPageHandler, this));
+  //webServer.on("/gpio", std::bind(&WEBIF::gpioPageHandler, this));
+  //webServer.on("/cfg", std::bind(&WEBIF::cfgPageHandler, this));
+  //webServer.onNotFound(std::bind(&WEBIF::handleNotFound, this));
 }
 
 //===============================================================================
 //  WEB-Server control
 //===============================================================================
-void ESP8266_Basic_webServer::start(){
+void WEBIF::start(){
   Serial.println("Start WEB-Server");
   
-  pinMode(GPIO2, OUTPUT);
+  //pinMode(GPIO2, OUTPUT);
   webServer.begin(); 
   Serial.println("HTTP server started");
 
 }
 //===> handle WEB-Server <-----------------------------------------------------
-void ESP8266_Basic_webServer::handleClient(){
+void WEBIF::handleClient(){
    webServer.handleClient();
 }
+
+
+/*
+
 //===> CFGstruct pointer <-----------------------------------------------------
-void ESP8266_Basic_webServer::set_cfgPointer(CFG *p){
+void WEBIF::set_cfgPointer(CFG *p){
   cfg = p;
 }
+//===> Sesorstruct pointer <---------------------------------------------------
+void WEBIF::set_sensorPointer(TDS18B20_Sensors *p, THTU21_Sensors *q, TBMP180_Sensors *r){
+  DS18B20_Sensors = p;
+  HTU21_Sensors = q;
+  BMP180_Sensors = r;
+}
 //===> Callback for CFGchange <------------------------------------------------
-void ESP8266_Basic_webServer::set_saveConfig_Callback(CallbackFunction c){
+void WEBIF::set_saveConfig_Callback(CallbackFunction c){
   saveConfig_Callback = c;
 }
 //===> Update Firmware <-------------------------------------------------------
-void ESP8266_Basic_webServer::updateFirmware(){
+void WEBIF::updateFirmware(){
   Serial.println("Updating Firmware.......");
   t_httpUpdate_return ret = ESPhttpUpdate.update(cfg->updateServer, 80, cfg->filePath);
   switch(ret) {
@@ -73,30 +68,66 @@ void ESP8266_Basic_webServer::updateFirmware(){
 //===============================================================================
 
 //===> Sensor Page <-------------------------------------------------------
-void ESP8266_Basic_webServer::sensorPageHandler(){
+void WEBIF::sensorPageHandler(){
  String rm = ""
   
   "<!doctype html> <html>"
   "<head> <meta charset='utf-8'>"
-  "<title>ESP8266 Configuration</title>"
+  "<meta http-equiv='refresh' content='5; URL=http://" + String(IPtoString(WiFi.localIP()))  + "/sensoren'>"
+  "<title>ESP8266 Sensoren</title>"
   "</head>"
 
   "<body><body bgcolor='#F0F0F0'><font face='VERDANA,ARIAL,HELVETICA'> <form> <font face='VERDANA,ARIAL,HELVETICA'>"
-  "<b><h1>ESP8266 Configuration</h1></b>";
+  "<b><h1>ESP8266 Sensoren</h1></b>"
+  "<b><h3>1Wire</h3></b>";
+  
+  for (int i = 0; i < DS18B20_Sensors->count; i++) {	
+	  rm += "<font face='Courier New'>";
+	
+	  char str[15];
+	  sprintf(str, "%03d - ", i+1);
+	  rm += "<tab indent=20>";
+	  rm += String(str) + String(DS18B20_Sensors->item[i].serial) + " - " + 
+	                      String(DS18B20_Sensors->item[i].temperature) + " &deg;C<br>";
+  }
 
-  rm += ""
-  "<font size='-2'>&copy; by Pf@nne/16   |   " + String(cfg->version) + "</font>"
+  rm += "</font></p>"
+  "<font face='VERDANA,ARIAL,HELVETICA'> <b><h3>I2C</h3></b> </font>";
+  
+  for (int i=0; i<HTU21_Sensors->count; i++){  
+    rm += "<font face='Courier New'>";
+  
+    //char str[15];
+    //sprintf(str, "Ch %01d - ", String(HTU21_Sensors->item[i].channel).c_str());
+    //rm += "Ch " + String(HTU21_Sensors->item[i].channel);
+    rm += "Ch " + String(HTU21_Sensors->item[i].channel) + " - ";
+    rm += String(HTU21_Sensors->item[i].temperature) + " &deg;C" + " / " + 
+          String(HTU21_Sensors->item[i].humidity) + " %<br>";
+  }
+  for (int i=0; i<BMP180_Sensors->count; i++){  
+    rm += "<font face='Courier New'>";
+  
+    //char str[15];
+    //sprintf(str, "Ch %01d - ", String(BMP180_Sensors->item[i].channel).c_str());
+    //rm += "Ch " + String(BMP180_Sensors->item[i].channel);
+    rm += "Ch " + String(BMP180_Sensors->item[i].channel) + " - ";
+    rm += String(BMP180_Sensors->item[i].temperature) + " &deg;C" + " / " + 
+          String(BMP180_Sensors->item[i].pressure) + " hPa<br>";
+  }
+
+
+  rm += "</font></p>"
+  "<font face='VERDANA,ARIAL,HELVETICA'><font size='-2'>&copy; by Pf@nne/16   |   " + String(cfg->version) + "</font>"
   "</body bgcolor> </body></font>"
   "</html>"  
   ;
 
   webServer.send(200, "text/html", rm);
 
-
 }
 
 //#############################################################################
-void ESP8266_Basic_webServer::rootPageHandler()
+void WEBIF::rootPageHandler()
 {
   // Check if there are any GET parameters
   if (webServer.hasArg("webUser")) strcpy(cfg->webUser, webServer.arg("webUser").c_str());
@@ -269,7 +300,7 @@ void ESP8266_Basic_webServer::rootPageHandler()
 
 //#############################################################################
 
-void ESP8266_Basic_webServer::wlanPageHandler()
+void WEBIF::wlanPageHandler()
 {
   // Check if there are any GET parameters
   if (webServer.hasArg("ssid"))
@@ -345,7 +376,7 @@ void ESP8266_Basic_webServer::wlanPageHandler()
 }
 
 
-void ESP8266_Basic_webServer::gpioPageHandler()
+void WEBIF::gpioPageHandler()
 {
   // Check if there are any GET parameters
   if (webServer.hasArg("gpio2"))
@@ -384,7 +415,7 @@ void ESP8266_Basic_webServer::gpioPageHandler()
 }
 
 
-void ESP8266_Basic_webServer::handleNotFound()
+void WEBIF::handleNotFound()
 {
   String message = "File Not Found\n\n";
   message += "URI: ";
@@ -408,7 +439,7 @@ void ESP8266_Basic_webServer::handleNotFound()
 //===============================================================================
 
 //===> IPToString  <-----------------------------------------------------------
-String ESP8266_Basic_webServer::IPtoString(IPAddress ip) {
+String WEBIF::IPtoString(IPAddress ip) {
   String res = "";
   for (int i = 0; i < 3; i++) {
     res += String((ip >> (8 * i)) & 0xFF) + ".";
@@ -416,3 +447,5 @@ String ESP8266_Basic_webServer::IPtoString(IPAddress ip) {
   res += String(((ip >> 8 * 3)) & 0xFF);
   return res;
 }
+
+*/
