@@ -1,7 +1,8 @@
 #include "ESP8266_Basic.h"
 
 //CLASS ESP8266_Basic################################################################
-ESP8266_Basic::ESP8266_Basic(){  
+ESP8266_Basic::ESP8266_Basic():
+    ffs(i2c){  
   
   // : webServer(), 
                                  //mqtt_client(wifi_client){
@@ -22,6 +23,10 @@ ESP8266_Basic::ESP8266_Basic(){
 //===> Start WiFi Connection <-------------------------------------------------
 void ESP8266_Basic::startConnections(){
   wifi.start();
+}
+//===> Start Periphery <-------------------------------------------------------
+void ESP8266_Basic::startPeriphery(){
+  i2c.start();
 }
 
 //===> updateMeasurement <-----------------------------------------------------

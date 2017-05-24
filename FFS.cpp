@@ -1,60 +1,108 @@
 #include "FFS.h"
 
-FFS::FFS(){
+//===============================================================================
+//  FFS 
+//===============================================================================
+FFS::FFS(I2C& i2c):
+    i2c(i2c),
+    cfg(CFG_PATH, TYPE_OBJECT),
+    testArray(TESTARRAY_PATH, TYPE_ARRAY){
 
-  Serial.println("#### CFG ####");
-  String CFG_jsonFileBuffer = readJsonString(CFG_FilePath, false);
-  DynamicJsonBuffer CFG_JsonBuffer;
-  JsonObject& CFG_root = CFG_JsonBuffer.parseObject(CFG_jsonFileBuffer);
-  
 }
 
+//===> TEST <------------------------------------------------------
 void FFS::TEST(){
-
-  CFG_root.printTo(Serial);Serial.println("");
-  
-  Serial.println("#### pub ####");
-  Serial.println(readJsonString(pub_FilePath, false));
-  Serial.println("#### sub ####");
-  Serial.println(readJsonString(sub_FilePath, false));
-  Serial.println("#### MyFile ####");
-  Serial.println(readJsonString(MyFile_FilePath, false));
-  Serial.println("#### ADE7953 ####");
-  Serial.println(readJsonString(ADE7953reg_FilePath, false));
-  Serial.println("#### ARRAY ####");
-  Serial.println(readJsonString(testArray_FilePath, true));
   
 
-  //Serial.println("#### CFG ####");
-  //parseJsonObject(GetJsonObject(CFG_FilePath));
-  //parseJsonObject(MyFile_root);
-  //CFG_root.printTo(Serial);
+  Serial.println(cfg.readItem("apName"));
+  Serial.println(cfg.readItem("wifiSSID"));
+  Serial.println(cfg.readItem("wifiPSK"));
+  Serial.println(testArray.readItem(1));
 
-  //String jsonFileBuffer = readJsonString(CFG_FilePath, false);
-  //DynamicJsonBuffer JsonBuffer;
-  //JsonObject& root = JsonBuffer.parseObject(jsonFileBuffer);
-  //root.printTo(Serial);
+  cfg.writeItem("wifiSSID", "HelloWorld");  //Pf@nne-NET
+  //Serial.println(cfg.readItem("wifiSSID"));
+
+  //i2c.lcd.println(cfg.readItem("WiFiSSID"), 0);
+  i2c.lcd.println(String(cfg.size), 1);
   
-/*  Serial.println("#### pub ####");
-  parseJsonObject(GetJsonObject(pub_FilePath));
-  Serial.println("#### sub ####");
-  parseJsonObject(GetJsonObject(sub_FilePath));
-  Serial.println("#### MyFile ####");
-  parseJsonObject(GetJsonObject(MyFile_FilePath));
-  Serial.println("#### ADE7953 ####");
-  parseJsonObject(GetJsonObject(ADE7953reg_FilePath));
-*/
-  //parseJsonArray(GetJsonArray(testArray_FilePath));
+  //Serial.println("TEST");
+  //Serial.println(CFG_root);
+  //Serial.println(getObjectItem(CFG_root, "wifiSSID"));
+  //Serial.println(getArrayItem(testArray_root, 0));
+}
+  
+
+//===============================================================================
+//  FFSjsonFile public
+//===============================================================================
+FFSjsonFile::FFSjsonFile(String filePath, int type) :
+    filePath       (filePath),
+    type           (type),
+    root           (readJsonString()),
+    jsonRootObject (JsonBuffer.parseObject(root)),
+    jsonRootArray  (JsonBuffer.parseArray(root)){
 }
 
-
-//===> Read json DATA <------------------------------------------------
-String FFS::readJsonString(String path, bool typ){  //Typ true = ARRAY 
- //if (typ == true) Serial.println("readJsonString Typ = true");
- //if (typ == false) Serial.println("readJsonString Typ = false");
+//===> readItem from jsonString <-------------------------------------
+String FFSjsonFile::readItem(String itemName){
+  //DynamicJsonBuffer JsonBuffer;
+  //JsonObject& rootObject = JsonBuffer.parseObject(root);  
+  //return rootObject[itemName].asString();
   
- File jsonFile;
- String jsonData = "NIL";
+  return jsonRootObject[itemName].asString();
+}
+
+String FFSjsonFile::readItem(int item){
+  //DynamicJsonBuffer JsonBuffer;
+  //JsonArray& rootArray = JsonBuffer.parseArray(root);  
+  //return rootArray[item].asString();
+  return jsonRootArray[item].asString();
+  
+}
+
+//===> writeItem to jsonString <---------------------------------------
+void FFSjsonFile::writeItem(String itemName, String value){
+  jsonRootObject[itemName] = value;
+
+  //SPIFFS.begin();
+  File jsonFile = SPIFFS.open(filePath, "w");
+  if (!jsonFile) {
+    Serial.println("failed to open File for writing");
+    //Serial.print("format file System.. ");
+    //SPIFFS.format();
+  }
+
+  jsonRootObject.printTo(Serial);
+  jsonRootObject.printTo(jsonFile);
+  jsonFile.close(); 
+
+/*  
+  DynamicJsonBuffer JsonBuffer;
+  JsonObject& rootObject = JsonBuffer.parseObject(root);  
+  rootObject[itemName] = value;
+
+  //SPIFFS.begin();
+  File jsonFile = SPIFFS.open(filePath, "w");
+  if (!jsonFile) {
+    Serial.println("failed to open File for writing");
+    //Serial.print("format file System.. ");
+    //SPIFFS.format();
+  }
+
+  rootObject.printTo(Serial);
+  rootObject.printTo(jsonFile);
+  jsonFile.close(); 
+*/  
+}
+
+//  FFSjsonFile private 
+//===============================================================================
+
+//===> Read json String from File <------------------------------------
+String FFSjsonFile::readJsonString(){    
+  //Serial.println("FFSjsonFile::readJsonString()");
+  File jsonFile;
+  String jsonData = "NIL";
  
   //clean FS, for testing
   //SPIFFS.format();
@@ -65,19 +113,19 @@ String FFS::readJsonString(String path, bool typ){  //Typ true = ARRAY
 
   if (SPIFFS.begin()) {
     Serial.println("mounted file system...OK");
-    if (SPIFFS.exists(path)) {
+    if (SPIFFS.exists(filePath)) {
       //file exists, reading and loading
-      Serial.print("file exists: ");Serial.println(path);
-      jsonFile = SPIFFS.open(path, "r");
+      Serial.print("file exists: ");Serial.println(filePath);
+      jsonFile = SPIFFS.open(filePath, "r");
       if (jsonFile) {
         Serial.println("opened File...OK");
-        size_t size = jsonFile.size();
+        size = jsonFile.size();
         // Allocate a buffer to store contents of the file.
         std::unique_ptr<char[]> buf(new char[size]);
 
         jsonFile.readBytes(buf.get(), size);
         
-        if (typ == true){
+        if (type == TYPE_ARRAY){
         //Array 
           DynamicJsonBuffer jsonBufferArray;
           JsonArray& jsonArray = jsonBufferArray.parseArray(buf.get());             
@@ -92,8 +140,8 @@ String FFS::readJsonString(String path, bool typ){  //Typ true = ARRAY
           }
         }else{
         //Object
-          DynamicJsonBuffer jsonBuffer;
-          JsonObject& json = jsonBuffer.parseObject(buf.get());
+          DynamicJsonBuffer _jsonBuffer;
+          JsonObject& json = _jsonBuffer.parseObject(buf.get());
           if (json.success()) {         
             char buffer[size];
             json.printTo(buffer, sizeof(buffer));
@@ -109,6 +157,7 @@ String FFS::readJsonString(String path, bool typ){  //Typ true = ARRAY
   }else{
     Serial.println("failed to mount FS");
   }
+  Serial.println("");
   jsonFile.close();
   //end read    
   //Serial.println(jsonData);    
@@ -118,7 +167,14 @@ String FFS::readJsonString(String path, bool typ){  //Typ true = ARRAY
 
 
 
-void FFS::parseJsonObject(JsonObject& jsonObject){
+
+//#########################################################################################
+
+
+
+
+
+void FFSjsonFile::parseJsonObject(JsonObject& jsonObject){
   //Serial.println("parseJsonObject");
   for (auto &element : jsonObject){
     String strKey = element.key;
@@ -127,7 +183,7 @@ void FFS::parseJsonObject(JsonObject& jsonObject){
   }
 }
 
-void FFS::parseJsonArray(JsonArray& jsonArray){
+void FFSjsonFile::parseJsonArray(JsonArray& jsonArray){
   //int i=0;
   for (auto &element : jsonArray){
     if (element.is<JsonArray&>()){
@@ -142,59 +198,22 @@ void FFS::parseJsonArray(JsonArray& jsonArray){
 }
 
 
-JsonObject& FFS::GetJsonObject(String jsonFileBuffer){
-  Serial.println("GetJsonObject");
-  //String jsonFileBuffer = readJsonString(path,false);
-  DynamicJsonBuffer JsonBuffer;
-  JsonObject& root = JsonBuffer.parseObject(jsonFileBuffer);
-  root.printTo(Serial);
-  return root; 
-}
 
 
-JsonArray& FFS::GetJsonArray(String jsonFileBuffer){
-  //Serial.println("GetJsonArray");
-  //String jsonFileBuffer = readJsonString(path,true);
-  
-  //Serial.println("GetJsonArray String read");
-  //Serial.println(jsonFileBuffer);
-  
- 
-  DynamicJsonBuffer JsonBuffer;
-  JsonArray& root = JsonBuffer.parseArray(jsonFileBuffer);
-  //parseJsonArray(root);
-  //root.printTo(Serial);
-
-  //Serial.println("print ArrayItems:");
-  //Serial.println(root[0].asString());
-  //Serial.println(root[1].asString());
-  
-  return root; 
-}
-  
 
 
-//===> getFileSize <---------------------------------------------------
-size_t FFS::getFileSize(String path){
-  File tmpFile;
-  size_t size = 0;
-  
-  //read configuration from FS json
-  Serial.println("");
-  Serial.println("mounting FS...");
 
-  if (SPIFFS.begin()) {
-    Serial.println("mounted file system");
-    if (SPIFFS.exists(path)) {
-      Serial.println("file exists");
-      tmpFile = SPIFFS.open(path, "r");
-      if (tmpFile) {
-        Serial.println("opened File");
-        size = tmpFile.size();
-      }
-    }
-  }
-  return size;
-}
+
+
+
+
+
+
+
+
+
+
+
+
 
 

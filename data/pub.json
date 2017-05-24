@@ -1,5 +1,5 @@
 {
-"0"			:"WiFiConfig",
+"0"		:"WiFiConfig",
 "0.0"		:"WiFiConfig/WEBserver",
 "0.0.0"		:"WiFiConfig/WEBserver/Username",
 "0.0.1"		:"WiFiConfig/WEBserver/Password",
@@ -18,13 +18,13 @@
 "0.4.0"		:"WiFiConfig/WEBserver/Server",
 "0.4.1"		:"WiFiConfig/WEBserver/FilePath",
 
-"1"			:"Control",
+"1"	        :"Control",
 "1.0"		:"Control/Status",
 "1.0.0"		:"Control/Status/WiFi",
 "1.0.1"		:"Control/Status/MQTT",
 "1.0.2"		:"Control/Status/updateFirmware",
 
-"2"			:"ADE7953",
+"2"		:"ADE7953",
 "2.0"		:"ADE7953/Last_RW",
 "2.0.0"		:"ADE7953/Last_RW/HEX",
 "2.0.1"		:"ADE7953/Last_RW/BIN",

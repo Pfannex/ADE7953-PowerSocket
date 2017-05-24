@@ -22,15 +22,20 @@ void setup() {
   Serial.begin(115200); 
   Serial.println("");
   espClient.checkFlash();  
-
-  espClient.ffs.TEST();
   
-  espClient.startConnections();
+  //espClient.startConnections();
+  espClient.startPeriphery();
+  
+  espClient.ffs.TEST();
 }  
 
 void loop() {
+  //espClient.i2c.lcd.clear();
+  //espClient.ffs.i2c.lcd.println("Hello World!", 2);
+  
   //espClient.handle_connections(); 
-  espClient.TimerUpdate();
+  //espClient.TimerUpdate();
+  
 }
 
 

@@ -15,6 +15,7 @@ public:
   void TimerUpdate();
   
   void startConnections();  
+  void startPeriphery();  
 
   ESP8266_Basic();
   FFS ffs;
