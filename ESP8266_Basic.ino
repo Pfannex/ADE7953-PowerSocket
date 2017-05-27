@@ -1,7 +1,7 @@
 /******************************************************************************
 
-  ProjectName: ESP8266-1W-I2C-Gateway             ***** *****
-  SubTitle   : 1W/I²C -> MQTT bridge             *     *     ************
+  ProjectName: Basic template                     ***** *****
+  SubTitle   : WLAN/LAN/MQTT/WebIf,LCD           *     *     ************
                                                 *   **   **   *           *
   Copyright by Pf@nne                          *   *   *   *   *   ****    *
                                                *   *       *   *   *   *   *
@@ -21,11 +21,12 @@ ESP8266_Basic espClient;
 void setup() {  
   Serial.begin(115200); 
   Serial.println("");
+  
   espClient.checkFlash();  
+  espClient.startPeriphery();
   espClient.ffs.mount();
   
   //espClient.startConnections();
-  espClient.startPeriphery();
   
 }  
 
