@@ -26,18 +26,18 @@ void FFS::mount(){
     //SPIFFS.format();
     //Serial.println("OK");
     
-    //cfg.loadFile();
-    //myFile.loadFile();
+    cfg.loadFile();
+    myFile.loadFile();
 
-  cfg.loadFile();
-  Serial.println("cfg.root: " + cfg.root);
+  //cfg.loadFile();
+  //Serial.println("cfg.root: " + cfg.root);
   
-  cfg.read("apName");
-  cfg.write("apName", "my World");
-  cfg.read("apName");
+  //cfg.read("apName");
+  //cfg.write("apName", "my World");
+  //cfg.read("apName");
   
-  cfg.loadFile();
-  Serial.println(cfg.root);
+  //cfg.loadFile();
+  //Serial.println(cfg.root);
     
   }
   
@@ -48,10 +48,23 @@ void FFS::mount(){
 //--- TEST----------------------------------------  
 //for (int i=0; i<100; i++){ 
   //Serial.println(i); 
-  //Serial.println(cfg.readItem("apName"));
-  //Serial.println(cfg.readItem("wifiSSID"));
-  //Serial.println(cfg.readItem("wifiPSK"));
-  //Serial.println(cfg.readItem("mqttServer"));
+  Serial.println(cfg.readItem("apName"));
+  Serial.println(cfg.readItem("wifiSSID"));
+  Serial.println(cfg.readItem("wifiPSK"));
+  Serial.println(cfg.readItem("mqttServer"));
+  Serial.println(cfg.size);
+
+  cfg.writeItem("apName", "1111");
+  cfg.writeItem("wifiSSID", "2222");
+  cfg.writeItem("wifiPSK", "3333");
+  cfg.writeItem("mqttServer", "4444");
+  
+  Serial.println(cfg.readItem("apName"));
+  Serial.println(cfg.readItem("wifiSSID"));
+  Serial.println(cfg.readItem("wifiPSK"));
+  Serial.println(cfg.readItem("mqttServer"));
+  Serial.println(cfg.size);
+  
   
   //Serial.println(myFile.readItem("Field_01"));
   //Serial.println(myFile.readItem("Field_02"));
@@ -172,7 +185,7 @@ bool FFSjsonFile::write(String itemName, String value){
   }
 
   json.printTo(configFile);
-  Serial.print("printTo: "); json.printTo(Serial); Serial.println("");
+  //Serial.print("printTo: "); json.printTo(Serial); Serial.println("");
   return true;
   
 }
@@ -196,34 +209,30 @@ void FFSjsonFile::loadFile(){
 String FFSjsonFile::readItem(String itemName){
   DynamicJsonBuffer JsonBuffer;
   JsonObject& rootObject = JsonBuffer.parseObject(root);  
-  Serial.println(""); 
-  parseJsonObject(rootObject);  
   return rootObject[itemName].asString();
 }
 
 String FFSjsonFile::readItem(int item){
   DynamicJsonBuffer JsonBuffer;
   JsonArray& rootArray = JsonBuffer.parseArray(root);   
-  parseJsonArray(rootArray); 
-  Serial.println(""); 
   return rootArray[item].asString();
 }
 
 //===> writeItem to jsonString <---------------------------------------
 bool FFSjsonFile::writeItem(String itemName, String value){
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& json = jsonBuffer.parseObject(root);
 
-  StaticJsonBuffer<200> jsonBuffer;
-  JsonObject& json = jsonBuffer.createObject();
-  json["Field_01"] = "Hello";
-  json["Field_02"] = "World!";
-
-  File configFile = SPIFFS.open(MYFILE_PATH, "w");
-  if (!configFile) {
+  json[itemName] = value;
+  
+  File jsonFile = SPIFFS.open(filePath, "w");
+  if (!jsonFile) {
     Serial.println("Failed to open config file for writing");
     return false;
   }
-
-  json.printTo(configFile);
+  json.printTo(jsonFile);
+  jsonFile.close(); 
+  root = readJsonString();
   return true;
 
   
@@ -281,9 +290,9 @@ String FFSjsonFile::readJsonString(){
           if (json.success()) {         
             char buffer[size+1];
             json.printTo(buffer, sizeof(buffer));
-            Serial.print("printTo readJsonString: ");
-            json.printTo(Serial);
-            Serial.println("");
+            //Serial.print("printTo readJsonString: ");
+            //json.printTo(Serial);
+            //Serial.println("");
             jsonData = String(buffer);
           }
         }
