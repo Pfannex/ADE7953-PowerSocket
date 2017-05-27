@@ -22,11 +22,11 @@ void setup() {
   Serial.begin(115200); 
   Serial.println("");
   espClient.checkFlash();  
+  espClient.ffs.mount();
   
   //espClient.startConnections();
   espClient.startPeriphery();
   
-  espClient.ffs.TEST();
 }  
 
 void loop() {

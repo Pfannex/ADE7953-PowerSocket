@@ -6,6 +6,7 @@
 
   #define CFG_PATH        "/config.json"
   #define TESTARRAY_PATH  "/testArray.json"
+  #define MYFILE_PATH     "/MyFile.json"
 
   #define TYPE_OBJECT 1
   #define TYPE_ARRAY  0
