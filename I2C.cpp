@@ -29,11 +29,10 @@ void LCD::init(){
   ssd1306.setContrast(255);
 }
 
-void LCD::println(String txt, int line){
+void LCD::println(String txt, const char *fontData, int yPos){
   ssd1306.setTextAlignment(TEXT_ALIGN_LEFT);
-  ssd1306.setFont(ArialMT_Plain_16);
-  line = line * 16;
-  ssd1306.drawString(0, line, txt);
+  ssd1306.setFont(fontData);
+  ssd1306.drawString(0, yPos, txt);
   ssd1306.display();
 }
 void LCD::clear(){

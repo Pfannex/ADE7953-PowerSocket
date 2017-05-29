@@ -1,18 +1,17 @@
-#include "ESP8266_Basic.h"
+#include "BasicTemplate.h"
 
 //CLASS ESP8266_Basic################################################################
-ESP8266_Basic::ESP8266_Basic():
-    ffs(i2c){  
+BasicTemplate::BasicTemplate():
+    ffs(i2c),
+    mqtt(ffs),
+    wifi(ffs, i2c){  
   
   // : webServer(), 
                                  //mqtt_client(wifi_client){
-
-
 								 
   //Callbacks								 
   //webServer.set_saveConfig_Callback(std::bind(&ESP8266_Basic::cfgChange_Callback, this));
   //mqtt_client.setCallback(std::bind(&ESP8266_Basic::mqttBroker_Callback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-
 
 }
 
@@ -21,16 +20,16 @@ ESP8266_Basic::ESP8266_Basic():
 //===============================================================================
 
 //===> Start WiFi Connection <-------------------------------------------------
-void ESP8266_Basic::startConnections(){
+void BasicTemplate::startConnections(){
   wifi.start();
 }
 //===> Start Periphery <-------------------------------------------------------
-void ESP8266_Basic::startPeriphery(){
+void BasicTemplate::startPeriphery(){
   i2c.start();
 }
 
 //===> updateMeasurement <-----------------------------------------------------
-void ESP8266_Basic::TimerUpdate(){
+void BasicTemplate::TimerUpdate(){
   long now = millis();
   if (now - timerLastUpdate > timerUpdateTime){
     timerLastUpdate = now;
@@ -45,13 +44,13 @@ void ESP8266_Basic::TimerUpdate(){
 }
 
 //===> Check Flash Memory <-----------------------------------------------------
-void ESP8266_Basic::checkFlash(){
+void BasicTemplate::checkFlash(){
   uint32_t realSize = ESP.getFlashChipRealSize();
   uint32_t ideSize = ESP.getFlashChipSize();
   FlashMode_t ideMode = ESP.getFlashChipMode();
 
   Serial.println("");
-  Serial.println("============================================");
+  Serial.println("............................................");
     Serial.printf("Flash real id:   %08X", ESP.getFlashChipId());
     Serial.println("");
     Serial.printf("Flash real size: %u", realSize);
@@ -69,8 +68,7 @@ void ESP8266_Basic::checkFlash(){
     } else {
         Serial.println("Flash Chip configuration ok.");
     }
-  Serial.println("============================================");
-  Serial.println("");
+  Serial.println("............................................");
 }
 
 

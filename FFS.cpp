@@ -42,6 +42,7 @@ void FFS::mount(){
     pub.loadFile();
     ade7953.loadFile();
     myFile.loadFile();
+    Serial.println("............................................");
   }
 }
 
@@ -66,10 +67,10 @@ void FFS::TEST(){
   Serial.println(cfg.readItem("mqttServer"));
   Serial.println(cfg.size);
   
-  i2c.lcd.println(sub.readItem("1.0"), 0);
-  i2c.lcd.println(cfg.readItem("wifiSSID"), 1);
-  i2c.lcd.println(cfg.readItem("wifiPSK"), 2);
-  i2c.lcd.println(cfg.readItem("mqttServer"), 3);
+  i2c.lcd.println(sub.readItem("1.0"), ArialMT_Plain_16, 0);
+  i2c.lcd.println(cfg.readItem("wifiSSID"), ArialMT_Plain_16, 16);
+  i2c.lcd.println(cfg.readItem("wifiPSK"), ArialMT_Plain_16, 24);
+  i2c.lcd.println(cfg.readItem("mqttServer"), ArialMT_Plain_16, 32);
 }
 
 //-------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 #pragma once
 
-//ESP8266_Basic
+//BasicTemplate
   #include "FFS.h"
   #include "WIFI.h"
   #include "WEBServer.h"
@@ -8,7 +8,7 @@
   #include "oWire.h"
   #include "I2C.h"
   
-class ESP8266_Basic{
+class BasicTemplate{
 
 public:
   void checkFlash();
@@ -17,7 +17,7 @@ public:
   void startConnections();  
   void startPeriphery();  
 
-  ESP8266_Basic();
+  BasicTemplate();
   FFS ffs;
   WIFI wifi;
   MQTT mqtt;

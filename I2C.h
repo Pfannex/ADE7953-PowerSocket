@@ -10,7 +10,7 @@ class LCD{
 public:
   LCD();
   void init();
-  void println(String txt, int line);
+  void println(String txt, const char *fontData, int yPos);
   void clear();
 
 private:  

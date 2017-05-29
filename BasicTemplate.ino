@@ -14,30 +14,30 @@
 
 ********************************************************************************/
 
-#include "ESP8266_Basic.h"
-ESP8266_Basic espClient;
+#include "BasicTemplate.h"
+BasicTemplate bt;
 
 
 void setup() {  
   Serial.begin(115200); 
   Serial.println("");
   
-  espClient.checkFlash();  
-  espClient.startPeriphery();
-  espClient.ffs.mount();
+  bt.checkFlash();  
+  bt.startPeriphery();
+  bt.ffs.mount();  
+  bt.startConnections();
+
   
-  espClient.ffs.TEST();
-  
-  //espClient.startConnections();
+  //bt.ffs.TEST();
   
 }  
 
 void loop() {
-  //espClient.i2c.lcd.clear();
-  //espClient.ffs.i2c.lcd.println("Hello World!", 2);
+  //bt.i2c.lcd.clear();
+  //bt.ffs.i2c.lcd.println("Hello World!", 2);
   
-  //espClient.handle_connections(); 
-  //espClient.TimerUpdate();
+  //bt.handle_connections(); 
+  //bt.TimerUpdate();
   
 }
 
