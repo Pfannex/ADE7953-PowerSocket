@@ -8,6 +8,11 @@ FFS::FFS(I2C& i2c):
     i2c(i2c),
   //jsonFiles
     cfg(CFG_PATH, TYPE_OBJECT),
+    sub(SUB_PATH, TYPE_OBJECT),
+    subGlobal(SUB_GLOBAL_PATH, TYPE_OBJECT),
+    pub(PUB_PATH, TYPE_OBJECT),
+    ade7953(ADE7953_PATH, TYPE_OBJECT),
+
     myFile(MYFILE_PATH, TYPE_OBJECT),
     testArray(TESTARRAY_PATH, TYPE_ARRAY){
 }
@@ -32,11 +37,18 @@ void FFS::mount(){
     
   //load rootStrings
     cfg.loadFile();
+    subGlobal.loadFile();
+    sub.loadFile();
+    pub.loadFile();
+    ade7953.loadFile();
     myFile.loadFile();
-
   }
-  
-//--- TEST----------------------------------------  
+}
+
+//...............................................................................
+//  TEST
+//...............................................................................
+void FFS::TEST(){
   Serial.println(cfg.readItem("apName"));
   Serial.println(cfg.readItem("wifiSSID"));
   Serial.println(cfg.readItem("wifiPSK"));
@@ -54,7 +66,7 @@ void FFS::mount(){
   Serial.println(cfg.readItem("mqttServer"));
   Serial.println(cfg.size);
   
-  i2c.lcd.println(cfg.readItem("apName"), 0);
+  i2c.lcd.println(sub.readItem("1.0"), 0);
   i2c.lcd.println(cfg.readItem("wifiSSID"), 1);
   i2c.lcd.println(cfg.readItem("wifiPSK"), 2);
   i2c.lcd.println(cfg.readItem("mqttServer"), 3);
@@ -132,7 +144,7 @@ bool FFSjsonFile::writeItem(String itemName, String value){
 String FFSjsonFile::readJsonString(){  
     
   File jsonFile;
-  String jsonData = "NIL";
+  String jsonData;
  
   Serial.print("reading " + filePath + "...");
   if (SPIFFS.exists(filePath)) {
@@ -140,31 +152,23 @@ String FFSjsonFile::readJsonString(){
     if (jsonFile) {
       Serial.println("OK");
       size = jsonFile.size();
-      std::unique_ptr<char[]> buf(new char[size]);
-
-      jsonFile.readBytes(buf.get(), size);
-      if (type == TYPE_ARRAY){
-      //Array 
-        DynamicJsonBuffer jsonBufferArray;
-        JsonArray& jsonArray = jsonBufferArray.parseArray(buf.get());             
-        if (jsonArray.success()) {
-          char buffer[size];
-          jsonArray.printTo(buffer, sizeof(buffer));
-          jsonData = String(buffer); 
-        }
-      }else{
-      //Object
-        DynamicJsonBuffer jsonBuffer;
-        JsonObject& json = jsonBuffer.parseObject(buf.get());
-        if (json.success()) {         
-          char buffer[size+1];
-          json.printTo(buffer, sizeof(buffer));
-          jsonData = String(buffer);
-        }
+      
+      DynamicJsonBuffer jsonBuffer;
+      JsonVariant json = jsonBuffer.parse(jsonFile);
+      if (json.is<JsonArray>()) {
+        JsonArray& arr = json.as<JsonArray>();
+        json.printTo(jsonData);           
       }
+      if (json.is<JsonObject>()) {
+        JsonObject& obj = json.as<JsonObject>();
+          json.printTo(jsonData);           
+      }
+    }else{
+      Serial.println("ERROR openFile");
+      return "NIL";
     }
+    jsonFile.close();
   }
-  jsonFile.close();
   return jsonData;  
 }
 

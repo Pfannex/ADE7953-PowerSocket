@@ -5,6 +5,11 @@
 #define __FFS_PATH__
 
   #define CFG_PATH        "/config.json"
+  #define SUB_PATH        "/sub.json"
+  #define SUB_GLOBAL_PATH "/subGlobal.json"
+  #define PUB_PATH        "/pub.json"
+  #define ADE7953_PATH    "/ADE7953.json"
+
   #define TESTARRAY_PATH  "/testArray.json"
   #define MYFILE_PATH     "/MyFile.json"
 

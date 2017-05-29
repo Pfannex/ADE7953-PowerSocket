@@ -37,10 +37,16 @@ public:
   I2C& i2c;
   
   FFSjsonFile cfg;
+  FFSjsonFile sub;
+  FFSjsonFile subGlobal;
+  FFSjsonFile pub;
+  FFSjsonFile ade7953;
+
   FFSjsonFile testArray;
   FFSjsonFile myFile;
 
   void mount(); 
+  void TEST();
 private:
 };
 

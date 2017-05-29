@@ -26,6 +26,8 @@ void setup() {
   espClient.startPeriphery();
   espClient.ffs.mount();
   
+  espClient.ffs.TEST();
+  
   //espClient.startConnections();
   
 }  
