@@ -1,6 +1,7 @@
 #pragma once
 
 //BasicTemplate
+  #include "Helpers.h"
   #include "FFS.h"
   #include "WIFI.h"
   #include "WEBServer.h"
@@ -8,16 +9,25 @@
   #include "oWire.h"
   #include "I2C.h"
   
+//###############################################################################
+//  BasicTemplate
+//###############################################################################
 class BasicTemplate{
-
 public:
-  void checkFlash();
   void TimerUpdate();
   
   void startConnections();  
-  void startPeriphery();  
+  void startPeriphery(); 
+  void handle();
+  
+//Callback Events
+  //WiFi   
+  void on_wifiConnected();
+  void on_x();
 
+//classes
   BasicTemplate();
+  Helpers h;
   FFS ffs;
   WIFI wifi;
   MQTT mqtt;
@@ -28,5 +38,5 @@ public:
 private:
 
   long timerLastUpdate;
-  long timerUpdateTime = 5000;   
+  long timerUpdateTime = 5000;
 };

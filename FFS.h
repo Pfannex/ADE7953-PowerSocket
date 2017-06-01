@@ -14,6 +14,7 @@ public:
   FFSjsonFile(String filePath, int type);
   String filePath;
   size_t size;                               //filled in readJsonString()
+  int itemsCount;
   int type;                                  //0=Object; 1=Array
   String root;
 
@@ -23,7 +24,7 @@ public:
   bool writeItem(String itemName, String value);
 private: 
   String readJsonString();
-  void parseJsonObject(JsonObject& jsonObject);
+  int parseJsonObject(JsonObject& jsonObject);
   void parseJsonArray(JsonArray& jsonArray);
 };
  

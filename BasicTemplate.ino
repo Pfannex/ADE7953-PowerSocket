@@ -22,7 +22,7 @@ void setup() {
   Serial.begin(115200); 
   Serial.println("");
   
-  bt.checkFlash();  
+  bt.h.checkFlash();  
   bt.startPeriphery();
   bt.ffs.mount();  
   bt.startConnections();
@@ -33,6 +33,8 @@ void setup() {
 }  
 
 void loop() {
+  bt.handle();
+  
   //bt.i2c.lcd.clear();
   //bt.ffs.i2c.lcd.println("Hello World!", 2);
   

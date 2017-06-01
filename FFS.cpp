@@ -162,7 +162,8 @@ String FFSjsonFile::readJsonString(){
       }
       if (json.is<JsonObject>()) {
         JsonObject& obj = json.as<JsonObject>();
-          json.printTo(jsonData);           
+          json.printTo(jsonData);  
+          itemsCount = parseJsonObject(obj);         
       }
     }else{
       Serial.println("ERROR openFile");
@@ -176,13 +177,16 @@ String FFSjsonFile::readJsonString(){
 //...............................................................................
 //  parse jsonObject recursively
 //...............................................................................
-void FFSjsonFile::parseJsonObject(JsonObject& jsonObject){
+int FFSjsonFile::parseJsonObject(JsonObject& jsonObject){
+  int count = 0;
   //Serial.println("parseJsonObject");
   for (auto &element : jsonObject){
     String strKey = element.key;
     String strValue = element.value;
-    Serial.print(strKey);Serial.print("      ");Serial.println(strValue);
+    //Serial.print(strKey);Serial.print("      ");Serial.println(strValue);
+    count ++;
   }
+  return count;
 }
 
 //...............................................................................
