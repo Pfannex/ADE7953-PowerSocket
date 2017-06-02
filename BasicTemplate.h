@@ -14,7 +14,6 @@
 //###############################################################################
 class BasicTemplate{
 public:
-  void TimerUpdate();
   
   void startConnections();  
   void startPeriphery(); 
@@ -36,7 +35,7 @@ public:
   OWIRE oWire; 
  
 private:
-
+  void timerUpdate();
   long timerLastUpdate;
   long timerUpdateTime = 5000;
 };

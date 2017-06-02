@@ -28,12 +28,14 @@ void BasicTemplate::startConnections(){
 //  handle connection
 //...............................................................................
 void BasicTemplate::handle(){
+  timerUpdate();
   if (wifi.handle()){
     if (!mqtt.handle()){
       Serial.println("MQTT has disconnected!");
       delay(1000);
       mqtt.start();
     }
+    webServer.handle();
   }else{
     Serial.println("WiFi has disconnected!");
     wifi.start();
@@ -53,6 +55,7 @@ void BasicTemplate::startPeriphery(){
 void BasicTemplate::on_wifiConnected(){
   delay(1000);
   mqtt.start();
+  webServer.start();
  
 }
 //...............................................................................
@@ -62,10 +65,13 @@ void BasicTemplate::on_x(){
   //Serial.println("on_x");  
 }
 
+//-------------------------------------------------------------------------------
+//  BasicTemplate private
+//-------------------------------------------------------------------------------
 //...............................................................................
 //  idle timer
 //...............................................................................
-void BasicTemplate::TimerUpdate(){
+void BasicTemplate::timerUpdate(){
   long now = millis();
   if (now - timerLastUpdate > timerUpdateTime){
     timerLastUpdate = now;

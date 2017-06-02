@@ -7,7 +7,6 @@
 WIFI::WIFI(FFS& ffs, I2C& i2c):
     ffs(ffs),
     i2c(i2c){
-  
 }
 
 //-------------------------------------------------------------------------------
@@ -39,7 +38,7 @@ bool WIFI::start(){
 
   if (WiFi.status() == WL_CONNECTED){
     WiFiOK = true; 
-    Serial.println("connected");
+    Serial.println("  connected");
     Serial.print("DHCP-IP: "); Serial.println(WiFi.localIP().toString());   
     i2c.lcd.println("DHCP-IP:", ArialMT_Plain_10, 31);  
     i2c.lcd.println(WiFi.localIP().toString(), ArialMT_Plain_16, 41);  

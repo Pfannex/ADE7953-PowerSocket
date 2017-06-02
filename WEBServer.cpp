@@ -4,30 +4,244 @@ WEBIF::WEBIF() : webServer(80){
 
   httpUpdater.setup(&webServer); 
  
-  //webServer.on("/", std::bind(&WEBIF::rootPageHandler, this));
-  //webServer.on("/sensoren", std::bind(&WEBIF::sensorPageHandler, this));
-  
-  //webServer.on("/wlan_config", std::bind(&WEBIF::wlanPageHandler, this));
-  //webServer.on("/gpio", std::bind(&WEBIF::gpioPageHandler, this));
-  //webServer.on("/cfg", std::bind(&WEBIF::cfgPageHandler, this));
-  //webServer.onNotFound(std::bind(&WEBIF::handleNotFound, this));
+  webServer.on("/", std::bind(&WEBIF::rootPageHandler, this));
+  webServer.onNotFound(std::bind(&WEBIF::handleNotFound, this));
 }
 
-//===============================================================================
-//  WEB-Server control
-//===============================================================================
+//###############################################################################
+//  WEB-Interface 
+//###############################################################################
+//-------------------------------------------------------------------------------
+//  WEB-Interface public
+//-------------------------------------------------------------------------------
+//...............................................................................
+//  WEB-Interface start
+//...............................................................................
 void WEBIF::start(){
-  Serial.println("Start WEB-Server");
-  
-  //pinMode(GPIO2, OUTPUT);
-  webServer.begin(); 
-  Serial.println("HTTP server started");
-
+  Serial.print("WEB-Interface...");
+  webServer.begin();
+  Serial.println("started");
 }
-//===> handle WEB-Server <-----------------------------------------------------
-void WEBIF::handleClient(){
+
+//...............................................................................
+//  WEB-Interface handle
+//...............................................................................
+void WEBIF::handle(){
    webServer.handleClient();
 }
+
+//-------------------------------------------------------------------------------
+//  WEB-Interface private
+//-------------------------------------------------------------------------------
+
+//###############################################################################
+//  page handler 
+//###############################################################################
+//...............................................................................
+//  root
+//...............................................................................
+void WEBIF::rootPageHandler()
+{
+  // Check if there are any GET parameters
+/*  if (webServer.hasArg("webUser")) strcpy(cfg->webUser, webServer.arg("webUser").c_str());
+  if (webServer.hasArg("webPassword")) strcpy(cfg->webPassword, webServer.arg("webPassword").c_str());
+  if (webServer.hasArg("apName")) strcpy(cfg->apName, webServer.arg("apName").c_str());
+  if (webServer.hasArg("apPassword")) strcpy(cfg->apPassword, webServer.arg("apPassword").c_str());
+  if (webServer.hasArg("wifiSSID")) strcpy(cfg->wifiSSID, webServer.arg("wifiSSID").c_str());
+  if (webServer.hasArg("wifiPSK")) strcpy(cfg->wifiPSK, webServer.arg("wifiPSK").c_str());
+  if (webServer.hasArg("wifiIP")) strcpy(cfg->wifiIP, webServer.arg("wifiIP").c_str());
+  if (webServer.hasArg("mqttServer")) strcpy(cfg->mqttServer, webServer.arg("mqttServer").c_str());
+  if (webServer.hasArg("mqttPort")) strcpy(cfg->mqttPort, webServer.arg("mqttPort").c_str());
+  if (webServer.hasArg("mqttDeviceName")) strcpy(cfg->mqttDeviceName, webServer.arg("mqttDeviceName").c_str());
+  if (webServer.hasArg("updateServer")) strcpy(cfg->updateServer, webServer.arg("updateServer").c_str());
+  if (webServer.hasArg("filePath")) strcpy(cfg->filePath, webServer.arg("filePath").c_str());*/
+  
+
+  String rm = ""
+  
+  "<!doctype html> <html>"
+  "<head> <meta charset='utf-8'>"
+  "<title>ESP8266 Configuration</title>"
+  "</head>"
+
+  "<body><body bgcolor='#F0F0F0'><font face='VERDANA,ARIAL,HELVETICA'> <form> <font face='VERDANA,ARIAL,HELVETICA'>"
+  "<b><h1>ESP8266 Configuration</h1></b>";
+
+/*  if (WiFi.status() == WL_CONNECTED){
+    rm += "ESP8266 connected to: "; rm += WiFi.SSID(); rm += "<br>";
+    rm += "DHCP IP: "; rm += String(IPtoString(WiFi.localIP())); rm += "<p></p>";
+  }else{
+    rm += "ESP8266 ist not connected!"; rm += "<p></p>";
+  }  
+  
+  String str = String(cfg->mqttStatus);
+  if (str == "connected"){
+    rm += "ESP8266 connected to MQTT-Broker: "; rm += cfg->mqttServer; rm += "<p></p>";
+  }*/
+  
+  rm += ""
+  "<table width='30%' border='0' cellpadding='0' cellspacing='2'>"
+  " <tr>"
+  "  <td><b><font size='+1'>WEB Server</font></b></td>"
+  "  <td></td>"
+  " </tr>"
+  " <tr>"
+  "  <td>Username</td>"
+  "  <td><input type='text' id='webUser' name='webUser' value='" + String("cfg->webUser") + "' size='30' maxlength='40' placeholder='Username'></td>"
+  " </tr>"
+  " <tr>"
+  " <tr>"
+  "  <td>Password</td>"
+  "  <td><input type='text' id='webPassword' name='webPassword' value='" + String("cfg->webPassword") + "' size='30' maxlength='40' placeholder='Password'></td>"
+  " </tr>"
+  " <tr>"
+
+  " <tr>"
+  "  <td><b><font size='+1'>Accesspoint</font></b></td>"
+  "  <td></td>"
+  " </tr>"
+  " <tr>"
+  "  <td>SSID</td>"
+  "  <td><input type='text' id='apName' name='apName' value='" + String("cfg->apName") + "' size='30' maxlength='40' placeholder='SSID'></td>"
+  " </tr>"
+  " <tr>"
+  " <tr>"
+  "  <td>Password</td>"
+  "  <td><input type='text' id='apPassword' name='apPassword' value='" + String("cfg->apPassword") + "' size='30' maxlength='40' placeholder='Password'></td>"
+  " </tr>"
+  " <tr>"
+
+  " <tr>"
+  "  <td><b><font size='+1'>WiFi</font></b></td>"
+  "  <td></td>"
+  " </tr>"
+  "  <td>SSID</td>"
+  "  <td><input type='text' id='wifiSSID' name='wifiSSID' value='" + String("cfg->wifiSSID") + "' size='30' maxlength='40' placeholder='SSID'></td>"
+  " </tr>"
+  " <tr>"
+  " <tr>"
+  "  <td>Password</td>"
+  "  <td><input type='text' id='wifiPSK' name='wifiPSK' value='" + String("cfg->wifiPSK") + "' size='30' maxlength='40' placeholder='Password'></td>"
+  " </tr>"
+  " <tr>"
+
+  " <tr>"
+  "  <td><b><font size='+1'>MQTT</font></b></td>"
+  "  <td></td>"
+  " </tr>"
+  " <tr>"
+  "  <td>Broker IP</td>"
+  "  <td><input type='text' id='mqttServer' name='mqttServer' value='" + String("cfg->mqttServer") + "' size='30' maxlength='40' placeholder='IP Address'></td>"
+  " </tr>"
+  " <tr>"
+  " <tr>"
+  "  <td>Port</td>"
+  "  <td><input type='text' id='mqttPort' name='mqttPort' value='" + String("cfg->mqttPort") + "' size='30' maxlength='40' placeholder='Port'></td>"
+  " </tr>"
+  " <tr>"
+  "  <td>Devicename</td>"
+  "  <td><input type='text' id='mqttDeviceName' name='mqttDeviceName' value='" + String("cfg->mqttDeviceName") + "' size='30' maxlength='40' placeholder='Devicename'></td>"
+  " </tr>"
+
+  " <tr>"
+  "  <td><b><font size='+1'>UpdateServer</font></b></td>"
+  "  <td></td>"
+  " </tr>"
+  " <tr>"
+  "  <td>Server IP</td>"
+  "  <td><input type='text' id='updateServer' name='updateServer' value='" + String("cfg->updateServer") + "' size='30' maxlength='40' placeholder='IP Address'></td>"
+  " </tr>"
+  " <tr>"
+  " <tr>"
+  "  <td>FilePath</td>"
+  "  <td><input type='text' id='filePath' name='filePath' value='" + String("cfg->filePath") + "' size='30' maxlength='40' placeholder='Path'></td>"
+  " </tr>"
+
+  " <tr>"
+  "  <td><p></p> </td>"
+  "  <td>  </td>"
+  " </tr>"
+  " <tr>"
+  "  <td></td>"
+  "  <td><input type='submit' value='Configuration sichern' style='height:30px; width:200px' > </font></form> </td>"
+  " </tr>"
+
+ " <tr>"
+ "  <td></td>"
+ "  <td>  </td>"
+ " </tr>"
+ " <tr>"
+ "  <td></td>"
+ "  <td><input type='submit' value='Update Firmware' id='update' name='update' value='' style='height:30px; width:200px' ></td>"
+ " </tr>"
+
+  " <tr>"
+  "  <td></td>"
+  "  <td>  </td>"
+  " </tr>"
+  " <tr>"
+  "  <td></td>"
+  "  <td><input type='submit' value='RESET' id='reset' name='reset' value='' style='height:30px; width:200px' >  </font></form> </td>"
+  " </tr>"
+
+  " <tr>"
+  "  <td></td>"
+  "  <td>  </td>"
+  " </tr>"
+  " <tr>"
+  "  <td></td>"
+  "  <td><input type='button' onclick=\"location.href='./update'\"  value='Flash Firmware' style='height:30px; width:200px' >  </font></form> </td>"
+  " </tr>"
+
+  "</table>"
+
+  "<font size='-2'>&copy; by Pf@nne/16   |   " + String("cfg->version") + "</font>"
+  "</body bgcolor> </body></font>"
+  "</html>"  
+  ;
+
+  webServer.send(200, "text/html", rm);
+ 
+  //if (saveConfig_Callback != nullptr)
+    //saveConfig_Callback();
+  //else
+     //Serial.println("null");
+   
+  //if (webServer.hasArg("reset")) ESP.restart();
+  //if (webServer.hasArg("update")) updateFirmware();
+}
+
+//...............................................................................
+//  404 file not found
+//...............................................................................
+void WEBIF::handleNotFound(){
+  String message = "File Not Found\n\n";
+  message += "URI: ";
+  message += webServer.uri();
+  message += "\nMethod: ";
+  message += (webServer.method() == HTTP_GET)?"GET":"POST";
+  message += "\nArguments: ";
+  message += webServer.args();
+  message += "\n";
+  
+  for (uint8_t i = 0; i < webServer.args(); i++){
+    message += " " + webServer.argName(i) + ": " + webServer.arg(i) + "\n";
+  }
+  webServer.send(404, "text/plain", message);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*

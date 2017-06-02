@@ -1,5 +1,4 @@
 #pragma once
-
   #include <Arduino.h>
   #include <ESP8266WiFi.h>			//https://github.com/esp8266/Arduino	
 
@@ -12,13 +11,14 @@
   #include <functional>
   typedef std::function<void(void)> CallbackFunction;
   
-  #define GPIO2 2
-
+//###############################################################################
+//  WEB-Interface 
+//###############################################################################
 class WEBIF{
 public:
   WEBIF();
   void start();
-  void handleClient();
+  void handle();
   
   //void set_cfgPointer(CFG *p);  
   //void set_sensorPointer(TDS18B20_Sensors *p, THTU21_Sensors *q, TBMP180_Sensors *r);  
@@ -28,6 +28,7 @@ public:
 private:
   ESP8266WebServer webServer;
   ESP8266HTTPUpdateServer httpUpdater;
+  
   //CallbackFunction saveConfig_Callback;
   //CFG *cfg;
   //TDS18B20_Sensors *DS18B20_Sensors; 
@@ -35,13 +36,13 @@ private:
   //TBMP180_Sensors *BMP180_Sensors; 
   
   //Page controls----------------
-  //void rootPageHandler();
+  void rootPageHandler();
   //void sensorPageHandler();
 
   //void wlanPageHandler();
   //void gpioPageHandler();
   //void cfgPageHandler();
-  //void handleNotFound();
+  void handleNotFound();
 
   //helpers----------------------------
   //String IPtoString(IPAddress ip);
