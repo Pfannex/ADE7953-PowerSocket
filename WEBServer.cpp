@@ -5,6 +5,7 @@ WEBIF::WEBIF() : webServer(80){
   httpUpdater.setup(&webServer); 
  
   webServer.on("/", std::bind(&WEBIF::rootPageHandler, this));
+  webServer.on("/test", std::bind(&WEBIF::testPageHandler, this));
   webServer.onNotFound(std::bind(&WEBIF::handleNotFound, this));
 }
 
@@ -38,10 +39,44 @@ void WEBIF::handle(){
 //  page handler 
 //###############################################################################
 //...............................................................................
+//  test
+//...............................................................................
+void WEBIF::testPageHandler(){
+  String rm = ""
+"<html>"
+"<head>"
+"    <!--"
+"     * Author:      Gianluca Guarini"
+"     * Contact:     gianluca.guarini@gmail.com"
+"     * Website:     http://www.gianlucaguarini.com/"
+"     * Twitter:     @gianlucaguarini"
+"   -->"
+"    <title>Arduino and Nodejs</title>"
+"    <style>"
+"    center {"
+"        font-size: 100px;"
+"        font-family:arial;"
+"    }"
+"    </style>"
+"</head>"
+"<body>"
+"    <button>"
+"        Turn the light"
+"        <span>on</span>"
+"    </button>"
+"    <script src=\"socket.io/socket.io.js\"></script>"
+"    <script src=\"http://code.jquery.com/jquery-latest.min.js\"></script>"
+"    <script src=\"js/app.js\"></script>"
+"</body>"
+"</html>";
+
+  webServer.send(200, "text/html", rm);
+}
+
+//...............................................................................
 //  root
 //...............................................................................
-void WEBIF::rootPageHandler()
-{
+void WEBIF::rootPageHandler(){
   // Check if there are any GET parameters
 /*  if (webServer.hasArg("webUser")) strcpy(cfg->webUser, webServer.arg("webUser").c_str());
   if (webServer.hasArg("webPassword")) strcpy(cfg->webPassword, webServer.arg("webPassword").c_str());

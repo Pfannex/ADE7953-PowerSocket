@@ -37,6 +37,7 @@ private:
   
   //Page controls----------------
   void rootPageHandler();
+  void testPageHandler();
   //void sensorPageHandler();
 
   //void wlanPageHandler();
