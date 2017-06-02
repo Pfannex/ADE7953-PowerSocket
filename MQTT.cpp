@@ -28,10 +28,10 @@ bool MQTT::start(){
   String deviceName = ffs.cfg.readItem("mqttDeviceName");
   String lastWillTopic = "Devices/" + deviceName;
 
-  Serial.print("Connecting to MQTT-Broker: ");  
-  Serial.println(strIP);
+  Serial.print("MQTT-Broker: ");  
+  Serial.print(strIP);
   i2c.lcd.clear();
-  i2c.lcd.println("Connecting to MQTTBroker:", ArialMT_Plain_10, 0);  
+  i2c.lcd.println("MQTTBroker:", ArialMT_Plain_10, 0);  
   i2c.lcd.println(strIP + ":" + String(port), ArialMT_Plain_16,  10);  
   
   client.setServer(IP, port); 
@@ -39,8 +39,8 @@ bool MQTT::start(){
   //if (client.connect(ffs.cfg.readItem("mqttDeviceName").c_str())){
   if (client.connect(deviceName.c_str(), lastWillTopic.c_str() , 0, false, "Dead")) {
     MQTTOK = true;
-    Serial.println("MQTT connected");
-    i2c.lcd.println("connected to MQTTBroker", ArialMT_Plain_10, 31);  
+    Serial.println("...connected");
+    i2c.lcd.println("...connected", ArialMT_Plain_10, 31);  
     client.publish(lastWillTopic.c_str(), "Alive");
 
     //global subscribe
@@ -100,12 +100,20 @@ void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length)
   }
   attrCount++;
   String strValue = String(value);
-  
+
+//print out
   Serial.println("MQTT::on_incommingSubcribe");
   Serial.println(strTopic + " | " + strValue);
+  i2c.lcd.clear();
   for (int i=0; i<attrCount; i++){
     Serial.println("   " + String(i+1) + ": " + attr[i]);   
+    i2c.lcd.println(attr[i], ArialMT_Plain_10, i*10);  
   }
+
+//dissect
+  
+
+
 }
 
 //-------------------------------------------------------------------------------
