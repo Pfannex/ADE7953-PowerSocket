@@ -1,6 +1,7 @@
 #pragma once
   #include <Arduino.h>
   #include "Setup.h"
+  #include <Wire.h>             //I²C
   #include <SSD1306.h>
 
 //###############################################################################
@@ -25,6 +26,7 @@ public:
   I2C();
   LCD lcd;
   void start();
+  void scanBus();
   
 private:
 
