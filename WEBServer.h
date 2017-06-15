@@ -7,6 +7,9 @@
   #include <DNSServer.h>
   #include <ESP8266HTTPUpdateServer.h>
   #include <ESP8266httpUpdate.h>
+  
+  #include "FFS.h"
+  #include "Auth.h"
 
   #include <functional>
   typedef std::function<void(void)> CallbackFunction;
@@ -14,38 +17,37 @@
 //###############################################################################
 //  WEB-Interface 
 //###############################################################################
-class WEBIF{
+  
+// https://links2004.github.io/Arduino/index.html
+
+class WEBIF {
 public:
-  WEBIF();
+  WEBIF(FFS& ffs);
   void start();
   void handle();
-  
-  //void set_cfgPointer(CFG *p);  
-  //void set_sensorPointer(TDS18B20_Sensors *p, THTU21_Sensors *q, TBMP180_Sensors *r);  
-  //void set_saveConfig_Callback(CallbackFunction c);
-  //void updateFirmware();
   
 private:
   ESP8266WebServer webServer;
   ESP8266HTTPUpdateServer httpUpdater;
-  
-  //CallbackFunction saveConfig_Callback;
-  //CFG *cfg;
-  //TDS18B20_Sensors *DS18B20_Sensors; 
-  //THTU21_Sensors *HTU21_Sensors; 
-  //TBMP180_Sensors *BMP180_Sensors; 
-  
-  //Page controls----------------
-  void rootPageHandler();
-  void testPageHandler();
-  //void sensorPageHandler();
+  FFS& ffs;
 
-  //void wlanPageHandler();
-  //void gpioPageHandler();
-  //void cfgPageHandler();
+  // authenticator
+  Auth auth;
+  
+  // number of pages served
+  long numPagesServed= 0;
+  
+  // serve page with some logging
+  void send(const String &description, int code, char *content_type, const String &content);
+  
+  // pages served
+  String login;         // login.html
+  String ui;            // ui.html
+  
+  // page handler
+  void rootPageHandler();
+  void authPageHandler();
   void handleNotFound();
 
-  //helpers----------------------------
-  //String IPtoString(IPAddress ip);
 };
 

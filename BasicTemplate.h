@@ -30,7 +30,7 @@ public:
   FFS ffs;
   WIFI wifi;
   MQTT mqtt;
-  WEBIF webServer;  
+  WEBIF webif;  
   I2C i2c;
   OWIRE oWire; 
  

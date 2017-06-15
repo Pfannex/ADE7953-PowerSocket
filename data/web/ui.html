@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    
+    <head>
+        <title>ESP8266 P&amp;N</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="lib/jquery.js"></script>
+        <script src="lib/jquery.mobile.js"></script>
+        <link href="css/jquery.mobile.css" rel="stylesheet" />
+   
+	<style>
+		.custom-size-flipswitch.ui-flipswitch .ui-btn.ui-flipswitch-on {
+		    text-indent: -6em;
+		}
+		.custom-size-flipswitch.ui-flipswitch .ui-flipswitch-off {
+		    text-indent: 2em;
+		}
+		.custom-size-flipswitch.ui-flipswitch {
+		    width: 8.875em;
+		}
+		.custom-size-flipswitch.ui-flipswitch.ui-flipswitch-active {
+		    padding-left: 7em;
+		    width: 1.875em;
+	}
+	</style>
+
+    </head>
+
+    <body>
+        <!--
+
+                page 1
+
+        -->
+        <div data-role="page" data-theme="b" id="page1">
+            <div data-role="header">
+                <a href="https://github.com/Pfannex/ADE7953_Breakoutboard/wiki" target="_blank" 
+                id="info" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left">Info</a>
+                <h1>ESP8266 P&amp;N</h1>
+                <a href="#" id="logout" class="ui-btn ui-corner-all ui-shadow ui-icon-delete 
+                ui-btn-icon-left">Logout</a>
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="#page1" data-transition="flow" data-icon="gear" data-role="button" class="ui-btn-active ui-state-persist">Configuration</a></li>
+                        <li><a href="#page2" data-transition="flow" data-icon="eye" data-role="button">Readings</a></li>
+                        <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button">Log</a></li>                                                                               
+                    </ul>                                                                                   
+                </div>                                                                                      
+            </div>                                                                                          
+            <div data-role="content">                                                                       
+                <form action="." method="POST">                                                       
+                    <div data-role="collapsible">                                                           
+                        <h1>Device</h1>                                                                     
+                        <div data-role="fieldcontain">                                                      
+                            <label for="device_name">Name</label>                                           
+                            <input type="text" id="device_name" placeholder="Hostname and MQTT device name"/>                                          
+                        </div>                                                                              
+                        <div data-role="fieldcontain">                                                      
+                            <label for="device_username">Username</label>                                   
+                            <input type="text" id="device_username" />                                      
+                        </div>                                                                              
+                        <div data-role="fieldcontain">                                                      
+                            <label for="device_password">Password</label>                                   
+                            <input type="password" id="device_password" />                                      
+                        </div>                                                                              
+                        <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" id="reboot">Reboot</a>                                                    
+                    </div>                                                                                  
+                    <div data-role="collapsible">
+                        <h1>WiFi</h1>
+                        <input type="checkbox" data-role="flipswitch" data-on-text="On" data-off-text="Off" id="wifi" checked>
+                        <div data-role="fieldcontain">
+                            <label for="wifi_ssid">SSID</label>
+                            <input type="text" id="wifi_ssid" />
+                        </div>
+                        <div data-role="fieldcontain">
+                            <label for="wifi_password">Password</label>
+                            <input type="password" id="wifi_password" />
+                        </div>
+                        <input type="checkbox" data-role="flipswitch" data-on-text="DHCP" data-off-text="Manual"
+                        	   id="wifi_dhcp"
+                               checked data-wrapper-class="custom-size-flipswitch">
+                        <div data-role="fieldcontain">
+                            <label for="wifi_ip">IP Address</label>
+                            <input type="text" id="wifi_ip" value="10.20.17.101" />
+                        </div>
+                        <div data-role="fieldcontain">
+                            <label for="wifi_netmask">Netmask</label>
+                            <input type="text" id="wifi_netmask" value="255.255.255.0" />
+                        </div>
+                        <div data-role="fieldcontain">
+                            <label for="wifi_gateway">Gateway</label>
+                            <input type="text" id="wifi_gateway" value="10.20.17.1" />
+                        </div>
+                    </div>
+                    <div data-role="collapsible">
+                        <h1>LAN</h1>
+                        <input type="checkbox" data-role="flipswitch" data-on-text="On" data-off-text="Off" id="lan" checked>
+			<br/>
+                        <input type="checkbox" data-role="flipswitch" data-on-text="DHCP" data-off-text="Manual"
+                        	   id="lan_dhcp" checked 
+				   data-wrapper-class="custom-size-flipswitch">
+                        <div data-role="fieldcontain">
+                            <label for="lan_ip">IP Address</label>
+                            <input type="text" id="lan_ip" value="10.20.17.111" />
+                        </div>
+                        <div data-role="fieldcontain">
+                            <label for="lan_netmask">Netmask</label>
+                            <input type="text" id="lan_netmask" value="255.255.255.0" />
+                        </div>
+                        <div data-role="fieldcontain">
+                            <label for="lan_gateway">Gateway</label>
+                            <input type="text" id="lan_gateway" value="10.20.17.1" />
+                        </div>
+                    </div>
+                    <div data-role="collapsible">
+                        <h1>Network Time</h1>
+                        <select data-role="slider">
+                            <option value="off">Off</option>
+                            <option value="on">On</option>
+                        </select>
+                        <div data-role="fieldcontain">
+                            <label for="ntp_serverip">NTP Server IP Address</label>
+                            <input type="text" id="ntp_serverip" />
+                        </div>
+                    </div>
+                    <div data-role="collapsible">
+                        <h1>OTA Update</h1>
+                        <div data-role="collapsible">
+                            <h1>Local Update</h1>
+                            <div data-role="fieldcontain">
+                                <label for="update_localpath">Path</label>
+                                <input type="text" id="update_localpath" />
+                            </div>
+                            <a data-role="button">Update</a>
+                            <a data-role="button">Select file...</a>
+                        </div>
+                        <div data-role="collapsible">
+                            <h1>Remote Update</h1>
+	                        <input type="checkbox" data-role="flipswitch" data-on-text="Auto" data-off-text="Manual"
+                        	   id="update"
+                               checked data-wrapper-class="custom-size-flipswitch">
+                            <div data-role="fieldcontain">
+                                <label for="update_ip">Update Server IP Address</label>
+                                <input type="text" id="update_ip" />
+                            </div>
+                            <div data-role="fieldcontain">
+                                <label for="update_remotepath">Path</label>
+                                <input type="text" id="update_remotepath" />
+                            </div>
+                            <a data-role="button">Update</a>
+                        </div>
+                    </div>
+                    <div data-role="collapsible">
+                        <h1>MQTT</h1>
+                        <select data-role="slider" id="mqtt">
+                            <option value="off">Off</option>
+                            <option value="on">On</option>
+                        </select>
+                        <div data-role="fieldcontain">
+                            <label for="mqtt_ip">Broker IP Address</label>
+                            <input type="text" id="mqtt_ip" />
+                        </div>
+                        <div data-role="fieldcontain">
+                            <label for="mqtt_port">Broker Port</label>
+                            <input type="text" id="mqtt_port" />
+                        </div>
+                    </div>
+                    <!-- <a data-role="button" data-icon="check">Apply</a> -->
+                    <input type="submit" id="apply" name="apply" value="Apply" data-role="button" data-icon="check">
+                    
+                </form>
+            </div>
+            <div data-role="footer">
+                <div id="message"></div>
+                <!--
+                <form action="." method="POST">
+                        <input type="submit" id="logout" name="logout" value="Logout" data-role="button" data-icon="delete">
+               </form>
+               -->
+            </div>
+        </div>
+
+
+        <!--
+
+                page 2
+
+        -->
+        <div data-role="page" data-theme="b" id="page2">
+            <div data-role="header">
+                <h1>ESP8266 P&amp;N</h1>
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="#page1" data-transition="flow" data-icon="gear" data-role="button">Configuration</a></li>
+                        <li><a href="#page2" data-transition="flow" data-icon="eye" data-role="button" class="ui-btn-active ui-state-persist">Readings</a></li>
+                        <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button">Log</a></li>                                                                               
+                    </ul>
+                </div>
+            </div>
+            <div data-role="content">
+		<div class="ui-grid-b">
+			<div class="ui-block-a"></div>
+			<div class="ui-block-b">Channel A</div>
+			<div class="ui-block-c">Channel B</div>
+			<div class="ui-block-a">Power</div>
+			<div class="ui-block-b">212.0 W</div>
+			<div class="ui-block-c">0.0 W</div>
+			<div class="ui-block-a">Phase</div>
+			<div class="ui-block-b">5,5°</div>
+			<div class="ui-block-c">0.0°</div>
+		</div>
+            </div>
+            <div data-role="footer">
+                <!--
+                <form action="." method="POST">
+                        <input type="submit" id="logout" value="Logout" class="ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left">
+               </form>
+               -->
+            </div>
+        </div>
+
+
+        <!--
+
+                page 3
+
+        -->
+        <div data-role="page" data-theme="b" id="page3">
+            <div data-role="header">
+                <h1>ESP8266 P&amp;N</h1>
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="#page1" data-transition="flow" data-icon="gear" data-role="button">Configuration</a></li>
+                        <li><a href="#page2" data-transition="flow" data-icon="eye" data-role="button">Readings</a></li>
+                        <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button" class="ui-btn-active ui-state-persist">Log</a></li>                                                                               
+                    </ul>
+                </div>
+            </div>
+            <div data-role="content">
+            </div>
+            <div data-role="footer">
+                <!--
+                <form action="." method="POST">
+                        <input type="submit" id="logout" value="Logout" class="ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left">
+               </form>
+               -->
+            </div>
+     </div>
+        
+        <script src="auth.js"></script>
+    </body>
+
+</html>
+ 

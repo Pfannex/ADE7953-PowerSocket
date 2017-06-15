@@ -6,7 +6,8 @@
 BasicTemplate::BasicTemplate():
     ffs(i2c),
     mqtt(ffs, i2c, wifi),
-    wifi(ffs, i2c){  
+    wifi(ffs, i2c), 
+    webif(ffs) {  
 
 //callback Events
   //WiFi
@@ -35,7 +36,7 @@ void BasicTemplate::handle(){
       delay(1000);
       mqtt.start();
     }
-    webServer.handle();
+    webif.handle();
   }else{
     Serial.println("WiFi has disconnected!");
     wifi.start();
@@ -55,7 +56,7 @@ void BasicTemplate::startPeriphery(){
 void BasicTemplate::on_wifiConnected(){
   delay(1000);
   mqtt.start();
-  webServer.start();
+  webif.start();
  
 }
 //...............................................................................
