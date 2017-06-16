@@ -19,7 +19,7 @@ function reboot() {
           url: "/",
           data: "action=reboot",
           success: function() { 
-            setTimeout( function() { window.location="/"; }, 10000); 
+            setTimeout( function() { window.location="/"; }, 20000); 
           }
     }
   );
