@@ -46,7 +46,7 @@ bool WIFI::start(){
     if (on_wifiConnected != nullptr) on_wifiConnected();  //callback event
   }else{
     Serial.println("NOT connected!");  
-    //start AP 
+    //start AP über Button!!! (GodMode?)
   }
   Serial.println("............................................");
   return WiFiOK; 
