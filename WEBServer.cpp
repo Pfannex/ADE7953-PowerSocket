@@ -41,10 +41,6 @@ void WEBIF::start() {
   // Authentificator
   auth.reset();
   
-  // load content  
-  login= ffs.loadString("/web/login.html");
-  ui= ffs.loadString("/web/ui.html");
-  
   //here the list of headers to be recorded
   const char* headerkeys[] = {"User-Agent","Cookie"} ;
   size_t headerkeyssize = sizeof(headerkeys)/sizeof(char*);
@@ -71,11 +67,54 @@ void WEBIF::handle() {
 //  web interface private
 //-------------------------------------------------------------------------------
 
+String WEBIF::subst(String data) {
+
+  /*
+  int p1= 0, p2;
+  String key;
+  
+  while((p1= data.indexOf('$DATA('), p1)>= 0) {
+    p2= data.indexOf(')', p1+6);
+    key= data.substring(p1+6,p2-1);
+    if(key == 'MACADDRESS') {
+        data= data.substring(0,p1
+    }
+  }*/
+  data.replace("$DATA(MACADDRESS)", "FF:FF:FF:FF:FF:FF");
+  return data;
+  
+}
+
+
 void WEBIF::send(const String &description, int code, char *content_type, const String &content) {
  
   numPagesServed++;
   Serial.println("Serving "+description);
   webServer.send(code, content_type, content);
+}
+
+void WEBIF::sendFile(const String &description, int code, char *content_type, const String filePath) {
+    
+  
+  // http://esp8266.github.io/Arduino/versions/2.0.0/doc/filesystem.html
+  // https://github.com/pellepl/spiffs/wiki/Using-spiffs
+  File f;
+  
+  Serial.println("Serving "+description);
+  Serial.print("reading " + filePath + "... ");
+  if (SPIFFS.exists(filePath)) {
+    f = SPIFFS.open(filePath, "r");
+    if (f) {
+      Serial.println("OK");
+      webServer.send(code, content_type, subst(f.readString()));
+      f.close();
+    } else {
+      Serial.println("ERROR (open)");
+    }
+  } else {
+      Serial.println("ERROR (no such file)");
+  }  
+
 }
 
 //###############################################################################
@@ -109,11 +148,11 @@ void WEBIF::rootPageHandler() {
   if(authenticated) {
     // show dashboard
     Serial.println("Request authenticated.");
-    send("dashboard", 200, "text/html;charset=UTF-8", ui);
+    sendFile("dashboard", 200, "text/html;charset=UTF-8", "/web/ui.html");
   } else {
     // send user to login page  
     Serial.println("Request not authenticated.");
-    send("login page", 200, "text/html;charset=UTF-8", login);
+    sendFile("login page", 200, "text/html;charset=UTF-8", "/web/login.html");
   }
 }
 

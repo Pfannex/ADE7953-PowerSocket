@@ -37,17 +37,19 @@ private:
   // number of pages served
   long numPagesServed= 0;
   
-  // serve page with some logging
+  // serve file with some logging
   void send(const String &description, int code, char *content_type, const String &content);
   
-  // pages served
-  String login;         // login.html
-  String ui;            // ui.html
+  // send a file
+  void sendFile(const String &description, int code, char *content_type, const String filePath);
   
   // page handler
   void rootPageHandler();
   void authPageHandler();
   void handleNotFound();
+  
+  // variable substitution
+  String subst(String data);
 
 };
 
