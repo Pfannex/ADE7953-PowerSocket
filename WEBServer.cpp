@@ -86,6 +86,9 @@ void WEBIF::applyConfiguration() {
   
 }
 
+//...............................................................................
+//  WEBIF::getConfiguration()
+//...............................................................................
 String WEBIF::getConfiguration() {
   return ffs.cfg.root;
 }

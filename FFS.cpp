@@ -187,7 +187,8 @@ bool FFSjsonFile::writeItem(String itemName, String value){
   }
   json.printTo(jsonFile);
   jsonFile.close(); 
-  root = readJsonString();
+  //root = readJsonString();
+  json.printTo(root);
   return true;
 }
 
