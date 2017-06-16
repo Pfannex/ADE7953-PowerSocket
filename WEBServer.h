@@ -50,6 +50,10 @@ private:
   
   // variable substitution
   String subst(String data);
-
+  
+  // configuration 
+  void applyConfiguration();
+  String getConfiguration();
+  
 };
 

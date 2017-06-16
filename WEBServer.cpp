@@ -2,6 +2,7 @@
 #include "FS.h"
 #include "Hash.h"
 #include "Logging.h"
+#include "SysUtils.h"
 
 //###############################################################################
 //  web interface 
@@ -16,7 +17,8 @@ WEBIF::WEBIF(FFS& ffs): webServer(80), ffs(ffs) {
   webServer.serveStatic("/lib/jquery.js", SPIFFS, "/web/lib/jquery.js", "max-age=86400");
   webServer.serveStatic("/lib/jquery.mobile.js", SPIFFS, "/web/lib/jquery.mobile.js", "max-age=86400");
   webServer.serveStatic("/css/jquery.mobile.css", SPIFFS, "/web/css/jquery.mobile.css", "max-age=86400");  
-  webServer.serveStatic("/auth.js", SPIFFS, "/web/auth.js", "max-age=86400");  
+  webServer.serveStatic("/auth.js", SPIFFS, "/web/auth.js" /*, "max-age=86400"*/);  
+  webServer.serveStatic("/config.js", SPIFFS, "/web/config.js" /*, "max-age=86400"*/);  
   webServer.serveStatic("/css/images/ajax-loader.gif", SPIFFS, "/web/css/images/ajax-loader.gif", "max-age=86400");  
   // dynamic pages
   webServer.on("/", std::bind(&WEBIF::rootPageHandler, this));
@@ -25,13 +27,14 @@ WEBIF::WEBIF(FFS& ffs): webServer(80), ffs(ffs) {
   
 }
 
-//-------------------------------------------------------------------------------
+//###############################################################################
 //  web interface public
-//-------------------------------------------------------------------------------
+//###############################################################################
 
 //...............................................................................
 //  web interface start
 //...............................................................................
+
 void WEBIF::start() {
   
   info("Web interface... ");
@@ -64,9 +67,34 @@ void WEBIF::handle() {
    webServer.handleClient();
 }
 
-//-------------------------------------------------------------------------------
+//###############################################################################
 //  web interface private
-//-------------------------------------------------------------------------------
+//###############################################################################
+
+//...............................................................................
+//  configuration
+//...............................................................................
+
+void WEBIF::applyConfiguration() {
+  
+  info("applying configuration...");
+  for(int i= 0; i< webServer.args(); i++) {
+    debug(webServer.argName(i) + ": " + webServer.arg(i));
+    ffs.cfg.writeItem(webServer.argName(i), webServer.arg(i));
+  };
+  //ffs.cfg.saveFile();
+  
+}
+
+String WEBIF::getConfiguration() {
+  return ffs.cfg.root;
+}
+
+
+//...............................................................................
+//  page handlers and related functions
+//...............................................................................
+
 
 String WEBIF::subst(String data) {
 
@@ -81,7 +109,8 @@ String WEBIF::subst(String data) {
         data= data.substring(0,p1
     }
   }*/
-  data.replace("$DATA(MACADDRESS)", "FF:FF:FF:FF:FF:FF");
+  data.replace("$DATA(MACADDRESS)", macAddress());
+  data.replace("$DATA(DEVICEID)", String(chipID()));
   return data;
   
 }
@@ -119,10 +148,6 @@ void WEBIF::sendFile(const String &description, int code, char *content_type, co
 
 }
 
-//###############################################################################
-//  page handlers
-//###############################################################################
-
 void WEBIF::rootPageHandler() {
   
   info("serving root page...");
@@ -148,9 +173,29 @@ void WEBIF::rootPageHandler() {
   }
   
   if(authenticated) {
-    // show dashboard
-    info("request authenticated.");
-    sendFile("dashboard", 200, "text/html;charset=UTF-8", "/web/ui.html");
+    
+    String action= webServer.arg("action");
+    
+    // reboot
+    if(action == "reboot") {
+      info("action: reboot");
+      webServer.send(200, "text/plain", "true");
+      reboot(); // never returns
+    }
+    // config
+    if(action == "apply") {
+      info("action: apply config");
+      // https://code.tutsplus.com/tutorials/jquery-mobile-framework-a-forms-tutorial--mobile-4500
+      applyConfiguration();
+      webServer.send(200, "text/plain", "true");
+    } else if(action == "config") {
+      info("action: get config");
+      webServer.send(200, "application/json", getConfiguration());
+    } else {
+      // show dashboard
+      info("request authenticated.");
+      sendFile("dashboard", 200, "text/html;charset=UTF-8", "/web/ui.html");
+    }
   } else {
     // send user to login page  
     info("request not authenticated.");
@@ -189,6 +234,7 @@ void WEBIF::authPageHandler() {
   } else if(action == "logout") {
     
     // --- logout
+    info("logging out");
     webServer.sendHeader("Location","/");
     webServer.sendHeader("Cache-Control","no-cache");
     webServer.sendHeader("Set-Cookie","SessionID=0");

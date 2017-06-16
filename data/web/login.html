@@ -6,6 +6,7 @@
 <script src="lib/jquery.js"></script>
 <script src="lib/jquery.mobile.js"></script>
 <link href="css/jquery.mobile.css" rel="stylesheet" />
+<script src="auth.js"></script>
 </head>
 <body>
 <div data-role="page" data-theme="b">
@@ -15,7 +16,7 @@
 		<h1>ESP8266 P&amp;N Authentification</h1>
 	</div>
 	<div data-role="content">
-		<form action="/" method="post" id="form">
+		<form id="loginForm" method="POST">
 			<div data-role="fieldcontain" id="credentials">
 				<label for="username">Username</label>
 				<input type="text" name="username" id="username"/>
@@ -24,10 +25,10 @@
 				<label for="password">Password</label>
 				<input type="password" name="password" id="password"/>                                   
 			</div>
-			<input type="submit" id="login" name="login" value="Login" data-role="button" data-icon="check">
+			<a data-role="button" class="ui-btn ui-icon-check ui-btn-icon-left" onClick="login()">Login</a>
 		</form>
 	</div>
-	<div data-role="popup" id="failed" class="ui-content" data-position-to="#form">
+	<div data-role="popup" id="failed" class="ui-content" data-position-to="#loginForm">
 		<a href="#" data-rel="back" 
 			class="ui-btn ui-corner-all ui-shadow ui-btn 
 			ui-icon-delete ui-btn-icon-notext 
@@ -35,12 +36,18 @@
 		<p>Login failed.</p>
 	</div>
 	<div data-role="footer">
-		<div id="message"></div>
-		MAC Address: $DATA(MACADDRESS)
+          <div id="message"></div>
+          <div class="ui-grid-a">
+                <div class="ui-block-a">
+			MAC Address<br>$DATA(MACADDRESS)
+                </div>
+                <div class="ui-block-b">
+                        Device ID<br>$DATA(DEVICEID)
+                </div>
+          </div>
 	</div>
 
 </div>
-<script src="auth.js"></script>
 </body>
 </html>
 

@@ -7,7 +7,9 @@
         <script src="lib/jquery.js"></script>
         <script src="lib/jquery.mobile.js"></script>
         <link href="css/jquery.mobile.css" rel="stylesheet" />
-   
+        <script src="auth.js"></script>   
+        <script src="config.js"></script>   
+        
 	<style>
 		.custom-size-flipswitch.ui-flipswitch .ui-btn.ui-flipswitch-on {
 		    text-indent: -6em;
@@ -37,8 +39,7 @@
                 <a href="https://github.com/Pfannex/ADE7953_Breakoutboard/wiki" target="_blank" 
                 id="info" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left">Info</a>
                 <h1>ESP8266 P&amp;N</h1>
-                <a href="#" id="logout" class="ui-btn ui-corner-all ui-shadow ui-icon-delete 
-                ui-btn-icon-left">Logout</a>
+                <a class="ui-btn ui-corner-all ui-shadow ui-icon-delete ui-btn-icon-left" onClick="logout()">Logout</a>
                 <div data-role="navbar">
                     <ul>
                         <li><a href="#page1" data-transition="flow" data-icon="gear" data-role="button" class="ui-btn-active ui-state-persist">Configuration</a></li>
@@ -48,12 +49,12 @@
                 </div>                                                                                      
             </div>                                                                                          
             <div data-role="content">                                                                       
-                <form action="." method="POST">                                                       
+                <form id="configForm"  method="POST">                                                       
                     <div data-role="collapsible">                                                           
                         <h1>Device</h1>                                                                     
                         <div data-role="fieldcontain">                                                      
                             <label for="device_name">Name</label>                                           
-                            <input type="text" id="device_name" placeholder="Hostname and MQTT device name"/>                                          
+                            <input type="text" id="device_name" name="device_name" placeholder="Hostname and MQTT device name"/>                                          
                         </div>                                                                              
                         <div data-role="fieldcontain">                                                      
                             <label for="device_username">Username</label>                                   
@@ -63,7 +64,7 @@
                             <label for="device_password">Password</label>                                   
                             <input type="password" id="device_password" />                                      
                         </div>                                                                              
-                        <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" id="reboot">Reboot</a>                                                    
+                        <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" id="reboot" onClick="reboot()">Reboot</a>                                                    
                     </div>                                                                                  
                     <div data-role="collapsible">
                         <h1>WiFi</h1>
@@ -114,13 +115,13 @@
                     </div>
                     <div data-role="collapsible">
                         <h1>Network Time</h1>
-                        <select data-role="slider">
+                        <select data-role="slider" name="ntp">
                             <option value="off">Off</option>
                             <option value="on">On</option>
                         </select>
                         <div data-role="fieldcontain">
                             <label for="ntp_serverip">NTP Server IP Address</label>
-                            <input type="text" id="ntp_serverip" />
+                            <input type="text" id="ntp_serverip" name="ntp_serverip"/>
                         </div>
                     </div>
                     <div data-role="collapsible">
@@ -165,9 +166,8 @@
                             <input type="text" id="mqtt_port" />
                         </div>
                     </div>
-                    <!-- <a data-role="button" data-icon="check">Apply</a> -->
-                    <input type="submit" id="apply" name="apply" value="Apply" data-role="button" data-icon="check">
-                    
+                    <input type="hidden" name="action" value="apply"/>
+                    <a data-role="button" data-icon="check" onClick="apply()">Apply</a>
                 </form>
             </div>
             <div data-role="footer">
@@ -177,6 +177,16 @@
                         <input type="submit" id="logout" name="logout" value="Logout" data-role="button" data-icon="delete">
                </form>
                -->
+            </div>
+            <!-- Popups -->
+            <div data-role="popup" id="popupProcessing" class="ui-content" 
+                 data-dismissible="false" data-position-to="#configForm">
+                    <p>Processing configuration....</p>
+            </div>
+            <div data-role="popup" id="popupRebooting" class="ui-content" 
+                 data-dismissible="false" data-position-to="#configForm">
+                    <p>Rebooting device....</p>
+                    <p>You will be automatically redirected to the login page.</p>
             </div>
         </div>
 
@@ -247,7 +257,7 @@
             </div>
      </div>
         
-        <script src="auth.js"></script>
+        
     </body>
 
 </html>

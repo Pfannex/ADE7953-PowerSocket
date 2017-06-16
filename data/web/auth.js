@@ -1,5 +1,7 @@
-$(document).ready( function() {
-	$("#login").click( function() {	
+// 
+// login
+//
+function login() {	
 		username=$("#username").val();
 		password=$("#password").val();
 		$.ajax({
@@ -16,17 +18,20 @@ $(document).ready( function() {
 			}
 		});
 		return false;
-	});
-	$("#logout").click( function() {	
-		//$("#message").html("Ausgeloggt");
-                $.ajax({
-			type: "POST",
-			url: "./auth.html",
-			data: "action=logout",
-			success: function(html) {    
-				 window.location="/";
-			}
-		});
-		return false;
-	});
-});
+	};
+
+// 
+// logout
+//
+function logout() {
+        $.ajax({
+                type: "POST",
+                url: "./auth.html",
+                data: "action=logout",
+                success: function(html) {    
+                          window.location="/";
+                }
+        });
+        return false;
+};        
+
