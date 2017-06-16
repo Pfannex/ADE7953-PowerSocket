@@ -4,6 +4,7 @@
 
 #include "Auth.h"
 #include "Hash.h"
+#include "Logging.h"
 
 Auth::Auth() {
 
@@ -27,7 +28,7 @@ void Auth::reset() {
 bool Auth::checkPassword(String username, String password) {
 
   String sha1hash= sha1(password);
-  Serial.print("Authentificating user "+username+" with SHA1 hash "+sha1hash+"... ");
+  info("authentificating user "+username+" with SHA1 hash "+sha1hash+"... ");
   
   // this is a stub!
   return (username == "admin");
@@ -45,7 +46,7 @@ String Auth::createSession(String username) {
   // add session to list
   // ...
   
-  Serial.println("Session " + SessionID + " created for user " + username);
+  info("session " + SessionID + " created for user " + username);
   return SessionID;
 
 }    
@@ -54,6 +55,6 @@ bool Auth::checkSession(String SessionID) {
  
   // check if we have a session with this ID
   // ...
-  Serial.println("Checking session " + SessionID);
+  info("checking session " + SessionID);
   return (SessionID != "0");
 }

@@ -1,6 +1,7 @@
 #include "WEBServer.h"
 #include "FS.h"
 #include "Hash.h"
+#include "Logging.h"
 
 //###############################################################################
 //  web interface 
@@ -33,7 +34,7 @@ WEBIF::WEBIF(FFS& ffs): webServer(80), ffs(ffs) {
 //...............................................................................
 void WEBIF::start() {
   
-  Serial.print("Web interface... ");
+  info("Web interface... ");
   
   // pages served
   numPagesServed= 0;
@@ -50,7 +51,7 @@ void WEBIF::start() {
   
   // start serving requests
   webServer.begin();
-  Serial.println(" started");
+  info("started.");
 
 }
 
@@ -89,7 +90,8 @@ String WEBIF::subst(String data) {
 void WEBIF::send(const String &description, int code, char *content_type, const String &content) {
  
   numPagesServed++;
-  Serial.println("Serving "+description);
+  info("serving "+description);
+  debugMem();
   webServer.send(code, content_type, content);
 }
 
@@ -100,19 +102,19 @@ void WEBIF::sendFile(const String &description, int code, char *content_type, co
   // https://github.com/pellepl/spiffs/wiki/Using-spiffs
   File f;
   
-  Serial.println("Serving "+description);
-  Serial.print("reading " + filePath + "... ");
+  info("serving "+description);
+  debug("reading " + filePath + "... ");
   if (SPIFFS.exists(filePath)) {
     f = SPIFFS.open(filePath, "r");
     if (f) {
-      Serial.println("OK");
+      debug("opened.");
       webServer.send(code, content_type, subst(f.readString()));
       f.close();
     } else {
-      Serial.println("ERROR (open)");
+      error("cannot open "+filePath);
     }
   } else {
-      Serial.println("ERROR (no such file)");
+      error("file "+filePath+" does not exist.");
   }  
 
 }
@@ -123,14 +125,14 @@ void WEBIF::sendFile(const String &description, int code, char *content_type, co
 
 void WEBIF::rootPageHandler() {
   
-  Serial.println("Serving root page...");
+  info("serving root page...");
   
   // Debug only
   //Serial.println("Headers:");
   //for(int i= 0; i< webServer.headers(); Serial.println(webServer.header(i++)));
   
   if(webServer.hasHeader("User-Agent")) {
-    Serial.println("User-Agent: "+webServer.header("User-Agent"));
+    info("User-Agent: "+webServer.header("User-Agent"));
   }
   
   bool authenticated= false;
@@ -138,7 +140,7 @@ void WEBIF::rootPageHandler() {
   // check for cookie
   if(webServer.hasHeader("Cookie")) {
     String cookie = webServer.header("Cookie");
-    Serial.println("Client provided cookie: "+cookie);
+    info("client provided cookie: "+cookie);
     // check if cookie corresponds to active session
     authenticated= auth.checkSession(cookie.substring(10));
   } else {
@@ -147,11 +149,11 @@ void WEBIF::rootPageHandler() {
   
   if(authenticated) {
     // show dashboard
-    Serial.println("Request authenticated.");
+    info("request authenticated.");
     sendFile("dashboard", 200, "text/html;charset=UTF-8", "/web/ui.html");
   } else {
     // send user to login page  
-    Serial.println("Request not authenticated.");
+    info("request not authenticated.");
     sendFile("login page", 200, "text/html;charset=UTF-8", "/web/login.html");
   }
 }
@@ -168,7 +170,7 @@ void WEBIF::authPageHandler() {
     
     if(auth.checkPassword(username, password)) {
       // password ok
-      Serial.println("OK");
+      info("user "+username+" authenticated");
       String SessionID= auth.createSession(username);
       webServer.sendHeader("Location","/");
       webServer.sendHeader("Cache-Control","no-cache");
@@ -177,7 +179,7 @@ void WEBIF::authPageHandler() {
       
     } else {
       // password not ok
-      Serial.println("Failed");
+      info("user "+username+" authentification failed");
       webServer.sendHeader("Location","/");
       webServer.sendHeader("Cache-Control","no-cache");
       webServer.send(200, "text/plain", "false");

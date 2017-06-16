@@ -1,4 +1,5 @@
 #include "BasicTemplate.h"
+#include "Logging.h"
 
 //###############################################################################
 //  BasicTemplate
@@ -77,8 +78,9 @@ void BasicTemplate::timerUpdate(){
   if (now - timerLastUpdate > timerUpdateTime){
     timerLastUpdate = now;
 
-    Serial.println("Hello World");
-  }
+    //Serial.println("Hello World");
+    debugMem();
+}
 }
 
 

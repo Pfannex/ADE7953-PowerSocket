@@ -1,0 +1,6 @@
+[submodule "MemoryFree"]
+	path = MemoryFree
+	url = https://github.com/McNeight/MemoryFree.git
+[submodule "src/MemoryFree"]
+	path = src/MemoryFree
+	url = https://github.com/McNeight/MemoryFree.git

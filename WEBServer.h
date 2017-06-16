@@ -15,7 +15,7 @@
   typedef std::function<void(void)> CallbackFunction;
   
 //###############################################################################
-//  WEB-Interface 
+//  web interface 
 //###############################################################################
   
 // https://links2004.github.io/Arduino/index.html
