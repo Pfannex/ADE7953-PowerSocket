@@ -6,7 +6,7 @@ letzte Änderung: Pf@nne
   
 - **Firmware**
   - ~~writeItem - separieren write / saveConfig~~
-  - sysUtils -> CLASS
+  - ~~sysUtils -> CLASS~~
 
 - **UI**
   - erstellen der Readings-Übersicht (PF)
