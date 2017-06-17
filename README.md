@@ -5,7 +5,7 @@ Unterstütz werden bislang folgende Funktionen:
 
 - ESP8266 WiFi-Verbindung
 - SPIFSS Unterstüzung
-- Webinterface zur vollständigen Konfiguration der Anbindungen inkl. Authentifizierung
+- Webinterface (UI) zur vollständigen Konfiguration der Anbindungen inkl. Authentifizierung
 - ApplicationInterface (API) zur besseren Erweiterbarkeit
 - Logging-/ Debugging-Funktionalitäten 
 - OTA mit Fileupload
