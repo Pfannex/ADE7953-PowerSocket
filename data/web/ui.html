@@ -68,7 +68,7 @@
                     </div>                                                                                  
                     <div data-role="collapsible">
                         <h1>WiFi</h1>
-                        <input type="checkbox" data-role="flipswitch" data-on-text="On" data-off-text="Off" id="wifi" checked>
+                        <input type="checkbox" data-role="flipswitch" data-on-text="On" data-off-text="Off" id="wifi" name="wifi" checked>
                         <div data-role="fieldcontain">
                             <label for="wifi_ssid">SSID</label>
                             <input type="text" id="wifi_ssid" />
@@ -78,7 +78,7 @@
                             <input type="password" id="wifi_password" />
                         </div>
                         <input type="checkbox" data-role="flipswitch" data-on-text="DHCP" data-off-text="Manual"
-                        	   id="wifi_dhcp"
+                        	   id="wifi_dhcp" name="wifi_dhcp"
                                checked data-wrapper-class="custom-size-flipswitch">
                         <div data-role="fieldcontain">
                             <label for="wifi_ip">IP Address</label>
@@ -115,7 +115,7 @@
                     </div>
                     <div data-role="collapsible">
                         <h1>Network Time</h1>
-                        <select data-role="slider" name="ntp">
+                        <select data-role="slider" id="ntp" name="ntp">
                             <option value="off">Off</option>
                             <option value="on">On</option>
                         </select>
