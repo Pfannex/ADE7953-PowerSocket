@@ -1,24 +1,30 @@
-# ADE7953 MQTT Wattmeter
+# ESP8266 BasicTemplate 
 
-Der ADE7953 wird über einen ESP8266-WLAN-Controller per I²C angesteuert.
-Aktuell gibt es nur ein Breakoutboard mit Grundbeschaltung. 
-Die Ankopplung der Leistungsmessgrößen erfolgt zu einem späteren Zeitpunkt.
+In diesem Template stehen alle Grundfunktionen zu erstellen eigenener Aplikationen zur Verfügung.
+Unterstütz werden bislang folgende Funktionen:
+
+- ESP8266 WiFi-Verbindung
+- SPIFSS Unterstüzung
+- Webinterface zur vollständigen Konfiguration der Anbindungen inkl. Authentifizierung
+- ApplicationInterface (API) zur besseren Erweiterbarkeit
+- Logging-/ Debugging-Funktionalitäten 
+- OTA mit Fileupload
+- OTA über WebServer (automatisiert)
+- MQTT Anbindung
+- I2C
+- 1-Wire
+
 
 ***
 
-- **ADE7953**
-  - [Kalibrierung](https://github.com/Pfannex/ADE7953_Breakoutboard/wiki/Kalibrierung-%7C-ADE7953-MQTT-Wattmeter)
-- **Firmware**
-  - [ESP8266-Web-Interface](https://github.com/Pfannex/ADE7953_Breakoutboard/wiki/ESP8266-Web-Interface-%7C-ADE7953-MQTT-Wattmeter)
-  - [MQTT](https://github.com/Pfannex/ADE7953_Breakoutboard/wiki/MQTT-%7C-ADE7953-MQTT-Wattmeter)
-  - [FileSystem](https://github.com/Pfannex/ADE7953_Breakoutboard/wiki/FileSystem-%7C-ADE7953-MQTT-Wattmeter)
-  - [OTA](https://github.com/Pfannex/ADE7953_Breakoutboard/wiki/OTA-%7C-ADE7953-MQTT-Wattmeter)
-- **FHEM**
-  - [FHEM](https://github.com/Pfannex/ADE7953_Breakoutboard/wiki/FHEM-%7C-ADE7953-MQTT-Wattmeter)  
+- **Menü1**
+  - [SUB1]()
+- **Menü2**
+  - [SUB2]()
   
 ***
-[ToDo](https://github.com/Pfannex/ADE7953_Breakoutboard/blob/master/ToDo.md)  
-[changeLOG](https://github.com/Pfannex/ADE7953_Breakoutboard/blob/master/changeLOG.md)
+[ToDo](https://github.com/Pfannex/BasicTemplate/blob/master/ToDo.md)  
+[changeLOG](https://github.com/Pfannex/BasicTemplate/blob/master/changeLOG.md)
 
 
 
