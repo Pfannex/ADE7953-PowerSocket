@@ -7,6 +7,8 @@ letzte Änderung: Pf@nne
 - **Firmware**
   - ~~writeItem - separieren write / saveConfig~~
   - ~~sysUtils -> CLASS~~
+  - NTP jede h
+  - start AP
 
 - **UI**
   - erstellen der Readings-Übersicht (PF)
