@@ -71,6 +71,7 @@ void FFS::TEST(){
   cfg.writeItem("wifiSSID", "Pf@nne-NET");
   cfg.writeItem("wifiPSK", "Pf@nneNETwlan_ACCESS");
   cfg.writeItem("mqttServer", "192.168.1.203");
+  cfg.saveFile();
   
   Serial.println(cfg.readItem("apName"));
   Serial.println(cfg.readItem("wifiSSID"));
@@ -154,6 +155,23 @@ void FFSjsonFile::loadFile(){
 }
 
 //...............................................................................
+//  save root string to FFS-File (for external use)
+//...............................................................................
+bool FFSjsonFile::saveFile(){
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& json = jsonBuffer.parseObject(root);
+
+  File jsonFile = SPIFFS.open(filePath, "w");
+  if (!jsonFile) {
+    Serial.println("Failed to open config file for writing");
+    return false;
+  }
+  json.printTo(jsonFile);
+  jsonFile.close(); 
+  return true;
+}
+
+//...............................................................................
 //  read Item from jsonObjectString
 //...............................................................................
 String FFSjsonFile::readItem(String itemName){
@@ -179,16 +197,9 @@ bool FFSjsonFile::writeItem(String itemName, String value){
   JsonObject& json = jsonBuffer.parseObject(root);
 
   json[itemName] = value;
-  
-  File jsonFile = SPIFFS.open(filePath, "w");
-  if (!jsonFile) {
-    Serial.println("Failed to open config file for writing");
-    return false;
-  }
-  json.printTo(jsonFile);
-  jsonFile.close(); 
-  //root = readJsonString();
-  json.printTo(root);
+ 
+  root = "";           //printTo(String) is additive!!
+  json.printTo(root);  
   return true;
 }
 

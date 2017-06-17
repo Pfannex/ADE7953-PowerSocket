@@ -36,7 +36,7 @@ public:
   String readItem(String itemName);
   String readItem(int item);
   bool writeItem(String itemName, String value);
-  //void saveFile();
+  bool saveFile();
   
 private: 
   String readJsonString();
