@@ -11,7 +11,7 @@ letzte Änderung: Pf@nne
   - start AP
 
 - **UI**
-  - erstellen der Readings-Übersicht (PF)
+  - ~~erstellen der Readings-Übersicht (PF)~~
   
 - **API**
   - erstellen der Funktionsübersicht (PF)
