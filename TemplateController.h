@@ -1,7 +1,8 @@
 #pragma once
 
-//BasicTemplate
-  #include "Helpers.h"
+//TemplateController
+  #include "SysUtils.h"
+  #include "API.h"
   #include "FFS.h"
   #include "WIFI.h"
   #include "WEBServer.h"
@@ -12,7 +13,7 @@
 //###############################################################################
 //  BasicTemplate
 //###############################################################################
-class BasicTemplate{
+class TemplateController{
 public:
   
   void startConnections();  
@@ -25,8 +26,9 @@ public:
   void on_x();
 
 //classes
-  BasicTemplate();
-  Helpers h;
+  TemplateController();
+  SysUtils sysUtils;
+  API api;
   FFS ffs;
   WIFI wifi;
   MQTT mqtt;
