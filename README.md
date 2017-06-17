@@ -1,6 +1,6 @@
 # ESP8266 BasicTemplate 
 
-In diesem Template stehen alle Grundfunktionen zu erstellen eigenener Aplikationen zur Verfügung.
+In diesem Template stehen alle Grundfunktionen zum Erstellen eigenener Applikationen zur Verfügung.
 Unterstütz werden bislang folgende Funktionen:
 
 - ESP8266 WiFi-Verbindung
