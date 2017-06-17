@@ -5,7 +5,7 @@ letzte Änderung: Pf@nne
 - **Hardware**
   
 - **Firmware**
-  - writeItem - separieren write / saveConfig
+  - ~~writeItem - separieren write / saveConfig~~
   - sysUtils -> CLASS
 
 - **UI**
