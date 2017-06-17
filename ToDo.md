@@ -5,12 +5,16 @@ letzte Änderung: Pf@nne
 - **Hardware**
   
 - **Firmware**
+  - writeItem - separieren write / saveConfig
+  - sysUtils -> CLASS
 
 - **UI**
-  - erstellen der Readingsübersicht 
+  - erstellen der Readings-Übersicht (PF)
+  - erstellen der Config-Übersicht (BN)
   
 - **API**
-  -   
+  - erstellen der Funktionsübersicht (PF)
+ 
 
   
 ***
