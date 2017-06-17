@@ -10,7 +10,6 @@ letzte Änderung: Pf@nne
 
 - **UI**
   - erstellen der Readings-Übersicht (PF)
-  - erstellen der Config-Übersicht (BN)
   
 - **API**
   - erstellen der Funktionsübersicht (PF)
