@@ -1,8 +1,4 @@
 #include "WEBServer.h"
-#include "FS.h"
-#include "Hash.h"
-#include "Logging.h"
-#include "SysUtils.h"
 
 //###############################################################################
 //  web interface 
@@ -27,17 +23,15 @@ WEBIF::WEBIF(FFS& ffs): webServer(80), ffs(ffs) {
   
 }
 
-//###############################################################################
+//-------------------------------------------------------------------------------
 //  web interface public
-//###############################################################################
-
+//-------------------------------------------------------------------------------
 //...............................................................................
 //  web interface start
 //...............................................................................
-
 void WEBIF::start() {
   
-  info("Web interface... ");
+  sysUtils.logging.info("Web interface... ");
   
   // pages served
   numPagesServed= 0;
@@ -54,32 +48,29 @@ void WEBIF::start() {
   
   // start serving requests
   webServer.begin();
-  info("started.");
+  sysUtils.logging.info("started.");
 
 }
 
 //...............................................................................
 //  web interface handle
 //...............................................................................
-
 void WEBIF::handle() {
   
    webServer.handleClient();
 }
 
-//###############################################################################
+//-------------------------------------------------------------------------------
 //  web interface private
-//###############################################################################
-
+//-------------------------------------------------------------------------------
 //...............................................................................
 //  configuration
 //...............................................................................
-
 void WEBIF::applyConfiguration() {
   
-  info("applying configuration...");
+  sysUtils.logging.info("applying configuration...");
   for(int i= 0; i< webServer.args(); i++) {
-    debug(webServer.argName(i) + ": " + webServer.arg(i));
+    sysUtils.logging.debug(webServer.argName(i) + ": " + webServer.arg(i));
     ffs.cfg.writeItem(webServer.argName(i), webServer.arg(i));
   };
   //ffs.cfg.saveFile();
@@ -97,8 +88,6 @@ String WEBIF::getConfiguration() {
 //...............................................................................
 //  page handlers and related functions
 //...............................................................................
-
-
 String WEBIF::subst(String data) {
 
   /*
@@ -112,55 +101,62 @@ String WEBIF::subst(String data) {
         data= data.substring(0,p1
     }
   }*/
-  data.replace("$DATA(MACADDRESS)", macAddress());
-  data.replace("$DATA(DEVICEID)", String(chipID()));
+  data.replace("$DATA(MACADDRESS)", sysUtils.net.macAddress());
+  data.replace("$DATA(DEVICEID)", String(sysUtils.esp_tools.chipID()));
   return data;
   
 }
 
 
+//...............................................................................
+//  WEBIF::send
+//...............................................................................
 void WEBIF::send(const String &description, int code, char *content_type, const String &content) {
  
   numPagesServed++;
-  info("serving "+description);
-  debugMem();
+  sysUtils.logging.info("serving "+description);
+  sysUtils.logging.debugMem();
   webServer.send(code, content_type, content);
 }
 
+//...............................................................................
+//  WEBIF::sendFile
+//...............................................................................
 void WEBIF::sendFile(const String &description, int code, char *content_type, const String filePath) {
-    
-  
   // http://esp8266.github.io/Arduino/versions/2.0.0/doc/filesystem.html
   // https://github.com/pellepl/spiffs/wiki/Using-spiffs
   File f;
   
-  info("serving "+description);
-  debug("reading " + filePath + "... ");
+  sysUtils.logging.info("serving "+description);
+  sysUtils.logging.debug("reading " + filePath + "... ");
   if (SPIFFS.exists(filePath)) {
     f = SPIFFS.open(filePath, "r");
     if (f) {
-      debug("opened.");
+      sysUtils.logging.debug("opened.");
       webServer.send(code, content_type, subst(f.readString()));
       f.close();
     } else {
-      error("cannot open "+filePath);
+      sysUtils.logging.error("cannot open "+filePath);
     }
   } else {
-      error("file "+filePath+" does not exist.");
+      sysUtils.logging.error("file "+filePath+" does not exist.");
   }  
 
 }
 
+//...............................................................................
+//  WEBIF::rootPageHandler
+//...............................................................................
 void WEBIF::rootPageHandler() {
   
-  info("serving root page...");
+  sysUtils.logging.info("serving root page...");
   
   // Debug only
   //Serial.println("Headers:");
   //for(int i= 0; i< webServer.headers(); Serial.println(webServer.header(i++)));
   
   if(webServer.hasHeader("User-Agent")) {
-    info("User-Agent: "+webServer.header("User-Agent"));
+    sysUtils.logging.info("User-Agent: "+webServer.header("User-Agent"));
   }
   
   bool authenticated= false;
@@ -168,7 +164,7 @@ void WEBIF::rootPageHandler() {
   // check for cookie
   if(webServer.hasHeader("Cookie")) {
     String cookie = webServer.header("Cookie");
-    info("client provided cookie: "+cookie);
+    sysUtils.logging.info("client provided cookie: "+cookie);
     // check if cookie corresponds to active session
     authenticated= auth.checkSession(cookie.substring(10));
   } else {
@@ -181,31 +177,34 @@ void WEBIF::rootPageHandler() {
     
     // reboot
     if(action == "reboot") {
-      info("action: reboot");
+      sysUtils.logging.info("action: reboot");
       webServer.send(200, "text/plain", "true");
-      reboot(); // never returns
+      sysUtils.esp_tools.reboot(); // never returns
     }
     // config
     if(action == "apply") {
-      info("action: apply config");
+      sysUtils.logging.info("action: apply config");
       // https://code.tutsplus.com/tutorials/jquery-mobile-framework-a-forms-tutorial--mobile-4500
       applyConfiguration();
       webServer.send(200, "text/plain", "true");
     } else if(action == "config") {
-      info("action: get config");
+      sysUtils.logging.info("action: get config");
       webServer.send(200, "application/json", getConfiguration());
     } else {
       // show dashboard
-      info("request authenticated.");
+      sysUtils.logging.info("request authenticated.");
       sendFile("dashboard", 200, "text/html;charset=UTF-8", "/web/ui.html");
     }
   } else {
     // send user to login page  
-    info("request not authenticated.");
+    sysUtils.logging.info("request not authenticated.");
     sendFile("login page", 200, "text/html;charset=UTF-8", "/web/login.html");
   }
 }
 
+//...............................................................................
+//  WEBIF::authPageHandler
+//...............................................................................
 void WEBIF::authPageHandler() {
  
   String action= webServer.arg("action");
@@ -218,7 +217,7 @@ void WEBIF::authPageHandler() {
     
     if(auth.checkPassword(username, password)) {
       // password ok
-      info("user "+username+" authenticated");
+      sysUtils.logging.info("user "+username+" authenticated");
       String SessionID= auth.createSession(username);
       webServer.sendHeader("Location","/");
       webServer.sendHeader("Cache-Control","no-cache");
@@ -227,7 +226,7 @@ void WEBIF::authPageHandler() {
       
     } else {
       // password not ok
-      info("user "+username+" authentification failed");
+      sysUtils.logging.info("user "+username+" authentification failed");
       webServer.sendHeader("Location","/");
       webServer.sendHeader("Cache-Control","no-cache");
       webServer.send(200, "text/plain", "false");
@@ -237,7 +236,7 @@ void WEBIF::authPageHandler() {
   } else if(action == "logout") {
     
     // --- logout
-    info("logging out");
+    sysUtils.logging.info("logging out");
     webServer.sendHeader("Location","/");
     webServer.sendHeader("Cache-Control","no-cache");
     webServer.sendHeader("Set-Cookie","SessionID=0");
@@ -249,7 +248,6 @@ void WEBIF::authPageHandler() {
 //...............................................................................
 //  404 file not found
 //...............................................................................
-
 void WEBIF::handleNotFound() {
 
   String message = "File Not Found\n\n";

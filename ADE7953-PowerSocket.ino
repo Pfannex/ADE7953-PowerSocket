@@ -14,32 +14,32 @@
 
 ********************************************************************************/
 
-#include "BasicTemplate.h"
-BasicTemplate bt;
+#include "TemplateController.h"
+TemplateController tc;
 
 
 void setup() {  
   Serial.begin(115200); 
   Serial.println("");
   
-  bt.h.checkFlash();  
-  bt.startPeriphery();
-  bt.ffs.mount();  
-  bt.startConnections();
+  tc.sysUtils.esp_tools.checkFlash();  
+  tc.startPeriphery();
+  tc.ffs.mount();  
+  tc.startConnections();
 
   
-  //bt.ffs.TEST();
+  //tc.ffs.TEST();
   
 }  
 
 void loop() {
-  bt.handle();
+  tc.handle();
   
-  //bt.i2c.lcd.clear();
-  //bt.ffs.i2c.lcd.println("Hello World!", 2);
+  //tc.i2c.lcd.clear();
+  //tc.ffs.i2c.lcd.println("Hello World!", 2);
   
-  //bt.handle_connections(); 
-  //bt.TimerUpdate();
+  //tc.handle_connections(); 
+  //tc.TimerUpdate();
   
 }
 

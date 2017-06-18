@@ -10,6 +10,9 @@
   
   #include "FFS.h"
   #include "Auth.h"
+  #include "SysUtils.h"
+  #include "FS.h"
+  #include "Hash.h"
 
   #include <functional>
   typedef std::function<void(void)> CallbackFunction;
@@ -17,7 +20,6 @@
 //###############################################################################
 //  web interface 
 //###############################################################################
-  
 // https://links2004.github.io/Arduino/index.html
 
 class WEBIF {
@@ -30,6 +32,7 @@ private:
   ESP8266WebServer webServer;
   ESP8266HTTPUpdateServer httpUpdater;
   FFS& ffs;
+  SysUtils sysUtils;
 
   // authenticator
   Auth auth;

@@ -1,12 +1,14 @@
-
-#include <Arduino.h>
+#pragma once
+  #include <Arduino.h>
 
 //###############################################################################
-//  logging
+//  API 
 //###############################################################################
+class API{
+public:
+  API();
+  
+private:
 
+};
 
-void info(const String &msg);
-void error(const String &msg);
-void debug(const String &msg);
-void debugMem();

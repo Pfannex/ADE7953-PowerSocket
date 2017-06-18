@@ -1,10 +1,10 @@
-#include "BasicTemplate.h"
+#include "TemplateController.h"
 #include "Logging.h"
 
 //###############################################################################
-//  BasicTemplate
+//  TemplateController
 //###############################################################################
-BasicTemplate::BasicTemplate():
+TemplateController::TemplateController():
     ffs(i2c),
     mqtt(ffs, i2c, wifi),
     wifi(ffs, i2c), 
@@ -12,24 +12,24 @@ BasicTemplate::BasicTemplate():
 
 //callback Events
   //WiFi
-  wifi.set_callbacks(std::bind(&BasicTemplate::on_wifiConnected, this), 
-                     std::bind(&BasicTemplate::on_x, this));
+  wifi.set_callbacks(std::bind(&TemplateController::on_wifiConnected, this), 
+                     std::bind(&TemplateController::on_x, this));
 }
 
 //-------------------------------------------------------------------------------
-//  BasicTemplate public
+//  TemplateController public
 //-------------------------------------------------------------------------------
 //...............................................................................
 //  Start WiFi Connection
 //...............................................................................
-void BasicTemplate::startConnections(){
+void TemplateController::startConnections(){
   wifi.start();
 }
 
 //...............................................................................
 //  handle connection
 //...............................................................................
-void BasicTemplate::handle(){
+void TemplateController::handle(){
   timerUpdate();
   if (wifi.handle()){
     if (!mqtt.handle()){
@@ -47,14 +47,14 @@ void BasicTemplate::handle(){
 //...............................................................................
 //  Start Periphery
 //...............................................................................
-void BasicTemplate::startPeriphery(){
+void TemplateController::startPeriphery(){
   i2c.start();
 }
 
 //...............................................................................
 //  EVENT Wifi has connected
 //...............................................................................
-void BasicTemplate::on_wifiConnected(){
+void TemplateController::on_wifiConnected(){
   delay(1000);
   mqtt.start();
   webif.start();
@@ -63,23 +63,23 @@ void BasicTemplate::on_wifiConnected(){
 //...............................................................................
 //  EVENT wifi x
 //...............................................................................
-void BasicTemplate::on_x(){
+void TemplateController::on_x(){
   //Serial.println("on_x");  
 }
 
 //-------------------------------------------------------------------------------
-//  BasicTemplate private
+//  TemplateController private
 //-------------------------------------------------------------------------------
 //...............................................................................
 //  idle timer
 //...............................................................................
-void BasicTemplate::timerUpdate(){
+void TemplateController::timerUpdate(){
   long now = millis();
   if (now - timerLastUpdate > timerUpdateTime){
     timerLastUpdate = now;
 
     //Serial.println("Hello World");
-    debugMem();
+    sysUtils.logging.debugMem();
 }
 }
 
