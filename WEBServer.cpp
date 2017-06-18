@@ -19,6 +19,7 @@ WEBIF::WEBIF(FFS& ffs): webServer(80), ffs(ffs) {
   // dynamic pages
   webServer.on("/", std::bind(&WEBIF::rootPageHandler, this));
   webServer.on("/auth.html", std::bind(&WEBIF::authPageHandler, this));
+  webServer.on("/api.html", std::bind(&WEBIF::apiPageHandler, this));
   webServer.onNotFound(std::bind(&WEBIF::handleNotFound, this));
   
 }
@@ -144,6 +145,23 @@ void WEBIF::sendFile(const String &description, int code, char *content_type, co
 
 }
 
+
+//...............................................................................
+//  WEBIF::checkAuthentification
+//...............................................................................
+bool WEBIF::checkAuthentification() {
+  
+  // check for cookie
+  if(webServer.hasHeader("Cookie")) {
+    String cookie = webServer.header("Cookie");
+    sysUtils.logging.info("client provided cookie: "+cookie);
+    // check if cookie corresponds to active session
+    return auth.checkSession(cookie.substring(10));
+  } else {
+    return false;
+  }
+}
+
 //...............................................................................
 //  WEBIF::rootPageHandler
 //...............................................................................
@@ -159,17 +177,8 @@ void WEBIF::rootPageHandler() {
     sysUtils.logging.info("User-Agent: "+webServer.header("User-Agent"));
   }
   
-  bool authenticated= false;
+  bool authenticated= checkAuthentification();
 
-  // check for cookie
-  if(webServer.hasHeader("Cookie")) {
-    String cookie = webServer.header("Cookie");
-    sysUtils.logging.info("client provided cookie: "+cookie);
-    // check if cookie corresponds to active session
-    authenticated= auth.checkSession(cookie.substring(10));
-  } else {
-    authenticated= false;
-  }
   
   if(authenticated) {
     
@@ -243,6 +252,20 @@ void WEBIF::authPageHandler() {
     webServer.send(200, "text/plain", "true");
   }
   
+}
+
+//...............................................................................
+//  WEBIF::apiPageHandler
+//...............................................................................
+
+
+void WEBIF::apiPageHandler() {
+ 
+  if(checkAuthentification()) {
+    webServer.send(200, "text/plain", "here can be anything");
+  } else {
+    webServer.send(200, "text/plain", "permission denied");
+  }
 }
 
 //...............................................................................

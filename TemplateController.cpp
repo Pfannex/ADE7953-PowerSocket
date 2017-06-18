@@ -1,5 +1,4 @@
 #include "TemplateController.h"
-#include "Logging.h"
 
 //###############################################################################
 //  TemplateController

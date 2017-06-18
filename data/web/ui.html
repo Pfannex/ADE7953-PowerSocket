@@ -50,6 +50,7 @@
             </div>                                                                                          
             <div data-role="content">                                                                       
                 <form id="configForm"  method="POST">                                                       
+                    <input type="hidden" name="action" value="apply"/>
                     <div data-role="collapsible">                                                           
                         <h1>Device</h1>                                                                     
                         <div data-role="fieldcontain">                                                      
@@ -58,11 +59,11 @@
                         </div>                                                                              
                         <div data-role="fieldcontain">                                                      
                             <label for="device_username">Username</label>                                   
-                            <input type="text" id="device_username" />                                      
+                            <input type="text" id="device_username" name="device_username"/>                                      
                         </div>                                                                              
                         <div data-role="fieldcontain">                                                      
                             <label for="device_password">Password</label>                                   
-                            <input type="password" id="device_password" />                                      
+                            <input type="password" id="device_password" name="device_password"/>                                      
                         </div>                                                                              
                         <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" id="reboot" onClick="reboot()">Reboot</a>                                                    
                     </div>                                                                                  
@@ -71,11 +72,11 @@
                         <input type="checkbox" data-role="flipswitch" data-on-text="On" data-off-text="Off" id="wifi" name="wifi" checked>
                         <div data-role="fieldcontain">
                             <label for="wifi_ssid">SSID</label>
-                            <input type="text" id="wifi_ssid" />
+                            <input type="text" id="wifi_ssid" name="wifi_ssid"/>
                         </div>
                         <div data-role="fieldcontain">
                             <label for="wifi_password">Password</label>
-                            <input type="password" id="wifi_password" />
+                            <input type="password" id="wifi_password" name="wifi_password"/>
                         </div>
                         <input type="checkbox" data-role="flipswitch" data-on-text="DHCP" data-off-text="Manual"
                         	   id="wifi_dhcp" name="wifi_dhcp"
@@ -166,7 +167,6 @@
                             <input type="text" id="mqtt_port" />
                         </div>
                     </div>
-                    <input type="hidden" name="action" value="apply"/>
                     <a data-role="button" data-icon="check" onClick="apply()">Apply</a>
                 </form>
             </div>

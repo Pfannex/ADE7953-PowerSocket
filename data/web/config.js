@@ -3,8 +3,35 @@
 //
 
 $(document).ready( function() {
+  config();
 }
 );
+
+
+//
+// check if alive
+//
+function alive() {
+        $.ajax({
+                type: "POST",
+                url: "./api.html",
+                data: "input={ vvvv }",
+                success: function() {    
+                          return true;
+                }
+        });
+        return false;
+}
+
+function reloadIfAlive() {
+ 
+  if(alive()) {
+    window.location="/";
+  } else {
+   setTimeout( reloadIfAlive(), 5000); 
+  }
+    
+}
 
 //
 // post action reboot
@@ -18,9 +45,7 @@ function reboot() {
     {     type: "POST",
           url: "/",
           data: "action=reboot",
-          success: function() { 
-            setTimeout( function() { window.location="/"; }, 20000); 
-          }
+          success: function() { reloadIfAlive;  }
     }
   );
   

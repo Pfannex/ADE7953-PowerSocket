@@ -36,6 +36,7 @@ private:
 
   // authenticator
   Auth auth;
+  bool checkAuthentification();
   
   // number of pages served
   long numPagesServed= 0;
@@ -49,6 +50,7 @@ private:
   // page handler
   void rootPageHandler();
   void authPageHandler();
+  void apiPageHandler();
   void handleNotFound();
   
   // variable substitution
