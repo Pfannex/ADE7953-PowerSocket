@@ -1,6 +1,10 @@
 #pragma once
   #include <Arduino.h>
+  #include "Setup.h"
   #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino  
+  #include <WiFiUdp.h>
+  #include <NTPClient.h>
+  #include <TimeLib.h> 
 
 //###############################################################################
 //  NET WiFi/LAN
@@ -12,6 +16,34 @@ public:
   IPAddress strToIP(String IP);   
   char* string2char(String command);
   String macAddress();
+};
+
+//###############################################################################
+//  NTP clock
+//###############################################################################
+class Clock{
+public:
+  Clock();
+  void start();
+  void update();
+  String getTime();
+  
+  
+private:
+  WiFiUDP ntpUDP;
+  NTPClient ntpClient;
+};
+
+//###############################################################################
+//  NTP clock
+//###############################################################################
+class Timer{
+public:
+  Timer();
+  void start();
+  void update();
+  
+private:
 };
 
 //###############################################################################
@@ -49,6 +81,8 @@ class SysUtils{
 public:
   SysUtils();
   NET net;
+  Clock clock;
+  Timer timer;
   ESP_Tools esp_tools;
   LOGGING logging;
 };

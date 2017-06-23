@@ -7,9 +7,8 @@ TemplateController::TemplateController():
     ffs(i2c),
     mqtt(ffs, i2c, wifi),
     wifi(ffs, i2c), 
-    webif(ffs),
-    ntpClient(ntpUDP, "europe.pool.ntp.org", 3600,1000){  
-
+    webif(ffs){
+ 
 //callback Events
   //WiFi
   wifi.set_callbacks(std::bind(&TemplateController::on_wifiConnected, this), 
@@ -31,6 +30,8 @@ void TemplateController::startConnections(){
 //...............................................................................
 void TemplateController::handle(){
   timerUpdate();
+  sysUtils.timer.update();
+
   if (wifi.handle()){
     if (!mqtt.handle()){
       Serial.println("MQTT has disconnected!");
@@ -58,8 +59,10 @@ void TemplateController::on_wifiConnected(){
   delay(1000);
   mqtt.start();
   webif.start();
-  ntpClient.begin(); 
+  sysUtils.clock.start();
+  sysUtils.timer.start();
 }
+
 //...............................................................................
 //  EVENT wifi x
 //...............................................................................
@@ -81,9 +84,10 @@ void TemplateController::timerUpdate(){
     //Serial.println("Hello World");
     sysUtils.logging.debugMem();
 	
-	//move to 1h-timer
-	ntpClient.update();
-	sysUtils.logging.info(ntpClient.getFormattedTime());
+    //move to 1h-timer
+    sysUtils.clock.update();
+    sysUtils.logging.info(sysUtils.clock.getTime());
+
   }
 }
 

@@ -28,8 +28,8 @@ void setup() {
   tc.startConnections();
 
   
-  tc.api.set("/Hello/World/foo/bar", "arg1,arg2,3,4,5");
-  tc.api.set("/Hello/World/foo/bar arg1,arg2,3,4,5");
+  //tc.api.set("/Hello/World/foo/bar", "arg1,arg2,3,4,5");
+  //tc.api.set("/Hello/World/foo/bar arg1,arg2,3,4,5");
   
 }  
 

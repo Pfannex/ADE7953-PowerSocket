@@ -10,9 +10,6 @@
   #include "oWire.h"
   #include "I2C.h"
  
-  #include <NTPClient.h>
-  #include <WiFiUdp.h>
- 
 //###############################################################################
 //  BasicTemplate
 //###############################################################################
@@ -40,9 +37,6 @@ public:
   OWIRE oWire; 
  
 private:
-  WiFiUDP ntpUDP;
-  NTPClient ntpClient;
-
   void timerUpdate();
   long timerLastUpdate;
   long timerUpdateTime = 5000;
