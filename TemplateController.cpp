@@ -7,7 +7,8 @@ TemplateController::TemplateController():
     ffs(i2c),
     mqtt(ffs, i2c, wifi),
     wifi(ffs, i2c), 
-    webif(ffs) {  
+    webif(ffs),
+    ntpClient(ntpUDP, "europe.pool.ntp.org", 3600,1000){  
 
 //callback Events
   //WiFi
@@ -57,7 +58,7 @@ void TemplateController::on_wifiConnected(){
   delay(1000);
   mqtt.start();
   webif.start();
- 
+  ntpClient.begin(); 
 }
 //...............................................................................
 //  EVENT wifi x
@@ -79,7 +80,11 @@ void TemplateController::timerUpdate(){
 
     //Serial.println("Hello World");
     sysUtils.logging.debugMem();
-}
+	
+	//move to 1h-timer
+	ntpClient.update();
+	sysUtils.logging.info(ntpClient.getFormattedTime());
+  }
 }
 
 
