@@ -29,11 +29,26 @@ public:
   void start();
   void update();
   time_t t;
-  String getTime();
+  
+  int _day;
+  int _month;
+  int _year;
+  int _dayOfWeek;
+  int _hour;
+  int _minute;
+  int _second;
+  long _milliSecond;
+  String strDate;
+  String strTime;
+  String strTime_ms;
+  String strDateTime;
+  String strDateTime_ms;
   
 private:
   WiFiUDP ntpUDP;
   NTPClient ntpClient;
+  void ntp_timerUpdate();
+  long ntp_timerLastUpdate;
 };
 
 //###############################################################################
@@ -89,3 +104,4 @@ public:
   ESP_Tools esp_tools;
   LOGGING logging;
 };
+

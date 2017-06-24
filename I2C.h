@@ -1,7 +1,7 @@
 #pragma once
   #include <Arduino.h>
   #include "Setup.h"
-  #include <Wire.h>             //I²C
+  #include <Wire.h>             //IÂ²C
   #include <SSD1306.h>
 
 //###############################################################################
@@ -31,6 +31,7 @@ public:
 private:
 
 };
+
 
 
 

@@ -17,10 +17,19 @@
 #include "TemplateController.h"
 TemplateController tc;
 
+//void callBack1(Task* me);
+//void callBack2(Task* me);
+
+//Task t1(0, callBack1);
+//Task t2(2000, callBack2);
+
 
 void setup() {  
   Serial.begin(115200); 
   Serial.println("");
+  
+  //SoftTimer.add(&t1);
+  //SoftTimer.add(&t2);
   
   tc.sysUtils.esp_tools.checkFlash();  
   tc.startPeriphery();
@@ -43,6 +52,15 @@ void loop() {
   //tc.TimerUpdate();
   
 }
+
+/*
+void callBack1(Task* me) {
+  tc.handle();
+}
+void callBack2(Task* me) {
+  Serial.println("Hello TASK");
+}*/
+
 
 
 

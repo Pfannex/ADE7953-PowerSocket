@@ -74,3 +74,4 @@ long Auth::rand(long max) {
   }
   return random(max);
 }
+

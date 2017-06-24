@@ -21,3 +21,4 @@ private:
     long seed= 0;
     long rand(long max);
 };
+

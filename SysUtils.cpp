@@ -68,7 +68,7 @@ String NET::macAddress() {
 //  NTP clock public
 //-------------------------------------------------------------------------------
 Clock::Clock():
-       ntpClient(ntpUDP, NTP_SERVER, 7200, 1000){
+       ntpClient(ntpUDP, NTP_SERVER, SUMMER_TIME, 30000){
 }
 
 //...............................................................................
@@ -76,32 +76,59 @@ Clock::Clock():
 //...............................................................................
 void Clock::start(){
   ntpClient.begin();
-  update();
+  ntpClient.update();
 }
 //...............................................................................
 //  update ntp
 //...............................................................................
 void Clock::update(){
-  ntpClient.update();
-  t = ntpClient.getEpochTime();
+  long now = millis();
+  if (now - ntp_timerLastUpdate > NTP_UPDATE_TIME){
+    char txt[1024];
+    sprintf(txt, "%s %5s %s", strDateTime_ms.c_str(), "INFO", "NTP update");
+    Serial.println(txt);
+    ntp_timerLastUpdate = now;
+    t = ntpClient.getEpochTime();
+  }else{
+    t = t + 1;
+  }
   
-  /*
-  Serial.println(hour(t));
-  hour(t);          // returns the hour for the given time t
-  minute(t);        // returns the minute for the given time t
-  second(t);        // returns the second for the given time t
-  day(t);           // the day for the given time t
-  weekday(t);       // day of the week for the given time t
-  month(t);         // the month for the given time t
-  year(t);          // the year for the given time t 
-  */
-}
+  //Sommerzeit = letzter Sonntag im März von 2h -> 3h
+  if (month(t) == 3 and day(t) >= 25 and weekday(t) == 7 and hour(t) == 2) ntpClient.setTimeOffset(SUMMER_TIME);
+  //Winterzeit = letzter Sonntag im Oktober von 3h -> 2h
+  if (month(t) == 10 and day(t) >= 25 and weekday(t) == 7 and hour(t) == 3) ntpClient.setTimeOffset(WINTER_TIME);
 
-//...............................................................................
-//  get time
-//...............................................................................
-String Clock::getTime(){
-  return ntpClient.getFormattedTime();
+  _day         = day(t);
+  _month       = month(t);
+  _year        = year(t);
+  _dayOfWeek   = weekday(t);
+  _hour        = hour(t);
+  _minute      = minute(t);
+  _second      = second(t);
+ 
+  long ms = millis();
+  long d= ms/86400000;
+  ms-= d*86400000;
+  long h= ms/3600000;
+  ms-= h*3600000;
+  long m= ms/60000;
+  ms-= m*60000;
+  long s= ms/1000;
+  ms-= s*1000;
+  _milliSecond = ms;
+
+  char txt[1024];
+  sprintf(txt, "%02d.%02d.%04d", 
+               _day, _month, _year);
+  strDate = txt;
+  sprintf(txt, "%02d:%02d:%02d", 
+               _hour, _minute, _second);
+  strTime = txt;
+  sprintf(txt, "%02d:%02d:%02d.%03d", 
+               _hour, _minute, _second, _milliSecond);
+  strTime_ms = txt;
+  strDateTime = strDate + " - " + strTime;
+  strDateTime_ms = strDate + " - " + strTime_ms;
 }
 
 //-------------------------------------------------------------------------------
@@ -211,35 +238,8 @@ LOGGING::LOGGING(Clock& clock):
 //...............................................................................
 void LOGGING::log(const String &channel, const String &msg) {
   char txt[1024];
-  
-  long ms= millis();
-  long d= ms/86400000;
-  ms-= d*86400000;
-  long h= ms/3600000;
-  ms-= h*3600000;
-  long m= ms/60000;
-  ms-= m*60000;
-  long s= ms/1000;
-  ms-= s*1000;
-  
-  //sprintf(txt, "%4d - %02d:%02d:%02d.%03d %5s %s", d, h, m, s, ms, 
-  //        channel.c_str(), msg.c_str());
-  //Serial.println(txt);*/
-  
-  sprintf(txt, "%02d.%02d.%04d - %02d:%02d:%02d.%03d %5s %s", 
-               day(clock.t), month(clock.t), year(clock.t), hour(clock.t), minute(clock.t), second(clock.t), ms, 
-               channel.c_str(), msg.c_str());
+  sprintf(txt, "%s %5s %s", clock.strDateTime_ms.c_str(), channel.c_str(), msg.c_str());
   Serial.println(txt);
-
-/*  
-  hour(clock.t);          // returns the hour for the given time t
-  minute(clock.t);        // returns the minute for the given time t
-  second(clock.t);        // returns the second for the given time t
-  day(clock.t);           // the day for the given time t
-  weekday(clock.t);       // day of the week for the given time t
-  month(clock.t);         // the month for the given time t
-  year(clock.t);          // the year for the given time t 
-*/  
 }
 
 //...............................................................................
@@ -271,4 +271,5 @@ void LOGGING::debugMem() {
   sprintf(msg, "free memory: %d", esp_tools.freeHeapSize());
   debug(msg);
 }
+
 

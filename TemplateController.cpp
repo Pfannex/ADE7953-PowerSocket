@@ -29,11 +29,9 @@ void TemplateController::startConnections(){
 //  handle connection
 //...............................................................................
 void TemplateController::handle(){
-  //move to 1h-timer
-  sysUtils.clock.update();
-
+  
   timerUpdate();
-  sysUtils.timer.update();
+  //sysUtils.timer.update();
 
   if (wifi.handle()){
     if (!mqtt.handle()){
@@ -60,6 +58,7 @@ void TemplateController::startPeriphery(){
 //...............................................................................
 void TemplateController::on_wifiConnected(){
   sysUtils.clock.start();
+  sysUtils.clock.update();
   sysUtils.timer.start();
   delay(200);
   mqtt.start();
@@ -81,13 +80,14 @@ void TemplateController::on_x(){
 //...............................................................................
 void TemplateController::timerUpdate(){
   long now = millis();
-  if (now - timerLastUpdate > timerUpdateTime){
-    timerLastUpdate = now;
-
-    //Serial.println("Hello World");
+  if (now - timerLastUpdate_1s > timer_1s){
+    timerLastUpdate_1s = now;
+    
+	sysUtils.clock.update();
     sysUtils.logging.debugMem(); 
   }
 }
+
 
 
 

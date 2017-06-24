@@ -38,6 +38,7 @@ public:
  
 private:
   void timerUpdate();
-  long timerLastUpdate;
-  long timerUpdateTime = 5000;
+  long timerLastUpdate_1s;
+  long timer_1s = 1000;
 };
+
