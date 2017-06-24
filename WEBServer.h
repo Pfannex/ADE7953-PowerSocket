@@ -7,45 +7,59 @@
   #include <DNSServer.h>
   #include <ESP8266HTTPUpdateServer.h>
   #include <ESP8266httpUpdate.h>
+  
+  #include "FFS.h"
+  #include "Auth.h"
+  #include "SysUtils.h"
+  #include "FS.h"
+  #include "Hash.h"
 
   #include <functional>
   typedef std::function<void(void)> CallbackFunction;
   
 //###############################################################################
-//  WEB-Interface 
+//  web interface 
 //###############################################################################
-class WEBIF{
+// https://links2004.github.io/Arduino/index.html
+
+class WEBIF {
 public:
-  WEBIF();
+  WEBIF(FFS& ffs);
   void start();
   void handle();
-  
-  //void set_cfgPointer(CFG *p);  
-  //void set_sensorPointer(TDS18B20_Sensors *p, THTU21_Sensors *q, TBMP180_Sensors *r);  
-  //void set_saveConfig_Callback(CallbackFunction c);
-  //void updateFirmware();
   
 private:
   ESP8266WebServer webServer;
   ESP8266HTTPUpdateServer httpUpdater;
+  FFS& ffs;
+  SysUtils sysUtils;
+
+  // authenticator
+  Auth auth;
+  bool checkAuthentification();
   
-  //CallbackFunction saveConfig_Callback;
-  //CFG *cfg;
-  //TDS18B20_Sensors *DS18B20_Sensors; 
-  //THTU21_Sensors *HTU21_Sensors; 
-  //TBMP180_Sensors *BMP180_Sensors; 
+  // number of pages served
+  long numPagesServed= 0;
   
-  //Page controls----------------
+  // serve file with some logging
+  void send(const String &description, int code, char *content_type, const String &content);
+  
+  // send a file
+  void sendFile(const String &description, int code, char *content_type, const String filePath);
+  
+  // page handler
   void rootPageHandler();
-  void testPageHandler();
-  //void sensorPageHandler();
-
-  //void wlanPageHandler();
-  //void gpioPageHandler();
-  //void cfgPageHandler();
+  void authPageHandler();
+  void apiPageHandler();
   void handleNotFound();
-
-  //helpers----------------------------
-  //String IPtoString(IPAddress ip);
+  
+  // variable substitution
+  String subst(String data);
+  
+  // configuration 
+  void applyConfiguration();
+  String getConfiguration();
+  
 };
+
 

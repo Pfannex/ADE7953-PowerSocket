@@ -7,6 +7,20 @@
   #include "I2C.h"
  
 //###############################################################################
+//  stringFile
+//###############################################################################
+
+class FFSstringFile {
+public:
+    FFSstringFile(String filePath);
+    String filePath;
+    String data;
+    
+    void loadFile();
+    String read();
+};
+
+//###############################################################################
 //  jsonFile
 //###############################################################################
 class FFSjsonFile{
@@ -22,17 +36,19 @@ public:
   String readItem(String itemName);
   String readItem(int item);
   bool writeItem(String itemName, String value);
+  bool saveFile();
+  
 private: 
   String readJsonString();
   int parseJsonObject(JsonObject& jsonObject);
   void parseJsonArray(JsonArray& jsonArray);
 };
  
-
 //###############################################################################
 //  FFS 
 //###############################################################################
-class FFS{
+
+class FFS {
 public:
   FFS(I2C& i2c);
   I2C& i2c;
@@ -47,7 +63,9 @@ public:
   FFSjsonFile myFile;
 
   void mount(); 
+  String loadString(String filePath);
   void TEST();
 private:
 };
+
 

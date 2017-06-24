@@ -1,18 +1,19 @@
 #pragma once
 
-//BasicTemplate
-  #include "Helpers.h"
+//TemplateController
+  #include "SysUtils.h"
+  #include "API.h"
   #include "FFS.h"
   #include "WIFI.h"
   #include "WEBServer.h"
   #include "MQTT.h"
   #include "oWire.h"
   #include "I2C.h"
-  
+ 
 //###############################################################################
 //  BasicTemplate
 //###############################################################################
-class BasicTemplate{
+class TemplateController{
 public:
   
   void startConnections();  
@@ -25,17 +26,19 @@ public:
   void on_x();
 
 //classes
-  BasicTemplate();
-  Helpers h;
+  TemplateController();
+  SysUtils sysUtils;
+  API api;
   FFS ffs;
   WIFI wifi;
   MQTT mqtt;
-  WEBIF webServer;  
+  WEBIF webif;  
   I2C i2c;
   OWIRE oWire; 
  
 private:
   void timerUpdate();
-  long timerLastUpdate;
-  long timerUpdateTime = 5000;
+  long timerLastUpdate_1s;
+  long timer_1s = 1000;
 };
+

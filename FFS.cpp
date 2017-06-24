@@ -47,6 +47,17 @@ void FFS::mount(){
 }
 
 //...............................................................................
+//  load string from file system
+//...............................................................................
+
+String FFS::loadString(String filePath) {
+  
+  FFSstringFile FS(filePath);
+  FS.loadFile();
+  return FS.read();
+}
+
+//...............................................................................
 //  TEST
 //...............................................................................
 void FFS::TEST(){
@@ -60,6 +71,7 @@ void FFS::TEST(){
   cfg.writeItem("wifiSSID", "Pf@nne-NET");
   cfg.writeItem("wifiPSK", "Pf@nneNETwlan_ACCESS");
   cfg.writeItem("mqttServer", "192.168.1.203");
+  cfg.saveFile();
   
   Serial.println(cfg.readItem("apName"));
   Serial.println(cfg.readItem("wifiSSID"));
@@ -76,6 +88,51 @@ void FFS::TEST(){
 //-------------------------------------------------------------------------------
 //  FFS private
 //-------------------------------------------------------------------------------
+
+//###############################################################################
+//  FFSstringFile
+//###############################################################################
+
+FFSstringFile::FFSstringFile(String filePath): 
+  filePath(filePath) {
+}
+
+//-------------------------------------------------------------------------------
+//  FFSstringFile public
+//-------------------------------------------------------------------------------
+
+//...............................................................................
+//  load string from FFS file
+//...............................................................................
+
+void FFSstringFile::loadFile() {
+
+  File stringFile;
+ 
+  Serial.print("reading " + filePath + "... ");
+  if (SPIFFS.exists(filePath)) {
+    stringFile = SPIFFS.open(filePath, "r");
+    if (stringFile) {
+      Serial.println("OK");
+      data= stringFile.readString();
+      stringFile.close();
+    } else {
+      Serial.println("ERROR (open)");
+      data= "";
+    }
+  } else {
+      Serial.println("ERROR (no such file)");
+  }  
+}
+
+//...............................................................................
+//  get string
+//...............................................................................
+
+String FFSstringFile::read() {
+  
+  return data;
+}
 
 //###############################################################################
 //  FFSjsonFile
@@ -95,6 +152,23 @@ FFSjsonFile::FFSjsonFile(String filePath, int type):
 //...............................................................................
 void FFSjsonFile::loadFile(){
   root = readJsonString();
+}
+
+//...............................................................................
+//  save root string to FFS-File (for external use)
+//...............................................................................
+bool FFSjsonFile::saveFile(){
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& json = jsonBuffer.parseObject(root);
+
+  File jsonFile = SPIFFS.open(filePath, "w");
+  if (!jsonFile) {
+    Serial.println("Failed to open config file for writing");
+    return false;
+  }
+  json.printTo(jsonFile);
+  jsonFile.close(); 
+  return true;
 }
 
 //...............................................................................
@@ -123,15 +197,9 @@ bool FFSjsonFile::writeItem(String itemName, String value){
   JsonObject& json = jsonBuffer.parseObject(root);
 
   json[itemName] = value;
-  
-  File jsonFile = SPIFFS.open(filePath, "w");
-  if (!jsonFile) {
-    Serial.println("Failed to open config file for writing");
-    return false;
-  }
-  json.printTo(jsonFile);
-  jsonFile.close(); 
-  root = readJsonString();
+ 
+  root = "";           //printTo(String) is additive!!
+  json.printTo(root);  
   return true;
 }
 
@@ -203,6 +271,7 @@ void FFSjsonFile::parseJsonArray(JsonArray& jsonArray){
     }
   }
 }
+
 
 
 

@@ -14,34 +14,53 @@
 
 ********************************************************************************/
 
-#include "BasicTemplate.h"
-BasicTemplate bt;
+#include "TemplateController.h"
+TemplateController tc;
+
+//void callBack1(Task* me);
+//void callBack2(Task* me);
+
+//Task t1(0, callBack1);
+//Task t2(2000, callBack2);
 
 
 void setup() {  
   Serial.begin(115200); 
   Serial.println("");
   
-  bt.h.checkFlash();  
-  bt.startPeriphery();
-  bt.ffs.mount();  
-  bt.startConnections();
+  //SoftTimer.add(&t1);
+  //SoftTimer.add(&t2);
+  
+  tc.sysUtils.esp_tools.checkFlash();  
+  tc.startPeriphery();
+  tc.ffs.mount();  
+  tc.startConnections();
 
   
-  //bt.ffs.TEST();
+  //tc.api.set("/Hello/World/foo/bar", "arg1,arg2,3,4,5");
+  //tc.api.set("/Hello/World/foo/bar arg1,arg2,3,4,5");
   
 }  
 
 void loop() {
-  bt.handle();
+  tc.handle();
   
-  //bt.i2c.lcd.clear();
-  //bt.ffs.i2c.lcd.println("Hello World!", 2);
+  //tc.i2c.lcd.clear();
+  //tc.ffs.i2c.lcd.println("Hello World!", 2);
   
-  //bt.handle_connections(); 
-  //bt.TimerUpdate();
+  //tc.handle_connections(); 
+  //tc.TimerUpdate();
   
 }
+
+/*
+void callBack1(Task* me) {
+  tc.handle();
+}
+void callBack2(Task* me) {
+  Serial.println("Hello TASK");
+}*/
+
 
 
 

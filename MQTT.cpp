@@ -23,7 +23,7 @@ bool MQTT::start(){
   bool MQTTOK = false;
 
   String strIP = ffs.cfg.readItem("mqttServer");
-  IPAddress IP = h.strToIP(strIP);
+  IPAddress IP = sysUtils.net.strToIP(strIP);
   int port = ffs.cfg.readItem("mqttPort").toInt();
   String deviceName = ffs.cfg.readItem("mqttDeviceName");
   String lastWillTopic = "Devices/" + deviceName;
@@ -119,4 +119,5 @@ void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length)
 //-------------------------------------------------------------------------------
 //  MQTT private
 //-------------------------------------------------------------------------------
+
 

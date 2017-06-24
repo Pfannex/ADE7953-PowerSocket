@@ -1,6 +1,6 @@
 #pragma once
   #include <Arduino.h>
-  #include "Helpers.h"
+  #include "SysUtils.h"
   #include "Setup.h"
   #include "FFS.h"
   #include "WIFI.h"
@@ -15,7 +15,7 @@ public:
   FFS& ffs;
   I2C& i2c;
   WIFI& wifi;
-  Helpers h;
+  SysUtils sysUtils;
 
   bool start();
   bool handle();
@@ -26,4 +26,5 @@ public:
 private:
   PubSubClient client;
 };
+
 

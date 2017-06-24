@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>ESP8266 P&amp;N Authentification</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="lib/jquery.js"></script>
+<script src="lib/jquery.mobile.js"></script>
+<link href="css/jquery.mobile.css" rel="stylesheet" />
+<script src="auth.js"></script>
+</head>
+<body>
+<div data-role="page" data-theme="b">
+	<div data-role="header">
+                <a href="https://github.com/Pfannex/ADE7953_Breakoutboard/wiki" target="_blank" 
+                id="info" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left">Info</a>
+		<h1>ESP8266 P&amp;N Authentification</h1>
+	</div>
+	<div data-role="content">
+		<form id="loginForm" method="POST">
+			<div data-role="fieldcontain" id="credentials">
+				<label for="username">Username</label>
+				<input type="text" name="username" id="username"/>
+			</div>
+			<div data-role="fieldcontain">
+				<label for="password">Password</label>
+				<input type="password" name="password" id="password"/>                                   
+			</div>
+			<a data-role="button" class="ui-btn ui-icon-check ui-btn-icon-left" onClick="login()">Login</a>
+		</form>
+	</div>
+	<div data-role="popup" id="failed" class="ui-content" data-position-to="#loginForm">
+		<a href="#" data-rel="back" 
+			class="ui-btn ui-corner-all ui-shadow ui-btn 
+			ui-icon-delete ui-btn-icon-notext 
+			ui-btn-right">Close</a>
+		<p>Login failed.</p>
+	</div>
+	<div data-role="footer">
+          <div id="message"></div>
+          <div class="ui-grid-a">
+                <div class="ui-block-a">
+			MAC Address<br>$DATA(MACADDRESS)
+                </div>
+                <div class="ui-block-b">
+                        Device ID<br>$DATA(DEVICEID)
+                </div>
+          </div>
+	</div>
+
+</div>
+</body>
+</html>
+
