@@ -5,7 +5,7 @@
   
 - **Firmware**
   - SysUtils -> CLASS
-  - basic NTP
+  - NTP Softclock
 
 - **FHEM**
   - 
