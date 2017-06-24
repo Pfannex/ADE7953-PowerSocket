@@ -1,12 +1,11 @@
 #ToDo
-Stand: 17.06.2017 / 14:30h  
-letzte Änderung: Pf@nne
 
 - **Hardware**
   
 - **Firmware**
   - ~~writeItem - separieren write / saveConfig~~
   - ~~sysUtils -> CLASS~~
+  - SoftClock und SoftTimer 
   - NTP jede h
   - start AP
 
