@@ -106,16 +106,16 @@ void Clock::update(){
   _minute      = minute(t);
   _second      = second(t);
  
-  long ms = millis();
-  long d= ms/86400000;
-  ms-= d*86400000;
-  long h= ms/3600000;
-  ms-= h*3600000;
-  long m= ms/60000;
-  ms-= m*60000;
-  long s= ms/1000;
-  ms-= s*1000;
-  _milliSecond = ms;
+  long tmp = 0;
+  _milliSecond  = millis();
+  tmp           = _milliSecond/86400000;
+  _milliSecond -= tmp*86400000;
+  tmp           = _milliSecond/3600000;
+  _milliSecond -= tmp*3600000;
+  tmp           = _milliSecond/60000;
+  _milliSecond -= tmp*60000;
+  tmp           = _milliSecond/1000;
+  _milliSecond -= tmp*1000;
 
   char txt[1024];
   sprintf(txt, "%02d.%02d.%04d", 
