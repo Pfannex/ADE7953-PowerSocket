@@ -5,6 +5,7 @@
   
 - **Firmware**
   - SysUtils -> CLASS
+  - basic NTP
 
 - **FHEM**
   - 
