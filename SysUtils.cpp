@@ -3,7 +3,8 @@
 //###############################################################################
 //  SysUtils
 //###############################################################################
-SysUtils::SysUtils(){
+SysUtils::SysUtils():
+          logging(clock){
 }
 
 //###############################################################################
@@ -67,7 +68,7 @@ String NET::macAddress() {
 //  NTP clock public
 //-------------------------------------------------------------------------------
 Clock::Clock():
-       ntpClient(ntpUDP, NTP_SERVER, 3600, 1000){
+       ntpClient(ntpUDP, NTP_SERVER, 7200, 1000){
 }
 
 //...............................................................................
@@ -75,12 +76,25 @@ Clock::Clock():
 //...............................................................................
 void Clock::start(){
   ntpClient.begin();
+  update();
 }
 //...............................................................................
 //  update ntp
 //...............................................................................
 void Clock::update(){
   ntpClient.update();
+  t = ntpClient.getEpochTime();
+  
+  /*
+  Serial.println(hour(t));
+  hour(t);          // returns the hour for the given time t
+  minute(t);        // returns the minute for the given time t
+  second(t);        // returns the second for the given time t
+  day(t);           // the day for the given time t
+  weekday(t);       // day of the week for the given time t
+  month(t);         // the month for the given time t
+  year(t);          // the year for the given time t 
+  */
 }
 
 //...............................................................................
@@ -185,7 +199,8 @@ long ESP_Tools::chipID() {
 //###############################################################################
 //  logging
 //###############################################################################
-LOGGING::LOGGING(){
+LOGGING::LOGGING(Clock& clock):
+         clock(clock){
 }
 
 //-------------------------------------------------------------------------------
@@ -196,6 +211,7 @@ LOGGING::LOGGING(){
 //...............................................................................
 void LOGGING::log(const String &channel, const String &msg) {
   char txt[1024];
+  
   long ms= millis();
   long d= ms/86400000;
   ms-= d*86400000;
@@ -206,9 +222,24 @@ void LOGGING::log(const String &channel, const String &msg) {
   long s= ms/1000;
   ms-= s*1000;
   
-  sprintf(txt, "%4d:%02d:%02d:%02d.%03d %5s %s", d, h, m, s, ms, 
-          channel.c_str(), msg.c_str());
+  //sprintf(txt, "%4d - %02d:%02d:%02d.%03d %5s %s", d, h, m, s, ms, 
+  //        channel.c_str(), msg.c_str());
+  //Serial.println(txt);*/
+  
+  sprintf(txt, "%02d.%02d.%04d - %02d:%02d:%02d.%03d %5s %s", 
+               day(clock.t), month(clock.t), year(clock.t), hour(clock.t), minute(clock.t), second(clock.t), ms, 
+               channel.c_str(), msg.c_str());
   Serial.println(txt);
+
+/*  
+  hour(clock.t);          // returns the hour for the given time t
+  minute(clock.t);        // returns the minute for the given time t
+  second(clock.t);        // returns the second for the given time t
+  day(clock.t);           // the day for the given time t
+  weekday(clock.t);       // day of the week for the given time t
+  month(clock.t);         // the month for the given time t
+  year(clock.t);          // the year for the given time t 
+*/  
 }
 
 //...............................................................................

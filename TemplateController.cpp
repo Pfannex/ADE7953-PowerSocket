@@ -29,6 +29,9 @@ void TemplateController::startConnections(){
 //  handle connection
 //...............................................................................
 void TemplateController::handle(){
+  //move to 1h-timer
+  sysUtils.clock.update();
+
   timerUpdate();
   sysUtils.timer.update();
 
@@ -56,11 +59,11 @@ void TemplateController::startPeriphery(){
 //  EVENT Wifi has connected
 //...............................................................................
 void TemplateController::on_wifiConnected(){
-  delay(1000);
-  mqtt.start();
-  webif.start();
   sysUtils.clock.start();
   sysUtils.timer.start();
+  delay(200);
+  mqtt.start();
+  webif.start();
 }
 
 //...............................................................................
@@ -82,12 +85,7 @@ void TemplateController::timerUpdate(){
     timerLastUpdate = now;
 
     //Serial.println("Hello World");
-    sysUtils.logging.debugMem();
-	
-    //move to 1h-timer
-    sysUtils.clock.update();
-    sysUtils.logging.info(sysUtils.clock.getTime());
-
+    sysUtils.logging.debugMem(); 
   }
 }
 

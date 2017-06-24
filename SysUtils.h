@@ -3,8 +3,10 @@
   #include "Setup.h"
   #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino  
   #include <WiFiUdp.h>
-  #include <NTPClient.h>
-  #include <TimeLib.h> 
+  #include <NTPClient.h>            //https://github.com/arduino-libraries/NTPClient
+  #include <TimeLib.h>              //https://github.com/PaulStoffregen/Time
+  //#include <SoftTimer.h>            //https://github.com/prampec/arduino-softtimer
+									//need https://github.com/prampec/arduino-pcimanager
 
 //###############################################################################
 //  NET WiFi/LAN
@@ -26,8 +28,8 @@ public:
   Clock();
   void start();
   void update();
+  time_t t;
   String getTime();
-  
   
 private:
   WiFiUDP ntpUDP;
@@ -63,7 +65,8 @@ public:
 //###############################################################################
 class LOGGING{
 public:
-  LOGGING();
+  LOGGING(Clock& clock);
+  Clock& clock;
   ESP_Tools esp_tools;
   
   void log(const String &channel, const String &msg);
