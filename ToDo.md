@@ -5,8 +5,8 @@
 - **Firmware**
   - ~~writeItem - separieren write / saveConfig~~
   - ~~sysUtils -> CLASS~~
-  - SoftClock und SoftTimer 
-  - NTP jede h
+  - ~~SoftClock und SoftTimer~~ 
+  - ~~NTP jede h~~
   - start AP
 
 - **UI**
