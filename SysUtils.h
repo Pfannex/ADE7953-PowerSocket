@@ -5,8 +5,6 @@
   #include <WiFiUdp.h>
   #include <NTPClient.h>            //https://github.com/arduino-libraries/NTPClient
   #include <TimeLib.h>              //https://github.com/PaulStoffregen/Time
-  //#include <SoftTimer.h>            //https://github.com/prampec/arduino-softtimer
-									//need https://github.com/prampec/arduino-pcimanager
 
 //###############################################################################
 //  NET WiFi/LAN
@@ -27,7 +25,7 @@ class Clock{
 public:
   Clock();
   void start();
-  void update();
+  void update(bool ntp); //true = NTP , false = t++
   time_t t;
   
   int _day;
@@ -47,20 +45,7 @@ public:
 private:
   WiFiUDP ntpUDP;
   NTPClient ntpClient;
-  void ntp_timerUpdate();
-  long ntp_timerLastUpdate;
-};
-
-//###############################################################################
-//  NTP clock
-//###############################################################################
-class Timer{
-public:
-  Timer();
-  void start();
-  void update();
-  
-private:
+  void setClock();
 };
 
 //###############################################################################
@@ -100,7 +85,6 @@ public:
   SysUtils();
   NET net;
   Clock clock;
-  Timer timer;
   ESP_Tools esp_tools;
   LOGGING logging;
 };

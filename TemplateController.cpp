@@ -16,23 +16,19 @@ TemplateController::TemplateController():
 }
 
 //-------------------------------------------------------------------------------
-//  TemplateController public
+//  start
 //-------------------------------------------------------------------------------
-//...............................................................................
-//  Start WiFi Connection
-//...............................................................................
-void TemplateController::startConnections(){
-  wifi.start();
+void TemplateController::start(){
+  sysUtils.esp_tools.checkFlash();  
+  startPeriphery();
+  ffs.mount();  
+  startConnections();
 }
 
 //...............................................................................
 //  handle connection
 //...............................................................................
 void TemplateController::handle(){
-  
-  timerUpdate();
-  //sysUtils.timer.update();
-
   if (wifi.handle()){
     if (!mqtt.handle()){
       Serial.println("MQTT has disconnected!");
@@ -47,19 +43,11 @@ void TemplateController::handle(){
 }
 
 //...............................................................................
-//  Start Periphery
-//...............................................................................
-void TemplateController::startPeriphery(){
-  i2c.start();
-}
-
-//...............................................................................
 //  EVENT Wifi has connected
 //...............................................................................
 void TemplateController::on_wifiConnected(){
   sysUtils.clock.start();
-  sysUtils.clock.update();
-  sysUtils.timer.start();
+  sysUtils.clock.update(true);
   delay(200);
   mqtt.start();
   webif.start();
@@ -72,23 +60,35 @@ void TemplateController::on_x(){
   //Serial.println("on_x");  
 }
 
+//...............................................................................
+//  idle timer
+//...............................................................................
+void TemplateController::t_1s_Update(){    
+  sysUtils.clock.update(false);  //t++
+}
+void TemplateController::t_short_Update(){    
+  sysUtils.logging.debugMem(); 
+}
+void TemplateController::t_long_Update(){    
+  sysUtils.clock.update(true);   //by NTP
+}
+
 //-------------------------------------------------------------------------------
 //  TemplateController private
 //-------------------------------------------------------------------------------
 //...............................................................................
-//  idle timer
+//  Start WiFi Connection
 //...............................................................................
-void TemplateController::timerUpdate(){
-  long now = millis();
-  if (now - timerLastUpdate_1s > timer_1s){
-    timerLastUpdate_1s = now;
-    
-	sysUtils.clock.update();
-    sysUtils.logging.debugMem(); 
-  }
+void TemplateController::startConnections(){
+  wifi.start();
 }
 
-
+//...............................................................................
+//  Start Periphery
+//...............................................................................
+void TemplateController::startPeriphery(){
+  i2c.start();
+}
 
 
 

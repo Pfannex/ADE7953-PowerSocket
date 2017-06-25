@@ -15,11 +15,8 @@
 //###############################################################################
 class TemplateController{
 public:
-  
-  void startConnections();  
-  void startPeriphery(); 
+  void start();
   void handle();
-  
 //Callback Events
   //WiFi   
   void on_wifiConnected();
@@ -35,10 +32,14 @@ public:
   WEBIF webif;  
   I2C i2c;
   OWIRE oWire; 
+  
+//Timer
+  void t_1s_Update();
+  void t_short_Update();
+  void t_long_Update();
  
 private:
-  void timerUpdate();
-  long timerLastUpdate_1s;
-  long timer_1s = 1000;
+  void startConnections();  
+  void startPeriphery(); 
 };
 
