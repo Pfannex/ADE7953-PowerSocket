@@ -1,14 +1,4 @@
 //
-// apply
-//
-
-$(document).ready( function() {
-  config();
-}
-);
-
-
-//
 // check if alive
 //
 function alive() {
@@ -16,7 +6,7 @@ function alive() {
                 type: "POST",
                 url: "./api.html",
                 data: "input={ vvvv }",
-                success: function() {    
+                success: function() {
                           return true;
                 }
         });
@@ -24,20 +14,20 @@ function alive() {
 }
 
 function reloadIfAlive() {
- 
+
   if(alive()) {
     window.location="/";
   } else {
-   setTimeout( reloadIfAlive(), 5000); 
+   setTimeout( reloadIfAlive(), 5000);
   }
-    
+
 }
 
 //
 // post action reboot
 //
 function reboot() {
-  
+
   // show popup
   $("#popupRebooting").popup("open");
 
@@ -48,14 +38,15 @@ function reboot() {
           success: function() { reloadIfAlive;  }
     }
   );
-  
+
 }
 
 //
 // get configuration as JSON and populate inputs
 //
-function config() {
- 
+function set_config() {
+
+  console.log("Setting configuration...")
   // form
   var configForm= $('#configForm');
 
@@ -63,36 +54,42 @@ function config() {
     {     type: "POST",
           url: "/",
           data: "action=config",
-          success: function(json) { 
+          success: function(json) {
+            // log json
             console.log(json);
-            configForm.find('input').val( function() {
+            // set inputs
+            configForm.find('input:text').val( function() {
+              console.log("Setting "+this.name+" to "+json[this.name]);
               return json[this.name];
-            })
+            });
+            // set radio groups
+            set_radio("wifi", json["wifi"]);
+            set_radio("lan", json["lan"]);
           }
     }
   );
-  
+
 }
 
 //
 // post all named fields in the form
 //
 function apply() {
- 
+
   // form
   var configForm= $('#configForm');
 
   // show popup
   $("#popupProcessing").popup("open");
-  
+
   //console.log(configForm.serialize());
-  
+
   // submit the form
   $.post("/", configForm.serialize(), function(data) {
     // hide popup
     $("#popupProcessing").popup("close");
-  });        
-        
+  });
 
-  
+
+
 }
