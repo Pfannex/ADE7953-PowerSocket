@@ -33,5 +33,6 @@ function set_radio_handlers() {
         $(document).on("change", "input[name=lan]", function() { show_details("lan_net_details", $(this), "manual"); } );
         $(document).on("change", "select[name=ntp]", function() { show_details("ntp_details", $(this), "on"); } );
         $(document).on("change", "select[name=mqtt]", function() { show_details("mqtt_details", $(this), "on"); } );
+ls
 
 }

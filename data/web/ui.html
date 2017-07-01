@@ -40,15 +40,15 @@
                         <h1>Device</h1>
                         <div data-role="fieldcontain">
                             <label for="device_name">Name</label>
-                            <input type="text" id="device_name" name="device_name" placeholder="Hostname and MQTT device name"/>
+                            <input type="text" id="device_name" name="device_name" placeholder="hostname and MQTT device name"/>
                         </div>
                         <div data-role="fieldcontain">
                             <label for="device_username">Username</label>
-                            <input type="text" id="device_username" name="device_username"/>
+                            <input type="text" id="device_username" name="device_username" placeholder="login name for user"/>
                         </div>
                         <div data-role="fieldcontain">
                             <label for="device_password">Password</label>
-                            <input type="password" id="device_password" name="device_password"/>
+                            <input type="password" id="device_password" name="device_password" placeholder"password for user"/>
                         </div>
                         <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" id="reboot" onClick="reboot()">Reboot</a>
                     </div>
@@ -62,31 +62,31 @@
                                 <input name="wifi" id="wifi-manual" value="manual" type="radio" />
                                 <label for="wifi-manual">Manual</label>
                         </fieldset></div>
-			<div id="wifi_details">
+			                  <div id="wifi_details">
                             <div data-role="fieldcontain">
                                 <label for="wifi_ssid">SSID</label>
-                                <input type="text" id="wifi_ssid" name="wifi_ssid"/>
+                                <input type="text" id="wifi_ssid" name="wifi_ssid" placeholder="wifi network the device connects to"/>
                             </div>
                             <div data-role="fieldcontain">
                                 <label for="wifi_password">Password</label>
-                                <input type="password" id="wifi_password" name="wifi_password"/>
+                                <input type="password" id="wifi_password" name="wifi_password" placeholder="password for the wifi network"/>
                             </div>
-			    <div id="wifi_net_details">
-				<hr style="visibility:hidden" />
+    			                  <div id="wifi_net_details">
+				                        <hr style="visibility:hidden" />
                                 <div data-role="fieldcontain">
                                     <label for="wifi_ip">IP Address</label>
-                                    <input type="text" id="wifi_ip" value="10.20.17.101" />
+                                    <input type="text" id="wifi_ip" name="wifi_ip" value="10.20.17.101" />
                                 </div>
                                 <div data-role="fieldcontain">
                                     <label for="wifi_netmask">Netmask</label>
-                                    <input type="text" id="wifi_netmask" value="255.255.255.0" />
+                                    <input type="text" id="wifi_netmask" name="wifi_netmask" value="255.255.255.0" />
                                 </div>
                                 <div data-role="fieldcontain">
                                     <label for="wifi_gateway">Gateway</label>
-                                    <input type="text" id="wifi_gateway" value="10.20.17.1" />
+                                    <input type="text" id="wifi_gateway" name="wifi_gateway" value="10.20.17.1" />
                                 </div>
                             </div>
-                        </div>   
+                        </div>
                     </div>
                     <div data-role="collapsible">
                         <h1>LAN</h1>
@@ -101,15 +101,15 @@
                         <div id="lan_net_details">
                             <div data-role="fieldcontain">
                                 <label for="lan_ip">IP Address</label>
-                                <input type="text" id="lan_ip" value="10.20.17.111" />
+                                <input type="text" id="lan_ip" name="lan_ip" value="10.20.17.111" />
                             </div>
                             <div data-role="fieldcontain">
                                 <label for="lan_netmask">Netmask</label>
-                                <input type="text" id="lan_netmask" value="255.255.255.0" />
+                                <input type="text" id="lan_netmask" name="lan_netmask" value="255.255.255.0" />
                             </div>
                             <div data-role="fieldcontain">
                                 <label for="lan_gateway">Gateway</label>
-                                <input type="text" id="lan_gateway" value="10.20.17.1" />
+                                <input type="text" id="lan_gateway" name="lan_gateway" value="10.20.17.1" />
                             </div>
                         </div>
                     </div>
@@ -119,7 +119,7 @@
                             <option value="off">Off</option>
                             <option value="on">On</option>
                         </select>
-			<div id="ntp_details">
+			                  <div id="ntp_details">
                             <div data-role="fieldcontain">
                                 <label for="ntp_serverip">NTP Server IP Address</label>
                                 <input type="text" id="ntp_serverip" name="ntp_serverip"/>
@@ -132,7 +132,7 @@
                             <h1>Local Update</h1>
                             <div data-role="fieldcontain">
                                 <label for="update_localpath">Path</label>
-                                <input type="text" id="update_localpath" />
+                                <input type="text" id="update_localpath" name="update_localpath" />
                             </div>
                             <a data-role="button">Update</a>
                             <a data-role="button">Select file...</a>
@@ -143,12 +143,8 @@
                         	   id="update"
                                checked data-wrapper-class="custom-size-flipswitch">
                             <div data-role="fieldcontain">
-                                <label for="update_ip">Update Server IP Address</label>
-                                <input type="text" id="update_ip" />
-                            </div>
-                            <div data-role="fieldcontain">
-                                <label for="update_remotepath">Path</label>
-                                <input type="text" id="update_remotepath" />
+                                <label for="update_remoteurl">URL</label>
+                                <input type="text" id="update_remoteurl" name="update_remoteurl" placeholder="URL of remote update information"/>
                             </div>
                             <a data-role="button">Update</a>
                         </div>
@@ -159,16 +155,24 @@
                             <option value="off">Off</option>
                             <option value="on">On</option>
                         </select>
-			<div id="mqtt_details">
+			                  <div id="mqtt_details">
                             <div data-role="fieldcontain">
                                 <label for="mqtt_ip">Broker IP Address</label>
-                                <input type="text" id="mqtt_ip" />
+                                <input type="text" id="mqtt_ip" name=="mqtt_ip"/>
                             </div>
                             <div data-role="fieldcontain">
                                 <label for="mqtt_port">Broker Port</label>
-                                <input type="text" id="mqtt_port" />
+                                <input type="text" id="mqtt_port" name="mqtt_port"/>
                             </div>
-			</div>
+                            <div data-role="fieldcontain">
+                                <label for="mqtt_username">Username</label>
+                                <input type="text" id="mqtt_username" name="mqtt_username" placeholder="username for MQTT server"/>
+                            </div>
+                            <div data-role="fieldcontain">
+                                <label for="mqtt_password">Password</label>
+                                <input type="password" id="mqtt_password" name="mqtt_password" placeholder="password for MQTT server"/>
+                            </div>
+			                  </div>
                     </div>
                     <a data-role="button" data-icon="check" onClick="apply()">Apply</a>
                 </form>
@@ -199,7 +203,7 @@
                 page 2
 
         -->
-        <div data-role="page" data-theme="b" id="page2">
+        <div data-role="page" data-theme="a" id="page2">
             <div data-role="header">
                 <h1>ESP8266 P&amp;N</h1>
                 <div data-role="navbar">
@@ -238,7 +242,7 @@
                 page 3
 
         -->
-        <div data-role="page" data-theme="b" id="page3">
+        <div data-role="page" data-theme="a" id="page3">
             <div data-role="header">
                 <h1>ESP8266 P&amp;N</h1>
                 <div data-role="navbar">

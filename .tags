@@ -1,0 +1,667 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+0	./data/pub.json	/^"0"		:"WiFiConfig",$/;"	function
+0	./data/sub.json	/^"0"			:"WiFiConfig",$/;"	function
+0.0	./data/pub.json	/^"0.0"		:"WiFiConfig\/WEBserver",$/;"	function
+0.0	./data/sub.json	/^"0.0"		:"WiFiConfig\/WEBserver",$/;"	function
+0.0.0	./data/pub.json	/^"0.0.0"		:"WiFiConfig\/WEBserver\/Username",$/;"	function
+0.0.0	./data/sub.json	/^"0.0.0"		:"WiFiConfig\/WEBserver\/Username",$/;"	function
+0.0.1	./data/pub.json	/^"0.0.1"		:"WiFiConfig\/WEBserver\/Password",$/;"	function
+0.0.1	./data/sub.json	/^"0.0.1"		:"WiFiConfig\/WEBserver\/Password",$/;"	function
+0.1	./data/pub.json	/^"0.1"		:"WiFiConfig\/Accesspoint",$/;"	function
+0.1	./data/sub.json	/^"0.1"		:"WiFiConfig\/Accesspoint",$/;"	function
+0.1.0	./data/pub.json	/^"0.1.0"		:"WiFiConfig\/WEBserver\/SSID",$/;"	function
+0.1.0	./data/sub.json	/^"0.1.0"		:"WiFiConfig\/WEBserver\/SSID",$/;"	function
+0.1.1	./data/pub.json	/^"0.1.1"		:"WiFiConfig\/WEBserver\/Password",$/;"	function
+0.1.1	./data/sub.json	/^"0.1.1"		:"WiFiConfig\/WEBserver\/Password",$/;"	function
+0.2	./data/pub.json	/^"0.2"		:"WiFiConfig\/WiFi",$/;"	function
+0.2	./data/sub.json	/^"0.2"		:"WiFiConfig\/WiFi",$/;"	function
+0.2.0	./data/pub.json	/^"0.2.0"		:"WiFiConfig\/WEBserver\/SSID",$/;"	function
+0.2.0	./data/sub.json	/^"0.2.0"		:"WiFiConfig\/WEBserver\/SSID",$/;"	function
+0.2.1	./data/pub.json	/^"0.2.1"		:"WiFiConfig\/WEBserver\/Password",$/;"	function
+0.2.1	./data/sub.json	/^"0.2.1"		:"WiFiConfig\/WEBserver\/Password",$/;"	function
+0.2.2	./data/pub.json	/^"0.2.2"		:"WiFiConfig\/WEBserver\/IP",$/;"	function
+0.2.2	./data/sub.json	/^"0.2.2"		:"WiFiConfig\/WEBserver\/IP",$/;"	function
+0.3	./data/pub.json	/^"0.3"		:"WiFiConfig\/MQTT",$/;"	function
+0.3	./data/sub.json	/^"0.3"		:"WiFiConfig\/MQTT",$/;"	function
+0.3.0	./data/pub.json	/^"0.3.0"		:"WiFiConfig\/WEBserver\/Server",$/;"	function
+0.3.0	./data/sub.json	/^"0.3.0"		:"WiFiConfig\/WEBserver\/Server",$/;"	function
+0.3.1	./data/pub.json	/^"0.3.1"		:"WiFiConfig\/WEBserver\/Port",$/;"	function
+0.3.1	./data/sub.json	/^"0.3.1"		:"WiFiConfig\/WEBserver\/Port",$/;"	function
+0.3.2	./data/pub.json	/^"0.3.2"		:"WiFiConfig\/WEBserver\/Status",$/;"	function
+0.3.2	./data/sub.json	/^"0.3.2"		:"WiFiConfig\/WEBserver\/Status",$/;"	function
+0.4	./data/pub.json	/^"0.4"		:"WiFiConfig\/UpdateServer",$/;"	function
+0.4	./data/sub.json	/^"0.4"		:"WiFiConfig\/UpdateServer",$/;"	function
+0.4.0	./data/pub.json	/^"0.4.0"		:"WiFiConfig\/WEBserver\/Server",$/;"	function
+0.4.0	./data/sub.json	/^"0.4.0"		:"WiFiConfig\/WEBserver\/Server",$/;"	function
+0.4.1	./data/pub.json	/^"0.4.1"		:"WiFiConfig\/WEBserver\/FilePath",$/;"	function
+0.4.1	./data/sub.json	/^"0.4.1"		:"WiFiConfig\/WEBserver\/FilePath",$/;"	function
+1	./data/pub.json	/^"1"	        :"Control",$/;"	function
+1	./data/sub.json	/^"1"			:"Control",$/;"	function
+1	./data/subGlobal.json	/^"1"		:"lights",$/;"	function
+1.0	./data/pub.json	/^"1.0"		:"Control\/Status",$/;"	function
+1.0	./data/sub.json	/^"1.0"		:"Control\/Status",$/;"	function
+1.0.0	./data/pub.json	/^"1.0.0"		:"Control\/Status\/WiFi",$/;"	function
+1.0.0	./data/sub.json	/^"1.0.0"		:"Control\/Status\/WiFi",$/;"	function
+1.0.1	./data/pub.json	/^"1.0.1"		:"Control\/Status\/MQTT",$/;"	function
+1.0.1	./data/sub.json	/^"1.0.1"		:"Control\/Status\/MQTT",$/;"	function
+1.0.2	./data/pub.json	/^"1.0.2"		:"Control\/Status\/updateFirmware",$/;"	function
+1.0.2	./data/sub.json	/^"1.0.2"		:"Control\/Status\/updateFirmware",$/;"	function
+2	./data/pub.json	/^"2"		:"ADE7953",$/;"	function
+2	./data/sub.json	/^"2"			:"ADE7953",$/;"	function
+2	./data/subGlobal.json	/^"2"		:"sensors"$/;"	function
+2.0	./data/pub.json	/^"2.0"		:"ADE7953\/Last_RW",$/;"	function
+2.0	./data/sub.json	/^"2.0"		:"ADE7953\/Last_RW",$/;"	function
+2.0.0	./data/pub.json	/^"2.0.0"		:"ADE7953\/Last_RW\/HEX",$/;"	function
+2.0.0	./data/sub.json	/^"2.0.0"		:"ADE7953\/Last_RW\/HEX",$/;"	function
+2.0.1	./data/pub.json	/^"2.0.1"		:"ADE7953\/Last_RW\/BIN",$/;"	function
+2.0.1	./data/sub.json	/^"2.0.1"		:"ADE7953\/Last_RW\/BIN",$/;"	function
+2.0.2	./data/pub.json	/^"2.0.2"		:"ADE7953\/Last_RW\/DEC",$/;"	function
+2.0.2	./data/sub.json	/^"2.0.2"		:"ADE7953\/Last_RW\/DEC",$/;"	function
+2.0.3	./data/pub.json	/^"2.0.3"		:"ADE7953\/Last_RW\/Bit",$/;"	function
+2.0.3	./data/sub.json	/^"2.0.3"		:"ADE7953\/Last_RW\/Bit",$/;"	function
+2.0.4	./data/pub.json	/^"2.0.4"		:"ADE7953\/Last_RW\/value",$/;"	function
+2.0.4	./data/sub.json	/^"2.0.4"		:"ADE7953\/Last_RW\/value",$/;"	function
+2.1	./data/pub.json	/^"2.1"		:"ADE7953\/values",$/;"	function
+2.1	./data/sub.json	/^"2.1"		:"ADE7953\/values",$/;"	function
+2.1.0	./data/pub.json	/^"2.1.0"		:"ADE7953\/Last_RW\/V_RMS",$/;"	function
+2.1.0	./data/sub.json	/^"2.1.0"		:"ADE7953\/Last_RW\/V_RMS",$/;"	function
+2.1.1	./data/pub.json	/^"2.1.1"		:"ADE7953\/Last_RW\/IA_RMS",$/;"	function
+2.1.1	./data/sub.json	/^"2.1.1"		:"ADE7953\/Last_RW\/IA_RMS",$/;"	function
+2.1.2	./data/pub.json	/^"2.1.2"		:"ADE7953\/Last_RW\/IB_RMS",$/;"	function
+2.1.2	./data/sub.json	/^"2.1.2"		:"ADE7953\/Last_RW\/IB_RMS",$/;"	function
+2.1.3	./data/pub.json	/^"2.1.3"		:"ADE7953\/Last_RW\/V_INST"$/;"	function
+2.1.3	./data/sub.json	/^"2.1.3"		:"ADE7953\/Last_RW\/V_INST"$/;"	function
+ACCMODE	./data/ADE7953.json	/^"ACCMODE"       : "",$/;"	function
+ADE7953_PATH	./src/Setup.h	24;"	macro
+AIGAIN	./data/ADE7953.json	/^"AIGAIN"        : "4145000",$/;"	function
+AIRMSOS	./data/ADE7953.json	/^"AIRMSOS"       : "-764",$/;"	function
+ALT_OUTPUT	./data/ADE7953.json	/^"ALT_OUTPUT"    : "",$/;"	function
+ANGLE_A	./data/ADE7953.json	/^"ANGLE_A"       : "",$/;"	function
+ANGLE_B	./data/ADE7953.json	/^"ANGLE_B"       : "",$/;"	function
+API	./src/API.cpp	/^API::API(){ $/;"	function	class:API
+API	./src/API.h	/^class API{$/;"	class
+AP_NOLOAD	./data/ADE7953.json	/^"AP_NOLOAD"     : "",$/;"	function
+AVAGAIN	./data/ADE7953.json	/^"AVAGAIN"       : "",$/;"	function
+AVAOS	./data/ADE7953.json	/^"AVAOS"         : "",$/;"	function
+AVARGAIN	./data/ADE7953.json	/^"AVARGAIN"      : "",$/;"	function
+AVAROS	./data/ADE7953.json	/^"AVAROS"        : "",$/;"	function
+AVGAIN	./data/ADE7953.json	/^"AVGAIN"        : "4202000",$/;"	function
+AWATTOS	./data/ADE7953.json	/^"AWATTOS"       : "",$/;"	function
+AWGAIN	./data/ADE7953.json	/^"AWGAIN"        : "",$/;"	function
+Auth	./src/Auth.cpp	/^Auth::Auth() {$/;"	function	class:Auth
+Auth	./src/Auth.h	/^class Auth{$/;"	class
+BIGAIN	./data/ADE7953.json	/^"BIGAIN"        : "4208900",$/;"	function
+BIRMSOS	./data/ADE7953.json	/^"BIRMSOS"       : "-764",$/;"	function
+BVAGAIN	./data/ADE7953.json	/^"BVAGAIN"       : "",$/;"	function
+BVAOS	./data/ADE7953.json	/^"BVAOS"         : "",$/;"	function
+BVARGAIN	./data/ADE7953.json	/^"BVARGAIN"      : "",$/;"	function
+BVAROS	./data/ADE7953.json	/^"BVAROS"        : "",$/;"	function
+BVGAIN	./data/ADE7953.json	/^"BVGAIN"        : "",$/;"	function
+BWATTOS	./data/ADE7953.json	/^"BWATTOS"       : "",$/;"	function
+BWGAIN	./data/ADE7953.json	/^"BWGAIN"        : "",$/;"	function
+CF1DEN	./data/ADE7953.json	/^"CF1DEN"        : "69",$/;"	function
+CF2DEN	./data/ADE7953.json	/^"CF2DEN"        : "69",$/;"	function
+CFG_PATH	./src/Setup.h	20;"	macro
+CFMODE	./data/ADE7953.json	/^"CFMODE"        : "115",$/;"	function
+CONFIG	./data/ADE7953.json	/^"CONFIG"        : "",$/;"	function
+CallbackFunction	./src/WEBServer.h	/^  typedef std::function<void(void)> CallbackFunction;$/;"	typedef
+CallbackFunction	./src/WIFI.h	/^  typedef std::function<void(void)> CallbackFunction;$/;"	typedef
+Clock	./src/SysUtils.cpp	/^Clock::Clock():$/;"	function	class:Clock
+Clock	./src/SysUtils.h	/^class Clock{$/;"	class
+Clock	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^Clock::Clock():$/;"	function	class:Clock
+DISNOLOAD	./data/ADE7953.json	/^"DISNOLOAD"     : "",$/;"	function
+Diskussion 1	./ToDo.md	/^###Diskussion 1$/;"	function
+ESP8266 BasicTemplate	./README.md	/^# ESP8266 BasicTemplate $/;"	function
+ESP_Tools	./src/SysUtils.cpp	/^ESP_Tools::ESP_Tools(){$/;"	function	class:ESP_Tools
+ESP_Tools	./src/SysUtils.h	/^class ESP_Tools{$/;"	class
+ESP_Tools	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^ESP_Tools::ESP_Tools(){$/;"	function	class:ESP_Tools
+EX_REF	./data/ADE7953.json	/^"EX_REF"        : "",$/;"	function
+FFS	./src/FFS.cpp	/^FFS::FFS(I2C& i2c):$/;"	function	class:FFS
+FFS	./src/FFS.h	/^class FFS {$/;"	class
+FFSjsonFile	./src/FFS.cpp	/^FFSjsonFile::FFSjsonFile(String filePath, int type):$/;"	function	class:FFSjsonFile
+FFSjsonFile	./src/FFS.h	/^class FFSjsonFile{$/;"	class
+FFSstringFile	./src/FFS.cpp	/^FFSstringFile::FFSstringFile(String filePath): $/;"	function	class:FFSstringFile
+FFSstringFile	./src/FFS.h	/^class FFSstringFile {$/;"	class
+Field_01	./data/MyFile.json	/^  "Field_01" : "Zeile1",$/;"	function
+Field_02	./data/MyFile.json	/^  "Field_02" : "Zeile2"$/;"	function
+I2C	./src/I2C.cpp	/^I2C::I2C(){$/;"	function	class:I2C
+I2C	./src/I2C.h	/^class I2C{$/;"	class
+I2C_SCL	./src/Setup.h	38;"	macro
+I2C_SDA	./src/Setup.h	37;"	macro
+IRQENA	./data/ADE7953.json	/^"IRQENA"        : "",$/;"	function
+IRQENB	./data/ADE7953.json	/^"IRQENB"        : "",$/;"	function
+LAST_ADD	./data/ADE7953.json	/^"LAST_ADD"      : "",$/;"	function
+LAST_RWDATA16	./data/ADE7953.json	/^"LAST_RWDATA16" : "",$/;"	function
+LCD	./src/I2C.cpp	/^LCD::LCD():$/;"	function	class:LCD
+LCD	./src/I2C.h	/^class LCD{$/;"	class
+LCYCMODE	./data/ADE7953.json	/^"LCYCMODE"      : "",$/;"	function
+LINECYC	./data/ADE7953.json	/^"LINECYC"       : "",$/;"	function
+LOGGING	./src/SysUtils.cpp	/^LOGGING::LOGGING(Clock& clock):$/;"	function	class:LOGGING
+LOGGING	./src/SysUtils.h	/^class LOGGING{$/;"	class
+LOGGING	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^LOGGING::LOGGING(Clock& clock):$/;"	function	class:LOGGING
+MQTT	./src/MQTT.cpp	/^MQTT::MQTT(FFS& ffs, I2C& i2c, WIFI& wifi):$/;"	function	class:MQTT
+MQTT	./src/MQTT.h	/^class MQTT{$/;"	class
+MYFILE_PATH	./src/Setup.h	27;"	macro
+NET	./src/SysUtils.cpp	/^NET::NET(){$/;"	function	class:NET
+NET	./src/SysUtils.h	/^class NET{$/;"	class
+NET	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^NET::NET(){$/;"	function	class:NET
+NTP_SERVER	./src/Setup.h	9;"	macro
+NTP_UPDATE_TIME	./src/Setup.h	10;"	macro
+OILVL	./data/ADE7953.json	/^"OILVL"         : "",$/;"	function
+OVLVL	./data/ADE7953.json	/^"OVLVL"         : "",$/;"	function
+OWIRE	./src/oWire.cpp	/^OWIRE::OWIRE(){$/;"	function	class:OWIRE
+OWIRE	./src/oWire.h	/^class OWIRE{$/;"	class
+PFA	./data/ADE7953.json	/^"PFA"           : "",$/;"	function
+PFB	./data/ADE7953.json	/^"PFB"           : "",$/;"	function
+PGA_IA	./data/ADE7953.json	/^"PGA_IA"        : "",$/;"	function
+PGA_IB	./data/ADE7953.json	/^"PGA_IB"        : "",$/;"	function
+PGA_V	./data/ADE7953.json	/^"PGA_V"         : "",$/;"	function
+PHCALA	./data/ADE7953.json	/^"PHCALA"        : "",$/;"	function
+PHCALB	./data/ADE7953.json	/^"PHCALB"        : "",$/;"	function
+PUB_PATH	./src/Setup.h	23;"	macro
+Period	./data/ADE7953.json	/^"Period"        : "",$/;"	function
+Reserved1	./data/ADE7953.json	/^"Reserved1"     : "48",$/;"	function
+Reserved2	./data/ADE7953.json	/^"Reserved2"     : "",$/;"	function
+Reserved3	./data/ADE7953.json	/^"Reserved3"     : "",$/;"	function
+Reserved4	./data/ADE7953.json	/^"Reserved4"     : "",$/;"	function
+Reserved5	./data/ADE7953.json	/^"Reserved5"     : "",$/;"	function
+Reserved6	./data/ADE7953.json	/^"Reserved6"     : "",$/;"	function
+SAGCYC	./data/ADE7953.json	/^"SAGCYC"        : "",$/;"	function
+SAGLVL	./data/ADE7953.json	/^"SAGLVL"        : "",$/;"	function
+SSD1306_I2C_adr	./src/Setup.h	44;"	macro
+SUB_GLOBAL_PATH	./src/Setup.h	22;"	macro
+SUB_PATH	./src/Setup.h	21;"	macro
+SUMMER_TIME	./src/Setup.h	11;"	macro
+SysUtils	./src/SysUtils.cpp	/^SysUtils::SysUtils():$/;"	function	class:SysUtils
+SysUtils	./src/SysUtils.h	/^class SysUtils{$/;"	class
+SysUtils	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^SysUtils::SysUtils():$/;"	function	class:SysUtils
+TEST	./src/FFS.cpp	/^void FFS::TEST(){$/;"	function	class:FFS
+TESTARRAY_PATH	./src/Setup.h	26;"	macro
+TTopic	./src/API.h	/^ typedef struct TTopic{$/;"	struct
+TYPE_ARRAY	./src/Setup.h	30;"	macro
+TYPE_OBJECT	./src/Setup.h	29;"	macro
+TemplateController	./src/TemplateController.cpp	/^TemplateController::TemplateController():$/;"	function	class:TemplateController
+TemplateController	./src/TemplateController.h	/^class TemplateController{$/;"	class
+Themen:	./ToDo.md	/^##Themen:$/;"	function
+ToDo	./ToDo.md	/^#ToDo$/;"	function
+VAR_NOLOAD	./data/ADE7953.json	/^"VAR_NOLOAD"    : "",$/;"	function
+VA_NOLOAD	./data/ADE7953.json	/^"VA_NOLOAD"     : "",$/;"	function
+VERSION	./src/Setup.h	4;"	macro
+VRMSOS	./data/ADE7953.json	/^"VRMSOS"        : "-764",$/;"	function
+WEBIF	./src/WEBServer.cpp	/^WEBIF::WEBIF(FFS& ffs): webServer(80), ffs(ffs) {$/;"	function	class:WEBIF
+WEBIF	./src/WEBServer.h	/^class WEBIF {$/;"	class
+WIFI	./src/WIFI.cpp	/^WIFI::WIFI(FFS& ffs, I2C& i2c):$/;"	function	class:WIFI
+WIFI	./src/WIFI.h	/^class WIFI{$/;"	class
+WINTER_TIME	./src/Setup.h	12;"	macro
+WRITE_PROTECT	./data/ADE7953.json	/^"WRITE_PROTECT" : "",$/;"	function
+ZXTOUT	./data/ADE7953.json	/^"ZXTOUT"        : "",$/;"	function
+__FFS_PATH__	./src/Setup.h	18;"	macro
+_day	./src/SysUtils.h	/^  int _day;$/;"	member	class:Clock
+_dayOfWeek	./src/SysUtils.h	/^  int _dayOfWeek;$/;"	member	class:Clock
+_hour	./src/SysUtils.h	/^  int _hour;$/;"	member	class:Clock
+_milliSecond	./src/SysUtils.h	/^  long _milliSecond;$/;"	member	class:Clock
+_minute	./src/SysUtils.h	/^  int _minute;$/;"	member	class:Clock
+_month	./src/SysUtils.h	/^  int _month;$/;"	member	class:Clock
+_second	./src/SysUtils.h	/^  int _second;$/;"	member	class:Clock
+_year	./src/SysUtils.h	/^  int _year;$/;"	member	class:Clock
+a	./data/web/login.html	/^			<a data-role="button" class="ui-btn ui-icon-check ui-btn-icon-left" onClick="login()">Login<\/a>$/;"	function
+a	./data/web/ui.html	/^                            <a data-role="button">Select file...<\/a>$/;"	function
+a	./data/web/ui.html	/^                            <a data-role="button">Update<\/a>$/;"	function
+a	./data/web/ui.html	/^                        <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" id="reboot" onClick="reboot()">Reboot<\/a>$/;"	function
+a	./data/web/ui.html	/^                    <a data-role="button" data-icon="check" onClick="apply()">Apply<\/a>$/;"	function
+a	./data/web/ui.html	/^                <a class="ui-btn ui-corner-all ui-shadow ui-icon-delete ui-btn-icon-left" onClick="logout()">Logout<\/a>$/;"	function
+a	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                            <a data-role="button">Select file...<\/a>$/;"	function
+a	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                            <a data-role="button">Update<\/a>$/;"	function
+a	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" id="reboot" onClick="reboot()">Reboot<\/a>$/;"	function
+a	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                    <a data-role="button" data-icon="check" onClick="apply()">Apply<\/a>$/;"	function
+a	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                <a class="ui-btn ui-corner-all ui-shadow ui-icon-delete ui-btn-icon-left" onClick="logout()">Logout<\/a>$/;"	function
+ade7953	./src/FFS.h	/^  FFSjsonFile ade7953;$/;"	member	class:FFS
+alive	./data/web/config.js	/^function alive() {$/;"	function
+apName	./data/config.json	/^  "apName":         "Node52",$/;"	function
+apPassword	./data/config.json	/^  "apPassword":     "ESP8266config",$/;"	function
+api	./src/TemplateController.h	/^  API api;$/;"	member	class:TemplateController
+apiPageHandler	./src/WEBServer.cpp	/^void WEBIF::apiPageHandler() {$/;"	function	class:WEBIF
+apply	./data/web/config.js	/^function apply() {$/;"	function
+applyConfiguration	./src/WEBServer.cpp	/^void WEBIF::applyConfiguration() {$/;"	function	class:WEBIF
+arg	./src/API.h	/^	String arg[10];$/;"	member	struct:TTopic
+auth	./src/WEBServer.h	/^  Auth auth;$/;"	member	class:WEBIF
+authPageHandler	./src/WEBServer.cpp	/^void WEBIF::authPageHandler() {$/;"	function	class:WEBIF
+body	./data/web/login.html	/^<body>$/;"	function
+body	./data/web/ui.html	/^    <body>$/;"	function
+body	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^    <body>$/;"	function
+cfg	./src/FFS.h	/^  FFSjsonFile cfg;$/;"	member	class:FFS
+changeLOG	./changeLOG.md	/^#changeLOG$/;"	function
+charToIP	./src/SysUtils.cpp	/^IPAddress NET::charToIP(char* IP) {$/;"	function	class:NET
+charToIP	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^IPAddress NET::charToIP(char* IP) {$/;"	function	class:NET
+checkAuthentification	./src/WEBServer.cpp	/^bool WEBIF::checkAuthentification() {$/;"	function	class:WEBIF
+checkFlash	./src/SysUtils.cpp	/^void ESP_Tools::checkFlash(){$/;"	function	class:ESP_Tools
+checkFlash	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^void ESP_Tools::checkFlash(){$/;"	function	class:ESP_Tools
+checkPassword	./src/Auth.cpp	/^bool Auth::checkPassword(String username, String password) {$/;"	function	class:Auth
+checkSession	./src/Auth.cpp	/^bool Auth::checkSession(String SessionID) {$/;"	function	class:Auth
+chipID	./src/SysUtils.cpp	/^long ESP_Tools::chipID() {$/;"	function	class:ESP_Tools
+chipID	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^long ESP_Tools::chipID() {$/;"	function	class:ESP_Tools
+clear	./src/I2C.cpp	/^void LCD::clear(){$/;"	function	class:LCD
+client	./src/MQTT.h	/^  PubSubClient client;$/;"	member	class:MQTT
+client	./src/WIFI.h	/^  WiFiClient client;$/;"	member	class:WIFI
+clock	./src/SysUtils.h	/^  Clock clock;$/;"	member	class:SysUtils
+clock	./src/SysUtils.h	/^  Clock& clock;$/;"	member	class:LOGGING
+countArgs	./src/API.h	/^	int countArgs;$/;"	member	struct:TTopic
+countTopics	./src/API.h	/^	int countTopics;$/;"	member	struct:TTopic
+createSession	./src/Auth.cpp	/^String Auth::createSession(String username) {$/;"	function	class:Auth
+data	./src/FFS.h	/^    String data;$/;"	member	class:FFSstringFile
+debug	./src/SysUtils.cpp	/^void LOGGING::debug(const String &msg) {$/;"	function	class:LOGGING
+debug	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^void LOGGING::debug(const String &msg) {$/;"	function	class:LOGGING
+debugMem	./src/SysUtils.cpp	/^void LOGGING::debugMem() {$/;"	function	class:LOGGING
+debugMem	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^void LOGGING::debugMem() {$/;"	function	class:LOGGING
+dissectTopic	./src/API.cpp	/^TTopic API::dissectTopic(String topic, String arg){$/;"	function	class:API
+div	./data/web/login.html	/^			<div data-role="fieldcontain" id="credentials">$/;"	function
+div	./data/web/login.html	/^			<div data-role="fieldcontain">$/;"	function
+div	./data/web/login.html	/^	<div data-role="content">$/;"	function
+div	./data/web/login.html	/^	<div data-role="footer">$/;"	function
+div	./data/web/login.html	/^	<div data-role="header">$/;"	function
+div	./data/web/login.html	/^	<div data-role="popup" id="failed" class="ui-content" data-position-to="#loginForm">$/;"	function
+div	./data/web/login.html	/^                <div class="ui-block-a">$/;"	function
+div	./data/web/login.html	/^                <div class="ui-block-b">$/;"	function
+div	./data/web/login.html	/^          <div class="ui-grid-a">$/;"	function
+div	./data/web/login.html	/^          <div id="message"><\/div>$/;"	function
+div	./data/web/login.html	/^<div data-role="page" data-theme="b">$/;"	function
+div	./data/web/ui.html	/^			    <div id="wifi_net_details">$/;"	function
+div	./data/web/ui.html	/^			<div class="ui-block-a"><\/div>$/;"	function
+div	./data/web/ui.html	/^			<div class="ui-block-a">Phase<\/div>$/;"	function
+div	./data/web/ui.html	/^			<div class="ui-block-a">Power<\/div>$/;"	function
+div	./data/web/ui.html	/^			<div class="ui-block-b">212.0 W<\/div>$/;"	function
+div	./data/web/ui.html	/^			<div class="ui-block-b">5,5°<\/div>$/;"	function
+div	./data/web/ui.html	/^			<div class="ui-block-b">Channel A<\/div>$/;"	function
+div	./data/web/ui.html	/^			<div class="ui-block-c">0.0 W<\/div>$/;"	function
+div	./data/web/ui.html	/^			<div class="ui-block-c">0.0°<\/div>$/;"	function
+div	./data/web/ui.html	/^			<div class="ui-block-c">Channel B<\/div>$/;"	function
+div	./data/web/ui.html	/^			<div id="mqtt_details">$/;"	function
+div	./data/web/ui.html	/^			<div id="ntp_details">$/;"	function
+div	./data/web/ui.html	/^			<div id="wifi_details">$/;"	function
+div	./data/web/ui.html	/^		<div class="ui-grid-b">$/;"	function
+div	./data/web/ui.html	/^                                <div data-role="fieldcontain">$/;"	function
+div	./data/web/ui.html	/^                            <div data-role="fieldcontain">$/;"	function
+div	./data/web/ui.html	/^                        <div data-role="collapsible">$/;"	function
+div	./data/web/ui.html	/^                        <div data-role="fieldcontain">$/;"	function
+div	./data/web/ui.html	/^                        <div id="lan_net_details">$/;"	function
+div	./data/web/ui.html	/^                        <div><fieldset data-role="controlgroup" data-type="horizontal">$/;"	function
+div	./data/web/ui.html	/^                    <div data-role="collapsible">$/;"	function
+div	./data/web/ui.html	/^                <div data-role="navbar">$/;"	function
+div	./data/web/ui.html	/^                <div id="message"><\/div>$/;"	function
+div	./data/web/ui.html	/^            <div data-role="content">$/;"	function
+div	./data/web/ui.html	/^            <div data-role="footer">$/;"	function
+div	./data/web/ui.html	/^            <div data-role="header">$/;"	function
+div	./data/web/ui.html	/^        <div data-role="page" data-theme="a" id="page1">$/;"	function
+div	./data/web/ui.html	/^        <div data-role="page" data-theme="b" id="page2">$/;"	function
+div	./data/web/ui.html	/^        <div data-role="page" data-theme="b" id="page3">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^			                  <div id="mqtt_details">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^			                  <div id="ntp_details">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^			                  <div id="wifi_details">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^			<div class="ui-block-a"><\/div>$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^			<div class="ui-block-a">Phase<\/div>$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^			<div class="ui-block-a">Power<\/div>$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^			<div class="ui-block-b">212.0 W<\/div>$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^			<div class="ui-block-b">5,5°<\/div>$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^			<div class="ui-block-b">Channel A<\/div>$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^			<div class="ui-block-c">0.0 W<\/div>$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^			<div class="ui-block-c">0.0°<\/div>$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^			<div class="ui-block-c">Channel B<\/div>$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^		<div class="ui-grid-b">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^    			                  <div id="wifi_net_details">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <div data-role="fieldcontain">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                            <div data-role="fieldcontain">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <div data-role="collapsible">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <div data-role="fieldcontain">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <div id="lan_net_details">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <div><fieldset data-role="controlgroup" data-type="horizontal">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                    <div data-role="collapsible">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                <div data-role="navbar">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                <div id="message"><\/div>$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^            <div data-role="content">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^            <div data-role="footer">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^            <div data-role="header">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^        <div data-role="page" data-theme="a" id="page1">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^        <div data-role="page" data-theme="a" id="page2">$/;"	function
+div	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^        <div data-role="page" data-theme="a" id="page3">$/;"	function
+error	./src/SysUtils.cpp	/^void LOGGING::error(const String &msg) {$/;"	function	class:LOGGING
+error	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^void LOGGING::error(const String &msg) {$/;"	function	class:LOGGING
+esp_tools	./src/SysUtils.h	/^  ESP_Tools esp_tools;$/;"	member	class:LOGGING
+esp_tools	./src/SysUtils.h	/^  ESP_Tools esp_tools;$/;"	member	class:SysUtils
+ffs	./src/MQTT.h	/^  FFS& ffs;$/;"	member	class:MQTT
+ffs	./src/TemplateController.h	/^  FFS ffs;$/;"	member	class:TemplateController
+ffs	./src/WEBServer.h	/^  FFS& ffs;$/;"	member	class:WEBIF
+ffs	./src/WIFI.h	/^  FFS& ffs;$/;"	member	class:WIFI
+filePath	./data/config.json	/^  "filePath":       "\/bin\/ESP8266_AktSen.ino.bin"$/;"	function
+filePath	./src/FFS.h	/^    String filePath;$/;"	member	class:FFSstringFile
+filePath	./src/FFS.h	/^  String filePath;$/;"	member	class:FFSjsonFile
+form	./data/web/login.html	/^		<form id="loginForm" method="POST">$/;"	function
+form	./data/web/ui.html	/^                <form action="." method="POST">$/;"	function
+form	./data/web/ui.html	/^                <form id="configForm"  method="POST">$/;"	function
+form	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                <form action="." method="POST">$/;"	function
+form	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                <form id="configForm"  method="POST">$/;"	function
+freeHeapSize	./src/SysUtils.cpp	/^uint32_t ESP_Tools::freeHeapSize() {  \/\/long?$/;"	function	class:ESP_Tools
+freeHeapSize	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^uint32_t ESP_Tools::freeHeapSize() {  \/\/long?$/;"	function	class:ESP_Tools
+getConfiguration	./src/WEBServer.cpp	/^String WEBIF::getConfiguration() {$/;"	function	class:WEBIF
+h	./data/web/login.html	/^		<h1>ESP8266 P&amp;N Authentification<\/h1>$/;"	function
+h	./data/web/ui.html	/^                            <h1>Local Update<\/h1>$/;"	function
+h	./data/web/ui.html	/^                            <h1>Remote Update<\/h1>$/;"	function
+h	./data/web/ui.html	/^                        <h1>Device<\/h1>$/;"	function
+h	./data/web/ui.html	/^                        <h1>LAN<\/h1>$/;"	function
+h	./data/web/ui.html	/^                        <h1>MQTT<\/h1>$/;"	function
+h	./data/web/ui.html	/^                        <h1>Network Time<\/h1>$/;"	function
+h	./data/web/ui.html	/^                        <h1>OTA Update<\/h1>$/;"	function
+h	./data/web/ui.html	/^                        <h1>WiFi<\/h1>$/;"	function
+h	./data/web/ui.html	/^                <h1>ESP8266 P&amp;N<\/h1>$/;"	function
+h	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                            <h1>Local Update<\/h1>$/;"	function
+h	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                            <h1>Remote Update<\/h1>$/;"	function
+h	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <h1>Device<\/h1>$/;"	function
+h	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <h1>LAN<\/h1>$/;"	function
+h	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <h1>MQTT<\/h1>$/;"	function
+h	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <h1>Network Time<\/h1>$/;"	function
+h	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <h1>OTA Update<\/h1>$/;"	function
+h	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <h1>WiFi<\/h1>$/;"	function
+h	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                <h1>ESP8266 P&amp;N<\/h1>$/;"	function
+handle	./src/MQTT.cpp	/^bool MQTT::handle(){$/;"	function	class:MQTT
+handle	./src/TemplateController.cpp	/^void TemplateController::handle(){$/;"	function	class:TemplateController
+handle	./src/WEBServer.cpp	/^void WEBIF::handle() {$/;"	function	class:WEBIF
+handle	./src/WIFI.cpp	/^bool WIFI::handle(){$/;"	function	class:WIFI
+handleNotFound	./src/WEBServer.cpp	/^void WEBIF::handleNotFound() {$/;"	function	class:WEBIF
+head	./data/web/login.html	/^<head>$/;"	function
+head	./data/web/ui.html	/^    <head>$/;"	function
+head	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^    <head>$/;"	function
+hr	./data/web/ui.html	/^				<hr style="visibility:hidden" \/>$/;"	function
+hr	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^				                        <hr style="visibility:hidden" \/>$/;"	function
+html	./data/web/login.html	/^<html xmlns="http:\/\/www.w3.org\/1999\/xhtml">$/;"	function
+html	./data/web/ui.html	/^<html xmlns="http:\/\/www.w3.org\/1999\/xhtml">$/;"	function
+html	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^<html xmlns="http:\/\/www.w3.org\/1999\/xhtml">$/;"	function
+httpUpdater	./src/WEBServer.h	/^  ESP8266HTTPUpdateServer httpUpdater;$/;"	member	class:WEBIF
+i2c	./src/FFS.h	/^  I2C& i2c;$/;"	member	class:FFS
+i2c	./src/MQTT.h	/^  I2C& i2c;$/;"	member	class:MQTT
+i2c	./src/TemplateController.h	/^  I2C i2c;$/;"	member	class:TemplateController
+i2c	./src/WIFI.h	/^  I2C& i2c;$/;"	member	class:WIFI
+info	./src/SysUtils.cpp	/^void LOGGING::info(const String &msg) {$/;"	function	class:LOGGING
+info	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^void LOGGING::info(const String &msg) {$/;"	function	class:LOGGING
+init	./src/I2C.cpp	/^void LCD::init(){$/;"	function	class:LCD
+input	./data/web/login.html	/^				<input type="password" name="password" id="password"\/>                                   $/;"	function
+input	./data/web/login.html	/^				<input type="text" name="username" id="username"\/>$/;"	function
+input	./data/web/ui.html	/^                                    <input type="text" id="wifi_gateway" value="10.20.17.1" \/>$/;"	function
+input	./data/web/ui.html	/^                                    <input type="text" id="wifi_ip" value="10.20.17.101" \/>$/;"	function
+input	./data/web/ui.html	/^                                    <input type="text" id="wifi_netmask" value="255.255.255.0" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input name="lan" id="lan-dhcp" value="dhcp" type="radio" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input name="lan" id="lan-manual" value="manual" type="radio" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input name="lan" id="lan-off" value="off" type="radio" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input name="wifi" id="wifi-dhcp" value="dhcp" type="radio" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input name="wifi" id="wifi-manual" value="manual" type="radio" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input name="wifi" id="wifi-off" value="off" type="radio" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input type="password" id="wifi_password" name="wifi_password"\/>$/;"	function
+input	./data/web/ui.html	/^                                <input type="text" id="lan_gateway" value="10.20.17.1" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input type="text" id="lan_ip" value="10.20.17.111" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input type="text" id="lan_netmask" value="255.255.255.0" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input type="text" id="mqtt_ip" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input type="text" id="mqtt_port" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input type="text" id="ntp_serverip" name="ntp_serverip"\/>$/;"	function
+input	./data/web/ui.html	/^                                <input type="text" id="update_ip" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input type="text" id="update_localpath" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input type="text" id="update_remotepath" \/>$/;"	function
+input	./data/web/ui.html	/^                                <input type="text" id="wifi_ssid" name="wifi_ssid"\/>$/;"	function
+input	./data/web/ui.html	/^                            <input type="password" id="device_password" name="device_password"\/>$/;"	function
+input	./data/web/ui.html	/^                            <input type="text" id="device_name" name="device_name" placeholder="Hostname and MQTT device name"\/>$/;"	function
+input	./data/web/ui.html	/^                            <input type="text" id="device_username" name="device_username"\/>$/;"	function
+input	./data/web/ui.html	/^                        <input type="submit" id="logout" name="logout" value="Logout" data-role="button" data-icon="delete">$/;"	function
+input	./data/web/ui.html	/^                        <input type="submit" id="logout" value="Logout" class="ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left">$/;"	function
+input	./data/web/ui.html	/^                    <input type="hidden" name="action" value="apply"\/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                    <input type="text" id="wifi_gateway" name="wifi_gateway" value="10.20.17.1" \/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                    <input type="text" id="wifi_ip" name="wifi_ip" value="10.20.17.101" \/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                    <input type="text" id="wifi_netmask" name="wifi_netmask" value="255.255.255.0" \/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input name="lan" id="lan-dhcp" value="dhcp" type="radio" \/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input name="lan" id="lan-manual" value="manual" type="radio" \/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input name="lan" id="lan-off" value="off" type="radio" \/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input name="wifi" id="wifi-dhcp" value="dhcp" type="radio" \/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input name="wifi" id="wifi-manual" value="manual" type="radio" \/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input name="wifi" id="wifi-off" value="off" type="radio" \/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input type="password" id="mqtt_password" name="mqtt_password" placeholder="password for MQTT server"\/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input type="password" id="wifi_password" name="wifi_password" placeholder="password for the wifi network"\/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input type="text" id="lan_gateway" name="lan_gateway" value="10.20.17.1" \/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input type="text" id="lan_ip" name="lan_ip" value="10.20.17.111" \/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input type="text" id="lan_netmask" name="lan_netmask" value="255.255.255.0" \/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input type="text" id="mqtt_ip" name=="mqtt_ip"\/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input type="text" id="mqtt_port" name="mqtt_port"\/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input type="text" id="mqtt_username" name="mqtt_username" placeholder="username for MQTT server"\/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input type="text" id="ntp_serverip" name="ntp_serverip"\/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input type="text" id="update_localpath" name="update_localpath" \/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input type="text" id="update_remoteurl" name="update_remoteurl" placeholder="URL of remote update information"\/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <input type="text" id="wifi_ssid" name="wifi_ssid" placeholder="wifi network the device connects to"\/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                            <input type="password" id="device_password" name="device_password" placeholder"password for user"\/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                            <input type="text" id="device_name" name="device_name" placeholder="hostname and MQTT device name"\/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                            <input type="text" id="device_username" name="device_username" placeholder="login name for user"\/>$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <input type="submit" id="logout" name="logout" value="Logout" data-role="button" data-icon="delete">$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <input type="submit" id="logout" value="Logout" class="ui-btn ui-btn-inline ui-icon-delete ui-btn-icon-left">$/;"	function
+input	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                    <input type="hidden" name="action" value="apply"\/>$/;"	function
+item	./src/API.h	/^    String item[10];$/;"	member	struct:TTopic
+itemsCount	./src/FFS.h	/^  int itemsCount;$/;"	member	class:FFSjsonFile
+k_IA	./data/ADE7953.json	/^"k_IA"          : "1",$/;"	function
+k_IB	./data/ADE7953.json	/^"k_IB"          : "1"$/;"	function
+k_V	./data/ADE7953.json	/^"k_V"           : "1",$/;"	function
+label	./data/web/login.html	/^				<label for="password">Password<\/label>$/;"	function
+label	./data/web/login.html	/^				<label for="username">Username<\/label>$/;"	function
+label	./data/web/ui.html	/^                                    <label for="wifi_gateway">Gateway<\/label>$/;"	function
+label	./data/web/ui.html	/^                                    <label for="wifi_ip">IP Address<\/label>$/;"	function
+label	./data/web/ui.html	/^                                    <label for="wifi_netmask">Netmask<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="lan-dhcp">DHCP<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="lan-manual">Manual<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="lan-off">Off<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="lan_gateway">Gateway<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="lan_ip">IP Address<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="lan_netmask">Netmask<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="mqtt_ip">Broker IP Address<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="mqtt_port">Broker Port<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="ntp_serverip">NTP Server IP Address<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="update_ip">Update Server IP Address<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="update_localpath">Path<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="update_remotepath">Path<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="wifi-dhcp">DHCP<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="wifi-manual">Manual<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="wifi-off">Off<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="wifi_password">Password<\/label>$/;"	function
+label	./data/web/ui.html	/^                                <label for="wifi_ssid">SSID<\/label>$/;"	function
+label	./data/web/ui.html	/^                            <label for="device_name">Name<\/label>$/;"	function
+label	./data/web/ui.html	/^                            <label for="device_password">Password<\/label>$/;"	function
+label	./data/web/ui.html	/^                            <label for="device_username">Username<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                    <label for="wifi_gateway">Gateway<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                    <label for="wifi_ip">IP Address<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                    <label for="wifi_netmask">Netmask<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="lan-dhcp">DHCP<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="lan-manual">Manual<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="lan-off">Off<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="lan_gateway">Gateway<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="lan_ip">IP Address<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="lan_netmask">Netmask<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="mqtt_ip">Broker IP Address<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="mqtt_password">Password<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="mqtt_port">Broker Port<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="mqtt_username">Username<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="ntp_serverip">NTP Server IP Address<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="update_localpath">Path<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="update_remoteurl">URL<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="wifi-dhcp">DHCP<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="wifi-manual">Manual<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="wifi-off">Off<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="wifi_password">Password<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                                <label for="wifi_ssid">SSID<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                            <label for="device_name">Name<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                            <label for="device_password">Password<\/label>$/;"	function
+label	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                            <label for="device_username">Username<\/label>$/;"	function
+lan	./data/config.json	/^  "lan":            "manual",$/;"	function
+lcd	./src/I2C.h	/^  LCD lcd;$/;"	member	class:I2C
+li	./data/web/ui.html	/^                        <li><a href="#page1" data-transition="flow" data-icon="gear" data-role="button" class="ui-btn-active ui-state-persist">Configuration<\/a><\/li>$/;"	function
+li	./data/web/ui.html	/^                        <li><a href="#page1" data-transition="flow" data-icon="gear" data-role="button">Configuration<\/a><\/li>$/;"	function
+li	./data/web/ui.html	/^                        <li><a href="#page2" data-transition="flow" data-icon="eye" data-role="button" class="ui-btn-active ui-state-persist">Readings<\/a><\/li>$/;"	function
+li	./data/web/ui.html	/^                        <li><a href="#page2" data-transition="flow" data-icon="eye" data-role="button">Readings<\/a><\/li>$/;"	function
+li	./data/web/ui.html	/^                        <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button" class="ui-btn-active ui-state-persist">Log<\/a><\/li>$/;"	function
+li	./data/web/ui.html	/^                        <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button">Log<\/a><\/li>$/;"	function
+li	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <li><a href="#page1" data-transition="flow" data-icon="gear" data-role="button" class="ui-btn-active ui-state-persist">Configuration<\/a><\/li>$/;"	function
+li	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <li><a href="#page1" data-transition="flow" data-icon="gear" data-role="button">Configuration<\/a><\/li>$/;"	function
+li	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <li><a href="#page2" data-transition="flow" data-icon="eye" data-role="button" class="ui-btn-active ui-state-persist">Readings<\/a><\/li>$/;"	function
+li	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <li><a href="#page2" data-transition="flow" data-icon="eye" data-role="button">Readings<\/a><\/li>$/;"	function
+li	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button" class="ui-btn-active ui-state-persist">Log<\/a><\/li>$/;"	function
+li	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button">Log<\/a><\/li>$/;"	function
+link	./data/web/login.html	/^<link href="css\/jquery.mobile.css" rel="stylesheet" \/>$/;"	function
+link	./data/web/ui.html	/^        <link href="css\/jquery.mobile.css" rel="stylesheet" \/>$/;"	function
+link	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^        <link href="css\/jquery.mobile.css" rel="stylesheet" \/>$/;"	function
+loadFile	./src/FFS.cpp	/^void FFSjsonFile::loadFile(){$/;"	function	class:FFSjsonFile
+loadFile	./src/FFS.cpp	/^void FFSstringFile::loadFile() {$/;"	function	class:FFSstringFile
+loadString	./src/FFS.cpp	/^String FFS::loadString(String filePath) {$/;"	function	class:FFS
+log	./src/SysUtils.cpp	/^void LOGGING::log(const String &channel, const String &msg) {$/;"	function	class:LOGGING
+log	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^void LOGGING::log(const String &channel, const String &msg) {$/;"	function	class:LOGGING
+logging	./src/SysUtils.h	/^  LOGGING logging;$/;"	member	class:SysUtils
+login	./data/web/auth.js	/^function login() {	$/;"	function
+logout	./data/web/auth.js	/^function logout() {$/;"	function
+macAddress	./src/SysUtils.cpp	/^String NET::macAddress() {$/;"	function	class:NET
+macAddress	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^String NET::macAddress() {$/;"	function	class:NET
+meta	./data/web/login.html	/^<meta name="viewport" content="width=device-width, initial-scale=1" \/>$/;"	function
+meta	./data/web/ui.html	/^        <meta name="viewport" content="width=device-width, initial-scale=1" \/>$/;"	function
+meta	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^        <meta name="viewport" content="width=device-width, initial-scale=1" \/>$/;"	function
+mount	./src/FFS.cpp	/^void FFS::mount(){$/;"	function	class:FFS
+mqtt	./src/TemplateController.h	/^  MQTT mqtt;$/;"	member	class:TemplateController
+mqttDeviceName	./data/config.json	/^  "mqttDeviceName": "Node52",$/;"	function
+mqttPort	./data/config.json	/^  "mqttPort":       "1883",$/;"	function
+mqttServer	./data/config.json	/^  "mqttServer":     "192.168.31.41",$/;"	function
+myFile	./src/FFS.h	/^  FFSjsonFile myFile;$/;"	member	class:FFS
+net	./src/SysUtils.h	/^  NET net;$/;"	member	class:SysUtils
+ntpClient	./src/SysUtils.h	/^  NTPClient ntpClient;$/;"	member	class:Clock
+ntpUDP	./src/SysUtils.h	/^  WiFiUDP ntpUDP;$/;"	member	class:Clock
+numPagesServed	./src/WEBServer.h	/^  long numPagesServed= 0;$/;"	member	class:WEBIF
+oWire	./src/TemplateController.h	/^  OWIRE oWire; $/;"	member	class:TemplateController
+on_incommingSubcribe	./src/MQTT.cpp	/^void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length){$/;"	function	class:MQTT
+on_wifiConnected	./src/TemplateController.cpp	/^void TemplateController::on_wifiConnected(){$/;"	function	class:TemplateController
+on_wifiConnected	./src/WIFI.h	/^  CallbackFunction on_wifiConnected;$/;"	member	class:WIFI
+on_x	./src/TemplateController.cpp	/^void TemplateController::on_x(){$/;"	function	class:TemplateController
+on_x	./src/WIFI.h	/^  CallbackFunction on_x;$/;"	member	class:WIFI
+option	./data/web/ui.html	/^                            <option value="off">Off<\/option>$/;"	function
+option	./data/web/ui.html	/^                            <option value="on">On<\/option>$/;"	function
+option	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                            <option value="off">Off<\/option>$/;"	function
+option	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                            <option value="on">On<\/option>$/;"	function
+p	./data/web/login.html	/^		<p>Login failed.<\/p>$/;"	function
+p	./data/web/ui.html	/^                    <p>Processing configuration....<\/p>$/;"	function
+p	./data/web/ui.html	/^                    <p>Rebooting device....<\/p>$/;"	function
+p	./data/web/ui.html	/^                    <p>You will be automatically redirected to the login page.<\/p>$/;"	function
+p	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                    <p>Processing configuration....<\/p>$/;"	function
+p	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                    <p>Rebooting device....<\/p>$/;"	function
+p	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                    <p>You will be automatically redirected to the login page.<\/p>$/;"	function
+parseJsonArray	./src/FFS.cpp	/^void FFSjsonFile::parseJsonArray(JsonArray& jsonArray){$/;"	function	class:FFSjsonFile
+parseJsonObject	./src/FFS.cpp	/^int FFSjsonFile::parseJsonObject(JsonObject& jsonObject){$/;"	function	class:FFSjsonFile
+printTopic	./src/API.cpp	/^void API::printTopic(TTopic topic){$/;"	function	class:API
+println	./src/I2C.cpp	/^void LCD::println(String txt, const char *fontData, int yPos){$/;"	function	class:LCD
+pub	./src/FFS.h	/^  FFSjsonFile pub;$/;"	member	class:FFS
+rand	./src/Auth.cpp	/^long Auth::rand(long max) {$/;"	function	class:Auth
+read	./src/FFS.cpp	/^String FFSstringFile::read() {$/;"	function	class:FFSstringFile
+readItem	./src/FFS.cpp	/^String FFSjsonFile::readItem(String itemName){$/;"	function	class:FFSjsonFile
+readItem	./src/FFS.cpp	/^String FFSjsonFile::readItem(int item){$/;"	function	class:FFSjsonFile
+readJsonString	./src/FFS.cpp	/^String FFSjsonFile::readJsonString(){  $/;"	function	class:FFSjsonFile
+reboot	./data/web/config.js	/^function reboot() {$/;"	function
+reboot	./src/SysUtils.cpp	/^void ESP_Tools::reboot() {$/;"	function	class:ESP_Tools
+reboot	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^void ESP_Tools::reboot() {$/;"	function	class:ESP_Tools
+reloadIfAlive	./data/web/config.js	/^function reloadIfAlive() {$/;"	function
+reset	./src/Auth.cpp	/^void Auth::reset() {$/;"	function	class:Auth
+root	./src/FFS.h	/^  String root;$/;"	member	class:FFSjsonFile
+rootPageHandler	./src/WEBServer.cpp	/^void WEBIF::rootPageHandler() {$/;"	function	class:WEBIF
+saveFile	./src/FFS.cpp	/^bool FFSjsonFile::saveFile(){$/;"	function	class:FFSjsonFile
+scanBus	./src/I2C.cpp	/^void I2C::scanBus(){$/;"	function	class:I2C
+script	./data/web/login.html	/^<script src="auth.js"><\/script>$/;"	function
+script	./data/web/login.html	/^<script src="lib\/jquery.js"><\/script>$/;"	function
+script	./data/web/login.html	/^<script src="lib\/jquery.mobile.js"><\/script>$/;"	function
+script	./data/web/ui.html	/^        <script src="auth.js"><\/script>$/;"	function
+script	./data/web/ui.html	/^        <script src="config.js"><\/script>$/;"	function
+script	./data/web/ui.html	/^        <script src="lib\/jquery.js"><\/script>$/;"	function
+script	./data/web/ui.html	/^        <script src="lib\/jquery.mobile.js"><\/script>$/;"	function
+script	./data/web/ui.html	/^        <script src="panels.js"><\/script>$/;"	function
+script	./data/web/ui.html	/^        <script src="ui.js"><\/script>$/;"	function
+script	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^        <script src="auth.js"><\/script>$/;"	function
+script	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^        <script src="config.js"><\/script>$/;"	function
+script	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^        <script src="lib\/jquery.js"><\/script>$/;"	function
+script	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^        <script src="lib\/jquery.mobile.js"><\/script>$/;"	function
+script	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^        <script src="panels.js"><\/script>$/;"	function
+script	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^        <script src="ui.js"><\/script>$/;"	function
+seed	./src/Auth.h	/^    long seed= 0;$/;"	member	class:Auth
+select	./data/web/ui.html	/^                        <select data-role="slider" id="mqtt" name="mqtt">$/;"	function
+select	./data/web/ui.html	/^                        <select data-role="slider" id="ntp" name="ntp">$/;"	function
+select	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <select data-role="slider" id="mqtt" name="mqtt">$/;"	function
+select	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                        <select data-role="slider" id="ntp" name="ntp">$/;"	function
+send	./src/WEBServer.cpp	/^void WEBIF::send(const String &description, int code, char *content_type, const String &content) {$/;"	function	class:WEBIF
+sendFile	./src/WEBServer.cpp	/^void WEBIF::sendFile(const String &description, int code, char *content_type, const String filePath) {$/;"	function	class:WEBIF
+set	./src/API.cpp	/^bool API::set(String topic, String arg){       \/\/ "foo\/bar","arg1,arg2,arg3"$/;"	function	class:API
+set	./src/API.cpp	/^bool API::set(String topicArg){                \/\/ "foo\/bar arg1,arg2,arg3"$/;"	function	class:API
+set	./src/API.cpp	/^bool API::set(TTopic topic){$/;"	function	class:API
+setClock	./src/SysUtils.cpp	/^void Clock::setClock(){$/;"	function	class:Clock
+setClock	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^void Clock::setClock(){$/;"	function	class:Clock
+set_callbacks	./src/WIFI.cpp	/^void WIFI::set_callbacks(CallbackFunction wifiConnected, $/;"	function	class:WIFI
+set_config	./data/web/config.js	/^function set_config() {$/;"	function
+set_radio	./data/web/panels.js	/^function set_radio(name, value) {$/;"	function
+set_radio	/users/neubert/Development/ADE7953-PowerSocket/data/web/panels.js	/^function set_radio(name, value) {$/;"	function
+set_radio_handlers	./data/web/panels.js	/^function set_radio_handlers() {$/;"	function
+set_radio_handlers	/users/neubert/Development/ADE7953-PowerSocket/data/web/panels.js	/^function set_radio_handlers() {$/;"	function
+show_details	./data/web/panels.js	/^function show_details(panelName, radio, value) {$/;"	function
+show_details	/users/neubert/Development/ADE7953-PowerSocket/data/web/panels.js	/^function show_details(panelName, radio, value) {$/;"	function
+size	./src/FFS.h	/^  size_t size;                               \/\/filled in readJsonString()$/;"	member	class:FFSjsonFile
+ssd1306	./src/I2C.h	/^  SSD1306 ssd1306;$/;"	member	class:LCD
+start	./src/I2C.cpp	/^void I2C::start(){$/;"	function	class:I2C
+start	./src/MQTT.cpp	/^bool MQTT::start(){$/;"	function	class:MQTT
+start	./src/SysUtils.cpp	/^void Clock::start(){$/;"	function	class:Clock
+start	./src/TemplateController.cpp	/^void TemplateController::start(){$/;"	function	class:TemplateController
+start	./src/WEBServer.cpp	/^void WEBIF::start() {$/;"	function	class:WEBIF
+start	./src/WIFI.cpp	/^bool WIFI::start(){$/;"	function	class:WIFI
+start	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^void Clock::start(){$/;"	function	class:Clock
+startConnections	./src/TemplateController.cpp	/^void TemplateController::startConnections(){$/;"	function	class:TemplateController
+startPeriphery	./src/TemplateController.cpp	/^void TemplateController::startPeriphery(){$/;"	function	class:TemplateController
+strDate	./src/SysUtils.h	/^  String strDate;$/;"	member	class:Clock
+strDateTime	./src/SysUtils.h	/^  String strDateTime;$/;"	member	class:Clock
+strDateTime_ms	./src/SysUtils.h	/^  String strDateTime_ms;$/;"	member	class:Clock
+strTime	./src/SysUtils.h	/^  String strTime;$/;"	member	class:Clock
+strTime_ms	./src/SysUtils.h	/^  String strTime_ms;$/;"	member	class:Clock
+strToIP	./src/SysUtils.cpp	/^IPAddress NET::strToIP(String IP) {$/;"	function	class:NET
+strToIP	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^IPAddress NET::strToIP(String IP) {$/;"	function	class:NET
+string2char	./src/SysUtils.cpp	/^char* NET::string2char(String command){$/;"	function	class:NET
+string2char	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^char* NET::string2char(String command){$/;"	function	class:NET
+sub	./src/FFS.h	/^  FFSjsonFile sub;$/;"	member	class:FFS
+subGlobal	./src/FFS.h	/^  FFSjsonFile subGlobal;$/;"	member	class:FFS
+subst	./src/WEBServer.cpp	/^String WEBIF::subst(String data) {$/;"	function	class:WEBIF
+success	./data/web/auth.js	/^			success: function(html) {    $/;"	function
+success	./data/web/auth.js	/^                success: function(html) {    $/;"	function
+success	./data/web/config.js	/^                success: function() {$/;"	function
+success	./data/web/config.js	/^          success: function() { reloadIfAlive;  }$/;"	function
+success	./data/web/config.js	/^          success: function(json) {$/;"	function
+sysUtils	./src/Auth.h	/^    SysUtils sysUtils;$/;"	member	class:Auth
+sysUtils	./src/MQTT.h	/^  SysUtils sysUtils;$/;"	member	class:MQTT
+sysUtils	./src/TemplateController.h	/^  SysUtils sysUtils;$/;"	member	class:TemplateController
+sysUtils	./src/WEBServer.h	/^  SysUtils sysUtils;$/;"	member	class:WEBIF
+t	./src/SysUtils.h	/^  time_t t;$/;"	member	class:Clock
+t_1s_Update	./src/TemplateController.cpp	/^void TemplateController::t_1s_Update(){    $/;"	function	class:TemplateController
+t_long_Update	./src/TemplateController.cpp	/^void TemplateController::t_long_Update(){    $/;"	function	class:TemplateController
+t_short_Update	./src/TemplateController.cpp	/^void TemplateController::t_short_Update(){    $/;"	function	class:TemplateController
+testArray	./src/FFS.h	/^  FFSjsonFile testArray;$/;"	member	class:FFS
+title	./data/web/login.html	/^<title>ESP8266 P&amp;N Authentification<\/title>$/;"	function
+title	./data/web/ui.html	/^        <title>ESP8266 P&amp;N<\/title>$/;"	function
+title	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^        <title>ESP8266 P&amp;N<\/title>$/;"	function
+type	./src/FFS.h	/^  int type;                                  \/\/0=Object; 1=Array$/;"	member	class:FFSjsonFile
+ul	./data/web/ui.html	/^                    <ul>$/;"	function
+ul	/users/neubert/Development/ADE7953-PowerSocket/data/web/ui.html	/^                    <ul>$/;"	function
+unlock	./data/ADE7953.json	/^"unlock"        : "173",$/;"	function
+update	./src/SysUtils.cpp	/^void Clock::update(bool ntp){$/;"	function	class:Clock
+update	/users/neubert/Development/ADE7953-PowerSocket/src/SysUtils.cpp	/^void Clock::update(bool ntp){$/;"	function	class:Clock
+updateServer	./data/config.json	/^  "updateServer":   "192.168.1.3",$/;"	function
+webPassword	./data/config.json	/^  "webPassword":    "ESPpass",$/;"	function
+webServer	./src/WEBServer.h	/^  ESP8266WebServer webServer;$/;"	member	class:WEBIF
+webUser	./data/config.json	/^  "webUser":        "ESPuser",$/;"	function
+webif	./src/TemplateController.h	/^  WEBIF webif;  $/;"	member	class:TemplateController
+wifi	./data/config.json	/^  "wifi":           "dhcp",$/;"	function
+wifi	./src/MQTT.h	/^  WIFI& wifi;$/;"	member	class:MQTT
+wifi	./src/TemplateController.h	/^  WIFI wifi;$/;"	member	class:TemplateController
+wifiIP	./data/config.json	/^  "wifiIP":         "",$/;"	function
+wifiPSK	./data/config.json	/^  "wifiPSK":        "0309196917041970",$/;"	function
+wifiSSID	./data/config.json	/^  "wifiSSID":       "Neubert-Volmar",$/;"	function
+writeItem	./src/FFS.cpp	/^bool FFSjsonFile::writeItem(String itemName, String value){$/;"	function	class:FFSjsonFile
