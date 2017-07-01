@@ -32,21 +32,21 @@ Task t4(3600000, t_long);
 //-------------------------------------------------------------------------------
 //  Setup
 //-------------------------------------------------------------------------------
-void setup() {  
-  Serial.begin(115200); 
+void setup() {
+  Serial.begin(115200);
   Serial.println("");
-  
+
   //Timer
   SoftTimer.add(&t1);
   SoftTimer.add(&t2);
   SoftTimer.add(&t3);
   SoftTimer.add(&t4);
-  
+
   tc.start();
 
   //tc.api.set("/Hello/World/foo/bar", "arg1,arg2,3,4,5");
   //tc.api.set("/Hello/World/foo/bar arg1,arg2,3,4,5");
-}  
+}
 
 //-------------------------------------------------------------------------------
 //  timer control
@@ -63,10 +63,3 @@ void t_short(Task* me) {
 void t_long(Task* me) {
   tc.t_long_Update();
 }
-
-
-
-
-
-
-
