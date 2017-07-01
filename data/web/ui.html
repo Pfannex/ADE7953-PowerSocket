@@ -1,31 +1,16 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-    
+
     <head>
         <title>ESP8266 P&amp;N</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script src="lib/jquery.js"></script>
         <script src="lib/jquery.mobile.js"></script>
         <link href="css/jquery.mobile.css" rel="stylesheet" />
-        <script src="auth.js"></script>   
-        <script src="config.js"></script>   
-        
-	<style>
-		.custom-size-flipswitch.ui-flipswitch .ui-btn.ui-flipswitch-on {
-		    text-indent: -6em;
-		}
-		.custom-size-flipswitch.ui-flipswitch .ui-flipswitch-off {
-		    text-indent: 2em;
-		}
-		.custom-size-flipswitch.ui-flipswitch {
-		    width: 8.875em;
-		}
-		.custom-size-flipswitch.ui-flipswitch.ui-flipswitch-active {
-		    padding-left: 7em;
-		    width: 1.875em;
-	}
-	</style>
-
+        <script src="auth.js"></script>
+        <script src="panels.js"></script>
+        <script src="config.js"></script>
+        <script src="ui.js"></script>
     </head>
 
     <body>
@@ -34,9 +19,9 @@
                 page 1
 
         -->
-        <div data-role="page" data-theme="b" id="page1">
+        <div data-role="page" data-theme="a" id="page1">
             <div data-role="header">
-                <a href="https://github.com/Pfannex/ADE7953_Breakoutboard/wiki" target="_blank" 
+                <a href="https://github.com/Pfannex/ADE7953_Breakoutboard/wiki" target="_blank"
                 id="info" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left">Info</a>
                 <h1>ESP8266 P&amp;N</h1>
                 <a class="ui-btn ui-corner-all ui-shadow ui-icon-delete ui-btn-icon-left" onClick="logout()">Logout</a>
@@ -44,74 +29,88 @@
                     <ul>
                         <li><a href="#page1" data-transition="flow" data-icon="gear" data-role="button" class="ui-btn-active ui-state-persist">Configuration</a></li>
                         <li><a href="#page2" data-transition="flow" data-icon="eye" data-role="button">Readings</a></li>
-                        <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button">Log</a></li>                                                                               
-                    </ul>                                                                                   
-                </div>                                                                                      
-            </div>                                                                                          
-            <div data-role="content">                                                                       
-                <form id="configForm"  method="POST">                                                       
+                        <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button">Log</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div data-role="content">
+                <form id="configForm"  method="POST">
                     <input type="hidden" name="action" value="apply"/>
-                    <div data-role="collapsible">                                                           
-                        <h1>Device</h1>                                                                     
-                        <div data-role="fieldcontain">                                                      
-                            <label for="device_name">Name</label>                                           
-                            <input type="text" id="device_name" name="device_name" placeholder="Hostname and MQTT device name"/>                                          
-                        </div>                                                                              
-                        <div data-role="fieldcontain">                                                      
-                            <label for="device_username">Username</label>                                   
-                            <input type="text" id="device_username" name="device_username"/>                                      
-                        </div>                                                                              
-                        <div data-role="fieldcontain">                                                      
-                            <label for="device_password">Password</label>                                   
-                            <input type="password" id="device_password" name="device_password"/>                                      
-                        </div>                                                                              
-                        <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" id="reboot" onClick="reboot()">Reboot</a>                                                    
-                    </div>                                                                                  
+                    <div data-role="collapsible">
+                        <h1>Device</h1>
+                        <div data-role="fieldcontain">
+                            <label for="device_name">Name</label>
+                            <input type="text" id="device_name" name="device_name" placeholder="Hostname and MQTT device name"/>
+                        </div>
+                        <div data-role="fieldcontain">
+                            <label for="device_username">Username</label>
+                            <input type="text" id="device_username" name="device_username"/>
+                        </div>
+                        <div data-role="fieldcontain">
+                            <label for="device_password">Password</label>
+                            <input type="password" id="device_password" name="device_password"/>
+                        </div>
+                        <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" id="reboot" onClick="reboot()">Reboot</a>
+                    </div>
                     <div data-role="collapsible">
                         <h1>WiFi</h1>
-                        <input type="checkbox" data-role="flipswitch" data-on-text="On" data-off-text="Off" id="wifi" name="wifi" checked>
-                        <div data-role="fieldcontain">
-                            <label for="wifi_ssid">SSID</label>
-                            <input type="text" id="wifi_ssid" name="wifi_ssid"/>
-                        </div>
-                        <div data-role="fieldcontain">
-                            <label for="wifi_password">Password</label>
-                            <input type="password" id="wifi_password" name="wifi_password"/>
-                        </div>
-                        <input type="checkbox" data-role="flipswitch" data-on-text="DHCP" data-off-text="Manual"
-                        	   id="wifi_dhcp" name="wifi_dhcp"
-                               checked data-wrapper-class="custom-size-flipswitch">
-                        <div data-role="fieldcontain">
-                            <label for="wifi_ip">IP Address</label>
-                            <input type="text" id="wifi_ip" value="10.20.17.101" />
-                        </div>
-                        <div data-role="fieldcontain">
-                            <label for="wifi_netmask">Netmask</label>
-                            <input type="text" id="wifi_netmask" value="255.255.255.0" />
-                        </div>
-                        <div data-role="fieldcontain">
-                            <label for="wifi_gateway">Gateway</label>
-                            <input type="text" id="wifi_gateway" value="10.20.17.1" />
-                        </div>
+                        <div><fieldset data-role="controlgroup" data-type="horizontal">
+                                <input name="wifi" id="wifi-off" value="off" type="radio" />
+                                <label for="wifi-off">Off</label>
+                                <input name="wifi" id="wifi-dhcp" value="dhcp" type="radio" />
+                                <label for="wifi-dhcp">DHCP</label>
+                                <input name="wifi" id="wifi-manual" value="manual" type="radio" />
+                                <label for="wifi-manual">Manual</label>
+                        </fieldset></div>
+			<div id="wifi_details">
+                            <div data-role="fieldcontain">
+                                <label for="wifi_ssid">SSID</label>
+                                <input type="text" id="wifi_ssid" name="wifi_ssid"/>
+                            </div>
+                            <div data-role="fieldcontain">
+                                <label for="wifi_password">Password</label>
+                                <input type="password" id="wifi_password" name="wifi_password"/>
+                            </div>
+			    <div id="wifi_net_details">
+				<hr style="visibility:hidden" />
+                                <div data-role="fieldcontain">
+                                    <label for="wifi_ip">IP Address</label>
+                                    <input type="text" id="wifi_ip" value="10.20.17.101" />
+                                </div>
+                                <div data-role="fieldcontain">
+                                    <label for="wifi_netmask">Netmask</label>
+                                    <input type="text" id="wifi_netmask" value="255.255.255.0" />
+                                </div>
+                                <div data-role="fieldcontain">
+                                    <label for="wifi_gateway">Gateway</label>
+                                    <input type="text" id="wifi_gateway" value="10.20.17.1" />
+                                </div>
+                            </div>
+                        </div>   
                     </div>
                     <div data-role="collapsible">
                         <h1>LAN</h1>
-                        <input type="checkbox" data-role="flipswitch" data-on-text="On" data-off-text="Off" id="lan" checked>
-			<br/>
-                        <input type="checkbox" data-role="flipswitch" data-on-text="DHCP" data-off-text="Manual"
-                        	   id="lan_dhcp" checked 
-				   data-wrapper-class="custom-size-flipswitch">
-                        <div data-role="fieldcontain">
-                            <label for="lan_ip">IP Address</label>
-                            <input type="text" id="lan_ip" value="10.20.17.111" />
-                        </div>
-                        <div data-role="fieldcontain">
-                            <label for="lan_netmask">Netmask</label>
-                            <input type="text" id="lan_netmask" value="255.255.255.0" />
-                        </div>
-                        <div data-role="fieldcontain">
-                            <label for="lan_gateway">Gateway</label>
-                            <input type="text" id="lan_gateway" value="10.20.17.1" />
+                        <div><fieldset data-role="controlgroup" data-type="horizontal">
+                                <input name="lan" id="lan-off" value="off" type="radio" />
+                                <label for="lan-off">Off</label>
+                                <input name="lan" id="lan-dhcp" value="dhcp" type="radio" />
+                                <label for="lan-dhcp">DHCP</label>
+                                <input name="lan" id="lan-manual" value="manual" type="radio" />
+                                <label for="lan-manual">Manual</label>
+                        </fieldset></div>
+                        <div id="lan_net_details">
+                            <div data-role="fieldcontain">
+                                <label for="lan_ip">IP Address</label>
+                                <input type="text" id="lan_ip" value="10.20.17.111" />
+                            </div>
+                            <div data-role="fieldcontain">
+                                <label for="lan_netmask">Netmask</label>
+                                <input type="text" id="lan_netmask" value="255.255.255.0" />
+                            </div>
+                            <div data-role="fieldcontain">
+                                <label for="lan_gateway">Gateway</label>
+                                <input type="text" id="lan_gateway" value="10.20.17.1" />
+                            </div>
                         </div>
                     </div>
                     <div data-role="collapsible">
@@ -120,9 +119,11 @@
                             <option value="off">Off</option>
                             <option value="on">On</option>
                         </select>
-                        <div data-role="fieldcontain">
-                            <label for="ntp_serverip">NTP Server IP Address</label>
-                            <input type="text" id="ntp_serverip" name="ntp_serverip"/>
+			<div id="ntp_details">
+                            <div data-role="fieldcontain">
+                                <label for="ntp_serverip">NTP Server IP Address</label>
+                                <input type="text" id="ntp_serverip" name="ntp_serverip"/>
+                            </div>
                         </div>
                     </div>
                     <div data-role="collapsible">
@@ -154,18 +155,20 @@
                     </div>
                     <div data-role="collapsible">
                         <h1>MQTT</h1>
-                        <select data-role="slider" id="mqtt">
+                        <select data-role="slider" id="mqtt" name="mqtt">
                             <option value="off">Off</option>
                             <option value="on">On</option>
                         </select>
-                        <div data-role="fieldcontain">
-                            <label for="mqtt_ip">Broker IP Address</label>
-                            <input type="text" id="mqtt_ip" />
-                        </div>
-                        <div data-role="fieldcontain">
-                            <label for="mqtt_port">Broker Port</label>
-                            <input type="text" id="mqtt_port" />
-                        </div>
+			<div id="mqtt_details">
+                            <div data-role="fieldcontain">
+                                <label for="mqtt_ip">Broker IP Address</label>
+                                <input type="text" id="mqtt_ip" />
+                            </div>
+                            <div data-role="fieldcontain">
+                                <label for="mqtt_port">Broker Port</label>
+                                <input type="text" id="mqtt_port" />
+                            </div>
+			</div>
                     </div>
                     <a data-role="button" data-icon="check" onClick="apply()">Apply</a>
                 </form>
@@ -179,11 +182,11 @@
                -->
             </div>
             <!-- Popups -->
-            <div data-role="popup" id="popupProcessing" class="ui-content" 
+            <div data-role="popup" id="popupProcessing" class="ui-content"
                  data-dismissible="false" data-position-to="#configForm">
                     <p>Processing configuration....</p>
             </div>
-            <div data-role="popup" id="popupRebooting" class="ui-content" 
+            <div data-role="popup" id="popupRebooting" class="ui-content"
                  data-dismissible="false" data-position-to="#configForm">
                     <p>Rebooting device....</p>
                     <p>You will be automatically redirected to the login page.</p>
@@ -203,7 +206,7 @@
                     <ul>
                         <li><a href="#page1" data-transition="flow" data-icon="gear" data-role="button">Configuration</a></li>
                         <li><a href="#page2" data-transition="flow" data-icon="eye" data-role="button" class="ui-btn-active ui-state-persist">Readings</a></li>
-                        <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button">Log</a></li>                                                                               
+                        <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button">Log</a></li>
                     </ul>
                 </div>
             </div>
@@ -242,7 +245,7 @@
                     <ul>
                         <li><a href="#page1" data-transition="flow" data-icon="gear" data-role="button">Configuration</a></li>
                         <li><a href="#page2" data-transition="flow" data-icon="eye" data-role="button">Readings</a></li>
-                        <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button" class="ui-btn-active ui-state-persist">Log</a></li>                                                                               
+                        <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button" class="ui-btn-active ui-state-persist">Log</a></li>
                     </ul>
                 </div>
             </div>
@@ -256,9 +259,8 @@
                -->
             </div>
      </div>
-        
-        
+
+
     </body>
 
 </html>
- 
