@@ -35,18 +35,59 @@ bool API::call(String topicArg){                // "foo/bar arg1,arg2,arg3"
 //  set distributing
 //...............................................................................
 bool API::call(TTopic topic){        //e.g. "Node52/set/ffs/cfg/item/webUser Klaus"
-  if (topic.item[0] == "set"){      //e.g. "Node52/set/ffs/cfg/saveFile"
-    if (topic.item[1] == "ffs"){
-      ffs.set(topic);
-    }
-  }else if (topic.item[0] == "get"){
-    //call subAPI
+  String topItem= stripTopic(topic);
+  if (topItem == "set") {      //e.g. "Node52/set/ffs/cfg/saveFile"
+    set(topic);
+  } else if(topItem == "get") {
+    get(topic);
+  } else {
+    //logging.error('no such item: '+topItem)
   }
 }
+
+String API::set(String topic, String arg) {
+  TTopic tmpTopic = dissectTopic(topic, arg);
+  return set(tmpTopic);
+
+}
+
+String API::set(TTopic topic) {
+  if (topic.item[0] == "ffs"){
+    ffs.set(topic);
+  }
+
+}
+
+
+String API::get(String topic, String arg) {
+  TTopic tmpTopic = dissectTopic(topic, arg);
+  return get(tmpTopic);
+}
+
+String API::get(TTopic topic) {
+  if (topic.item[0] == "ffs"){
+    return ffs.get(topic);
+  }
+
+}
+
 
 //...............................................................................
 //  dissect Topic
 //...............................................................................
+
+// remove top level from topic
+String API::stripTopic(TTopic topic) {
+  String topItem;
+  if(!topic.countTopics) return("");
+  topItem= topic.item[0];
+  for(int i= 1; i< topic.countTopics; i++) {
+    topic.item[i-1]= topic.item[i];
+  }
+  topic.countTopics--;
+  return topItem;
+}
+
 TTopic API::dissectTopic(String topic, String arg){
   TTopic tmpTopic;
 

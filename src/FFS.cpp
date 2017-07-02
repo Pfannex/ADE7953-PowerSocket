@@ -126,7 +126,7 @@ Serial.println(cfg.readItem("webUser"));
 }
 
 
-void FFS::get(TTopic topic){
+String FFS::get(TTopic topic){
 
 }
 

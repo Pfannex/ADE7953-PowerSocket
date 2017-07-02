@@ -69,7 +69,7 @@ public:
   void TEST();
 //API
   void set(TTopic topic);
-  void get(TTopic topic);
+  String get(TTopic topic);
 private:
 //API
 
