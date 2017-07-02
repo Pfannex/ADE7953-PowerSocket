@@ -218,6 +218,7 @@ LOGGING::LOGGING(Clock& clock):
 //  log
 //...............................................................................
 void LOGGING::log(const String &channel, const String &msg) {
+  clock.setClock();
   char txt[1024];
   sprintf(txt, "%s %5s %s", clock.strDateTime_ms.c_str(), channel.c_str(), msg.c_str());
   Serial.println(txt);

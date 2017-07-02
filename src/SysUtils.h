@@ -9,7 +9,7 @@
 //###############################################################################
 //  API types
 //###############################################################################
-  typedef struct TTopic{
+struct TTopic{
   String item[10];
   int countTopics;
   String arg[10];
@@ -37,6 +37,7 @@ public:
   Clock();
   void start();
   void update(bool ntp); //true = NTP , false = t++
+  void setClock();
   time_t t;
 
   int _day;
@@ -56,7 +57,6 @@ public:
 private:
   WiFiUDP ntpUDP;
   NTPClient ntpClient;
-  void setClock();
 };
 
 //###############################################################################
