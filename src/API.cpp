@@ -34,8 +34,10 @@ bool API::call(String topicArg){                // "foo/bar arg1,arg2,arg3"
 //...............................................................................
 //  set distributing
 //...............................................................................
-bool API::call(TTopic topic){        //e.g. "Node52/set/ffs/cfg/item/webUser Klaus"
-  if (topic.item[0] == "set"){      //e.g. "Node52/set/ffs/cfg/saveFile"
+bool API::call(TTopic topic){
+  sysUtils.logging.log("info", topic.asString);
+
+  if (topic.item[0] == "set"){
     if (topic.item[1] == "ffs"){
       ffs.set(topic);
     }
@@ -49,6 +51,7 @@ bool API::call(TTopic topic){        //e.g. "Node52/set/ffs/cfg/item/webUser Kla
 //...............................................................................
 TTopic API::dissectTopic(String topic, String arg){
   TTopic tmpTopic;
+  tmpTopic.asString = topic + " | " + arg;
 
   tmpTopic.countTopics = 0;
   tmpTopic.countArgs = 0;

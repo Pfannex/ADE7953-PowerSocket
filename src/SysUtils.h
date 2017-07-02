@@ -14,6 +14,7 @@
   int countTopics;
   String arg[10];
   int countArgs;
+  String asString;
 };
 
 //###############################################################################

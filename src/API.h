@@ -11,6 +11,7 @@ class API{
 public:
   API(FFS& ffs);
   FFS& ffs;
+  SysUtils sysUtils;
 
   bool call(String topic, String arg);  // "foo/bar","arg1,arg2,arg3"
   bool call(String topicArg);           // "foo/bar arg1,arg2,arg3"

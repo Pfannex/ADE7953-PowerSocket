@@ -104,7 +104,6 @@ FFS
 */
 
 Serial.println(cfg.readItem("webUser"));
-
   if (topic.item[2] == "cfg"){
     if (topic.item[3] == "item"){
       cfg.writeItem(topic.item[4], topic.arg[0]);   //write Item
