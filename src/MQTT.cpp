@@ -3,7 +3,8 @@
 //###############################################################################
 //  MQTT client
 //###############################################################################
-MQTT::MQTT(API& api, FFS& ffs, I2C& i2c, WIFI& wifi):
+MQTT::MQTT(SysUtils& sysUtils, API& api, FFS& ffs, I2C& i2c, WIFI& wifi):
+    sysUtils(sysUtils),
     api(api),
     ffs(ffs),
     i2c(i2c),

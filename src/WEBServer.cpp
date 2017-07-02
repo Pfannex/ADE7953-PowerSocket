@@ -4,7 +4,10 @@
 //  web interface
 //###############################################################################
 
-WEBIF::WEBIF(API& api): webServer(80), api(api) {
+WEBIF::WEBIF(SysUtils& sysUtils, API& api):
+       sysUtils(sysUtils),
+       api(api),  
+       webServer(80) {
 
   httpUpdater.setup(&webServer);
 

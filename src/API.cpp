@@ -3,8 +3,9 @@
 //###############################################################################
 //  API
 //###############################################################################
-API::API(FFS& ffs):
-         ffs(ffs){
+API::API(SysUtils& sysUtils,FFS& ffs):
+     sysUtils(sysUtils),
+     ffs(ffs){
 }
 
 //-------------------------------------------------------------------------------
@@ -35,7 +36,7 @@ bool API::call(String topicArg){                // "foo/bar arg1,arg2,arg3"
 //  set distributing
 //...............................................................................
 bool API::call(TTopic topic){
-  sysUtils.logging.log("info", topic.asString);
+  sysUtils.logging.log("MQTT", topic.asString);
 
   if (topic.item[0] == "set"){
     if (topic.item[1] == "ffs"){

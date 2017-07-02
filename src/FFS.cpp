@@ -4,7 +4,8 @@
 //  FFS
 //###############################################################################
 
-FFS::FFS(I2C& i2c):
+FFS::FFS(SysUtils& sysUtils, I2C& i2c):
+    sysUtils(sysUtils),
     i2c(i2c),
   //jsonFiles
     cfg(CFG_PATH, TYPE_OBJECT),
@@ -103,7 +104,7 @@ FFS
      └─saveFile()
 */
 
-Serial.println(cfg.readItem("webUser"));
+//Serial.println(cfg.readItem("webUser"));
   if (topic.item[2] == "cfg"){
     if (topic.item[3] == "item"){
       cfg.writeItem(topic.item[4], topic.arg[0]);   //write Item
@@ -115,8 +116,7 @@ Serial.println(cfg.readItem("webUser"));
        //call FFS subAPI
        //ffs.set(topic);
   }
-
-  Serial.println(cfg.readItem("webUser"));
+//Serial.println(cfg.readItem("webUser"));
 
 
 
