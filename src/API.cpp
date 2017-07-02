@@ -13,12 +13,12 @@ API::API(FFS& ffs):
 //...............................................................................
 //  set mapping
 //...............................................................................
-bool API::set(String topic, String arg){       // "foo/bar","arg1,arg2,arg3"
+bool API::call(String topic, String arg){       // "foo/bar","arg1,arg2,arg3"
   TTopic tmpTopic = dissectTopic(topic, arg);
-  set(tmpTopic);
+  call(tmpTopic);
 }
 
-bool API::set(String topicArg){                // "foo/bar arg1,arg2,arg3"
+bool API::call(String topicArg){                // "foo/bar arg1,arg2,arg3"
   String topic; String arg;
   int index = -1;
   index = topicArg.indexOf(" ");
@@ -28,19 +28,19 @@ bool API::set(String topicArg){                // "foo/bar arg1,arg2,arg3"
 	arg = topicArg;
   }
   TTopic tmpTopic = dissectTopic(topic, arg);
-  set(tmpTopic);
+  call(tmpTopic);
 }
 
 //...............................................................................
 //  set distributing
 //...............................................................................
-bool API::set(TTopic topic){
-  if (topic.item[0] == "WiFi"){
-    //call WiFi subAPI
-	  //WiFi.set(topic);
-  }else if (topic.item[1] == "FFS"){
-    //call FFS subAPI
-    ffs.set(topic);
+bool API::call(TTopic topic){        //e.g. "Node52/set/ffs/cfg/item/webUser Klaus"
+  if (topic.item[0] == "set"){      //e.g. "Node52/set/ffs/cfg/saveFile"
+    if (topic.item[1] == "ffs"){
+      ffs.set(topic);
+    }
+  }else if (topic.item[0] == "get"){
+    //call subAPI
   }
 }
 

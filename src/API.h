@@ -12,9 +12,9 @@ public:
   API(FFS& ffs);
   FFS& ffs;
 
-  bool set(String topic, String arg);  // "foo/bar","arg1,arg2,arg3"
-  bool set(String topicArg);           // "foo/bar arg1,arg2,arg3"
-  bool set(TTopic topic);
+  bool call(String topic, String arg);  // "foo/bar","arg1,arg2,arg3"
+  bool call(String topicArg);           // "foo/bar arg1,arg2,arg3"
+  bool call(TTopic topic);
   TTopic dissectTopic(String topic, String arg);
   void printTopic(TTopic topic);
 

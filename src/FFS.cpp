@@ -103,19 +103,20 @@ FFS
      └─saveFile()
 */
 
+Serial.println(cfg.readItem("webUser"));
 
-  Serial.println(cfg.readItem("webUser"));
   if (topic.item[2] == "cfg"){
-    if (topic.item[3] == "writeItem"){
-      cfg.writeItem(topic.item[4], topic.arg[0]);
-    }else if (topic.item[3] == "saveFile"){
+    if (topic.item[3] == "item"){
+      cfg.writeItem(topic.item[4], topic.arg[0]);   //write Item
+    }else if (topic.item[3] == "saveFile"){         //save File
       cfg.saveFile();
     }
 
-  }else if (topic.item[1] == "FFS"){
+  }else if (topic.item[1] == "ade7953"){
        //call FFS subAPI
        //ffs.set(topic);
   }
+
   Serial.println(cfg.readItem("webUser"));
 
 

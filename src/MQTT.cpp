@@ -98,7 +98,8 @@ void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length)
   String strArg = String(arg);
   TTopic tmpTopic = api.dissectTopic(strTopic, strArg);
 
-  api.set(tmpTopic);
+  Serial.println(topic);
+  api.call(tmpTopic);
 }
 
 //-------------------------------------------------------------------------------
