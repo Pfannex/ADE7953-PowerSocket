@@ -1,31 +1,23 @@
 #pragma once
   #include <Arduino.h>
+  #include "SysUtils.h"
+  #include "FFS.h"
+
 
 //###############################################################################
-//  API types
-//###############################################################################
- typedef struct TTopic{
-    String item[10];
-	int countTopics;
-	String arg[10];
-	int countArgs;
-  };
-  
-//###############################################################################
-//  API 
+//  API
 //###############################################################################
 class API{
 public:
-  API();
+  API(FFS& ffs);
+  FFS& ffs;
+
   bool set(String topic, String arg);  // "foo/bar","arg1,arg2,arg3"
   bool set(String topicArg);           // "foo/bar arg1,arg2,arg3"
-  bool set(TTopic topic);              
-  //TTopic tmpTopic;
-  
-private:
+  bool set(TTopic topic);
   TTopic dissectTopic(String topic, String arg);
   void printTopic(TTopic topic);
 
+private:
+
 };
-
-

@@ -4,7 +4,7 @@
 //  web interface
 //###############################################################################
 
-WEBIF::WEBIF(FFS& ffs): webServer(80), ffs(ffs) {
+WEBIF::WEBIF(API& api): webServer(80), api(api) {
 
   httpUpdater.setup(&webServer);
 
@@ -16,7 +16,7 @@ WEBIF::WEBIF(FFS& ffs): webServer(80), ffs(ffs) {
   webServer.serveStatic("/auth.js", SPIFFS, "/web/auth.js" /*, "max-age=86400"*/);
   webServer.serveStatic("/config.js", SPIFFS, "/web/config.js" /*, "max-age=86400"*/);
   webServer.serveStatic("/panels.js", SPIFFS, "/web/panels.js" /*, "max-age=86400"*/);
-  webServer.serveStatic("/ui.js", SPIFFS, "/web/ui.js" /*, "max-age=86400"*/);  
+  webServer.serveStatic("/ui.js", SPIFFS, "/web/ui.js" /*, "max-age=86400"*/);
   webServer.serveStatic("/css/images/ajax-loader.gif", SPIFFS, "/web/css/images/ajax-loader.gif", "max-age=86400");
   // dynamic pages
   webServer.on("/", std::bind(&WEBIF::rootPageHandler, this));
@@ -74,7 +74,8 @@ void WEBIF::applyConfiguration() {
   sysUtils.logging.info("applying configuration...");
   for(int i= 0; i< webServer.args(); i++) {
     sysUtils.logging.debug(webServer.argName(i) + ": " + webServer.arg(i));
-    ffs.cfg.writeItem(webServer.argName(i), webServer.arg(i));
+    //ffs.cfg.writeItem(webServer.argName(i), webServer.arg(i));
+    api.set(webServer.argName(i), webServer.arg(i));
   };
   //ffs.cfg.saveFile();
 
@@ -84,7 +85,7 @@ void WEBIF::applyConfiguration() {
 //  WEBIF::getConfiguration()
 //...............................................................................
 String WEBIF::getConfiguration() {
-  return ffs.cfg.root;
+  //return ffs.cfg.root;
 }
 
 

@@ -4,14 +4,15 @@
 //  TemplateController
 //###############################################################################
 TemplateController::TemplateController():
+    api(ffs),
     ffs(i2c),
-    mqtt(ffs, i2c, wifi),
-    wifi(ffs, i2c), 
-    webif(ffs){
- 
+    mqtt(api, ffs, i2c, wifi),
+    wifi(ffs, i2c),
+    webif(api){
+
 //callback Events
   //WiFi
-  wifi.set_callbacks(std::bind(&TemplateController::on_wifiConnected, this), 
+  wifi.set_callbacks(std::bind(&TemplateController::on_wifiConnected, this),
                      std::bind(&TemplateController::on_x, this));
 }
 
@@ -19,9 +20,9 @@ TemplateController::TemplateController():
 //  start
 //-------------------------------------------------------------------------------
 void TemplateController::start(){
-  sysUtils.esp_tools.checkFlash();  
+  sysUtils.esp_tools.checkFlash();
   startPeriphery();
-  ffs.mount();  
+  ffs.mount();
   startConnections();
 }
 
@@ -57,19 +58,19 @@ void TemplateController::on_wifiConnected(){
 //  EVENT wifi x
 //...............................................................................
 void TemplateController::on_x(){
-  //Serial.println("on_x");  
+  //Serial.println("on_x");
 }
 
 //...............................................................................
 //  idle timer
 //...............................................................................
-void TemplateController::t_1s_Update(){    
+void TemplateController::t_1s_Update(){
   sysUtils.clock.update(false);  //t++
 }
-void TemplateController::t_short_Update(){    
-  sysUtils.logging.debugMem(); 
+void TemplateController::t_short_Update(){
+  sysUtils.logging.debugMem();
 }
-void TemplateController::t_long_Update(){    
+void TemplateController::t_long_Update(){
   sysUtils.clock.update(true);   //by NTP
 }
 
@@ -89,8 +90,3 @@ void TemplateController::startConnections(){
 void TemplateController::startPeriphery(){
   i2c.start();
 }
-
-
-
-
-

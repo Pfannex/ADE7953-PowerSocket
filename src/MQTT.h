@@ -1,17 +1,19 @@
 #pragma once
   #include <Arduino.h>
+  #include "API.h"
   #include "SysUtils.h"
   #include "Setup.h"
   #include "FFS.h"
   #include "WIFI.h"
   #include <PubSubClient.h>
-  
+
 //###############################################################################
-//  MQTT client 
+//  MQTT client
 //###############################################################################
 class MQTT{
 public:
-  MQTT(FFS& ffs, I2C& i2c, WIFI& wifi);
+  MQTT(API& api, FFS& ffs, I2C& i2c, WIFI& wifi);
+  API& api;
   FFS& ffs;
   I2C& i2c;
   WIFI& wifi;
@@ -21,10 +23,8 @@ public:
   bool handle();
   void setCallback(MQTT_CALLBACK_SIGNATURE);
   void on_incommingSubcribe(char* topic, byte* payload, unsigned int length);
-  
-  
+
+
 private:
   PubSubClient client;
 };
-
-

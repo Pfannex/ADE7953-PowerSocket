@@ -1,7 +1,7 @@
 #include "FFS.h"
 
 //###############################################################################
-//  FFS 
+//  FFS
 //###############################################################################
 
 FFS::FFS(I2C& i2c):
@@ -34,7 +34,7 @@ void FFS::mount(){
     //Serial.print("formating FS...");
     //SPIFFS.format();
     //Serial.println("OK");
-    
+
   //load rootStrings
     cfg.loadFile();
     subGlobal.loadFile();
@@ -51,7 +51,7 @@ void FFS::mount(){
 //...............................................................................
 
 String FFS::loadString(String filePath) {
-  
+
   FFSstringFile FS(filePath);
   FS.loadFile();
   return FS.read();
@@ -72,17 +72,61 @@ void FFS::TEST(){
   cfg.writeItem("wifiPSK", "Pf@nneNETwlan_ACCESS");
   cfg.writeItem("mqttServer", "192.168.1.203");
   cfg.saveFile();
-  
+
   Serial.println(cfg.readItem("apName"));
   Serial.println(cfg.readItem("wifiSSID"));
   Serial.println(cfg.readItem("wifiPSK"));
   Serial.println(cfg.readItem("mqttServer"));
   Serial.println(cfg.size);
-  
+
   i2c.lcd.println(sub.readItem("1.0"), ArialMT_Plain_16, 0);
   i2c.lcd.println(cfg.readItem("wifiSSID"), ArialMT_Plain_16, 16);
   i2c.lcd.println(cfg.readItem("wifiPSK"), ArialMT_Plain_16, 24);
   i2c.lcd.println(cfg.readItem("mqttServer"), ArialMT_Plain_16, 32);
+}
+
+//-------------------------------------------------------------------------------
+//  FFS API
+//-------------------------------------------------------------------------------
+void FFS::set(TTopic topic){
+/*
+FFS
+  └─FILE
+     ├─filePath                     R
+     ├─size                         R
+     ├─itemsCount                   R
+     ├─type                         R
+     ├─root                         RW
+     ├─loadFile()
+     ├─readItem(itemName)
+     ├─writeItem(itemName, value)
+     └─saveFile()
+*/
+
+
+  Serial.println(cfg.readItem("webUser"));
+  if (topic.item[2] == "cfg"){
+    if (topic.item[3] == "writeItem"){
+      cfg.writeItem(topic.item[4], topic.arg[0]);
+    }else if (topic.item[3] == "saveFile"){
+      cfg.saveFile();
+    }
+
+  }else if (topic.item[1] == "FFS"){
+       //call FFS subAPI
+       //ffs.set(topic);
+  }
+  Serial.println(cfg.readItem("webUser"));
+
+
+
+
+
+}
+
+
+void FFS::get(TTopic topic){
+
 }
 
 //-------------------------------------------------------------------------------
@@ -93,7 +137,7 @@ void FFS::TEST(){
 //  FFSstringFile
 //###############################################################################
 
-FFSstringFile::FFSstringFile(String filePath): 
+FFSstringFile::FFSstringFile(String filePath):
   filePath(filePath) {
 }
 
@@ -108,7 +152,7 @@ FFSstringFile::FFSstringFile(String filePath):
 void FFSstringFile::loadFile() {
 
   File stringFile;
- 
+
   Serial.print("reading " + filePath + "... ");
   if (SPIFFS.exists(filePath)) {
     stringFile = SPIFFS.open(filePath, "r");
@@ -122,7 +166,7 @@ void FFSstringFile::loadFile() {
     }
   } else {
       Serial.println("ERROR (no such file)");
-  }  
+  }
 }
 
 //...............................................................................
@@ -130,7 +174,7 @@ void FFSstringFile::loadFile() {
 //...............................................................................
 
 String FFSstringFile::read() {
-  
+
   return data;
 }
 
@@ -167,7 +211,7 @@ bool FFSjsonFile::saveFile(){
     return false;
   }
   json.printTo(jsonFile);
-  jsonFile.close(); 
+  jsonFile.close();
   return true;
 }
 
@@ -176,7 +220,7 @@ bool FFSjsonFile::saveFile(){
 //...............................................................................
 String FFSjsonFile::readItem(String itemName){
   DynamicJsonBuffer JsonBuffer;
-  JsonObject& rootObject = JsonBuffer.parseObject(root);  
+  JsonObject& rootObject = JsonBuffer.parseObject(root);
   return rootObject[itemName].asString();
 }
 
@@ -185,7 +229,7 @@ String FFSjsonFile::readItem(String itemName){
 //...............................................................................
 String FFSjsonFile::readItem(int item){
   DynamicJsonBuffer JsonBuffer;
-  JsonArray& rootArray = JsonBuffer.parseArray(root);   
+  JsonArray& rootArray = JsonBuffer.parseArray(root);
   return rootArray[item].asString();
 }
 
@@ -197,9 +241,9 @@ bool FFSjsonFile::writeItem(String itemName, String value){
   JsonObject& json = jsonBuffer.parseObject(root);
 
   json[itemName] = value;
- 
+
   root = "";           //printTo(String) is additive!!
-  json.printTo(root);  
+  json.printTo(root);
   return true;
 }
 
@@ -210,28 +254,28 @@ bool FFSjsonFile::writeItem(String itemName, String value){
 //...............................................................................
 //  read json-root-string from File
 //...............................................................................
-String FFSjsonFile::readJsonString(){  
-    
+String FFSjsonFile::readJsonString(){
+
   File jsonFile;
   String jsonData;
- 
+
   Serial.print("reading " + filePath + "...");
   if (SPIFFS.exists(filePath)) {
     jsonFile = SPIFFS.open(filePath, "r");
     if (jsonFile) {
       Serial.println("OK");
       size = jsonFile.size();
-      
+
       DynamicJsonBuffer jsonBuffer;
       JsonVariant json = jsonBuffer.parse(jsonFile);
       if (json.is<JsonArray>()) {
         JsonArray& arr = json.as<JsonArray>();
-        json.printTo(jsonData);           
+        json.printTo(jsonData);
       }
       if (json.is<JsonObject>()) {
         JsonObject& obj = json.as<JsonObject>();
-          json.printTo(jsonData);  
-          itemsCount = parseJsonObject(obj);         
+          json.printTo(jsonData);
+          itemsCount = parseJsonObject(obj);
       }
     }else{
       Serial.println("ERROR openFile");
@@ -239,7 +283,7 @@ String FFSjsonFile::readJsonString(){
     }
     jsonFile.close();
   }
-  return jsonData;  
+  return jsonData;
 }
 
 //...............................................................................
@@ -271,25 +315,3 @@ void FFSjsonFile::parseJsonArray(JsonArray& jsonArray){
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,10 +1,20 @@
 #pragma once
   #include <Arduino.h>
   #include "Setup.h"
-  #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino  
+  #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino
   #include <WiFiUdp.h>
   #include <NTPClient.h>            //https://github.com/arduino-libraries/NTPClient
   #include <TimeLib.h>              //https://github.com/PaulStoffregen/Time
+
+//###############################################################################
+//  API types
+//###############################################################################
+  typedef struct TTopic{
+  String item[10];
+  int countTopics;
+  String arg[10];
+  int countArgs;
+};
 
 //###############################################################################
 //  NET WiFi/LAN
@@ -12,8 +22,8 @@
 class NET{
 public:
   NET();
-  IPAddress charToIP(char* IP);   
-  IPAddress strToIP(String IP);   
+  IPAddress charToIP(char* IP);
+  IPAddress strToIP(String IP);
   char* string2char(String command);
   String macAddress();
 };
@@ -27,7 +37,7 @@ public:
   void start();
   void update(bool ntp); //true = NTP , false = t++
   time_t t;
-  
+
   int _day;
   int _month;
   int _year;
@@ -41,7 +51,7 @@ public:
   String strTime_ms;
   String strDateTime;
   String strDateTime_ms;
-  
+
 private:
   WiFiUDP ntpUDP;
   NTPClient ntpClient;
@@ -68,9 +78,9 @@ public:
   LOGGING(Clock& clock);
   Clock& clock;
   ESP_Tools esp_tools;
-  
+
   void log(const String &channel, const String &msg);
-  
+
   void info(const String &msg);
   void error(const String &msg);
   void debug(const String &msg);
@@ -88,4 +98,3 @@ public:
   ESP_Tools esp_tools;
   LOGGING logging;
 };
-

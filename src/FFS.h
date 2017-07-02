@@ -3,9 +3,10 @@
   #include <FS.h>                     //this needs to be first, or it all crashes and burns...
   #include <ArduinoJson.h>
   #include <Arduino.h>
+  #include "SysUtils.h"
   #include "Setup.h"
   #include "I2C.h"
- 
+
 //###############################################################################
 //  stringFile
 //###############################################################################
@@ -15,7 +16,7 @@ public:
     FFSstringFile(String filePath);
     String filePath;
     String data;
-    
+
     void loadFile();
     String read();
 };
@@ -24,7 +25,7 @@ public:
 //  jsonFile
 //###############################################################################
 class FFSjsonFile{
-public:  
+public:
   FFSjsonFile(String filePath, int type);
   String filePath;
   size_t size;                               //filled in readJsonString()
@@ -37,22 +38,22 @@ public:
   String readItem(int item);
   bool writeItem(String itemName, String value);
   bool saveFile();
-  
-private: 
+
+private:
   String readJsonString();
   int parseJsonObject(JsonObject& jsonObject);
   void parseJsonArray(JsonArray& jsonArray);
 };
- 
+
 //###############################################################################
-//  FFS 
+//  FFS
 //###############################################################################
 
 class FFS {
 public:
   FFS(I2C& i2c);
   I2C& i2c;
-  
+//Files
   FFSjsonFile cfg;
   FFSjsonFile sub;
   FFSjsonFile subGlobal;
@@ -61,11 +62,14 @@ public:
 
   FFSjsonFile testArray;
   FFSjsonFile myFile;
-
-  void mount(); 
+//Functions
+  void mount();
   String loadString(String filePath);
   void TEST();
+//API
+  void set(TTopic topic);
+  void get(TTopic topic);
 private:
+//API
+
 };
-
-
