@@ -25,30 +25,26 @@ bool WIFI::start(){
   String psk = ffs.cfg.readItem("wifiPSK");
 
   sysUtils.logging.log("WIFI", "Connecting WiFi to: " + ssid);
-  //Serial.print("Connecting WiFi to: ");
   i2c.lcd.println("Connecting WiFi to:", ArialMT_Plain_10, 0);
   i2c.lcd.println(ssid, ArialMT_Plain_16,  10);
 
-  Serial.println(ssid);
   WiFi.mode(WIFI_STA);                     //exit AP-Mode if set once
   WiFi.begin(ssid.c_str(),psk.c_str());
   int i = 0;
   while (WiFi.status() != WL_CONNECTED and i < 31) {
     delay(500);
-    Serial.print(">");
-  i++;
+    i++;
   }
 
   if (WiFi.status() == WL_CONNECTED){
     WiFiOK = true;
-    Serial.println("  connected");
-    Serial.print("DHCP-IP: "); Serial.println(WiFi.localIP().toString());
+    sysUtils.logging.log("DHCP", WiFi.localIP().toString());
     i2c.lcd.println("DHCP-IP:", ArialMT_Plain_10, 31);
     i2c.lcd.println(WiFi.localIP().toString(), ArialMT_Plain_16, 41);
 
     if (on_wifiConnected != nullptr) on_wifiConnected();  //callback event
   }else{
-    Serial.println("NOT connected!");
+    sysUtils.logging.error("Wifi unable to connect");
     //start AP Ã¼ber Button!!! (GodMode?)
   }
   Serial.println("............................................");

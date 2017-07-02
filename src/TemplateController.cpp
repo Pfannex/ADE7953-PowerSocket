@@ -20,6 +20,8 @@ TemplateController::TemplateController():
 //  start
 //-------------------------------------------------------------------------------
 void TemplateController::start(){
+  sysUtils.clock.update(false);
+
   sysUtils.esp_tools.checkFlash();
   startPeriphery();
   ffs.mount();

@@ -30,18 +30,16 @@ bool MQTT::start(){
   String deviceName = ffs.cfg.readItem("mqttDeviceName");
   String lastWillTopic = "Devices/" + deviceName;
 
-  Serial.print("MQTT-Broker: ");
-  Serial.print(strIP);
+  sysUtils.logging.log("MQTT", "connecting to: " + strIP + ":" + String(port));
   i2c.lcd.clear();
   i2c.lcd.println("MQTTBroker:", ArialMT_Plain_10, 0);
   i2c.lcd.println(strIP + ":" + String(port), ArialMT_Plain_16,  10);
 
   client.setServer(IP, port);
   client.disconnect();
-  //if (client.connect(ffs.cfg.readItem("mqttDeviceName").c_str())){
   if (client.connect(deviceName.c_str(), lastWillTopic.c_str() , 0, false, "Dead")) {
     MQTTOK = true;
-    Serial.println("...connected");
+    sysUtils.logging.log("MQTT", "connected to Broker");
     i2c.lcd.println("...connected", ArialMT_Plain_10, 31);
     client.publish(lastWillTopic.c_str(), "Alive");
 
