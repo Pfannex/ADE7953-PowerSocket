@@ -23,9 +23,6 @@
   #define PUB_PATH        "/pub.json"
   #define ADE7953_PATH    "/ADE7953.json"
 
-  #define TESTARRAY_PATH  "/testArray.json"
-  #define MYFILE_PATH     "/MyFile.json"
-
   #define TYPE_OBJECT 1
   #define TYPE_ARRAY  0
 #endif

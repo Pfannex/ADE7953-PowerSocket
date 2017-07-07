@@ -7,6 +7,66 @@ SysUtils::SysUtils():
           logging(clock){
 }
 
+//-------------------------------------------------------------------------------
+//  SysUtils API
+//-------------------------------------------------------------------------------
+//...............................................................................
+//  SysUtils SET
+//...............................................................................
+/*
+sysUtils
+  ├──esp
+  │   └─restart
+  └─clock
+      └─forceNTP
+*/
+bool SysUtils::set(TTopic topic){
+  if (topic.item[3] == "esp"){
+    if (topic.item[4] == "restart") {
+      esp_tools.reboot();
+    }
+
+  }else if (topic.item[3] == "clock") {
+    if (topic.item[4] == "forceNTP") {
+      Serial.println("NTP update");
+      //clock.update(true);
+    }
+  }
+}
+
+//...............................................................................
+//  SysUtils GET
+//...............................................................................
+/*
+sysUtils
+  ├──esp
+  │   └─freeHeapSize
+  └─clock
+      ├─Time
+      ├─Date
+      ├─DateTime
+      └─DateTime_ms
+*/
+String SysUtils::get(TTopic topic){
+  String str = "NIL";
+  if (topic.item[3] == "esp"){
+    if (topic.item[4] == "freeHeapSize") {
+      str = esp_tools.freeHeapSize();
+    }
+  }else if (topic.item[3] == "clock") {
+    if (topic.item[4] == "time") {
+      str = clock.strTime;
+    }else if (topic.item[4] == "date") {
+        str = clock.strDate;
+    }else if (topic.item[4] == "dateTime") {
+          str = clock.strDateTime;
+    }else if (topic.item[4] == "dateTime_ms") {
+      str = clock.strDateTime_ms;
+    }
+  }
+  return str;
+}
+
 //###############################################################################
 //  NET WiFi/LAN
 //###############################################################################
@@ -26,7 +86,7 @@ IPAddress NET::charToIP(char* IP) {
   for (int i = 0; i < 4; i++){
     String x = str.substring(0, str.indexOf("."));
     MyIP[i] = x.toInt();
-    str.remove(0, str.indexOf(".")+1); 
+    str.remove(0, str.indexOf(".")+1);
   }
   return MyIP;
 }
@@ -35,7 +95,7 @@ IPAddress NET::charToIP(char* IP) {
 //...............................................................................
 IPAddress NET::strToIP(String IP) {
   IPAddress MyIP;
-  
+
   MyIP = charToIP(string2char(IP.c_str()));
   return MyIP;
 }
@@ -56,7 +116,7 @@ String NET::macAddress() {
     uint8_t mac[6];
     char maddr[18];
     WiFi.macAddress(mac);
-      sprintf(maddr, "%02x:%02x:%02x:%02x:%02x:%02x", 
+      sprintf(maddr, "%02x:%02x:%02x:%02x:%02x:%02x",
                 mac[0],mac[1],mac[2],mac[3],mac[4],mac[5]);
     return String(maddr);
 }
@@ -102,7 +162,7 @@ void Clock::update(bool ntp){
 //...............................................................................
 void Clock::setClock(){
   long now = millis();
-  
+
   //Sommerzeit = letzter Sonntag im März von 2h -> 3h
   if (month(t) == 3 and day(t) >= 25 and weekday(t) == 7 and hour(t) == 2) ntpClient.setTimeOffset(SUMMER_TIME);
   //Winterzeit = letzter Sonntag im Oktober von 3h -> 2h
@@ -115,7 +175,7 @@ void Clock::setClock(){
   _hour        = hour(t);
   _minute      = minute(t);
   _second      = second(t);
- 
+
   long tmp = 0;
   _milliSecond  = millis();
   tmp           = _milliSecond/86400000;
@@ -128,13 +188,13 @@ void Clock::setClock(){
   _milliSecond -= tmp*1000;
 
   char txt[1024];
-  sprintf(txt, "%02d.%02d.%04d", 
+  sprintf(txt, "%02d.%02d.%04d",
                _day, _month, _year);
   strDate = txt;
-  sprintf(txt, "%02d:%02d:%02d", 
+  sprintf(txt, "%02d:%02d:%02d",
                _hour, _minute, _second);
   strTime = txt;
-  sprintf(txt, "%02d:%02d:%02d.%03d", 
+  sprintf(txt, "%02d:%02d:%02d.%03d",
                _hour, _minute, _second, _milliSecond);
   strTime_ms = txt;
   strDateTime = strDate + " - " + strTime;
@@ -171,7 +231,7 @@ void ESP_Tools::checkFlash(){
     Serial.println("");
     Serial.printf("Flash ide mode:  %s", (ideMode == FM_QIO ? "QIO" : ideMode == FM_QOUT ? "QOUT" : ideMode == FM_DIO ? "DIO" : ideMode == FM_DOUT ? "DOUT" : "UNKNOWN"));
     Serial.println("");
-    
+
     if(ideSize != realSize) {
         Serial.println("Flash Chip configuration wrong!");
     } else {
@@ -218,6 +278,7 @@ LOGGING::LOGGING(Clock& clock):
 //  log
 //...............................................................................
 void LOGGING::log(const String &channel, const String &msg) {
+  clock.setClock();
   char txt[1024];
   sprintf(txt, "%s %5s %s", clock.strDateTime_ms.c_str(), channel.c_str(), msg.c_str());
   Serial.println(txt);
@@ -227,7 +288,7 @@ void LOGGING::log(const String &channel, const String &msg) {
 //  INFO
 //...............................................................................
 void LOGGING::info(const String &msg) {
-  log("INFO ", msg);
+  log(" INFO", msg);
 }
 
 //...............................................................................
@@ -252,5 +313,3 @@ void LOGGING::debugMem() {
   sprintf(msg, "free memory: %d", esp_tools.freeHeapSize());
   debug(msg);
 }
-
-

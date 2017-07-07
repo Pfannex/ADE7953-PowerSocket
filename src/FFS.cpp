@@ -4,17 +4,15 @@
 //  FFS
 //###############################################################################
 
-FFS::FFS(I2C& i2c):
+FFS::FFS(SysUtils& sysUtils, I2C& i2c):
+    sysUtils(sysUtils),
     i2c(i2c),
   //jsonFiles
     cfg(CFG_PATH, TYPE_OBJECT),
     sub(SUB_PATH, TYPE_OBJECT),
     subGlobal(SUB_GLOBAL_PATH, TYPE_OBJECT),
     pub(PUB_PATH, TYPE_OBJECT),
-    ade7953(ADE7953_PATH, TYPE_OBJECT),
-
-    myFile(MYFILE_PATH, TYPE_OBJECT),
-    testArray(TESTARRAY_PATH, TYPE_ARRAY){
+    ade7953(ADE7953_PATH, TYPE_OBJECT){
 }
 
 //-------------------------------------------------------------------------------
@@ -41,7 +39,6 @@ void FFS::mount(){
     sub.loadFile();
     pub.loadFile();
     ade7953.loadFile();
-    myFile.loadFile();
     Serial.println("............................................");
   }
 }
@@ -55,6 +52,15 @@ String FFS::loadString(String filePath) {
   FFSstringFile FS(filePath);
   FS.loadFile();
   return FS.read();
+}
+
+//...............................................................................
+//  check for valid JSON-String
+//...............................................................................
+bool FFS::isValidJson(String root){
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& json = jsonBuffer.parseObject(root);
+  return json.success();
 }
 
 //...............................................................................
@@ -88,46 +94,117 @@ void FFS::TEST(){
 //-------------------------------------------------------------------------------
 //  FFS API
 //-------------------------------------------------------------------------------
-void FFS::set(TTopic topic){
+//...............................................................................
+//  API SET
+//...............................................................................
 /*
-FFS
-  └─FILE
-     ├─filePath                     R
-     ├─size                         R
-     ├─itemsCount                   R
-     ├─type                         R
-     ├─root                         RW
-     ├─loadFile()
-     ├─readItem(itemName)
-     ├─writeItem(itemName, value)
-     └─saveFile()
+ffs
+  └─fileObject
+      ├─loadFile
+      ├─saveFile
+      ├─root          [jsonString]    RW
+      └─item
+          └─itemName  [value]         RW
 */
-
-Serial.println(cfg.readItem("webUser"));
-
-  if (topic.item[2] == "cfg"){
-    if (topic.item[3] == "item"){
-      cfg.writeItem(topic.item[4], topic.arg[0]);   //write Item
-    }else if (topic.item[3] == "saveFile"){         //save File
-      cfg.saveFile();
-    }
-
-  }else if (topic.item[1] == "ade7953"){
-       //call FFS subAPI
-       //ffs.set(topic);
+bool FFS::set(TTopic topic){
+  FFSjsonFile *tmpFile = NULL;
+  if (topic.item[3] == "cfg") {
+    tmpFile = &cfg;
+  }else if (topic.item[3] == "sub"){
+    tmpFile = &sub;
+  }else if (topic.item[3] == "subGlobal"){
+    tmpFile = &subGlobal;
+  }else if (topic.item[3] == "pub"){
+    tmpFile = &pub;
+  }else if (topic.item[3] == "ade7953"){
+    tmpFile = &ade7953;
   }
 
-  Serial.println(cfg.readItem("webUser"));
+  if (tmpFile != NULL){
+//LoadFile-----------------------------------------------
+    if (topic.item[4] == "loadFile"){
+      tmpFile->loadFile();
+//SaveFile-----------------------------------------------
+    }else if (topic.item[4] == "saveFile"){
+      tmpFile->saveFile();
+//write rootString---------------------------------------
+    }else if (topic.item[4] == "root"){
+      if (isValidJson(topic.arg[0])){
+        tmpFile->root = topic.arg[0];
+      }else{
+        sysUtils.logging.error("no valid JSON-String!");
+      }
+//writeItem----------------------------------------------
+    }else if (topic.item[4] == "item"){
+      tmpFile->writeItem(topic.item[5], topic.arg[0]);
+    }
+//ERROR--------------------------------------------------
+  }else{
+    sysUtils.logging.error("No match file found!");
+    return false;
+  }
 
-
-
-
-
+/*
+  sysUtils.logging.debug(cfg.root);
+  sysUtils.logging.debug(cfg.readItem("webUser"));
+{"webUser":"ESPuser","webPassword":"ESPpass","apName":"Node52","apPassword":"ESP8266config","wifi":"dhcp","lan":"manual","wifiSSID":"Pf@nne-NET","wifiPSK":"Pf@nneNETwlan_ACCESS","wifiIP":"","mqttServer":"192.168.1.3","mqttPort":"1883","mqttDeviceName":"Node52","updateServer":"192.168.1.3","filePath":"/bin/ESP8266_AktSen.ino.bin"}
+*/
 }
 
-
+//...............................................................................
+//  API GET
+//...............................................................................
+/*
+ffs
+  └─fileObject
+     ├─filePath     R
+     ├─size         R
+     ├─itemsCount   R
+     ├─type         R
+     ├─root         RW
+     └─Item
+         └─ItemName RW
+*/
 String FFS::get(TTopic topic){
+  String str = "NIL";
+  FFSjsonFile *tmpFile = NULL;
+  if (topic.item[3] == "cfg") {
+    tmpFile = &cfg;
+  }else if (topic.item[3] == "sub"){
+    tmpFile = &sub;
+  }else if (topic.item[3] == "subGlobal"){
+    tmpFile = &subGlobal;
+  }else if (topic.item[3] == "pub"){
+    tmpFile = &pub;
+  }else if (topic.item[3] == "ade7953"){
+    tmpFile = &ade7953;
+  }
 
+  if (tmpFile != NULL){
+//filePath-----------------------------------------------
+    if (topic.item[4] == "filePath"){
+      str = tmpFile->filePath;
+//FileSize-----------------------------------------------
+    }else if (topic.item[4] == "size"){
+      str = tmpFile->size;
+//ItemsCount---------------------------------------------
+    }else if (topic.item[4] == "itemsCounte"){
+      str = tmpFile->itemsCount;
+//Json Object Type---------------------------------------
+    }else if (topic.item[4] == "type"){
+      str = tmpFile->type;
+//write rootString---------------------------------------
+    }else if (topic.item[4] == "root"){
+      str = tmpFile->root;
+//readItem----------------------------------------------
+    }else if (topic.item[4] == "item"){
+      str = tmpFile->readItem(topic.item[5]);
+    }
+//ERROR--------------------------------------------------
+  }else{
+    sysUtils.logging.error("No match file found!");
+    return str;
+  }
 }
 
 //-------------------------------------------------------------------------------
@@ -205,15 +282,18 @@ void FFSjsonFile::loadFile(){
 bool FFSjsonFile::saveFile(){
   DynamicJsonBuffer jsonBuffer;
   JsonObject& json = jsonBuffer.parseObject(root);
-
-  File jsonFile = SPIFFS.open(filePath, "w");
-  if (!jsonFile) {
-    Serial.println("Failed to open config file for writing");
+  if (json.success()) {
+    File jsonFile = SPIFFS.open(filePath, "w");
+    if (!jsonFile) {
+      Serial.println("Failed to open config file for writing");
+      return false;
+    }
+    json.printTo(jsonFile);
+    jsonFile.close();
+    return true;
+  }else{
     return false;
   }
-  json.printTo(jsonFile);
-  jsonFile.close();
-  return true;
 }
 
 //...............................................................................
@@ -222,7 +302,11 @@ bool FFSjsonFile::saveFile(){
 String FFSjsonFile::readItem(String itemName){
   DynamicJsonBuffer JsonBuffer;
   JsonObject& rootObject = JsonBuffer.parseObject(root);
-  return rootObject[itemName].asString();
+  if (rootObject.success()) {
+    return rootObject[itemName].asString();
+  }else{
+    return "NIL";
+  }
 }
 
 //...............................................................................
@@ -231,7 +315,11 @@ String FFSjsonFile::readItem(String itemName){
 String FFSjsonFile::readItem(int item){
   DynamicJsonBuffer JsonBuffer;
   JsonArray& rootArray = JsonBuffer.parseArray(root);
-  return rootArray[item].asString();
+  if (rootArray.success()) {
+    return rootArray[item].asString();
+  }else{
+    return "NIL";
+  }
 }
 
 //...............................................................................
@@ -240,12 +328,14 @@ String FFSjsonFile::readItem(int item){
 bool FFSjsonFile::writeItem(String itemName, String value){
   DynamicJsonBuffer jsonBuffer;
   JsonObject& json = jsonBuffer.parseObject(root);
-
-  json[itemName] = value;
-
-  root = "";           //printTo(String) is additive!!
-  json.printTo(root);
-  return true;
+  if (json.success()){
+    json[itemName] = value;
+    root = "";           //printTo(String) is additive!!
+    json.printTo(root);
+    return true;
+  }else{
+    return false;
+  }
 }
 
 //-------------------------------------------------------------------------------

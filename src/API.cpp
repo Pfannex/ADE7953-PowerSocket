@@ -3,8 +3,9 @@
 //###############################################################################
 //  API
 //###############################################################################
-API::API(FFS& ffs):
-         ffs(ffs){
+API::API(SysUtils& sysUtils,FFS& ffs):
+     sysUtils(sysUtils),
+     ffs(ffs){
 }
 
 //-------------------------------------------------------------------------------
@@ -13,12 +14,12 @@ API::API(FFS& ffs):
 //...............................................................................
 //  set mapping
 //...............................................................................
-bool API::call(String topic, String arg){       // "foo/bar","arg1,arg2,arg3"
+String API::call(String topic, String arg){       // "foo/bar","arg1,arg2,arg3"
   TTopic tmpTopic = dissectTopic(topic, arg);
   call(tmpTopic);
 }
 
-bool API::call(String topicArg){                // "foo/bar arg1,arg2,arg3"
+String API::call(String topicArg){                // "foo/bar arg1,arg2,arg3"
   String topic; String arg;
   int index = -1;
   index = topicArg.indexOf(" ");
@@ -34,14 +35,25 @@ bool API::call(String topicArg){                // "foo/bar arg1,arg2,arg3"
 //...............................................................................
 //  set distributing
 //...............................................................................
-bool API::call(TTopic topic){        //e.g. "Node52/set/ffs/cfg/item/webUser Klaus"
-  String topItem= stripTopic(topic);
-  if (topItem == "set") {      //e.g. "Node52/set/ffs/cfg/saveFile"
-    set(topic);
-  } else if(topItem == "get") {
-    get(topic);
-  } else {
-    //logging.error('no such item: '+topItem)
+String API::call(TTopic topic){
+  sysUtils.logging.log("API", topic.asString);
+
+  if (topic.item[1] == "set"){
+    if (topic.item[2] == "ffs"){
+      ffs.set(topic);
+    }else if (topic.item[2] == "sysUtils") {
+      sysUtils.set(topic);
+    }
+  }else if (topic.item[1] == "get"){
+    if (topic.item[2] == "ffs"){
+      String ret = ffs.get(topic);
+      sysUtils.logging.log("API", ret);
+      return ret;
+    }else if (topic.item[2] == "sysUtils") {
+      String ret = sysUtils.get(topic);
+      sysUtils.logging.log("API", ret);
+      return ret;
+    }
   }
 }
 
@@ -89,7 +101,13 @@ String API::stripTopic(TTopic topic) {
 }
 
 TTopic API::dissectTopic(String topic, String arg){
+
+//Prüfung ob arg ein jsonString ist!!
+
   TTopic tmpTopic;
+  tmpTopic.asString = topic + " | " + arg;
+  tmpTopic.itemAsString = topic;
+  tmpTopic.argAsString = arg;
 
   tmpTopic.countTopics = 0;
   tmpTopic.countArgs = 0;
@@ -113,6 +131,10 @@ TTopic API::dissectTopic(String topic, String arg){
   tmpTopic.countTopics = i;
 
 //argument
+  if (ffs.isValidJson(arg)){
+    tmpTopic.arg[0] = arg;   //don't split if arg ist JSON-String
+    tmpTopic.countArgs = 1;
+  }else{
   index = -1; i = 0;
   do{
     index = arg.indexOf(",");
@@ -127,8 +149,16 @@ TTopic API::dissectTopic(String topic, String arg){
   	}
   } while (index != -1);
   tmpTopic.countArgs = i;
-
+  }
+  //printTopic(tmpTopic);
   return tmpTopic;
+}
+
+//...............................................................................
+//  delete TopicItem
+//...............................................................................
+String API::deleteTopicItem(String topic, int item){
+  return topic;
 }
 
 //-------------------------------------------------------------------------------

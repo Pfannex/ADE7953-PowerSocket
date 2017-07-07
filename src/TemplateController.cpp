@@ -4,11 +4,11 @@
 //  TemplateController
 //###############################################################################
 TemplateController::TemplateController():
-    api(ffs),
-    ffs(i2c),
-    mqtt(api, ffs, i2c, wifi),
-    wifi(ffs, i2c),
-    webif(api){
+    api(sysUtils, ffs),
+    ffs(sysUtils, i2c),
+    mqtt(sysUtils, api, ffs, i2c, wifi),
+    wifi(sysUtils, api, ffs, i2c),
+    webif(sysUtils, api){
 
 //callback Events
   //WiFi
@@ -20,6 +20,8 @@ TemplateController::TemplateController():
 //  start
 //-------------------------------------------------------------------------------
 void TemplateController::start(){
+  sysUtils.clock.update(false);
+
   sysUtils.esp_tools.checkFlash();
   startPeriphery();
   ffs.mount();
