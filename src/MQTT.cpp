@@ -46,23 +46,31 @@ bool MQTT::start(){
     //global subscribe
     DynamicJsonBuffer global_JsonBuffer;
     JsonObject& global_rootObject = global_JsonBuffer.parseObject(ffs.subGlobal.root);
-    for (auto &element : global_rootObject){
-      //String strKey = element.key;
-      String strValue = element.value; strValue += "/#";
-      //Serial.println(strValue);
-      client.subscribe(strValue.c_str());
-      client.loop();
+    if (global_rootObject.success()) {
+      for (auto &element : global_rootObject){
+        //String strKey = element.key;
+        String strValue = element.value; strValue += "/#";
+        //Serial.println(strValue);
+        client.subscribe(strValue.c_str());
+        client.loop();
+      }
+    }else{
+      sysUtils.logging.error("reading ffs.subGlobal.root failed");
     }
     //device subscribe
     DynamicJsonBuffer device_JsonBuffer;
     JsonObject& device_rootObject = device_JsonBuffer.parseObject(ffs.sub.root);
-    for (auto &element : device_rootObject){
-      //String strKey = element.key;
-      String value = element.value;
-      String strValue = deviceName; strValue += "/"; strValue += value;
-      //Serial.println(strValue);
-      client.subscribe(strValue.c_str());
-      client.loop();
+    if (device_rootObject.success()) {
+      for (auto &element : device_rootObject){
+        //String strKey = element.key;
+        String value = element.value;
+        String strValue = deviceName; strValue += "/"; strValue += value;
+        //Serial.println(strValue);
+        client.subscribe(strValue.c_str());
+        client.loop();
+      }
+    }else{
+      sysUtils.logging.error("reading ffs.sub.root failed");
     }
   }
   return MQTTOK;
@@ -84,11 +92,12 @@ bool MQTT::handle(){
 //...............................................................................
 void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length){
 //topic
+  sysUtils.logging.log("MQTT", "PayloadSize: " + String(length));
   String strTopic = String(topic);
   String deviceName = ffs.cfg.readItem("mqttDeviceName");
-  if (strTopic.indexOf(deviceName) != -1) {  //is Topic with DeviceName
-    strTopic.remove(0, deviceName.length() +1);
-  }
+  //if (strTopic.indexOf(deviceName) != -1) {  //is Topic with DeviceName
+    //strTopic.remove(0, deviceName.length() +1);
+  //}
 //argument
   char arg[500] = "";
   for (int i = 0; i < length; i++) {
@@ -97,7 +106,50 @@ void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length)
   String strArg = String(arg);
   TTopic tmpTopic = api.dissectTopic(strTopic, strArg);
 
-  api.call(tmpTopic);
+  String returnTopic = "";
+  for (int i = 0; i < tmpTopic.countTopics; i++) {
+    if (i != 1) { //delete set/get
+      returnTopic += tmpTopic.item[i] + "/";
+    }
+  }
+  returnTopic.remove(returnTopic.length()-1,returnTopic.length());
+  //return Tpoic oder lieber ein allgemeines Topic "RESULT"??
+  //sysUtils.logging.debug(returnTopic);
+
+  pub(returnTopic, api.call(tmpTopic));
+}
+
+//...............................................................................
+//  MQTT publish
+//...............................................................................
+void MQTT::pub(String topic, String value){
+  client.publish(topic.c_str(), value.c_str());
+  client.loop();
+}
+
+//-------------------------------------------------------------------------------
+//  MQTT API
+//-------------------------------------------------------------------------------
+//...............................................................................
+//  MQTT SET
+//...............................................................................
+/*
+mqtt
+  └─
+*/
+bool MQTT::set(TTopic topic){
+
+}
+
+//...............................................................................
+//  MQTT GET
+//...............................................................................
+/*
+mqtt
+  └─
+*/
+String MQTT::get(TTopic topic){
+
 }
 
 //-------------------------------------------------------------------------------

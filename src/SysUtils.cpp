@@ -7,6 +7,66 @@ SysUtils::SysUtils():
           logging(clock){
 }
 
+//-------------------------------------------------------------------------------
+//  SysUtils API
+//-------------------------------------------------------------------------------
+//...............................................................................
+//  SysUtils SET
+//...............................................................................
+/*
+sysUtils
+  ├──esp
+  │   └─restart
+  └─clock
+      └─forceNTP
+*/
+bool SysUtils::set(TTopic topic){
+  if (topic.item[3] == "esp"){
+    if (topic.item[4] == "restart") {
+      esp_tools.reboot();
+    }
+
+  }else if (topic.item[3] == "clock") {
+    if (topic.item[4] == "forceNTP") {
+      Serial.println("NTP update");
+      //clock.update(true);
+    }
+  }
+}
+
+//...............................................................................
+//  SysUtils GET
+//...............................................................................
+/*
+sysUtils
+  ├──esp
+  │   └─freeHeapSize
+  └─clock
+      ├─Time
+      ├─Date
+      ├─DateTime
+      └─DateTime_ms
+*/
+String SysUtils::get(TTopic topic){
+  String str = "NIL";
+  if (topic.item[3] == "esp"){
+    if (topic.item[4] == "freeHeapSize") {
+      str = esp_tools.freeHeapSize();
+    }
+  }else if (topic.item[3] == "clock") {
+    if (topic.item[4] == "time") {
+      str = clock.strTime;
+    }else if (topic.item[4] == "date") {
+        str = clock.strDate;
+    }else if (topic.item[4] == "dateTime") {
+          str = clock.strDateTime;
+    }else if (topic.item[4] == "dateTime_ms") {
+      str = clock.strDateTime_ms;
+    }
+  }
+  return str;
+}
+
 //###############################################################################
 //  NET WiFi/LAN
 //###############################################################################

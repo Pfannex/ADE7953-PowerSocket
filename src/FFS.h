@@ -62,16 +62,14 @@ public:
   FFSjsonFile pub;
   FFSjsonFile ade7953;
 
-  FFSjsonFile testArray;
-  FFSjsonFile myFile;
 //Functions
   void mount();
   String loadString(String filePath);
+  bool isValidJson(String root);
   void TEST();
 //API
-  void set(TTopic topic);
-  void get(TTopic topic);
+  bool set(TTopic topic);
+  String get(TTopic topic);
 private:
-//API
 
 };

@@ -11,8 +11,10 @@
 //###############################################################################
 struct TTopic{
   String item[10];
+  String itemAsString;
   int countTopics;
   String arg[10];
+  String argAsString;
   int countArgs;
   String asString;
 };
@@ -98,4 +100,9 @@ public:
   Clock clock;
   ESP_Tools esp_tools;
   LOGGING logging;
+//API
+  bool set(TTopic topic);
+  String get(TTopic topic);
+
+
 };
