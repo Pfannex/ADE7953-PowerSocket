@@ -31,7 +31,6 @@ String API::call(String topicArg){                // "foo/bar arg1,arg2,arg3"
   }
   TTopic tmpTopic = dissectTopic(topic, arg);
   call(tmpTopic);
-  //test
 }
 
 //...............................................................................
