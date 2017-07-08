@@ -6,8 +6,9 @@
 
 WEBIF::WEBIF(SysUtils& sysUtils, API& api):
        sysUtils(sysUtils),
-       api(api),  
-       webServer(80) {
+       api(api),
+       webServer(80),
+       auth(sysUtils) {
 
   httpUpdater.setup(&webServer);
 
@@ -37,7 +38,7 @@ WEBIF::WEBIF(SysUtils& sysUtils, API& api):
 //...............................................................................
 void WEBIF::start() {
 
-  sysUtils.logging.info("Web interface... ");
+  sysUtils.logging.info("starting web interface... ");
 
   // pages served
   numPagesServed= 0;
@@ -54,7 +55,7 @@ void WEBIF::start() {
 
   // start serving requests
   webServer.begin();
-  sysUtils.logging.info("started.");
+  sysUtils.logging.info("web interface started.");
 
 }
 
@@ -161,8 +162,28 @@ bool WEBIF::checkAuthentification() {
   if(webServer.hasHeader("Cookie")) {
     String cookie = webServer.header("Cookie");
     sysUtils.logging.info("client provided cookie: "+cookie);
+    int p= cookie.indexOf("sessionId=");
+    if(p< 0) {
+      sysUtils.logging.info("no sessionId provided.");
+      return false;
+    }
     // check if cookie corresponds to active session
-    return auth.checkSession(cookie.substring(10));
+    String sessionId= cookie.substring(p+10,p+74);
+    sysUtils.logging.info("sessionId "+sessionId+" provided.");
+    SessionPtr session= auth.getSession(sessionId);
+    if(!session) {
+      //sysUtils.logging.debug("no session found.");
+      return false;
+    }
+    if(session->isExpired()) {
+      //sysUtils.logging.debug("session expired.");
+      // delete the session
+      auth.deleteSession(sessionId);
+      return false;
+    }
+    //sysUtils.logging.debug("session found.");
+    session->touch();
+    return true;
   } else {
     return false;
   }
@@ -232,11 +253,19 @@ void WEBIF::authPageHandler() {
 
     if(auth.checkPassword(username, password)) {
       // password ok
-      sysUtils.logging.info("user "+username+" authenticated");
-      String SessionID= auth.createSession(username);
+      sysUtils.logging.info("user "+username+" authenticated.");
+      SessionPtr session= auth.createSession(username);
+      if(!session) {
+        // could not create a session
+        sysUtils.logging.info("could not create a session.");
+        webServer.sendHeader("Location","/");
+        webServer.sendHeader("Cache-Control","no-cache");
+        webServer.send(200, "text/plain", "false");
+        return;
+      }
       webServer.sendHeader("Location","/");
       webServer.sendHeader("Cache-Control","no-cache");
-      webServer.sendHeader("Set-Cookie","SessionID="+SessionID);
+      webServer.sendHeader("Set-Cookie","sessionId="+session->getSessionId());
       webServer.send(200, "text/plain", "true");
 
     } else {
@@ -254,7 +283,7 @@ void WEBIF::authPageHandler() {
     sysUtils.logging.info("logging out");
     webServer.sendHeader("Location","/");
     webServer.sendHeader("Cache-Control","no-cache");
-    webServer.sendHeader("Set-Cookie","SessionID=0");
+    webServer.sendHeader("Set-Cookie","sessionId=");
     webServer.send(200, "text/plain", "true");
   }
 
@@ -268,9 +297,9 @@ void WEBIF::authPageHandler() {
 void WEBIF::apiPageHandler() {
 
   if(checkAuthentification()) {
-    webServer.send(200, "text/plain", "here can be anything");
+    webServer.send(200, "text/plain", "{ P_A: 1234.5 }");
   } else {
-    webServer.send(200, "text/plain", "permission denied");
+    webServer.send(200, "text/plain", "");
   }
 }
 
@@ -279,6 +308,7 @@ void WEBIF::apiPageHandler() {
 //...............................................................................
 void WEBIF::handleNotFound() {
 
+  sysUtils.logging.error("URI "+webServer.uri()+" not found.");
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += webServer.uri();

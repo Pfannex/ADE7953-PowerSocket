@@ -8,8 +8,6 @@
         <script src="lib/jquery.mobile.js"></script>
         <link href="css/jquery.mobile.css" rel="stylesheet" />
         <script src="auth.js"></script>
-        <script src="panels.js"></script>
-        <script src="config.js"></script>
         <script src="ui.js"></script>
     </head>
 
@@ -215,12 +213,12 @@
                 </div>
             </div>
             <div data-role="content">
-		<div class="ui-grid-b">
+		<div id="readings" class="ui-grid-b">
 			<div class="ui-block-a"></div>
 			<div class="ui-block-b">Channel A</div>
 			<div class="ui-block-c">Channel B</div>
 			<div class="ui-block-a">Power</div>
-			<div class="ui-block-b">212.0 W</div>
+			<div name="P_A" class="ui-block-b">212.0 W</div>
 			<div class="ui-block-c">0.0 W</div>
 			<div class="ui-block-a">Phase</div>
 			<div class="ui-block-b">5,5°</div>

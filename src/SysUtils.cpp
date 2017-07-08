@@ -7,6 +7,25 @@ SysUtils::SysUtils():
           logging(clock){
 }
 
+long SysUtils::seed= 0;
+
+//...............................................................................
+//  random
+//...............................................................................
+
+long SysUtils::rand(long max) {
+
+    // We initialize the random number generator when it is first used.
+    // Thus a random number of milliseconds has passed when we come here.
+    // seed is a class variable (only one copy for all instances of Session
+    if(!SysUtils::seed) {
+        SysUtils::seed= millis();
+        randomSeed(SysUtils::seed);
+        logging.info("initialized random generator.");
+    }
+    return random(max);
+};
+
 //-------------------------------------------------------------------------------
 //  SysUtils API
 //-------------------------------------------------------------------------------

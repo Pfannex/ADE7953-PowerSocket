@@ -57,6 +57,7 @@ String API::call(TTopic topic){
   }
 }
 
+/*
 String API::set(String topic, String arg) {
   TTopic tmpTopic = dissectTopic(topic, arg);
   return set(tmpTopic);
@@ -82,12 +83,13 @@ String API::get(TTopic topic) {
   }
 
 }
-
+*/
 
 //...............................................................................
 //  dissect Topic
 //...............................................................................
 
+/*
 // remove top level from topic
 String API::stripTopic(TTopic topic) {
   String topItem;
@@ -99,6 +101,7 @@ String API::stripTopic(TTopic topic) {
   topic.countTopics--;
   return topItem;
 }
+*/
 
 TTopic API::dissectTopic(String topic, String arg){
 
