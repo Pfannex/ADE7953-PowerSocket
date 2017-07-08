@@ -100,6 +100,9 @@ public:
   Clock clock;
   ESP_Tools esp_tools;
   LOGGING logging;
+  // random
+  long rand(long max);
+  static long seed; // class variable
 //API
   bool set(TTopic topic);
   String get(TTopic topic);
