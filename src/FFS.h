@@ -69,7 +69,6 @@ public:
   void TEST();
 //API
   bool set(TTopic topic);
-
   String get(TTopic topic);
 private:
 

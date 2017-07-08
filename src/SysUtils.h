@@ -55,6 +55,7 @@ public:
   String strTime_ms;
   String strDateTime;
   String strDateTime_ms;
+  String root;
 
 private:
   WiFiUDP ntpUDP;

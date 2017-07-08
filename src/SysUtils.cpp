@@ -61,6 +61,7 @@ sysUtils
   ├──esp
   │   └─freeHeapSize
   └─clock
+      ├─root
       ├─Time
       ├─Date
       ├─DateTime
@@ -73,7 +74,9 @@ String SysUtils::get(TTopic topic){
       str = esp_tools.freeHeapSize();
     }
   }else if (topic.item[3] == "clock") {
-    if (topic.item[4] == "time") {
+    if (topic.item[4] == "root") {
+      str = clock.root;
+    }else if (topic.item[4] == "time") {
       str = clock.strTime;
     }else if (topic.item[4] == "date") {
         str = clock.strDate;
@@ -218,6 +221,8 @@ void Clock::setClock(){
   strTime_ms = txt;
   strDateTime = strDate + " - " + strTime;
   strDateTime_ms = strDate + " - " + strTime_ms;
+
+  root = "{\"dateTime\":\"" + strDateTime + "\"}";
 }
 
 //###############################################################################
