@@ -43,6 +43,8 @@ String API::call(TTopic topic){
       ffs.set(topic);
     }else if (topic.item[2] == "sysUtils") {
       sysUtils.set(topic);
+    }else if (topic.item[2] == "mqtt") {   //!!!!!!!!
+      //sysUtils.set(topic);                 //
     }
   }else if (topic.item[1] == "get"){
     if (topic.item[2] == "ffs"){
@@ -57,53 +59,10 @@ String API::call(TTopic topic){
   }
 }
 
-String API::set(String topic, String arg) {
-  TTopic tmpTopic = dissectTopic(topic, arg);
-  return set(tmpTopic);
-
-}
-
-String API::set(TTopic topic) {
-  if (topic.item[0] == "ffs"){
-    ffs.set(topic);
-  }
-
-}
-
-
-String API::get(String topic, String arg) {
-  TTopic tmpTopic = dissectTopic(topic, arg);
-  return get(tmpTopic);
-}
-
-String API::get(TTopic topic) {
-  if (topic.item[0] == "ffs"){
-    return ffs.get(topic);
-  }
-
-}
-
-
 //...............................................................................
 //  dissect Topic
 //...............................................................................
-
-// remove top level from topic
-String API::stripTopic(TTopic topic) {
-  String topItem;
-  if(!topic.countTopics) return("");
-  topItem= topic.item[0];
-  for(int i= 1; i< topic.countTopics; i++) {
-    topic.item[i-1]= topic.item[i];
-  }
-  topic.countTopics--;
-  return topItem;
-}
-
 TTopic API::dissectTopic(String topic, String arg){
-
-//Prüfung ob arg ein jsonString ist!!
-
   TTopic tmpTopic;
   tmpTopic.asString = topic + " | " + arg;
   tmpTopic.itemAsString = topic;

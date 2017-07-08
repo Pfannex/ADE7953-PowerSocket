@@ -135,10 +135,12 @@ void MQTT::pub(String topic, String value){
 //...............................................................................
 /*
 mqtt
-  └─
+  └─connect
 */
 bool MQTT::set(TTopic topic){
-
+  if (topic.item[3] == "connect"){
+    start();
+  }
 }
 
 //...............................................................................
@@ -146,10 +148,18 @@ bool MQTT::set(TTopic topic){
 //...............................................................................
 /*
 mqtt
-  └─
+  └─status
 */
 String MQTT::get(TTopic topic){
-
+  String str = "NIL";
+  if (topic.item[3] == "status"){
+    if (handle()){
+      str = "connected";
+    }else{
+      str = "disconnected";
+    }
+  }
+  return str;
 }
 
 //-------------------------------------------------------------------------------
