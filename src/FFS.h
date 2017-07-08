@@ -68,7 +68,7 @@ public:
   bool isValidJson(String root);
   void TEST();
 //API
-  bool set(TTopic topic);
+  String set(TTopic topic);
   String get(TTopic topic);
 private:
 

@@ -106,7 +106,9 @@ ffs
       └─item
           └─itemName  [value]         RW
 */
-bool FFS::set(TTopic topic){
+String FFS::set(TTopic topic){
+  String str = "NIL";
+  sysUtils.logging.log("FFS", topic.asString);
   FFSjsonFile *tmpFile = NULL;
   if (topic.item[3] == "cfg") {
     tmpFile = &cfg;
@@ -124,26 +126,33 @@ bool FFS::set(TTopic topic){
 //LoadFile-----------------------------------------------
     if (topic.item[4] == "loadFile"){
       tmpFile->loadFile();
+      return "OK";
 //SaveFile-----------------------------------------------
     }else if (topic.item[4] == "saveFile"){
       tmpFile->saveFile();
+      return "OK";
 //write rootString---------------------------------------
     }else if (topic.item[4] == "root"){
       if (isValidJson(topic.arg[0])){
         tmpFile->root = topic.arg[0];
+        return "OK";
       }else{
         sysUtils.logging.error("no valid JSON-String!");
+        return "no valid JSON-String!";
       }
 //writeItem----------------------------------------------
     }else if (topic.item[4] == "item"){
-      tmpFile->writeItem(topic.item[5], topic.arg[0]);
+      return "ffs/item";
+      //tmpFile->writeItem(topic.item[5], topic.arg[0]);
+      //Serial.println("ffs/set/cfg/item");
+      //str = "Hallo"; //tmpFile->readItem(topic.item[5]);
     }
 //ERROR--------------------------------------------------
   }else{
     sysUtils.logging.error("No match file found!");
-    return false;
+    return "No match file found!";
   }
-
+  //return str;
 /*
   sysUtils.logging.debug(cfg.root);
   sysUtils.logging.debug(cfg.readItem("webUser"));
@@ -203,8 +212,8 @@ String FFS::get(TTopic topic){
 //ERROR--------------------------------------------------
   }else{
     sysUtils.logging.error("No match file found!");
-    return str;
   }
+  return str;
 }
 
 //-------------------------------------------------------------------------------
@@ -326,12 +335,15 @@ String FFSjsonFile::readItem(int item){
 //  writeItem to jsonObjectString
 //...............................................................................
 bool FFSjsonFile::writeItem(String itemName, String value){
+  //Serial.println(itemName + ":" + value);
   DynamicJsonBuffer jsonBuffer;
   JsonObject& json = jsonBuffer.parseObject(root);
   if (json.success()){
+    //json.printTo(Serial);
     json[itemName] = value;
     root = "";           //printTo(String) is additive!!
     json.printTo(root);
+    //json.printTo(Serial);
     return true;
   }else{
     return false;

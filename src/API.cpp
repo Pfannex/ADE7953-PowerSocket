@@ -38,10 +38,12 @@ String API::call(String topicArg){                // "foo/bar arg1,arg2,arg3"
 //...............................................................................
 String API::call(TTopic topic){
   sysUtils.logging.log("API", topic.asString);
+  String ret = "NIL";
 
   if (topic.item[1] == "set"){
     if (topic.item[2] == "ffs"){
-      ffs.set(topic);
+      //return "DEBUG";
+      return ffs.set(topic);
     }else if (topic.item[2] == "sysUtils") {
       sysUtils.set(topic);
     }else if (topic.item[2] == "mqtt") {   //!!!!!!!!
@@ -49,7 +51,7 @@ String API::call(TTopic topic){
     }
   }else if (topic.item[1] == "get"){
     if (topic.item[2] == "ffs"){
-      String ret = ffs.get(topic);
+      ret = ffs.get(topic);
       sysUtils.logging.log("API", ret);
       return ret;
     }else if (topic.item[2] == "sysUtils") {

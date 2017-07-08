@@ -106,17 +106,25 @@ void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length)
   String strArg = String(arg);
   TTopic tmpTopic = api.dissectTopic(strTopic, strArg);
 
-  String returnTopic = "";
-  for (int i = 0; i < tmpTopic.countTopics; i++) {
-    if (i != 1) { //delete set/get
-      returnTopic += tmpTopic.item[i] + "/";
-    }
-  }
-  returnTopic.remove(returnTopic.length()-1,returnTopic.length());
-  //return Tpoic oder lieber ein allgemeines Topic "RESULT"??
-  //sysUtils.logging.debug(returnTopic);
+//--------------------------------
 
-  pub(returnTopic, api.call(tmpTopic));
+  String returnTopic = tmpTopic.item[0];
+  for (int i = 2; i < tmpTopic.countTopics; i++) {
+      returnTopic += "/" + tmpTopic.item[i];
+  }
+  //return Tpoic oder lieber ein allgemeines Topic "RESULT"??
+
+  sysUtils.logging.log("MQTT", returnTopic);
+  String tmp = api.call(tmpTopic);
+  sysUtils.logging.log("MQTT", tmp);
+
+
+
+  //sysUtils.logging.log("xxxx", "ERROR");
+  //for (size_t i = 0; i < 100; i++) {
+    //sysUtils.logging.log("xxxx", "ERROR");
+  //}
+  //pub(returnTopic, tmp);
 }
 
 //...............................................................................
