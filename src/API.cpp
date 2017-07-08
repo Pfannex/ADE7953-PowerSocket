@@ -59,58 +59,9 @@ String API::call(TTopic topic){
   }
 }
 
-<<<<<<< HEAD
 //...............................................................................
 //  dissect Topic
 //...............................................................................
-=======
-/*
-String API::set(String topic, String arg) {
-  TTopic tmpTopic = dissectTopic(topic, arg);
-  return set(tmpTopic);
-
-}
-
-String API::set(TTopic topic) {
-  if (topic.item[0] == "ffs"){
-    ffs.set(topic);
-  }
-
-}
-
-
-String API::get(String topic, String arg) {
-  TTopic tmpTopic = dissectTopic(topic, arg);
-  return get(tmpTopic);
-}
-
-String API::get(TTopic topic) {
-  if (topic.item[0] == "ffs"){
-    return ffs.get(topic);
-  }
-
-}
-*/
-
-//...............................................................................
-//  dissect Topic
-//...............................................................................
-
-/*
-// remove top level from topic
-String API::stripTopic(TTopic topic) {
-  String topItem;
-  if(!topic.countTopics) return("");
-  topItem= topic.item[0];
-  for(int i= 1; i< topic.countTopics; i++) {
-    topic.item[i-1]= topic.item[i];
-  }
-  topic.countTopics--;
-  return topItem;
-}
-*/
-
->>>>>>> f900dfb1ff70f20d16188c865b00839a2176b35a
 TTopic API::dissectTopic(String topic, String arg){
   TTopic tmpTopic;
   tmpTopic.asString = topic + " | " + arg;
