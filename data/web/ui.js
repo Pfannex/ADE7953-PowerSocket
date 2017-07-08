@@ -61,19 +61,27 @@ function set_radio_handlers() {
 // check if alive
 //
 function alive() {
+        var result= false;
         $.ajax({
                 type: "POST",
                 url: "./api.html",
-                data: "input={ vvvv }",
+                data: "",
+                timeout: 1000,
                 success: function() {
-                          return true;
+                          console.log("server is alive");
+                          result= true;
+                },
+                error:  function() {
+                          console.log("server is dead");
+                          result= false;
                 }
         });
-        return false;
+        return result;
 }
 
 function reloadIfAlive() {
 
+  console.log("reload if alive...");
   if(alive()) {
     window.location="/";
   } else {
@@ -176,8 +184,8 @@ function set_readings() {
             console.log(json);
             // set inputs
             readingsDiv.find('div').html( function() {
-              console.log("Setting "+this.name+" to "+json[this.name]);
-              return json[this.name];
+              console.log("Setting div with id "+this.id+" to "+json[this.id]);
+              return json[this.id];
             });
             //setTimeout( set_readings(), 5000);
           }

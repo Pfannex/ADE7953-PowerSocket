@@ -16,7 +16,7 @@
 		<h1>ESP8266 P&amp;N Authentification</h1>
 	</div>
 	<div data-role="content">
-		<form id="loginForm" method="POST">
+		<form id="loginForm" action="/" method="POST">
 			<div data-role="fieldcontain" id="credentials">
 				<label for="username">Username</label>
 				<input type="text" name="username" id="username"/>
@@ -25,8 +25,7 @@
 				<label for="password">Password</label>
 				<input type="password" name="password" id="password"/>
 			</div>
-			<input type="submit" value="Login" data-role="button"
-						 class="ui-btn ui-icon-check ui-btn-icon-left" onClick="login()"/>
+			<a id="login" data-role="button" data-icon="check" onClick="login()">Login</a>
 		</form>
 	</div>
 	<div data-role="popup" id="failed" class="ui-content" data-position-to="#loginForm">
@@ -50,4 +49,17 @@
 
 </div>
 </body>
+
+<script>
+$('#password').keypress( function(event) {
+  if(event.keyCode == 13) {
+    $('#login').click();
+  }
+});
+$('#username').keypress( function(event) {
+  if(event.keyCode == 13) {
+    $('#login').click();
+  }
+});
+</script>
 </html>
