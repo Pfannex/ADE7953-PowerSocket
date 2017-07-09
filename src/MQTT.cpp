@@ -118,13 +118,8 @@ void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length)
   String tmp = api.call(tmpTopic);
   sysUtils.logging.log("MQTT", tmp);
 
-
-
-  //sysUtils.logging.log("xxxx", "ERROR");
-  //for (size_t i = 0; i < 100; i++) {
-    //sysUtils.logging.log("xxxx", "ERROR");
-  //}
   //pub(returnTopic, tmp);
+  //pub("Node52", "HelloWorld");
 }
 
 //...............................................................................

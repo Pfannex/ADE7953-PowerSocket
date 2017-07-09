@@ -107,6 +107,7 @@ ffs
           └─itemName  [value]         RW
 */
 String FFS::set(TTopic topic){
+
   String str = "NIL";
   sysUtils.logging.log("FFS", topic.asString);
   FFSjsonFile *tmpFile = NULL;
@@ -144,6 +145,8 @@ String FFS::set(TTopic topic){
     }else if (topic.item[4] == "item"){
       return "ffs/item";
       //tmpFile->writeItem(topic.item[5], topic.arg[0]);
+      //str = "xxx"; //tmpFile->readItem(topic.item[5]);
+      //return str;
       //Serial.println("ffs/set/cfg/item");
       //str = "Hallo"; //tmpFile->readItem(topic.item[5]);
     }

@@ -14,7 +14,7 @@
 
 ********************************************************************************/
 #include <SoftTimer.h>	//https://github.com/prampec/arduino-softtimer
-						//need https://github.com/prampec/arduino-pcimanager
+						            //need https://github.com/prampec/arduino-pcimanager
 
 #include "TemplateController.h"
 TemplateController tc;
@@ -54,6 +54,7 @@ void setup() {
 void Loop(Task* me) {
   tc.handle();
 }
+
 void t_1s(Task* me) {
   tc.t_1s_Update();
 }
