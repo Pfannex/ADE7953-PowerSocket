@@ -12,8 +12,8 @@ TemplateController::TemplateController():
 
 //callback Events
   //WiFi
-  //wifi.set_callbacks(std::bind(&TemplateController::on_wifiConnected, this),
-                     //std::bind(&TemplateController::on_x, this));
+  wifi.set_callbacks(std::bind(&TemplateController::on_wifiConnected, this),
+                     std::bind(&TemplateController::on_x, this));
 }
 
 //-------------------------------------------------------------------------------

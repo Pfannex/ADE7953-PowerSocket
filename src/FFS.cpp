@@ -107,9 +107,9 @@ ffs
           └─itemName  [value]         RW
 */
 String FFS::set(TTopic topic){
-  sysUtils.logging.log("FFS", "set");
-  return "str from FFS";
-/*
+  //sysUtils.logging.log("FFS", "set");
+  //return "setStr from FFS";
+
   String str = "NIL";
   sysUtils.logging.log("FFS", topic.asString);
   FFSjsonFile *tmpFile = NULL;
@@ -145,8 +145,10 @@ String FFS::set(TTopic topic){
       }
 //writeItem----------------------------------------------
     }else if (topic.item[4] == "item"){
-      return "ffs/item";
-      //tmpFile->writeItem(topic.item[5], topic.arg[0]);
+      //return "ffs/item";
+      tmpFile->writeItem(topic.item[5], topic.arg[0]);
+
+      return tmpFile->readItem(topic.item[5]);
       //str = "xxx"; //tmpFile->readItem(topic.item[5]);
       //return str;
       //Serial.println("ffs/set/cfg/item");
@@ -180,11 +182,11 @@ ffs
          └─ItemName RW
 */
 String FFS::get(TTopic topic){
-  sysUtils.logging.log("FFS", "get");
-  return "str from FFS";
+  //sysUtils.logging.log("FFS", "get");
+  //return "getStr from FFS";
 
-/*
   String str = "NIL";
+  sysUtils.logging.log("FFS", topic.asString);
   FFSjsonFile *tmpFile = NULL;
   if (topic.item[3] == "cfg") {
     tmpFile = &cfg;
@@ -223,7 +225,6 @@ String FFS::get(TTopic topic){
     sysUtils.logging.error("No match file found!");
   }
   return str;
-*/
 }
 
 //-------------------------------------------------------------------------------
