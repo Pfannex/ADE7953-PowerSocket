@@ -17,7 +17,7 @@ API::API(SysUtils& sysUtils,FFS& ffs):
 //...............................................................................
 String API::call(String topic, String arg){       // "foo/bar","arg1,arg2,arg3"
   TTopic tmpTopic = dissectTopic(topic, arg);
-  call(tmpTopic);
+  return call(tmpTopic);
 }
 
 String API::call(String topicArg){                // "foo/bar arg1,arg2,arg3"
@@ -30,13 +30,19 @@ String API::call(String topicArg){                // "foo/bar arg1,arg2,arg3"
 	arg = topicArg;
   }
   TTopic tmpTopic = dissectTopic(topic, arg);
-  call(tmpTopic);
+  return call(tmpTopic);
 }
 
 //...............................................................................
 //  set distributing
 //...............................................................................
 String API::call(TTopic topic){
+  sysUtils.logging.log("API", "CALL");
+  String tmp = ffs.set(topic);
+  sysUtils.logging.log("API", tmp);
+  return tmp;
+
+/*
   sysUtils.logging.log("API", topic.asString);
   String ret = "NIL";
 
@@ -44,7 +50,7 @@ String API::call(TTopic topic){
     if (topic.item[2] == "ffs"){
       //return "DEBUG";
       return ffs.set(topic);
-      
+
     }else if (topic.item[2] == "sysUtils") {
       sysUtils.set(topic);
     }else if (topic.item[2] == "mqtt") {   //!!!!!!!!
@@ -61,6 +67,7 @@ String API::call(TTopic topic){
       return ret;
     }
   }
+*/
 }
 
 //...............................................................................

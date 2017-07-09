@@ -107,7 +107,9 @@ ffs
           └─itemName  [value]         RW
 */
 String FFS::set(TTopic topic){
-
+  sysUtils.logging.log("FFS", "set");
+  return "str from FFS";
+/*
   String str = "NIL";
   sysUtils.logging.log("FFS", topic.asString);
   FFSjsonFile *tmpFile = NULL;
@@ -178,6 +180,10 @@ ffs
          └─ItemName RW
 */
 String FFS::get(TTopic topic){
+  sysUtils.logging.log("FFS", "get");
+  return "str from FFS";
+
+/*
   String str = "NIL";
   FFSjsonFile *tmpFile = NULL;
   if (topic.item[3] == "cfg") {
@@ -217,6 +223,7 @@ String FFS::get(TTopic topic){
     sysUtils.logging.error("No match file found!");
   }
   return str;
+*/
 }
 
 //-------------------------------------------------------------------------------

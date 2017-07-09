@@ -13,13 +13,14 @@
   Revison :                                                *****
 
 ********************************************************************************/
-#include <SoftTimer.h>	//https://github.com/prampec/arduino-softtimer
+//#include <SoftTimer.h>	//https://github.com/prampec/arduino-softtimer
 						            //need https://github.com/prampec/arduino-pcimanager
 
 #include "TemplateController.h"
 TemplateController tc;
 
 //Timer
+/*
 void Loop(Task* me);
 void t_1s(Task* me);
 void t_short(Task* me);
@@ -27,7 +28,7 @@ void t_long(Task* me);
 Task t1(0, Loop);
 Task t2(1000, t_1s);
 Task t3(5000, t_short);
-Task t4(3600000, t_long);
+Task t4(3600000, t_long);*/
 
 //-------------------------------------------------------------------------------
 //  Setup
@@ -37,12 +38,16 @@ void setup() {
   Serial.println("");
 
   //Timer
-  SoftTimer.add(&t1);
+/*  SoftTimer.add(&t1);
   SoftTimer.add(&t2);
   SoftTimer.add(&t3);
-  SoftTimer.add(&t4);
+  SoftTimer.add(&t4);*/
 
-  tc.start();
+  //tc.start();
+
+  String strAPI = tc.api.call("Node52/set/ffs/cfg/item/wifiPSK", "");
+  Serial.println(strAPI);
+
 
   //tc.api.set("/Hello/World/foo/bar", "arg1,arg2,3,4,5");
   //tc.api.set("/Hello/World/foo/bar arg1,arg2,3,4,5");
@@ -51,7 +56,10 @@ void setup() {
 //-------------------------------------------------------------------------------
 //  timer control
 //-------------------------------------------------------------------------------
-void Loop(Task* me) {
+void loop(){
+  
+}
+/*void Loop(Task* me) {
   tc.handle();
 }
 
@@ -63,4 +71,4 @@ void t_short(Task* me) {
 }
 void t_long(Task* me) {
   tc.t_long_Update();
-}
+}*/
