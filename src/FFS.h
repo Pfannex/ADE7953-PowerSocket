@@ -4,6 +4,7 @@
   #include <ArduinoJson.h>
   #include <Arduino.h>
   #include "SysUtils.h"
+  #include "Topic.h"
   #include "Setup.h"
   #include "I2C.h"
 
@@ -68,8 +69,8 @@ public:
   bool isValidJson(String root);
   void TEST();
 //API
-  String set(TTopic topic);
-  String get(TTopic topic);
+  String set(String strTopic, String strArg);
+  String get(String strTopic, String strArg);
 private:
 
 };

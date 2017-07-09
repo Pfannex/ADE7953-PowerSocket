@@ -1,23 +1,11 @@
 #pragma once
   #include <Arduino.h>
   #include "Setup.h"
+  #include "Topic.h"
   #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino
   #include <WiFiUdp.h>
   #include <NTPClient.h>            //https://github.com/arduino-libraries/NTPClient
   #include <TimeLib.h>              //https://github.com/PaulStoffregen/Time
-
-//###############################################################################
-//  API types
-//###############################################################################
-struct TTopic{
-  String item[10];
-  String itemAsString;
-  int countTopics;
-  String arg[10];
-  String argAsString;
-  int countArgs;
-  String asString;
-};
 
 //###############################################################################
 //  NET WiFi/LAN
@@ -105,8 +93,8 @@ public:
   long rand(long max);
   static long seed; // class variable
 //API
-  bool set(TTopic topic);
-  String get(TTopic topic);
+  bool set(String topic);
+  String get(String topic);
 
 
 };

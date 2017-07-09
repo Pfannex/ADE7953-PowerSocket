@@ -104,21 +104,21 @@ void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length)
     arg[i] = payload[i];
   }
   String strArg = String(arg);
-  TTopic tmpTopic = api.dissectTopic(strTopic, strArg);
+  //TTopic tmpTopic = api.dissectTopic(strTopic, strArg);
 
 //--------------------------------
 
-  String returnTopic = tmpTopic.item[0];
-  for (int i = 2; i < tmpTopic.countTopics; i++) {
-      returnTopic += "/" + tmpTopic.item[i];
-  }
+  String returnTopic = "Node52/ffs/cfg"; //tmpTopic.item[0];
+  //for (int i = 2; i < tmpTopic.countTopics; i++) {
+  //    returnTopic += "/" + tmpTopic.item[i];
+  //}
   //return Tpoic oder lieber ein allgemeines Topic "RESULT"??
 
   sysUtils.logging.log("MQTT", "incommingSUB");
-  String tmp = api.call(tmpTopic);
+  String tmp = api.call(strTopic, strArg);
   sysUtils.logging.log("MQTT", tmp);
 
-  //pub(returnTopic, tmp);
+  pub(returnTopic, tmp);
   //pub("Node52", "HelloWorld");
 }
 
@@ -127,7 +127,7 @@ void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length)
 //...............................................................................
 void MQTT::pub(String topic, String value){
   client.publish(topic.c_str(), value.c_str());
-  client.loop();
+  //client.loop();
 }
 
 //-------------------------------------------------------------------------------
@@ -140,10 +140,10 @@ void MQTT::pub(String topic, String value){
 mqtt
   └─connect
 */
-bool MQTT::set(TTopic topic){
-  if (topic.item[3] == "connect"){
-    start();
-  }
+bool MQTT::set(String strTopic, String strArg){
+  //if (topic.item[3] == "connect"){
+  //  start();
+  //}
 }
 
 //...............................................................................
@@ -153,16 +153,16 @@ bool MQTT::set(TTopic topic){
 mqtt
   └─status
 */
-String MQTT::get(TTopic topic){
+String MQTT::get(String strTopic, String strArg){
   String str = "NIL";
-  if (topic.item[3] == "status"){
+/*  if (topic.item[3] == "status"){
     if (handle()){
       str = "connected";
     }else{
       str = "disconnected";
     }
   }
-  return str;
+  return str;*/
 }
 
 //-------------------------------------------------------------------------------

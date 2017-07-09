@@ -106,9 +106,12 @@ ffs
       └─item
           └─itemName  [value]         RW
 */
-String FFS::set(TTopic topic){
+String FFS::set(String strTopic, String strArg){
   //sysUtils.logging.log("FFS", "set");
   //return "setStr from FFS";
+
+  Topic topic;
+  topic.dissectTopic(strTopic, strArg);
 
   String str = "NIL";
   sysUtils.logging.log("FFS", topic.asString);
@@ -181,9 +184,12 @@ ffs
      └─Item
          └─ItemName RW
 */
-String FFS::get(TTopic topic){
+String FFS::get(String strTopic, String strArg){
   //sysUtils.logging.log("FFS", "get");
   //return "getStr from FFS";
+
+  Topic topic;
+  topic.dissectTopic(strTopic, strArg);
 
   String str = "NIL";
   sysUtils.logging.log("FFS", topic.asString);

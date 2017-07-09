@@ -13,12 +13,12 @@ public:
   SysUtils& sysUtils;
   FFS& ffs;
 
-  String call(String topic, String arg);  // "foo/bar","arg1,arg2,arg3"
+  String call(String strTopic, String strArg);  // "foo/bar","arg1,arg2,arg3"
   String call(String topicArg);           // "foo/bar arg1,arg2,arg3"
-  String call(TTopic topic);
-  TTopic dissectTopic(String topic, String arg);
-  String deleteTopicItem(String topic, int item);
-  void printTopic(TTopic topic);
+  //String call(TTopic topic);
+  //TTopic dissectTopic(String topic, String arg);
+  //String deleteTopicItem(String topic, int item);
+  void printTopic(String strTopic);
 
 private:
 

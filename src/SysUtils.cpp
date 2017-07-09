@@ -39,8 +39,8 @@ sysUtils
   └─clock
       └─forceNTP
 */
-bool SysUtils::set(TTopic topic){
-  if (topic.item[3] == "esp"){
+bool SysUtils::set(String topic){
+/*  if (topic.item[3] == "esp"){
     if (topic.item[4] == "restart") {
       esp_tools.reboot();
     }
@@ -50,7 +50,7 @@ bool SysUtils::set(TTopic topic){
       Serial.println("NTP update");
       //clock.update(true);
     }
-  }
+  }*/
 }
 
 //...............................................................................
@@ -67,9 +67,9 @@ sysUtils
       ├─DateTime
       └─DateTime_ms
 */
-String SysUtils::get(TTopic topic){
+String SysUtils::get(String topic){
   String str = "NIL";
-  if (topic.item[3] == "esp"){
+/*  if (topic.item[3] == "esp"){
     if (topic.item[4] == "freeHeapSize") {
       str = esp_tools.freeHeapSize();
     }
@@ -85,7 +85,7 @@ String SysUtils::get(TTopic topic){
     }else if (topic.item[4] == "dateTime_ms") {
       str = clock.strDateTime_ms;
     }
-  }
+  }*/
   return str;
 }
 
