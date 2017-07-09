@@ -50,7 +50,7 @@ Auth::Auth(SysUtils& sysUtils):
 }
 
 Auth::~Auth() {
-  delete sessions;
+  delete[] sessions;
 }
 
 //-------------------------------------------------------------------------------

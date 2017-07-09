@@ -38,7 +38,7 @@ WEBIF::WEBIF(SysUtils& sysUtils, API& api):
 //...............................................................................
 void WEBIF::start() {
 
-  sysUtils.logging.info("starting web interface... ");
+  sysUtils.logging.info("starting webserver... ");
 
   // pages served
   numPagesServed= 0;
@@ -55,7 +55,7 @@ void WEBIF::start() {
 
   // start serving requests
   webServer.begin();
-  sysUtils.logging.info("web interface started.");
+  sysUtils.logging.info("webserver started.");
 
 }
 
@@ -296,10 +296,15 @@ void WEBIF::authPageHandler() {
 
 void WEBIF::apiPageHandler() {
 
+  String call= webServer.arg("call");
+  sysUtils.logging.info("webserver handling API call "+call);
   if(checkAuthentification()) {
-    webServer.send(200, "text/plain", "{ P_A: 1234.5 }");
+    String result= "{\"dateTime\":\"fake time\"}"; //api.call(call);
+    sysUtils.logging.debug("returning "+result);
+    webServer.send(200, "text/plain", result);
   } else {
-    webServer.send(200, "text/plain", "");
+    sysUtils.logging.debug("client is not authenticated.");
+    webServer.send(404, "text/plain", "");
   }
 }
 
