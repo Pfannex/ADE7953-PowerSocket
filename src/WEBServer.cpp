@@ -79,7 +79,9 @@ void WEBIF::applyConfiguration() {
   for(int i= 0; i< webServer.args(); i++) {
     sysUtils.logging.debug(webServer.argName(i) + ": " + webServer.arg(i));
     //ffs.cfg.writeItem(webServer.argName(i), webServer.arg(i));
-    api.call(webServer.argName(i), webServer.arg(i));
+    String strName = webServer.argName(i);
+    String strArg = webServer.arg(i);
+    api.call(strName, strArg);
   };
   //ffs.cfg.saveFile();
 

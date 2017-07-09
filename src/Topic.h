@@ -2,26 +2,28 @@
   #include <Arduino.h>
 
 //###############################################################################
-//  1-Wire Bus
+//  Topic
 //###############################################################################
+typedef char* string;
+
 class Topic{
 public:
-  Topic();
+  Topic(String topic_asString, String arg_asString);
+  ~Topic();
 
-  String item[10];
-  String itemAsString;
-  int countTopics;
-  String arg[10];
-  String argAsString;
-  int countArgs;
+  string* item;
+  String topic_asString;
+  int countTopics = 0;
+  string* arg;
+  String arg_asString;
+  int countArgs = 0;
   String asString;
 
-  void dissectTopic(String strTopic, String strArg);
-  String deleteTopicItem(String topic, int item);
+  void dissectTopic();
+  String deleteTopicItem(int item);
 
 
 private:
-
 };
 
 //###############################################################################

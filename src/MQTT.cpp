@@ -99,14 +99,30 @@ void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length)
     //strTopic.remove(0, deviceName.length() +1);
   //}
 //argument
-  char arg[500] = "";
+  //char* xarg = new char[length];
+  //Serial.println(length);
+
+  //char arg[20] = "";
+  //for (int i = 0; i < length; i++) {
+    //arg[i] = payload[i];
+    //xarg[i] = payload[i];
+  //}
+  //String strArg = String(arg);
+  //if (xarg != NULL) delete[] xarg;
+
+  String strArg = "";
   for (int i = 0; i < length; i++) {
-    arg[i] = payload[i];
+    strArg += (char)(payload[i]);
   }
-  String strArg = String(arg);
-  //TTopic tmpTopic = api.dissectTopic(strTopic, strArg);
+
+  //Serial.println(xarg);
+
+  sysUtils.logging.log("MQTT", strTopic + "|" + strArg);
 
 //--------------------------------
+  sysUtils.logging.debugMem();
+  Topic tmpTopic(strTopic, strArg);
+  sysUtils.logging.debugMem();
 
   String returnTopic = "Node52/ffs/cfg"; //tmpTopic.item[0];
   //for (int i = 2; i < tmpTopic.countTopics; i++) {
@@ -115,7 +131,9 @@ void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length)
   //return Tpoic oder lieber ein allgemeines Topic "RESULT"??
 
   sysUtils.logging.log("MQTT", "incommingSUB");
+  sysUtils.logging.debugMem();
   String tmp = api.call(strTopic, strArg);
+  sysUtils.logging.debugMem();
   sysUtils.logging.log("MQTT", tmp);
 
   pub(returnTopic, tmp);

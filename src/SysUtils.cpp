@@ -275,10 +275,23 @@ void ESP_Tools::reboot() {
 }
 
 //...............................................................................
-//  get free HeapSize
+//  get free memSize
 //...............................................................................
 uint32_t ESP_Tools::freeHeapSize() {  //long?
   return ESP.getFreeHeap();
+}
+
+int ESP_Tools::freeStackSize() {
+  register uint32_t *sp asm("a1");
+  return 4*(sp - g_cont.stack);
+}
+
+int ESP_Tools::minFreeStackSize() {
+  return cont_get_free_stack(&g_cont);
+}
+
+int ESP_Tools::stackCorrupted() {
+  return cont_check(&g_cont);
 }
 
 //...............................................................................
@@ -333,7 +346,11 @@ void LOGGING::error(const String &msg) {
 //  DEBUG MEM
 //...............................................................................
 void LOGGING::debugMem() {
-  char msg[30];
-  sprintf(msg, "free memory: %d", esp_tools.freeHeapSize());
+  char msg[200];
+  sprintf(msg, "free heap: %d, free stack: %d (min: %d, corrupt: %d)",
+    esp_tools.freeHeapSize(),
+    esp_tools.freeStackSize(),
+    esp_tools.minFreeStackSize(),
+    esp_tools.stackCorrupted());
   debug(msg);
 }

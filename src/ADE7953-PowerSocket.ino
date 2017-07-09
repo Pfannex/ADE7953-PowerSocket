@@ -54,21 +54,8 @@ void setup() {
 void Loop(Task* me) {
   tc.handle();
 }
-
 void t_1s(Task* me) {
   tc.t_1s_Update();
-
-    //Serial.println(tc.api.call("Node52/set/ffs/cfg/item/wifiPSK", "Walter"));
-    //Serial.println(tc.api.call("Node52/get/ffs/cfg/item/wifiPSK", ""));
-
-    //Serial.println("--------------------------------");
-
-    //TTopic tmpTopic;
-    //tmpTopic = tc.api.dissectTopic("Node52/set/ffs/cfg/item/wifiPSK", "Klaus");
-    //Serial.println(tc.api.call(tmpTopic));
-    //tmpTopic = tc.api.dissectTopic("Node52/get/ffs/cfg/item/wifiPSK", "");
-    //Serial.println(tc.api.call(tmpTopic));
-
 }
 void t_short(Task* me) {
   tc.t_short_Update();

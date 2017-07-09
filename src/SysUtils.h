@@ -1,5 +1,9 @@
 #pragma once
   #include <Arduino.h>
+  extern "C" {
+    #include <cont.h>
+    extern cont_t g_cont;
+  }
   #include "Setup.h"
   #include "Topic.h"
   #include <ESP8266WiFi.h>          //https://github.com/esp8266/Arduino
@@ -58,6 +62,9 @@ public:
   ESP_Tools();
   void checkFlash();
   uint32_t freeHeapSize();
+  int freeStackSize();
+  int minFreeStackSize();
+  int stackCorrupted();
   void reboot();
   long chipID();
 };

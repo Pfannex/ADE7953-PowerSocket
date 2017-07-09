@@ -20,7 +20,7 @@ API::API(SysUtils& sysUtils,FFS& ffs):
   return call(tmpTopic);
 }*/
 
-String API::call(String topicArg){                // "foo/bar arg1,arg2,arg3"
+String API::call(String& topicArg){                // "foo/bar arg1,arg2,arg3"
   String topic; String arg;
   int index = -1;
   index = topicArg.indexOf(" ");
@@ -36,7 +36,7 @@ String API::call(String topicArg){                // "foo/bar arg1,arg2,arg3"
 //...............................................................................
 //  set distributing
 //...............................................................................
-String API::call(String strTopic, String strArg){
+String API::call(String& strTopic, String& strArg){
 /*
   sysUtils.logging.log("API", "CALL");
   String tmp = ffs.set(topic);
@@ -44,14 +44,17 @@ String API::call(String strTopic, String strArg){
   return tmp;
 */
 
-  Topic topic;
-  topic.dissectTopic(strTopic, strArg);
+  sysUtils.logging.log("call", "CLASS Topic");
+  Topic topic(strTopic, strArg);
+  sysUtils.logging.debugMem();
+  //topic.dissectTopic(strTopic, strArg);
 
   sysUtils.logging.log("API", topic.asString);
   String ret = "NIL";
 
   if (topic.item[1] == "set"){
     if (topic.item[2] == "ffs"){
+      sysUtils.logging.debugMem();
       ret = ffs.set(strTopic, strArg);
       sysUtils.logging.log("API", ret);
       return ret;
