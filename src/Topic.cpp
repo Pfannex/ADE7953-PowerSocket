@@ -39,9 +39,13 @@ void Topic::dissectTopic(){
   Serial.println(strlen(chrArg));
   Serial.println(chrArg);
 
+
+  string s = "123";
+
+/*
   for (size_t i = 0; i < strlen(chrTopic); i++) {
     if (chrTopic[i] == "/"){
-      countTopics++
+      countTopics++;
     }else{
       strcpy(item[countTopics], chrTopic[i]);
     }
@@ -50,7 +54,7 @@ void Topic::dissectTopic(){
   for (size_t i = 0; i < countTopics; i++) {
     Serial.println(item[i]);
   }
-
+*/
 /*
   if (topic_asString.startsWith("/")) topic_asString.remove(0, 1);
   if (topic_asString.endsWith("/")) topic_asString.remove(topic_asString.length()-1,topic_asString.length());
