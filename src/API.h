@@ -18,7 +18,6 @@ public:
   //String call(TTopic topic);
   //TTopic dissectTopic(String topic, String arg);
   //String deleteTopicItem(String topic, int item);
-  void printTopic(String strTopic);
 
 private:
 
