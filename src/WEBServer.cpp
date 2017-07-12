@@ -301,7 +301,10 @@ void WEBIF::apiPageHandler() {
   String call= webServer.arg("call");
   sysUtils.logging.info("webserver handling API call "+call);
   if(checkAuthentification()) {
-    String result= "{\"dateTime\":\"fake time\"}"; //api.call(call);
+
+    Topic tmpTopic(call);
+
+    String result= api.call(tmpTopic);
     sysUtils.logging.debug("returning "+result);
     webServer.send(200, "text/plain", result);
   } else {

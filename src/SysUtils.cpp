@@ -74,7 +74,7 @@ String SysUtils::get(Topic& topic){
       str = esp_tools.freeHeapSize();
     }
   }else if (topic.itemIs(3, "clock")) {
-    if (topic.item[4] == "root") {
+    if (topic.itemIs(4, "root")) {
       str = clock.root;
     }else if (topic.itemIs(4, "time")) {
       str = clock.strTime;

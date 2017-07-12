@@ -3,20 +3,29 @@
 //###############################################################################
 //  data exchange Topic
 //###############################################################################
+Topic::Topic(String& topicsArgs) {
+
+    //String zerlegen in topic und arg
+    topics= new char[topicsArgs.length()];
+    strcpy(topics, topicsArgs.c_str());
+    item = nullptr;
+    arg = nullptr;
+    dissectTopic(topics, "args");
+}
 //Topic::Topic(String topic_asString, String arg_asString):  //by ref
-Topic::Topic(char* topics, char* args):  //by ref
-      topics(topics),
-      args(args){
+Topic::Topic(char* topics, char* args) {
   //topic_asString(topic_asString),
   //arg_asString(arg_asString){
 
   item = nullptr;
   arg = nullptr;
-  dissectTopic();
+  dissectTopic(topics, args);
 }
 Topic::~Topic(){
   if (item != NULL) delete[] item;
   if (arg != NULL)  delete[] arg;
+  if (topics != NULL)  delete[] topics;
+
 }
 
 //-------------------------------------------------------------------------------
@@ -25,7 +34,7 @@ Topic::~Topic(){
 //...............................................................................
 //  dissect Topic
 //...............................................................................
-void Topic::dissectTopic(){
+void Topic::dissectTopic(char* topics, char* args){
   Serial.println("Topic::dissectTopic()");
 
   String strTopics = String(topics);

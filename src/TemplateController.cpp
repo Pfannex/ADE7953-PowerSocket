@@ -53,7 +53,7 @@ void TemplateController::on_wifiConnected(){
   sysUtils.clock.update(true);
   delay(200);
   mqtt.start();
-  //webif.start();
+  webif.start();
 }
 
 //...............................................................................
