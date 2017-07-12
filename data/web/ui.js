@@ -178,16 +178,25 @@ function set_readings() {
   $.ajax(
     {     type: "POST",
           url: "/api.html",
-          data: "/getReadings",
+          data: "call=~/get/sysUtils/clock/root",
+          statusCode: {
+            404: function() {
+              window.location="/";
+            }
+          },
           success: function(json) {
             // log json
             console.log(json);
+            var readings= JSON.parse(json);
             // set inputs
             readingsDiv.find('div').html( function() {
-              console.log("Setting div with id "+this.id+" to "+json[this.id]);
-              return json[this.id];
+              console.log("Setting div with id "+this.id+" to "+readings[this.id]);
+              return readings[this.id];
             });
-            //setTimeout( set_readings(), 5000);
+            setTimeout("set_readings()", 5000);
+          },
+          error: function() {
+            window.location="/";
           }
     }
 
