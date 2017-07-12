@@ -3,9 +3,12 @@
 //###############################################################################
 //  data exchange Topic
 //###############################################################################
-Topic::Topic(String topic_asString, String arg_asString):  //by ref
-       topic_asString(topic_asString),
-       arg_asString(arg_asString){
+//Topic::Topic(String topic_asString, String arg_asString):  //by ref
+Topic::Topic(char* topics, char* args):  //by ref
+      topics(topics),
+      args(args){
+  //topic_asString(topic_asString),
+  //arg_asString(arg_asString){
 
   item = nullptr;
   arg = nullptr;
@@ -25,6 +28,90 @@ Topic::~Topic(){
 void Topic::dissectTopic(){
   Serial.println("Topic::dissectTopic()");
 
+  String strTopics = String(topics);
+  //char* chrTopics
+  //char* x;
+  //strcpy(x, strTopics.c_str());
+
+  String strArgs = String(args);
+  //strcpy(tmpTopics, args);
+
+  Serial.println(topics);
+  Serial.println(strTopics);
+
+/*
+  char *ptr;
+  ptr = strtok(topics, "/");
+  while(ptr != NULL) {
+   	ptr = strtok(NULL, "/");
+    countItems++;
+  }
+
+  ptr = strtok(args, ",");
+  while(ptr != NULL) {
+   	ptr = strtok(NULL, ",");
+    countArgs++;
+  }
+*/
+  countItems = 6;
+  countArgs = 3;
+  Serial.println(countItems);
+  Serial.println(countArgs);
+  item = new string[countItems];
+  arg = new string[countArgs];
+
+
+
+  Serial.println(topics);
+  Serial.println(args);
+
+  //trcpy(topics, strTopics.c_str());
+
+  char delimiter[] = "/";
+  // initialisieren und ersten Abschnitt erstellen
+  char *ptr;
+  ptr = strtok(topics, delimiter);
+  int i = 0;
+  while(ptr != NULL){
+    printf("Item %d, %s\n", i, ptr);
+    //printf("Item %s\n", ptr);
+    //strcpy(item[i], ptr);
+    i++;
+  	// naechsten Abschnitt erstellen
+   	ptr = strtok(NULL, delimiter);
+  }
+
+  //for (size_t i = 0; i < countItems; i++) {
+    //Serial.println(item[i]);
+  //}
+
+  topic_asString = "abc";
+  arg_asString = "def";
+  asString = "ghi";
+
+  Serial.println("Topic::var end");
+
+
+
+
+
+
+
+  //Serial.println("Topic::delete");
+  //delete[] chrTopic;
+  //delete[] chrArg;
+  //Serial.println("Topic::delete end");
+
+
+  /*
+    char* chrTopic = new char(topic_asString.length());
+    strcpy(chrTopic, topic_asString.c_str());
+    char* chrArg = new char(topic_asString.length());
+    strcpy(chrArg, topic_asString.c_str());
+  */
+
+
+/*
 //entfällt wenn char übergeben wird
   char* chrTopic;
   chrTopic = new char[topic_asString.length()];
@@ -41,6 +128,7 @@ void Topic::dissectTopic(){
 
 
   string s = "123";
+*/
 
 /*
   for (size_t i = 0; i < strlen(chrTopic); i++) {
@@ -147,9 +235,6 @@ void Topic::dissectTopic(){
   //printTopic(tmpTopic);
   //return tmpTopic;
   */
-
-  delete chrTopic;
-  delete chrArg;
 }
 
 //...............................................................................
@@ -177,7 +262,7 @@ String Topic::deleteTopicItem(int item){
 //...............................................................................
 void Topic::printTopic(){
   Serial.println("............................................");
-  for (int i = 0; i < countTopics; i++) {
+  for (int i = 0; i < countItems; i++) {
     Serial.println(item[i]);
   }
   //for (int i = 0; i < countArgs; i++) {

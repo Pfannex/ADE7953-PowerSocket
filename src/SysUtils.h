@@ -78,12 +78,16 @@ public:
   Clock& clock;
   ESP_Tools esp_tools;
 
+  int stackStart = 0;
+
   void log(const String &channel, const String &msg);
 
   void info(const String &msg);
   void error(const String &msg);
   void debug(const String &msg);
   void debugMem();
+  void debugMem_start();
+  void debugMem_stop();
 };
 
 //###############################################################################

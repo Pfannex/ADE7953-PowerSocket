@@ -91,10 +91,41 @@ bool MQTT::handle(){
 //  EVENT incomming MQTT subcribe
 //...............................................................................
 void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length){
-//topic
+  sysUtils.logging.debugMem_start();
+
+/*  char* arg = new char[length+1];
+  for (size_t i = 0; i < length; i++) {
+    arg[i] = (char)(payload[i]);
+  }
+  arg[length] = '\0';*/
+
+  sysUtils.logging.debugMem_start();
+  char *arg = (char*)payload;
+  strncpy((char*)&payload[0], arg, sizeof(payload[0])+1);
+  arg[length] = '\0';
+
+  sysUtils.logging.log("MQTT", "incommingSUB");
   sysUtils.logging.log("MQTT", "PayloadSize: " + String(length));
-  String strTopic = String(topic);
-  String deviceName = ffs.cfg.readItem("mqttDeviceName");
+  sysUtils.logging.log("MQTT", String(topic) + " | " + String(arg));
+
+  Topic tmpTopic(topic, arg);
+  //String tmp = api.call(topic, arg);
+  //sysUtils.logging.log("MQTT", tmp);
+
+  //if (arg != NULL) delete[] arg;
+  sysUtils.logging.debugMem_stop();
+
+
+
+
+
+
+  //Serial.println("del");
+  //Serial.println("del end");
+
+  //String strTopic = String(topic);
+
+  //String deviceName = ffs.cfg.readItem("mqttDeviceName");
   //if (strTopic.indexOf(deviceName) != -1) {  //is Topic with DeviceName
     //strTopic.remove(0, deviceName.length() +1);
   //}
@@ -110,33 +141,35 @@ void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length)
   //String strArg = String(arg);
   //if (xarg != NULL) delete[] xarg;
 
-  String strArg = "";
-  for (int i = 0; i < length; i++) {
-    strArg += (char)(payload[i]);
-  }
+  //String strArg = "";
+  //for (int i = 0; i < length; i++) {
+  //  strArg += (char)(payload[i]);
+  //}
 
   //Serial.println(xarg);
 
-  sysUtils.logging.log("MQTT", strTopic + "|" + strArg);
+
+
+
 
 //--------------------------------
-  sysUtils.logging.debugMem();
-  Topic tmpTopic(strTopic, strArg);
-  sysUtils.logging.debugMem();
+  //sysUtils.logging.debugMem();
+  //Topic tmpTopic(topic, arg);
+  //Serial.println(tmpTopic.asString);
+  //sysUtils.logging.debugMem();
 
-  String returnTopic = "Node52/ffs/cfg"; //tmpTopic.item[0];
+  //String returnTopic = "Node52/ffs/cfg"; //tmpTopic.item[0];
   //for (int i = 2; i < tmpTopic.countTopics; i++) {
   //    returnTopic += "/" + tmpTopic.item[i];
   //}
   //return Tpoic oder lieber ein allgemeines Topic "RESULT"??
 
-  sysUtils.logging.log("MQTT", "incommingSUB");
-  sysUtils.logging.debugMem();
-  String tmp = api.call(strTopic, strArg);
-  sysUtils.logging.debugMem();
-  sysUtils.logging.log("MQTT", tmp);
+  //sysUtils.logging.debugMem();
+  //String tmp = api.call(strTopic, strArg);
+  //sysUtils.logging.debugMem();
+  //sysUtils.logging.log("MQTT", tmp);
 
-  pub(returnTopic, tmp);
+  //pub(returnTopic, tmp);
   //pub("Node52", "HelloWorld");
 }
 

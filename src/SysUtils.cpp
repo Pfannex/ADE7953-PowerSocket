@@ -354,3 +354,16 @@ void LOGGING::debugMem() {
     esp_tools.stackCorrupted());
   debug(msg);
 }
+void LOGGING::debugMem_start(){
+  stackStart = esp_tools.freeStackSize();
+  debugMem();
+}
+void LOGGING::debugMem_stop() {
+  debugMem();
+  char msg[200];
+  sprintf(msg, "StackStart: %d, StackStop: %d, diff %d",
+    stackStart,
+    esp_tools.freeStackSize(),
+    esp_tools.freeStackSize()-stackStart);
+    debug(msg);
+}

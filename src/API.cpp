@@ -45,7 +45,9 @@ String API::call(String& strTopic, String& strArg){
 */
 
   sysUtils.logging.log("call", "CLASS Topic");
-  Topic topic(strTopic, strArg);
+  char* x = "abc";
+  char* y = "123";
+  Topic topic(x, y);
   sysUtils.logging.debugMem();
   //topic.dissectTopic(strTopic, strArg);
 

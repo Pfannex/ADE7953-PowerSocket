@@ -110,7 +110,7 @@ String FFS::set(String strTopic, String strArg){
   //sysUtils.logging.log("FFS", "set");
   //return "setStr from FFS";
 
-  Topic topic(strTopic, strArg);
+  Topic topic("", "");
   //topic.dissectTopic(strTopic, strArg);
 
   String str = "NIL";
@@ -189,7 +189,7 @@ String FFS::get(String strTopic, String strArg){
   //return "getStr from FFS";
 
   sysUtils.logging.debugMem();
-  Topic topic(strTopic, strArg);
+  Topic topic("", "");
   sysUtils.logging.debugMem();
   //topic.dissectTopic(strTopic, strArg);
 

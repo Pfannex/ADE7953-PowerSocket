@@ -9,15 +9,21 @@ typedef char* string;
 
 class Topic{
 public:
-  Topic(String topic_asString, String arg_asString);
+  //Topic(String topic_asString, String arg_asString);
+  Topic(char* topics, char* args);
   ~Topic();
 
+  char* topics;
+  char* args;
+
   string* item;
-  String topic_asString;
-  int countTopics = 0;
+  int countItems = 0;
   string* arg;
-  String arg_asString;
   int countArgs = 0;
+
+//to function
+  String topic_asString;
+  String arg_asString;
   String asString;
 
   void dissectTopic();
