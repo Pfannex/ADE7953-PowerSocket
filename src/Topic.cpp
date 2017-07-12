@@ -39,13 +39,43 @@ void Topic::dissectTopic(){
   Serial.println(topics);
   Serial.println(strTopics);
 
-/*
-  char *ptr;
-  ptr = strtok(topics, "/");
-  while(ptr != NULL) {
-   	ptr = strtok(NULL, "/");
-    countItems++;
+  char* ch;
+
+  if(*topics) {
+    ch= topics;
+    countItems= 1;
+    while(*ch) if(*ch++ == '/') countItems++;
+    Serial.println(countItems);
+    item = new string[countItems];
+
+    int i= 0;
+    item[i] = strtok(topics, "/");
+    while(item[i++] != NULL) {
+      //printf("%s\n", ptr);
+     	item[i] = strtok(NULL, "/");
+    }
   }
+
+  if(*args) {
+    ch= args;
+    countArgs= 1;
+    while(*ch) if(*ch++ == ',') countArgs++;
+    Serial.println(countArgs);
+    arg = new string[countArgs];
+    int i= 0;
+    arg[i] = strtok(args, ",");
+    while(arg[i++] != NULL) {
+     	arg[i] = strtok(NULL, ",");
+    }
+  }
+
+  for (size_t i = 0; i < countItems; i++) {
+    Serial.println(item[i]);
+  }
+  for (size_t i = 0; i < countArgs; i++) {
+    Serial.println(arg[i]);
+  }
+  /*
 
   ptr = strtok(args, ",");
   while(ptr != NULL) {
@@ -53,33 +83,31 @@ void Topic::dissectTopic(){
     countArgs++;
   }
 */
-  countItems = 6;
-  countArgs = 3;
-  Serial.println(countItems);
-  Serial.println(countArgs);
-  item = new string[countItems];
-  arg = new string[countArgs];
+  //countItems = 6;
+  //countArgs = 3;
+  //Serial.println(countArgs);
+  //arg = new string[countArgs];
 
 
 
-  Serial.println(topics);
-  Serial.println(args);
+  //Serial.println(topics);
+  //Serial.println(args);
 
   //trcpy(topics, strTopics.c_str());
 
-  char delimiter[] = "/";
+  //char delimiter[] = "/";
   // initialisieren und ersten Abschnitt erstellen
-  char *ptr;
-  ptr = strtok(topics, delimiter);
-  int i = 0;
-  while(ptr != NULL){
-    printf("Item %d, %s\n", i, ptr);
+  //char *ptr;
+  //ptr = strtok(topics, delimiter);
+  //int i = 0;
+  //while(ptr != NULL){
+  //  printf("Item %d, %s\n", i, ptr);
     //printf("Item %s\n", ptr);
     //strcpy(item[i], ptr);
-    i++;
+  //  i++;
   	// naechsten Abschnitt erstellen
-   	ptr = strtok(NULL, delimiter);
-  }
+  // 	ptr = strtok(NULL, delimiter);
+  //}
 
   //for (size_t i = 0; i < countItems; i++) {
     //Serial.println(item[i]);
@@ -254,6 +282,9 @@ String Topic::deleteTopicItem(int item){
   return "";
 }
 
+bool Topic::itemIs(int index, string topicName){
+  return !strcmp(item[index], topicName);
+}
 //-------------------------------------------------------------------------------
 //  Topic private
 //-------------------------------------------------------------------------------

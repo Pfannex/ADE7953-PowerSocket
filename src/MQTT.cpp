@@ -90,31 +90,35 @@ bool MQTT::handle(){
 //...............................................................................
 //  EVENT incomming MQTT subcribe
 //...............................................................................
-void MQTT::on_incommingSubcribe(char* topic, byte* payload, unsigned int length){
+void MQTT::on_incommingSubcribe(char* topics, byte* payload, unsigned int length){
   sysUtils.logging.debugMem_start();
 
-/*  char* arg = new char[length+1];
-  for (size_t i = 0; i < length; i++) {
-    arg[i] = (char)(payload[i]);
-  }
-  arg[length] = '\0';*/
+  char* args = new char[length+1];
+  strncpy(args, (char*)payload, length+1);
+  args[length] = '\0';
+
+  //for (size_t i = 0; i < length; i++) {
+  //  arg[i] = (char)(payload[i]);
+  //}
+  //arg[length] = '\0';
 
   sysUtils.logging.debugMem_start();
-  char *arg = (char*)payload;
-  strncpy((char*)&payload[0], arg, sizeof(payload[0])+1);
-  arg[length] = '\0';
+  //char *arg = (char*)payload;
+  //strncpy((char*)&payload[0], arg, sizeof(payload[0])+1);
+  //arg[length] = '\0';
 
   sysUtils.logging.log("MQTT", "incommingSUB");
   sysUtils.logging.log("MQTT", "PayloadSize: " + String(length));
-  sysUtils.logging.log("MQTT", String(topic) + " | " + String(arg));
+  sysUtils.logging.log("MQTT", String(topics) + " | " + String(args));
 
-  Topic tmpTopic(topic, arg);
-  //String tmp = api.call(topic, arg);
-  //sysUtils.logging.log("MQTT", tmp);
+  Topic tmpTopic(topics, args);
+  String tmp = api.call(tmpTopic);
+  sysUtils.logging.log("MQTT", tmp);
 
-  //if (arg != NULL) delete[] arg;
+  if (args != NULL) delete[] args;
   sysUtils.logging.debugMem_stop();
 
+  pub("Node52/clock", tmp);
 
 
 

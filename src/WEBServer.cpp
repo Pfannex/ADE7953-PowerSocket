@@ -81,7 +81,7 @@ void WEBIF::applyConfiguration() {
     //ffs.cfg.writeItem(webServer.argName(i), webServer.arg(i));
     String strName = webServer.argName(i);
     String strArg = webServer.arg(i);
-    api.call(strName, strArg);
+    //api.call(strName, strArg);
   };
   //ffs.cfg.saveFile();
 

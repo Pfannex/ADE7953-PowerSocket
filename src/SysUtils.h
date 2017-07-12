@@ -105,7 +105,7 @@ public:
   static long seed; // class variable
 //API
   bool set(String topic);
-  String get(String topic);
+  String get(Topic& topic);
 
 
 };

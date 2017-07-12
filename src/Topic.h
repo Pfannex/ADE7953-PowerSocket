@@ -13,12 +13,13 @@ public:
   Topic(char* topics, char* args);
   ~Topic();
 
+  string* item;
+  string* arg;
+
   char* topics;
   char* args;
 
-  string* item;
   int countItems = 0;
-  string* arg;
   int countArgs = 0;
 
 //to function
@@ -28,6 +29,7 @@ public:
 
   void dissectTopic();
   String deleteTopicItem(int item);
+  bool itemIs(int index, string topicName);
 
 
 private:

@@ -67,25 +67,25 @@ sysUtils
       ├─DateTime
       └─DateTime_ms
 */
-String SysUtils::get(String topic){
+String SysUtils::get(Topic& topic){
   String str = "NIL";
-/*  if (topic.item[3] == "esp"){
+  if (topic.item[3] == "esp"){
     if (topic.item[4] == "freeHeapSize") {
       str = esp_tools.freeHeapSize();
     }
-  }else if (topic.item[3] == "clock") {
+  }else if (topic.itemIs(3, "clock")) {
     if (topic.item[4] == "root") {
       str = clock.root;
-    }else if (topic.item[4] == "time") {
+    }else if (topic.itemIs(4, "time")) {
       str = clock.strTime;
     }else if (topic.item[4] == "date") {
         str = clock.strDate;
-    }else if (topic.item[4] == "dateTime") {
+    }else if (topic.itemIs(4, "dateTime")) {
           str = clock.strDateTime;
     }else if (topic.item[4] == "dateTime_ms") {
       str = clock.strDateTime_ms;
     }
-  }*/
+  }
   return str;
 }
 

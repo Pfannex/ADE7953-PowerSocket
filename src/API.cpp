@@ -20,6 +20,7 @@ API::API(SysUtils& sysUtils,FFS& ffs):
   return call(tmpTopic);
 }*/
 
+/*
 String API::call(String& topicArg){                // "foo/bar arg1,arg2,arg3"
   String topic; String arg;
   int index = -1;
@@ -31,33 +32,36 @@ String API::call(String& topicArg){                // "foo/bar arg1,arg2,arg3"
   }
   //TTopic tmpTopic = dissectTopic(topic, arg);
   //return call(tmpTopic);
-}
+}*/
 
 //...............................................................................
 //  set distributing
 //...............................................................................
-String API::call(String& strTopic, String& strArg){
-/*
+String API::call(Topic& topic){
+
   sysUtils.logging.log("API", "CALL");
-  String tmp = ffs.set(topic);
-  sysUtils.logging.log("API", tmp);
-  return tmp;
-*/
+  //String tmp = ffs.set(topic);
+  //sysUtils.logging.log("API", tmp);
+  //return tmp;
+  Serial.println(topic.item[1]);
+  Serial.println(topic.item[2]);
+
+
 
   sysUtils.logging.log("call", "CLASS Topic");
-  char* x = "abc";
-  char* y = "123";
-  Topic topic(x, y);
+  //char* x = "abc";
+  //char* y = "123";
+  //Topic topic(x, y);
   sysUtils.logging.debugMem();
   //topic.dissectTopic(strTopic, strArg);
 
-  sysUtils.logging.log("API", topic.asString);
+  //sysUtils.logging.log("API", topic.asString);
   String ret = "NIL";
 
   if (topic.item[1] == "set"){
     if (topic.item[2] == "ffs"){
       sysUtils.logging.debugMem();
-      ret = ffs.set(strTopic, strArg);
+      //ret = ffs.set(strTopic, strArg);
       sysUtils.logging.log("API", ret);
       return ret;
     }else if (topic.item[2] == "sysUtils") {
@@ -65,15 +69,15 @@ String API::call(String& strTopic, String& strArg){
     }else if (topic.item[2] == "mqtt") {   //!!!!!!!!
       //sysUtils.set(topic);                 //
     }
-  }else if (topic.item[1] == "get"){
+  }else if (topic.itemIs(1, "get")){
     if (topic.item[2] == "ffs"){
-      ret = ffs.get(strTopic, strArg);
+      //ret = ffs.get(strTopic, strArg);
       sysUtils.logging.log("API", ret);
       return ret;
-    }else if (topic.item[2] == "sysUtils") {
-      //String ret = sysUtils.get(topic);
-      //sysUtils.logging.log("API", ret);
-      //return ret;
+    }else if (topic.itemIs(2, "sysUtils")) {
+      ret = sysUtils.get(topic);
+      sysUtils.logging.log("API sysUtils", ret);
+      return ret;
     }
   }
 }
