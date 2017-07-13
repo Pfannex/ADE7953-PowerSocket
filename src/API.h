@@ -3,7 +3,7 @@
   #include "SysUtils.h"
   #include "Topic.h"
   #include "FFS.h"
-
+  //#include "MQTT.h"
 
 //###############################################################################
 //  API
@@ -11,17 +11,10 @@
 class API{
 public:
   API(SysUtils& sysUtils, FFS& ffs);
-  API();
   SysUtils& sysUtils;
   FFS& ffs;
+  //MQTT mqtt;
 
-  String call(Topic& topic);  // "foo/bar","arg1,arg2,arg3"
-  //String call(string topic);
-  //String call(String& topicArg);                   // "foo/bar arg1,arg2,arg3"
-  //String call(TTopic topic);
-  //TTopic dissectTopic(String topic, String arg);
-  //String deleteTopicItem(String topic, int item);
-
+  String call(Topic& topic);
 private:
-
 };

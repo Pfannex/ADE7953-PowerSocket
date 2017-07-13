@@ -69,8 +69,8 @@ public:
   bool isValidJson(String root);
   void TEST();
 //API
-  String set(String strTopic, String strArg);
-  String get(String strTopic, String strArg);
+  String set(Topic& topic);
+  String get(Topic& topic);
 private:
 
 };

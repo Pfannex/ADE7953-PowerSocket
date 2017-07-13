@@ -4,19 +4,21 @@
 //  data exchange Topic
 //###############################################################################
 Topic::Topic(String& topicsArgs) {
+//topics
+  String str = topicsArgs.substring(0, topicsArgs.indexOf(" "));
+  topics= new char[str.length()];
+  strcpy(topics, str.c_str());
+//args
+  str = topicsArgs.substring(topicsArgs.indexOf(" ")+1);
+  args = new char[str.length()];
+  strcpy(args, str.c_str());
 
-    //String zerlegen in topic und arg
-    topics= new char[topicsArgs.length()];
-    strcpy(topics, topicsArgs.c_str());
-    item = nullptr;
-    arg = nullptr;
-    dissectTopic(topics, "args");
+  item = nullptr;
+  arg = nullptr;
+  dissectTopic(topics, args);
 }
-//Topic::Topic(String topic_asString, String arg_asString):  //by ref
-Topic::Topic(char* topics, char* args) {
-  //topic_asString(topic_asString),
-  //arg_asString(arg_asString){
 
+Topic::Topic(char* topics, char* args) {
   item = nullptr;
   arg = nullptr;
   dissectTopic(topics, args);
@@ -25,28 +27,42 @@ Topic::~Topic(){
   if (item != NULL) delete[] item;
   if (arg != NULL)  delete[] arg;
   if (topics != NULL)  delete[] topics;
-
 }
 
 //-------------------------------------------------------------------------------
 //  Topic public
 //-------------------------------------------------------------------------------
 //...............................................................................
+//  Topic strings
+//...............................................................................
+String topic_asString(){
+  return "";
+}
+String arg_asString(){
+  return "";
+
+}
+String asString(){
+  return "";
+
+}
+//...............................................................................
 //  dissect Topic
 //...............................................................................
 void Topic::dissectTopic(char* topics, char* args){
   Serial.println("Topic::dissectTopic()");
 
-  String strTopics = String(topics);
+  //String strTopics = String(topics);
   //char* chrTopics
   //char* x;
   //strcpy(x, strTopics.c_str());
 
-  String strArgs = String(args);
+  //String strArgs = String(args);
   //strcpy(tmpTopics, args);
 
-  Serial.println(topics);
-  Serial.println(strTopics);
+  //Serial.println(String(topics));
+  //Serial.println(String(args));
+  //Serial.println(strTopics);
 
   char* ch;
 
@@ -54,7 +70,7 @@ void Topic::dissectTopic(char* topics, char* args){
     ch= topics;
     countItems= 1;
     while(*ch) if(*ch++ == '/') countItems++;
-    Serial.println(countItems);
+    //Serial.println(countItems);
     item = new string[countItems];
 
     int i= 0;
@@ -68,22 +84,32 @@ void Topic::dissectTopic(char* topics, char* args){
   if(*args) {
     ch= args;
     countArgs= 1;
-    while(*ch) if(*ch++ == ',') countArgs++;
-    Serial.println(countArgs);
-    arg = new string[countArgs];
-    int i= 0;
-    arg[i] = strtok(args, ",");
-    while(arg[i++] != NULL) {
-     	arg[i] = strtok(NULL, ",");
+    //wenn {....} dann jsonString!!
+    if (isValidJson(String(args))) {
+      Serial.println("is JSON");
+      arg = new string[1];
+      arg[0] = args;
+    }else{
+      while(*ch) if(*ch++ == ',') countArgs++;
+      //Serial.println(countArgs);
+      arg = new string[countArgs];
+      int i= 0;
+      arg[i] = strtok(args, ",");
+      while(arg[i++] != NULL) {
+     	  arg[i] = strtok(NULL, ",");
+      }
     }
   }
 
+/*
   for (size_t i = 0; i < countItems; i++) {
     Serial.println(item[i]);
   }
   for (size_t i = 0; i < countArgs; i++) {
     Serial.println(arg[i]);
   }
+*/
+
   /*
 
   ptr = strtok(args, ",");
@@ -122,11 +148,11 @@ void Topic::dissectTopic(char* topics, char* args){
     //Serial.println(item[i]);
   //}
 
-  topic_asString = "abc";
+/*  topic_asString = "abc";
   arg_asString = "def";
   asString = "ghi";
 
-  Serial.println("Topic::var end");
+  Serial.println("Topic::var end");*/
 
 
 
@@ -275,28 +301,39 @@ void Topic::dissectTopic(char* topics, char* args){
 }
 
 //...............................................................................
-//  delete TopicItem
+//  delete TopicItem in return String
 //...............................................................................
-String Topic::deleteTopicItem(int item){
-  //for (size_t i = 0; i < count; i++) {
-    /* code */
-  //}
+String Topic::modifyTopic(int index){
+  String str = "";
 
-  //String returnTopic = "Node52/ffs/cfg"; //tmpTopic.item[0];
-  //for (int i = 2; i < tmpTopic.countTopics; i++) {
-  //    returnTopic += "/" + tmpTopic.item[i];
-  //}
-  //return Tpoic oder lieber ein allgemeines Topic "RESULT"??
-
-  return "";
+  for (int i = 0; i < countItems; i++) {
+    if (i != index) {
+      str += String(item[i]);
+      if (i != countItems-1) {
+        str += "/";
+      }
+    }
+  }
+  return str;
 }
 
 bool Topic::itemIs(int index, string topicName){
   return !strcmp(item[index], topicName);
 }
+
+
 //-------------------------------------------------------------------------------
 //  Topic private
 //-------------------------------------------------------------------------------
+//...............................................................................
+//  check for valid JSON-String
+//...............................................................................
+bool Topic::isValidJson(String root){
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& json = jsonBuffer.parseObject(root);
+  return json.success();
+}
+
 //...............................................................................
 //  print Topic
 //...............................................................................

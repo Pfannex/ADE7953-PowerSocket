@@ -39,18 +39,19 @@ sysUtils
   └─clock
       └─forceNTP
 */
-bool SysUtils::set(String topic){
-/*  if (topic.item[3] == "esp"){
-    if (topic.item[4] == "restart") {
+String SysUtils::set(Topic& topic){
+//esp
+  if (topic.itemIs(3, "esp")){
+    if (topic.itemIs(4, "restart")) {
       esp_tools.reboot();
     }
-
-  }else if (topic.item[3] == "clock") {
-    if (topic.item[4] == "forceNTP") {
-      Serial.println("NTP update");
-      //clock.update(true);
+//clock
+  }else if (topic.itemIs(3, "clock")) {
+    if (topic.itemIs(4, "forceNTP")) {
+      clock.update(true);
+      return "OK";
     }
-  }*/
+  }
 }
 
 //...............................................................................
@@ -69,20 +70,22 @@ sysUtils
 */
 String SysUtils::get(Topic& topic){
   String str = "NIL";
-  if (topic.item[3] == "esp"){
-    if (topic.item[4] == "freeHeapSize") {
+//esp
+  if (topic.itemIs(3, "esp")){
+    if (topic.itemIs(4, "freeHeapSize")){
       str = esp_tools.freeHeapSize();
     }
+//clock
   }else if (topic.itemIs(3, "clock")) {
     if (topic.itemIs(4, "root")) {
       str = clock.root;
     }else if (topic.itemIs(4, "time")) {
       str = clock.strTime;
-    }else if (topic.item[4] == "date") {
+    }else if (topic.itemIs(4, "date")) {
         str = clock.strDate;
     }else if (topic.itemIs(4, "dateTime")) {
           str = clock.strDateTime;
-    }else if (topic.item[4] == "dateTime_ms") {
+    }else if (topic.itemIs(4, "dateTime_ms")) {
       str = clock.strDateTime_ms;
     }
   }
@@ -222,7 +225,13 @@ void Clock::setClock(){
   strDateTime = strDate + " - " + strTime;
   strDateTime_ms = strDate + " - " + strTime_ms;
 
-  root = "{\"dateTime\":\"" + strDateTime + "\"}";
+  //date|time|time_ms|dateTime|dateTime_ms
+
+  root = "{\"date\":\"" + strDate + "\"," +
+          "\"time\":\"" + strTime + "\"," +
+          "\"time_ms\":\"" + strTime_ms + "\"," +
+          "\"dateTime\":\"" + strDateTime + "\"," +
+          "\"dateTime_ms\":\"" + strDateTime_ms + "\"}";
 }
 
 //###############################################################################

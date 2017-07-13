@@ -25,8 +25,8 @@ public:
   void on_incommingSubcribe(char* topic, byte* payload, unsigned int length);
   void pub(String topic, String value);
 //API
-  bool set(String strTopic, String strArg);
-  String get(String strTopic, String strArg);
+  String set(Topic& topic);
+  String get(Topic& topic);
 
 private:
   PubSubClient client;
