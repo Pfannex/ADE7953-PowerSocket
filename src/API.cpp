@@ -20,29 +20,27 @@ String API::call(Topic& topic){
 //set
   if (topic.itemIs(1, "set")){
     if (topic.itemIs(2, "ffs")){
-      //sysUtils.logging.debugMem();
-      ret = ffs.set(topic);
-      //sysUtils.logging.log("API", ret);
-      return ret;
+      return ffs.set(topic);
     }else if (topic.itemIs(2, "sysUtils")) {
-        ret = sysUtils.set(topic);
-      return ret;
+      return sysUtils.set(topic);
     }else if (topic.itemIs(2, "mqtt")) {
       //return mqtt.set(topic);
+    }else{
+      return "NIL";
     }
 //get
   }else if (topic.itemIs(1, "get")){
     if (topic.itemIs(2, "ffs")){
-      ret = ffs.get(topic);
-      //sysUtils.logging.log("API", ret);
-      return ret;
+      return ffs.get(topic);
     }else if (topic.itemIs(2, "sysUtils")) {
-      ret = sysUtils.get(topic);
-      //sysUtils.logging.log("API sysUtils", ret);
-      return ret;
+      return sysUtils.get(topic);
     }else if (topic.itemIs(2, "mqtt")) {
       //return mqtt.get(topic);
+    }else{
+      return "NIL";
     }
+  }else{
+    return "NIL";
   }
 }
 

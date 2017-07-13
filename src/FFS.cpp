@@ -133,10 +133,6 @@ String FFS::set(Topic& topic){
       return "OK";
 //write rootString
     }else if (topic.itemIs(4, "root")){
-      Serial.println("JSON");
-      Serial.println(topic.arg[0]);
-
-      //prüfung in Topic!!
       if (isValidJson(topic.arg[0])){
         tmpFile->root = topic.arg[0];
         return "OK";
@@ -171,8 +167,6 @@ ffs
          └─ItemName RW
 */
 String FFS::get(Topic& topic){
-  String str = "NIL";
-
   FFSjsonFile *tmpFile = NULL;
   if (topic.itemIs(3, "cfg")) {
     tmpFile = &cfg;
@@ -189,28 +183,28 @@ String FFS::get(Topic& topic){
   if (tmpFile != NULL){
 //filePath
     if (topic.itemIs(4, "filePath")){
-      str = tmpFile->filePath;
+      return tmpFile->filePath;
 //FileSize
     }else if (topic.itemIs(4, "size")){
-      str = tmpFile->size;
+      return String(tmpFile->size);
 //ItemsCount
     }else if (topic.itemIs(4, "itemsCount")){
-      str = tmpFile->itemsCount;
+      return String(tmpFile->itemsCount);
 //Json Object Type
     }else if (topic.itemIs(4, "type")){
-      str = tmpFile->type;
+      return String(tmpFile->type);
 //write rootString
     }else if (topic.itemIs(4, "root")){
-      str = tmpFile->root;
+      return tmpFile->root;
 //readItem
     }else if (topic.itemIs(4, "item")){
-      str = tmpFile->readItem(topic.item[5]);
+      return tmpFile->readItem(topic.item[5]);
     }
 //ERROR
   }else{
     sysUtils.logging.error("No match file found!");
+    return "NIL";
   }
-  return str;
 }
 
 //-------------------------------------------------------------------------------

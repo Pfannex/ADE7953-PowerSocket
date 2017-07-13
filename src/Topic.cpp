@@ -50,6 +50,9 @@ String asString(){
 //  dissect Topic
 //...............................................................................
 void Topic::dissectTopic(char* topics, char* args){
+  Serial.println(topics);
+  Serial.println(args);
+
   char* ch;
 //topics
   if(*topics) {
@@ -59,11 +62,15 @@ void Topic::dissectTopic(char* topics, char* args){
     //Serial.println(countItems);
     item = new string[countItems];
 
-    int i= 0;
-    item[i] = strtok(topics, "/");
-    while(item[i++] != NULL) {
-      //printf("%s\n", ptr);
-     	item[i] = strtok(NULL, "/");
+    if (countItems == 1) {
+      item[0] = topics;
+    }else{
+      int i= 0;
+      item[i] = strtok(topics, "/");
+      while(item[i++] != NULL) {
+        //printf("%s\n", ptr);
+     	  item[i] = strtok(NULL, "/");
+      }
     }
   }
 //args
@@ -76,11 +83,15 @@ void Topic::dissectTopic(char* topics, char* args){
     }else{
       while(*ch) if(*ch++ == ',') countArgs++;
       arg = new string[countArgs];
-      
-      int i= 0;
-      arg[i] = strtok(args, ",");
-      while(arg[i++] != NULL) {
+
+      if (countArgs == 1) {
+        arg[0] = args;
+      }else{
+        int i= 0;
+        arg[i] = strtok(args, ",");
+        while(arg[i++] != NULL) {
      	  arg[i] = strtok(NULL, ",");
+        }
       }
     }
   }
