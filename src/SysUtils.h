@@ -104,7 +104,7 @@ public:
   long rand(long max);
   static long seed; // class variable
 //API
-  bool set(String topic);
+  String set(Topic& topic);
   String get(Topic& topic);
 
 

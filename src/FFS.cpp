@@ -106,39 +106,37 @@ ffs
       └─item
           └─itemName  [value]         RW
 */
-String FFS::set(String strTopic, String strArg){
-  //sysUtils.logging.log("FFS", "set");
-  //return "setStr from FFS";
-
-  Topic topic("", "");
-  //topic.dissectTopic(strTopic, strArg);
-
+String FFS::set(Topic& topic){
   String str = "NIL";
-  sysUtils.logging.log("FFS", topic.asString);
+
   FFSjsonFile *tmpFile = NULL;
-  if (topic.item[3] == "cfg") {
+  if (topic.itemIs(3, "cfg")) {
     tmpFile = &cfg;
-  }else if (topic.item[3] == "sub"){
+  }else if (topic.itemIs(3, "sub")){
     tmpFile = &sub;
-  }else if (topic.item[3] == "subGlobal"){
+  }else if (topic.itemIs(3, "subGlobal")){
     tmpFile = &subGlobal;
-  }else if (topic.item[3] == "pub"){
+  }else if (topic.itemIs(3, "pub")){
     tmpFile = &pub;
-  }else if (topic.item[3] == "ade7953"){
+  }else if (topic.itemIs(3, "ade7953")){
     tmpFile = &ade7953;
   }
 
   if (tmpFile != NULL){
-//LoadFile-----------------------------------------------
-    if (topic.item[4] == "loadFile"){
+//LoadFile
+    if (topic.itemIs(4, "loadFile")){
       tmpFile->loadFile();
       return "OK";
-//SaveFile-----------------------------------------------
-    }else if (topic.item[4] == "saveFile"){
+//SaveFile
+    }else if (topic.itemIs(4, "saveFile")){
       tmpFile->saveFile();
       return "OK";
-//write rootString---------------------------------------
-    }else if (topic.item[4] == "root"){
+//write rootString
+    }else if (topic.itemIs(4, "root")){
+      Serial.println("JSON");
+      Serial.println(topic.arg[0]);
+
+      //prüfung in Topic!!
       if (isValidJson(topic.arg[0])){
         tmpFile->root = topic.arg[0];
         return "OK";
@@ -146,28 +144,16 @@ String FFS::set(String strTopic, String strArg){
         sysUtils.logging.error("no valid JSON-String!");
         return "no valid JSON-String!";
       }
-//writeItem----------------------------------------------
-    }else if (topic.item[4] == "item"){
-      //return "ffs/item";
+//writeItem
+    }else if (topic.itemIs(4, "item")){
       tmpFile->writeItem(topic.item[5], topic.arg[0]);
-
       return tmpFile->readItem(topic.item[5]);
-      //str = "xxx"; //tmpFile->readItem(topic.item[5]);
-      //return str;
-      //Serial.println("ffs/set/cfg/item");
-      //str = "Hallo"; //tmpFile->readItem(topic.item[5]);
     }
 //ERROR--------------------------------------------------
   }else{
     sysUtils.logging.error("No match file found!");
     return "No match file found!";
   }
-  //return str;
-/*
-  sysUtils.logging.debug(cfg.root);
-  sysUtils.logging.debug(cfg.readItem("webUser"));
-{"webUser":"ESPuser","webPassword":"ESPpass","apName":"Node52","apPassword":"ESP8266config","wifi":"dhcp","lan":"manual","wifiSSID":"Pf@nne-NET","wifiPSK":"Pf@nneNETwlan_ACCESS","wifiIP":"","mqttServer":"192.168.1.3","mqttPort":"1883","mqttDeviceName":"Node52","updateServer":"192.168.1.3","filePath":"/bin/ESP8266_AktSen.ino.bin"}
-*/
 }
 
 //...............................................................................
@@ -184,51 +170,43 @@ ffs
      └─Item
          └─ItemName RW
 */
-String FFS::get(String strTopic, String strArg){
-  //sysUtils.logging.log("FFS", "get");
-  //return "getStr from FFS";
-
-  sysUtils.logging.debugMem();
-  Topic topic("", "");
-  sysUtils.logging.debugMem();
-  //topic.dissectTopic(strTopic, strArg);
-
+String FFS::get(Topic& topic){
   String str = "NIL";
-  sysUtils.logging.log("FFS", topic.asString);
+
   FFSjsonFile *tmpFile = NULL;
-  if (topic.item[3] == "cfg") {
+  if (topic.itemIs(3, "cfg")) {
     tmpFile = &cfg;
-  }else if (topic.item[3] == "sub"){
+  }else if (topic.itemIs(3, "sub")){
     tmpFile = &sub;
-  }else if (topic.item[3] == "subGlobal"){
+  }else if (topic.itemIs(3, "subGlobal")){
     tmpFile = &subGlobal;
-  }else if (topic.item[3] == "pub"){
+  }else if (topic.itemIs(3, "pub")){
     tmpFile = &pub;
-  }else if (topic.item[3] == "ade7953"){
+  }else if (topic.itemIs(3, "ade7953")){
     tmpFile = &ade7953;
   }
 
   if (tmpFile != NULL){
-//filePath-----------------------------------------------
-    if (topic.item[4] == "filePath"){
+//filePath
+    if (topic.itemIs(4, "filePath")){
       str = tmpFile->filePath;
-//FileSize-----------------------------------------------
-    }else if (topic.item[4] == "size"){
+//FileSize
+    }else if (topic.itemIs(4, "size")){
       str = tmpFile->size;
-//ItemsCount---------------------------------------------
-    }else if (topic.item[4] == "itemsCounte"){
+//ItemsCount
+    }else if (topic.itemIs(4, "itemsCount")){
       str = tmpFile->itemsCount;
-//Json Object Type---------------------------------------
-    }else if (topic.item[4] == "type"){
+//Json Object Type
+    }else if (topic.itemIs(4, "type")){
       str = tmpFile->type;
-//write rootString---------------------------------------
-    }else if (topic.item[4] == "root"){
+//write rootString
+    }else if (topic.itemIs(4, "root")){
       str = tmpFile->root;
-//readItem----------------------------------------------
-    }else if (topic.item[4] == "item"){
+//readItem
+    }else if (topic.itemIs(4, "item")){
       str = tmpFile->readItem(topic.item[5]);
     }
-//ERROR--------------------------------------------------
+//ERROR
   }else{
     sysUtils.logging.error("No match file found!");
   }

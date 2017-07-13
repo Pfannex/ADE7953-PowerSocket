@@ -97,84 +97,16 @@ void MQTT::on_incommingSubcribe(char* topics, byte* payload, unsigned int length
   strncpy(args, (char*)payload, length+1);
   args[length] = '\0';
 
-  //for (size_t i = 0; i < length; i++) {
-  //  arg[i] = (char)(payload[i]);
-  //}
-  //arg[length] = '\0';
-
-  sysUtils.logging.debugMem_start();
-  //char *arg = (char*)payload;
-  //strncpy((char*)&payload[0], arg, sizeof(payload[0])+1);
-  //arg[length] = '\0';
-
-  sysUtils.logging.log("MQTT", "incommingSUB");
-  sysUtils.logging.log("MQTT", "PayloadSize: " + String(length));
   sysUtils.logging.log("MQTT", String(topics) + " | " + String(args));
 
+  //String str = String(topics) + " " + String(args);
+  //Topic tmpTopic(str);
   Topic tmpTopic(topics, args);
   String tmp = api.call(tmpTopic);
-  sysUtils.logging.log("MQTT", tmp);
+
+  pub(tmpTopic.modifyTopic(1), tmp);
 
   if (args != NULL) delete[] args;
-  sysUtils.logging.debugMem_stop();
-
-  pub("Node52/sysUtils/clock/root", tmp);
-
-
-
-
-
-  //Serial.println("del");
-  //Serial.println("del end");
-
-  //String strTopic = String(topic);
-
-  //String deviceName = ffs.cfg.readItem("mqttDeviceName");
-  //if (strTopic.indexOf(deviceName) != -1) {  //is Topic with DeviceName
-    //strTopic.remove(0, deviceName.length() +1);
-  //}
-//argument
-  //char* xarg = new char[length];
-  //Serial.println(length);
-
-  //char arg[20] = "";
-  //for (int i = 0; i < length; i++) {
-    //arg[i] = payload[i];
-    //xarg[i] = payload[i];
-  //}
-  //String strArg = String(arg);
-  //if (xarg != NULL) delete[] xarg;
-
-  //String strArg = "";
-  //for (int i = 0; i < length; i++) {
-  //  strArg += (char)(payload[i]);
-  //}
-
-  //Serial.println(xarg);
-
-
-
-
-
-//--------------------------------
-  //sysUtils.logging.debugMem();
-  //Topic tmpTopic(topic, arg);
-  //Serial.println(tmpTopic.asString);
-  //sysUtils.logging.debugMem();
-
-  //String returnTopic = "Node52/ffs/cfg"; //tmpTopic.item[0];
-  //for (int i = 2; i < tmpTopic.countTopics; i++) {
-  //    returnTopic += "/" + tmpTopic.item[i];
-  //}
-  //return Tpoic oder lieber ein allgemeines Topic "RESULT"??
-
-  //sysUtils.logging.debugMem();
-  //String tmp = api.call(strTopic, strArg);
-  //sysUtils.logging.debugMem();
-  //sysUtils.logging.log("MQTT", tmp);
-
-  //pub(returnTopic, tmp);
-  //pub("Node52", "HelloWorld");
 }
 
 //...............................................................................
@@ -182,7 +114,7 @@ void MQTT::on_incommingSubcribe(char* topics, byte* payload, unsigned int length
 //...............................................................................
 void MQTT::pub(String topic, String value){
   client.publish(topic.c_str(), value.c_str());
-  //client.loop();
+  client.loop();
 }
 
 //-------------------------------------------------------------------------------
@@ -195,10 +127,16 @@ void MQTT::pub(String topic, String value){
 mqtt
   └─connect
 */
-bool MQTT::set(String strTopic, String strArg){
-  //if (topic.item[3] == "connect"){
-  //  start();
-  //}
+String MQTT::set(Topic& topic){
+  if (topic.itemIs(3, "connect")){
+    start();
+    if (handle()){
+      return "connected";
+    }else{
+      return "disconnected";
+    }
+
+  }
 }
 
 //...............................................................................
@@ -208,16 +146,16 @@ bool MQTT::set(String strTopic, String strArg){
 mqtt
   └─status
 */
-String MQTT::get(String strTopic, String strArg){
+String MQTT::get(Topic& topic){
   String str = "NIL";
-/*  if (topic.item[3] == "status"){
+//status
+  if (topic.itemIs(3, "status")){
     if (handle()){
-      str = "connected";
+      return "connected";
     }else{
-      str = "disconnected";
+      return "disconnected";
     }
   }
-  return str;*/
 }
 
 //-------------------------------------------------------------------------------
