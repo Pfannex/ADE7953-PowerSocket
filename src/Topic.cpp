@@ -50,7 +50,7 @@ String asString(){
 //  dissect Topic
 //...............................................................................
 void Topic::dissectTopic(char* topics, char* args){
-  Serial.println("Topic::dissectTopic()");
+  //Serial.println("Topic::dissectTopic()");
 
   //String strTopics = String(topics);
   //char* chrTopics
@@ -86,7 +86,6 @@ void Topic::dissectTopic(char* topics, char* args){
     countArgs= 1;
     //wenn {....} dann jsonString!!
     if (isValidJson(String(args))) {
-      Serial.println("is JSON");
       arg = new string[1];
       arg[0] = args;
     }else{
