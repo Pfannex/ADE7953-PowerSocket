@@ -50,8 +50,20 @@ String asString(){
 //  dissect Topic
 //...............................................................................
 void Topic::dissectTopic(char* topics, char* args){
-  Serial.println(topics);
-  Serial.println(args);
+  //Serial.println(topics);
+  //Serial.println(args);
+
+//clean up topics & args
+  while (topics[strlen(topics) - 1] == '/')
+    topics[strlen(topics) - 1] = '\0';
+  while (args[strlen(args) - 1] == ',')
+    args[strlen(args) - 1] = '\0';
+  while (args[0] == ','){
+    for (size_t i = 0; i < strlen(args); i++) {
+      args[0] = args[1];
+    }
+    args[strlen(args) - 1] = '\0';
+  }
 
   char* ch;
 //topics
@@ -59,7 +71,6 @@ void Topic::dissectTopic(char* topics, char* args){
     ch= topics;
     countItems= 1;
     while(*ch) if(*ch++ == '/') countItems++;
-    //Serial.println(countItems);
     item = new string[countItems];
 
     if (countItems == 1) {
@@ -114,8 +125,14 @@ String Topic::modifyTopic(int index){
   return str;
 }
 
+//...............................................................................
+//  compare topic.item by index with string
+//...............................................................................
 bool Topic::itemIs(int index, string topicName){
-  return !strcmp(item[index], topicName);
+  if (index < countItems)
+    return !strcmp(item[index], topicName);
+  else
+    return false;
 }
 
 //-------------------------------------------------------------------------------

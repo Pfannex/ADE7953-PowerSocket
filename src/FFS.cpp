@@ -133,17 +133,28 @@ String FFS::set(Topic& topic){
       return "OK";
 //write rootString
     }else if (topic.itemIs(4, "root")){
-      if (isValidJson(topic.arg[0])){
-        tmpFile->root = topic.arg[0];
-        return "OK";
+      if (topic.countArgs > 0){
+        if (isValidJson(topic.arg[0])){
+          tmpFile->root = topic.arg[0];
+          return "OK";
+        }else{
+          sysUtils.logging.error("no valid JSON-String!");
+          return "no valid JSON-String!";
+        }
       }else{
-        sysUtils.logging.error("no valid JSON-String!");
-        return "no valid JSON-String!";
+        sysUtils.logging.error("Argument not found!");
+        return "Argument not found!";
       }
+
 //writeItem
     }else if (topic.itemIs(4, "item")){
-      tmpFile->writeItem(topic.item[5], topic.arg[0]);
-      return tmpFile->readItem(topic.item[5]);
+      if (topic.countItems > 5 and topic.countArgs > 0){
+        tmpFile->writeItem(topic.item[5], topic.arg[0]);
+        return tmpFile->readItem(topic.item[5]);
+      }else{
+        sysUtils.logging.error("Topic or Argument not found!");
+        return "Topic or Argument not found!";
+      }
     }
 //ERROR--------------------------------------------------
   }else{
