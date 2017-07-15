@@ -102,8 +102,7 @@ void MQTT::on_incommingSubcribe(char* topics, byte* payload, unsigned int length
   //String str = String(topics) + " " + String(args);
   //Topic tmpTopic(str);
   Topic tmpTopic(topics, args);
-  String tmp = api.call(tmpTopic);
-
+  String tmp = api.call(tmpTopic);    //API verändert tmpTopic!!
   pub(tmpTopic.modifyTopic(1), tmp);
 
   if (args != NULL) delete[] args;

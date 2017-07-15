@@ -6,7 +6,7 @@
 Topic::Topic(String& topicsArgs) {
 //topics
   String str = topicsArgs.substring(0, topicsArgs.indexOf(" "));
-  topics= new char[str.length()];
+  topics = new char[str.length()];
   strcpy(topics, str.c_str());
 //args
   str = topicsArgs.substring(topicsArgs.indexOf(" ")+1);
@@ -35,16 +35,25 @@ Topic::~Topic(){
 //...............................................................................
 //  Topic strings
 //...............................................................................
-String topic_asString(){
-  return "";
+String Topic::topic_asString(){
+  Serial.println("Topic::topic_asString()");
+  Serial.println(String(item[0]));
+  String str = String(item[0]);
+  if (countItems > 1) for (size_t i = 1; i < countItems; i++) {
+    str += "/" + String(item[i]);
+  }
+  return str;
 }
-String arg_asString(){
-  return "";
-
+String Topic::arg_asString(){
+  String str = "";
+  if (countArgs > 0) str = String(arg[0]);
+  if (countArgs > 1) for (size_t i = 1; i < countArgs; i++) {
+    str += "/" + String(arg[i]);
+  }
+  return str;
 }
-String asString(){
-  return "";
-
+String Topic::asString(){
+  return topic_asString() + " | " + arg_asString();
 }
 //...............................................................................
 //  dissect Topic
