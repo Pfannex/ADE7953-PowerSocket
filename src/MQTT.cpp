@@ -3,9 +3,8 @@
 //###############################################################################
 //  MQTT client
 //###############################################################################
-MQTT::MQTT(SysUtils& sysUtils, API& api, FFS& ffs, I2C& i2c, WIFI& wifi):
+MQTT::MQTT(SysUtils& sysUtils, FFS& ffs, I2C& i2c, WIFI& wifi):
     sysUtils(sysUtils),
-    api(api),
     ffs(ffs),
     i2c(i2c),
     wifi(wifi),
@@ -102,7 +101,10 @@ void MQTT::on_incommingSubcribe(char* topics, byte* payload, unsigned int length
   //String str = String(topics) + " " + String(args);
   //Topic tmpTopic(str);
   Topic tmpTopic(topics, args);
-  String tmp = api.call(tmpTopic);    //API verändert tmpTopic!!
+
+  String tmp = "NIL";
+  //tmp = api.call(tmpTopic);    //CALLBACK!!
+
   pub(tmpTopic.modifyTopic(1), tmp);
 
   if (args != NULL) delete[] args;

@@ -12,9 +12,8 @@
 //###############################################################################
 class MQTT{
 public:
-  MQTT(SysUtils& sysUtils, API& api, FFS& ffs, I2C& i2c, WIFI& wifi);
+  MQTT(SysUtils& sysUtils, FFS& ffs, I2C& i2c, WIFI& wifi);
   SysUtils& sysUtils;
-  API& api;
   FFS& ffs;
   I2C& i2c;
   WIFI& wifi;

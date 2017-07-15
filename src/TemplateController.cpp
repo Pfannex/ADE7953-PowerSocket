@@ -6,7 +6,7 @@
 TemplateController::TemplateController():
     api(sysUtils, ffs),
     ffs(sysUtils, i2c),
-    mqtt(sysUtils, api, ffs, i2c, wifi),
+    mqtt(sysUtils, ffs, i2c, wifi),
     wifi(sysUtils, api, ffs, i2c),
     webif(sysUtils, api){
 
