@@ -14,9 +14,6 @@
 //###############################################################################
 //  FlashFileSystem
 //###############################################################################
-#ifndef __FFS_PATH__
-#define __FFS_PATH__
-
   #define CFG_PATH        "/config.json"
   #define SUB_PATH        "/sub.json"
   #define SUB_GLOBAL_PATH "/subGlobal.json"
@@ -25,7 +22,6 @@
 
   #define TYPE_OBJECT 1
   #define TYPE_ARRAY  0
-#endif
 
 //###############################################################################
 //  GPIO

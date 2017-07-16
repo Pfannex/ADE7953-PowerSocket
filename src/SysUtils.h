@@ -106,6 +106,4 @@ public:
 //API
   String set(Topic& topic);
   String get(Topic& topic);
-
-
 };
