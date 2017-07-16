@@ -1,11 +1,12 @@
 #pragma once
 //FileSystem
   #include <FS.h>                     //this needs to be first, or it all crashes and burns...
-  #include "Setup.h"
   #include <ArduinoJson.h>
   #include <Arduino.h>
   #include "SysUtils.h"
   #include "Topic.h"
+  #include "Setup.h"
+  #include "I2C.h"
 
 //###############################################################################
 //  stringFile
@@ -33,7 +34,7 @@ public:
   int type;                                  //0=Object; 1=Array
   String root;
 
-  bool loadFile();
+  void loadFile();
   String readItem(String itemName);
   String readItem(int item);
   bool writeItem(String itemName, String value);
@@ -51,9 +52,9 @@ private:
 
 class FFS {
 public:
-  FFS(SysUtils& sysUtils);
+  FFS(SysUtils& sysUtils, I2C& i2c);
   SysUtils& sysUtils;
-  //I2C& i2c;
+  I2C& i2c;
 
 //Files
   FFSjsonFile cfg;
