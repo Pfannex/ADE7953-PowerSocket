@@ -59,17 +59,15 @@ String Topic::asString(){
 //  dissect Topic
 //...............................................................................
 void Topic::dissectTopic(char* topics, char* args){
-  //Serial.println(topics);
-  //Serial.println(args);
-
 //clean up topics & args
   while (topics[strlen(topics) - 1] == '/')
     topics[strlen(topics) - 1] = '\0';
+
   while (args[strlen(args) - 1] == ',')
     args[strlen(args) - 1] = '\0';
   while (args[0] == ','){
-    for (size_t i = 0; i < strlen(args); i++) {
-      args[0] = args[1];
+    for (size_t i = 0; i < strlen(args)-1; i++) {
+      args[i] = args[i+1];
     }
     args[strlen(args) - 1] = '\0';
   }
