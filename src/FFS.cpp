@@ -4,9 +4,9 @@
 //  FFS
 //###############################################################################
 
-FFS::FFS(SysUtils& sysUtils, I2C& i2c):
+FFS::FFS(SysUtils& sysUtils):
     sysUtils(sysUtils),
-    i2c(i2c),
+    //i2c(i2c),
   //jsonFiles
     cfg(CFG_PATH, TYPE_OBJECT),
     sub(SUB_PATH, TYPE_OBJECT),
@@ -32,6 +32,8 @@ void FFS::mount(){
     //Serial.print("formating FS...");
     //SPIFFS.format();
     //Serial.println("OK");
+
+    Serial.println("FFS::mount()");
 
   //load rootStrings
     cfg.loadFile();
@@ -85,10 +87,10 @@ void FFS::TEST(){
   Serial.println(cfg.readItem("mqttServer"));
   Serial.println(cfg.size);
 
-  i2c.lcd.println(sub.readItem("1.0"), ArialMT_Plain_16, 0);
+/*  i2c.lcd.println(sub.readItem("1.0"), ArialMT_Plain_16, 0);
   i2c.lcd.println(cfg.readItem("wifiSSID"), ArialMT_Plain_16, 16);
   i2c.lcd.println(cfg.readItem("wifiPSK"), ArialMT_Plain_16, 24);
-  i2c.lcd.println(cfg.readItem("mqttServer"), ArialMT_Plain_16, 32);
+  i2c.lcd.println(cfg.readItem("mqttServer"), ArialMT_Plain_16, 32);*/
 }
 
 //-------------------------------------------------------------------------------
@@ -100,6 +102,7 @@ void FFS::TEST(){
 /*
 ffs
   └─fileObject
+      ├─mount
       ├─loadFile
       ├─saveFile
       ├─root          [jsonString]    RW
@@ -283,8 +286,12 @@ FFSjsonFile::FFSjsonFile(String filePath, int type):
 //...............................................................................
 //  load root string from FFS-File (for external use)
 //...............................................................................
-void FFSjsonFile::loadFile(){
+bool FFSjsonFile::loadFile(){
   root = readJsonString();
+  if (root = "NIL")
+    return false;
+  else
+    return true;
 }
 
 //...............................................................................
@@ -360,7 +367,6 @@ bool FFSjsonFile::writeItem(String itemName, String value){
 //  read json-root-string from File
 //...............................................................................
 String FFSjsonFile::readJsonString(){
-
   File jsonFile;
   String jsonData;
 
@@ -387,6 +393,9 @@ String FFSjsonFile::readJsonString(){
       return "NIL";
     }
     jsonFile.close();
+  }else{
+    Serial.println("ERROR File does not exists!");
+    return "NIL";
   }
   return jsonData;
 }

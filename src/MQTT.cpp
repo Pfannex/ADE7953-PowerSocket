@@ -3,10 +3,9 @@
 //###############################################################################
 //  MQTT client
 //###############################################################################
-MQTT::MQTT(SysUtils& sysUtils, FFS& ffs, I2C& i2c, WIFI& wifi):
+MQTT::MQTT(SysUtils& sysUtils, FFS& ffs,  WIFI& wifi):
     sysUtils(sysUtils),
     ffs(ffs),
-    i2c(i2c),
     wifi(wifi),
     client(wifi.client){
 
@@ -30,16 +29,16 @@ bool MQTT::start(){
   String lastWillTopic = "Devices/" + deviceName;
 
   sysUtils.logging.log("MQTT", "connecting to: " + strIP + ":" + String(port));
-  i2c.lcd.clear();
-  i2c.lcd.println("MQTTBroker:", ArialMT_Plain_10, 0);
-  i2c.lcd.println(strIP + ":" + String(port), ArialMT_Plain_16,  10);
+  //i2c.lcd.clear();
+  //i2c.lcd.println("MQTTBroker:", ArialMT_Plain_10, 0);
+  //i2c.lcd.println(strIP + ":" + String(port), ArialMT_Plain_16,  10);
 
   client.setServer(IP, port);
   client.disconnect();
   if (client.connect(deviceName.c_str(), lastWillTopic.c_str() , 0, false, "Dead")) {
     MQTTOK = true;
     sysUtils.logging.log("MQTT", "connected to Broker");
-    i2c.lcd.println("...connected", ArialMT_Plain_10, 31);
+    //i2c.lcd.println("...connected", ArialMT_Plain_10, 31);
     client.publish(lastWillTopic.c_str(), "Alive");
 
     //global subscribe

@@ -170,6 +170,8 @@ void Clock::start(){
 //  update clock
 //...............................................................................
 void Clock::update(bool ntp){
+Serial.println("Clock::update(bool ntp)");
+
   if (ntp){
     char txt[1024];
     sprintf(txt, "%s %5s %s", strDateTime_ms.c_str(), "INFO", "NTP update");
@@ -188,6 +190,7 @@ void Clock::update(bool ntp){
 //  update clock
 //...............................................................................
 void Clock::setClock(){
+  Serial.println("Clock::setClock()");
   long now = millis();
 
   //Sommerzeit = letzter Sonntag im März von 2h -> 3h
@@ -234,6 +237,9 @@ void Clock::setClock(){
           "\"time_ms\":\"" + strTime_ms + "\"," +
           "\"dateTime\":\"" + strDateTime + "\"," +
           "\"dateTime_ms\":\"" + strDateTime_ms + "\"}";
+
+  Serial.println("Clock::setClock() END");
+
 }
 
 //###############################################################################
