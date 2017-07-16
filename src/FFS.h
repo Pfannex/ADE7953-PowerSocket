@@ -52,9 +52,8 @@ private:
 
 class FFS {
 public:
-  FFS(SysUtils& sysUtils, I2C& i2c);
+  FFS(SysUtils& sysUtils);
   SysUtils& sysUtils;
-  I2C& i2c;
 
 //Files
   FFSjsonFile cfg;

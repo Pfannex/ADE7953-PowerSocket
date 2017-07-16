@@ -4,9 +4,8 @@
 //  FFS
 //###############################################################################
 
-FFS::FFS(SysUtils& sysUtils, I2C& i2c):
+FFS::FFS(SysUtils& sysUtils):
     sysUtils(sysUtils),
-    i2c(i2c),
   //jsonFiles
     cfg(CFG_PATH, TYPE_OBJECT),
     sub(SUB_PATH, TYPE_OBJECT),
@@ -85,10 +84,10 @@ void FFS::TEST(){
   Serial.println(cfg.readItem("mqttServer"));
   Serial.println(cfg.size);
 
-  i2c.lcd.println(sub.readItem("1.0"), ArialMT_Plain_16, 0);
+/*  i2c.lcd.println(sub.readItem("1.0"), ArialMT_Plain_16, 0);
   i2c.lcd.println(cfg.readItem("wifiSSID"), ArialMT_Plain_16, 16);
   i2c.lcd.println(cfg.readItem("wifiPSK"), ArialMT_Plain_16, 24);
-  i2c.lcd.println(cfg.readItem("mqttServer"), ArialMT_Plain_16, 32);
+  i2c.lcd.println(cfg.readItem("mqttServer"), ArialMT_Plain_16, 32);*/
 }
 
 //-------------------------------------------------------------------------------
