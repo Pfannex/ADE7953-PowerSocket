@@ -3,10 +3,10 @@
 //###############################################################################
 //  MQTT client
 //###############################################################################
-MQTT::MQTT(SysUtils& sysUtils, FFS& ffs, I2C& i2c, WIFI& wifi):
+MQTT::MQTT(SysUtils& sysUtils, WIFI& wifi):
     sysUtils(sysUtils),
-    ffs(ffs),
-    i2c(i2c),
+    //ffs(ffs),
+    //i2c(i2c),
     wifi(wifi),
     client(wifi.client){
 
@@ -23,27 +23,28 @@ MQTT::MQTT(SysUtils& sysUtils, FFS& ffs, I2C& i2c, WIFI& wifi):
 bool MQTT::start(){
   bool MQTTOK = false;
 
-  String strIP = ffs.cfg.readItem("mqttServer");
+  String strIP = "192.168.1.3";   //ffs.cfg.readItem("mqttServer");
   IPAddress IP = sysUtils.net.strToIP(strIP);
-  int port = ffs.cfg.readItem("mqttPort").toInt();
-  String deviceName = ffs.cfg.readItem("mqttDeviceName");
+  int port =     1883; // ffs.cfg.readItem("mqttPort").toInt();
+  String deviceName =  "Node52"; //ffs.cfg.readItem("mqttDeviceName");
   String lastWillTopic = "Devices/" + deviceName;
 
   sysUtils.logging.log("MQTT", "connecting to: " + strIP + ":" + String(port));
-  i2c.lcd.clear();
-  i2c.lcd.println("MQTTBroker:", ArialMT_Plain_10, 0);
-  i2c.lcd.println(strIP + ":" + String(port), ArialMT_Plain_16,  10);
+  //i2c.lcd.clear();
+  //i2c.lcd.println("MQTTBroker:", ArialMT_Plain_10, 0);
+  //i2c.lcd.println(strIP + ":" + String(port), ArialMT_Plain_16,  10);
 
   client.setServer(IP, port);
   client.disconnect();
   if (client.connect(deviceName.c_str(), lastWillTopic.c_str() , 0, false, "Dead")) {
     MQTTOK = true;
     sysUtils.logging.log("MQTT", "connected to Broker");
-    i2c.lcd.println("...connected", ArialMT_Plain_10, 31);
+    //i2c.lcd.println("...connected", ArialMT_Plain_10, 31);
     client.publish(lastWillTopic.c_str(), "Alive");
 
     //global subscribe
-    DynamicJsonBuffer global_JsonBuffer;
+//###########################################################
+/*    DynamicJsonBuffer global_JsonBuffer;
     JsonObject& global_rootObject = global_JsonBuffer.parseObject(ffs.subGlobal.root);
     if (global_rootObject.success()) {
       for (auto &element : global_rootObject){
@@ -70,8 +71,13 @@ bool MQTT::start(){
       }
     }else{
       sysUtils.logging.error("reading ffs.sub.root failed");
-    }
+    }*/
   }
+  client.subscribe("Node52/set/#");
+  client.loop();
+  client.subscribe("Node52/get/#");
+  client.loop();
+
   return MQTTOK;
 }
 

@@ -16,8 +16,8 @@
 #include <SoftTimer.h>	//https://github.com/prampec/arduino-softtimer
 						            //need https://github.com/prampec/arduino-pcimanager
 
-#include "TemplateController.h"
-TemplateController tc;
+#include "API.h"
+API api;
 
 //Timer
 void Loop(Task* me);
@@ -42,24 +42,24 @@ void setup() {
   SoftTimer.add(&t3);
   SoftTimer.add(&t4);
 
-  tc.start();
+  api.start();
 
-  //tc.api.set("/Hello/World/foo/bar", "arg1,arg2,3,4,5");
-  //tc.api.set("/Hello/World/foo/bar arg1,arg2,3,4,5");
+  //api.api.set("/Hello/World/foo/bar", "arg1,arg2,3,4,5");
+  //api.api.set("/Hello/World/foo/bar arg1,arg2,3,4,5");
 }
 
 //-------------------------------------------------------------------------------
 //  timer control
 //-------------------------------------------------------------------------------
 void Loop(Task* me) {
-  tc.handle();
+  api.handle();
 }
 void t_1s(Task* me) {
-  tc.t_1s_Update();
+  api.t_1s_Update();
 }
 void t_short(Task* me) {
-  tc.t_short_Update();
+  api.t_short_Update();
 }
 void t_long(Task* me) {
-  tc.t_long_Update();
+  api.t_long_Update();
 }

@@ -8,7 +8,7 @@
   #include <ESP8266HTTPUpdateServer.h>
   #include <ESP8266httpUpdate.h>
 
-  #include "API.h"
+  //#include "API.h"
   #include "Auth.h"
   #include "SysUtils.h"
   #include "FS.h"
@@ -24,7 +24,7 @@
 
 class WEBIF {
 public:
-  WEBIF(SysUtils& sysUtils, API& api);
+  WEBIF(SysUtils& sysUtils);
   void start();
   void handle();
 
@@ -32,7 +32,7 @@ private:
   ESP8266WebServer webServer;
   ESP8266HTTPUpdateServer httpUpdater;
   SysUtils& sysUtils;
-  API& api;
+  //API& api;
 
   // authenticator
   Auth auth;

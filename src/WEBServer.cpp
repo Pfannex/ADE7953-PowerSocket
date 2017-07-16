@@ -4,9 +4,9 @@
 //  web interface
 //###############################################################################
 
-WEBIF::WEBIF(SysUtils& sysUtils, API& api):
+WEBIF::WEBIF(SysUtils& sysUtils):
        sysUtils(sysUtils),
-       api(api),
+       //api(api),
        webServer(80),
        auth(sysUtils) {
 
@@ -304,7 +304,8 @@ void WEBIF::apiPageHandler() {
 
     Topic tmpTopic(call);
 
-    String result= api.call(tmpTopic);
+    String result= "NIL";
+    //String result=  api.call(tmpTopic);
     sysUtils.logging.debug("returning "+result);
     webServer.send(200, "text/plain", result);
   } else {

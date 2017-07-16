@@ -1,9 +1,9 @@
 #pragma once
   #include <Arduino.h>
-  #include "API.h"
+  //#include "API.h"
   #include "SysUtils.h"
   #include "Setup.h"
-  #include "FFS.h"
+  //#include "FFS.h"
   #include "WIFI.h"
   #include <PubSubClient.h>
 
@@ -12,11 +12,12 @@
 //###############################################################################
 class MQTT{
 public:
-  MQTT(SysUtils& sysUtils, FFS& ffs, I2C& i2c, WIFI& wifi);
+  MQTT(SysUtils& sysUtils, WIFI& wifi);
   SysUtils& sysUtils;
-  FFS& ffs;
-  I2C& i2c;
+  //FFS& ffs;
+  //I2C& i2c;
   WIFI& wifi;
+  
 
   bool start();
   bool handle();
