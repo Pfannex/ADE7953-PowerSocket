@@ -24,14 +24,13 @@
 
 class WEBIF {
 public:
-  WEBIF(SysUtils& sysUtils, API& api);
+  WEBIF(API& api);
   void start();
   void handle();
 
 private:
   ESP8266WebServer webServer;
   ESP8266HTTPUpdateServer httpUpdater;
-  SysUtils& sysUtils;
   API& api;
 
   // authenticator

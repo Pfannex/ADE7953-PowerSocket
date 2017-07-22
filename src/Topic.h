@@ -5,7 +5,11 @@
 //###############################################################################
 //  Topic
 //###############################################################################
-typedef char* string;
+
+#define TOPIC_OK String("ok")
+#define TOPIC_NO String("no such topic")
+
+typedef const char* string;
 class Topic{
 public:
   Topic(String& topicsArgs);       // "foo/bar arg1,arg2,arg3"
@@ -14,8 +18,8 @@ public:
 
   string* item;
   string* arg;
-  string topics;
-  string args;
+  char* topics;
+  char* args;
   int countItems = 0;
   int countArgs = 0;
   String topic_asString();
@@ -24,7 +28,7 @@ public:
 
   void dissectTopic(char* topics, char* arg);
   String modifyTopic(int index);
-  bool itemIs(int index, string topicName);
+  bool itemIs(int index, const string topicName);
 
 private:
   bool isValidJson(String root);

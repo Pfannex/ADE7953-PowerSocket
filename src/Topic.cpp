@@ -4,14 +4,24 @@
 //  data exchange Topic
 //###############################################################################
 Topic::Topic(String& topicsArgs) {
-//topics
-  String str = topicsArgs.substring(0, topicsArgs.indexOf(" "));
-  topics = new char[str.length()];
-  strcpy(topics, str.c_str());
-//args
-  str = topicsArgs.substring(topicsArgs.indexOf(" ")+1);
-  args = new char[str.length()];
-  strcpy(args, str.c_str());
+
+  int splitAt= topicsArgs.indexOf(" ");
+  if(splitAt< 0) {
+    // no args
+    topics = new char[topicsArgs.length()];
+    strcpy(topics, topicsArgs.c_str());
+    args= new char[1];
+    args[0]= 0;
+  } else {
+    // topics
+    String str = topicsArgs.substring(0, splitAt);
+    topics = new char[str.length()];
+    strcpy(topics, str.c_str());
+    // args
+    str = topicsArgs.substring(splitAt+1);
+    args = new char[str.length()];
+    strcpy(args, str.c_str());
+  }
 
   item = nullptr;
   arg = nullptr;
@@ -36,10 +46,10 @@ Topic::~Topic(){
 //  Topic strings
 //...............................................................................
 String Topic::topic_asString(){
-  Serial.println("Topic::topic_asString()");
-  Serial.println(String(item[0]));
+  //Serial.println("Topic::topic_asString()");
+  //Serial.println(String(item[0]));
   String str = String(item[0]);
-  if (countItems > 1) for (size_t i = 1; i < countItems; i++) {
+  for (int i = 1; i < countItems; i++) {
     str += "/" + String(item[i]);
   }
   return str;
@@ -47,13 +57,13 @@ String Topic::topic_asString(){
 String Topic::arg_asString(){
   String str = "";
   if (countArgs > 0) str = String(arg[0]);
-  if (countArgs > 1) for (size_t i = 1; i < countArgs; i++) {
+  for(int i = 1; i < countArgs; i++) {
     str += "/" + String(arg[i]);
   }
   return str;
 }
 String Topic::asString(){
-  return topic_asString() + " | " + arg_asString();
+  return topic_asString() + " " + arg_asString();
 }
 //...............................................................................
 //  dissect Topic

@@ -4,16 +4,12 @@
 //  FFS
 //###############################################################################
 
-FFS::FFS(SysUtils& sysUtils, I2C& i2c):
-    sysUtils(sysUtils),
-    i2c(i2c),
-  //jsonFiles
-    cfg(CFG_PATH, TYPE_OBJECT),
-    sub(SUB_PATH, TYPE_OBJECT),
-    subGlobal(SUB_GLOBAL_PATH, TYPE_OBJECT),
-    pub(PUB_PATH, TYPE_OBJECT),
-    ade7953(ADE7953_PATH, TYPE_OBJECT){
-}
+FFS::FFS(LOGGING &logging, I2C &i2c)
+    : logging(logging), i2c(i2c),
+      // jsonFiles
+      cfg(logging, CFG_PATH, TYPE_OBJECT), sub(logging, SUB_PATH, TYPE_OBJECT),
+      subGlobal(logging, SUB_GLOBAL_PATH, TYPE_OBJECT), pub(logging, PUB_PATH, TYPE_OBJECT),
+      ade7953(logging, ADE7953_PATH, TYPE_OBJECT) {}
 
 //-------------------------------------------------------------------------------
 //  FFS public
@@ -22,24 +18,25 @@ FFS::FFS(SysUtils& sysUtils, I2C& i2c):
 //...............................................................................
 //  Mount FFS
 //...............................................................................
-void FFS::mount(){
+void FFS::mount() {
 
-  Serial.print("Mounting FS...");
+  logging.info("mounting flash file system");
   if (!SPIFFS.begin()) {
-    Serial.println("Failed to mount file system");
-  }else{
-    Serial.println("OK");
-    //Serial.print("formating FS...");
-    //SPIFFS.format();
-    //Serial.println("OK");
+    logging.error("failed to mount flash file system");
+  } else {
+    logging.info("flash file system mounted");
+    // logging.info("formating FS...");
+    // SPIFFS.format();
+    // logging.info("OK");
 
-  //load rootStrings
+    // load rootStrings
+    logging.info("loading configuration");
     cfg.loadFile();
     subGlobal.loadFile();
     sub.loadFile();
     pub.loadFile();
     ade7953.loadFile();
-    Serial.println("............................................");
+    logging.debug("configuration loaded");
   }
 }
 
@@ -49,7 +46,7 @@ void FFS::mount(){
 
 String FFS::loadString(String filePath) {
 
-  FFSstringFile FS(filePath);
+  FFSstringFile FS(logging, filePath);
   FS.loadFile();
   return FS.read();
 }
@@ -57,21 +54,21 @@ String FFS::loadString(String filePath) {
 //...............................................................................
 //  check for valid JSON-String
 //...............................................................................
-bool FFS::isValidJson(String root){
+bool FFS::isValidJson(String root) {
   DynamicJsonBuffer jsonBuffer;
-  JsonObject& json = jsonBuffer.parseObject(root);
+  JsonObject &json = jsonBuffer.parseObject(root);
   return json.success();
 }
 
 //...............................................................................
 //  TEST
 //...............................................................................
-void FFS::TEST(){
-  Serial.println(cfg.readItem("apName"));
-  Serial.println(cfg.readItem("wifiSSID"));
-  Serial.println(cfg.readItem("wifiPSK"));
-  Serial.println(cfg.readItem("mqttServer"));
-  Serial.println(cfg.size);
+void FFS::TEST() {
+  logging.info(cfg.readItem("apName"));
+  logging.info(cfg.readItem("wifiSSID"));
+  logging.info(cfg.readItem("wifiPSK"));
+  logging.info(cfg.readItem("mqttServer"));
+  logging.info(String(cfg.size));
 
   cfg.writeItem("apName", "ESP8266_1032096");
   cfg.writeItem("wifiSSID", "Pf@nne-NET");
@@ -79,16 +76,18 @@ void FFS::TEST(){
   cfg.writeItem("mqttServer", "192.168.1.203");
   cfg.saveFile();
 
-  Serial.println(cfg.readItem("apName"));
-  Serial.println(cfg.readItem("wifiSSID"));
-  Serial.println(cfg.readItem("wifiPSK"));
-  Serial.println(cfg.readItem("mqttServer"));
-  Serial.println(cfg.size);
+  logging.info(cfg.readItem("apName"));
+  logging.info(cfg.readItem("wifiSSID"));
+  logging.info(cfg.readItem("wifiPSK"));
+  logging.info(cfg.readItem("mqttServer"));
+  logging.info(String(cfg.size));
 
+  /*
   i2c.lcd.println(sub.readItem("1.0"), ArialMT_Plain_16, 0);
   i2c.lcd.println(cfg.readItem("wifiSSID"), ArialMT_Plain_16, 16);
   i2c.lcd.println(cfg.readItem("wifiPSK"), ArialMT_Plain_16, 24);
   i2c.lcd.println(cfg.readItem("mqttServer"), ArialMT_Plain_16, 32);
+  */
 }
 
 //-------------------------------------------------------------------------------
@@ -106,60 +105,60 @@ ffs
       └─item
           └─itemName  [value]         RW
 */
-String FFS::set(Topic& topic){
+String FFS::set(Topic &topic) {
   String str = "NIL";
 
   FFSjsonFile *tmpFile = NULL;
   if (topic.itemIs(3, "cfg")) {
     tmpFile = &cfg;
-  }else if (topic.itemIs(3, "sub")){
+  } else if (topic.itemIs(3, "sub")) {
     tmpFile = &sub;
-  }else if (topic.itemIs(3, "subGlobal")){
+  } else if (topic.itemIs(3, "subGlobal")) {
     tmpFile = &subGlobal;
-  }else if (topic.itemIs(3, "pub")){
+  } else if (topic.itemIs(3, "pub")) {
     tmpFile = &pub;
-  }else if (topic.itemIs(3, "ade7953")){
+  } else if (topic.itemIs(3, "ade7953")) {
     tmpFile = &ade7953;
   }
 
-  if (tmpFile != NULL){
-//LoadFile
-    if (topic.itemIs(4, "loadFile")){
+  if (tmpFile != NULL) {
+    // LoadFile
+    if (topic.itemIs(4, "loadFile")) {
       tmpFile->loadFile();
       return "OK";
-//SaveFile
-    }else if (topic.itemIs(4, "saveFile")){
+      // SaveFile
+    } else if (topic.itemIs(4, "saveFile")) {
       tmpFile->saveFile();
       return "OK";
-//write rootString
-    }else if (topic.itemIs(4, "root")){
-      if (topic.countArgs > 0){
-        if (isValidJson(topic.arg[0])){
+      // write rootString
+    } else if (topic.itemIs(4, "root")) {
+      if (topic.countArgs > 0) {
+        if (isValidJson(topic.arg[0])) {
           tmpFile->root = topic.arg[0];
           return "OK";
-        }else{
-          sysUtils.logging.error("no valid JSON-String!");
-          return "no valid JSON-String!";
+        } else {
+          logging.error("no valid JSON string");
+          return "no valid JSON string";
         }
-      }else{
-        sysUtils.logging.error("Argument not found!");
-        return "Argument not found!";
+      } else {
+        logging.error("argument not found");
+        return "argument not found!";
       }
 
-//writeItem
-    }else if (topic.itemIs(4, "item")){
-      if (topic.countItems > 5 and topic.countArgs > 0){
+      // writeItem
+    } else if (topic.itemIs(4, "item")) {
+      if (topic.countItems > 5 and topic.countArgs > 0) {
         tmpFile->writeItem(topic.item[5], topic.arg[0]);
         return tmpFile->readItem(topic.item[5]);
-      }else{
-        sysUtils.logging.error("Topic or Argument not found!");
-        return "Topic or Argument not found!";
+      } else {
+        logging.error("topic or argument not found");
+        return "topic or argument not found!";
       }
     }
-//ERROR--------------------------------------------------
-  }else{
-    sysUtils.logging.error("No match file found!");
-    return "No match file found!";
+    // ERROR--------------------------------------------------
+  } else {
+    logging.error("no matching file found");
+    return "no matching file found";
   }
 }
 
@@ -167,6 +166,7 @@ String FFS::set(Topic& topic){
 //  API GET
 //...............................................................................
 /*
+~/get/
 ffs
   └─fileObject
      ├─filePath     R
@@ -174,46 +174,48 @@ ffs
      ├─itemsCount   R
      ├─type         R
      ├─root         RW
-     └─Item
-         └─ItemName RW
+     └─item
+         └─itemName RW
 */
-String FFS::get(Topic& topic){
+String FFS::get(Topic &topic) {
   FFSjsonFile *tmpFile = NULL;
   if (topic.itemIs(3, "cfg")) {
     tmpFile = &cfg;
-  }else if (topic.itemIs(3, "sub")){
+  } else if (topic.itemIs(3, "sub")) {
     tmpFile = &sub;
-  }else if (topic.itemIs(3, "subGlobal")){
+  } else if (topic.itemIs(3, "subGlobal")) {
     tmpFile = &subGlobal;
-  }else if (topic.itemIs(3, "pub")){
+  } else if (topic.itemIs(3, "pub")) {
     tmpFile = &pub;
-  }else if (topic.itemIs(3, "ade7953")){
+  } else if (topic.itemIs(3, "ade7953")) {
     tmpFile = &ade7953;
   }
 
-  if (tmpFile != NULL){
-//filePath
-    if (topic.itemIs(4, "filePath")){
+  if (tmpFile != NULL) {
+    // filePath
+    if (topic.itemIs(4, "filePath")) {
       return tmpFile->filePath;
-//FileSize
-    }else if (topic.itemIs(4, "size")){
+      // FileSize
+    } else if (topic.itemIs(4, "size")) {
       return String(tmpFile->size);
-//ItemsCount
-    }else if (topic.itemIs(4, "itemsCount")){
+      // ItemsCount
+    } else if (topic.itemIs(4, "itemsCount")) {
       return String(tmpFile->itemsCount);
-//Json Object Type
-    }else if (topic.itemIs(4, "type")){
+      // Json Object Type
+    } else if (topic.itemIs(4, "type")) {
       return String(tmpFile->type);
-//write rootString
-    }else if (topic.itemIs(4, "root")){
+      // write rootString
+    } else if (topic.itemIs(4, "root")) {
       return tmpFile->root;
-//readItem
-    }else if (topic.itemIs(4, "item")){
+      // readItem
+    } else if (topic.itemIs(4, "item")) {
       return tmpFile->readItem(topic.item[5]);
+    } else {
+      return TOPIC_NO;
     }
-//ERROR
-  }else{
-    sysUtils.logging.error("No match file found!");
+    // ERROR
+  } else {
+    logging.error("no matching file found");
     return "NIL";
   }
 }
@@ -226,9 +228,8 @@ String FFS::get(Topic& topic){
 //  FFSstringFile
 //###############################################################################
 
-FFSstringFile::FFSstringFile(String filePath):
-  filePath(filePath) {
-}
+FFSstringFile::FFSstringFile(LOGGING& logging,
+String filePath) : logging(logging), filePath(filePath) {}
 
 //-------------------------------------------------------------------------------
 //  FFSstringFile public
@@ -242,19 +243,19 @@ void FFSstringFile::loadFile() {
 
   File stringFile;
 
-  Serial.print("reading " + filePath + "... ");
+  logging.info("reading file " + filePath);
   if (SPIFFS.exists(filePath)) {
     stringFile = SPIFFS.open(filePath, "r");
     if (stringFile) {
-      Serial.println("OK");
-      data= stringFile.readString();
+      logging.debug("file opened");
+      data = stringFile.readString();
       stringFile.close();
     } else {
-      Serial.println("ERROR (open)");
-      data= "";
+      logging.error("could not open file");
+      data = "";
     }
   } else {
-      Serial.println("ERROR (no such file)");
+    logging.error("no such file");
   }
 }
 
@@ -262,19 +263,14 @@ void FFSstringFile::loadFile() {
 //  get string
 //...............................................................................
 
-String FFSstringFile::read() {
-
-  return data;
-}
+String FFSstringFile::read() { return data; }
 
 //###############################################################################
 //  FFSjsonFile
 //###############################################################################
 
-FFSjsonFile::FFSjsonFile(String filePath, int type):
-    filePath(filePath),
-    type(type){
-}
+FFSjsonFile::FFSjsonFile(LOGGING& logging, String filePath, int type)
+    : logging(logging), filePath(filePath), type(type) {}
 
 //-------------------------------------------------------------------------------
 //  FFSjsonFile public
@@ -283,26 +279,24 @@ FFSjsonFile::FFSjsonFile(String filePath, int type):
 //...............................................................................
 //  load root string from FFS-File (for external use)
 //...............................................................................
-void FFSjsonFile::loadFile(){
-  root = readJsonString();
-}
+void FFSjsonFile::loadFile() { root = readJsonString(); }
 
 //...............................................................................
 //  save root string to FFS-File (for external use)
 //...............................................................................
-bool FFSjsonFile::saveFile(){
+bool FFSjsonFile::saveFile() {
   DynamicJsonBuffer jsonBuffer;
-  JsonObject& json = jsonBuffer.parseObject(root);
+  JsonObject &json = jsonBuffer.parseObject(root);
   if (json.success()) {
     File jsonFile = SPIFFS.open(filePath, "w");
     if (!jsonFile) {
-      Serial.println("Failed to open config file for writing");
+      logging.info("failed to open config file for writing");
       return false;
     }
     json.printTo(jsonFile);
     jsonFile.close();
     return true;
-  }else{
+  } else {
     return false;
   }
 }
@@ -310,12 +304,12 @@ bool FFSjsonFile::saveFile(){
 //...............................................................................
 //  read Item from jsonObjectString
 //...............................................................................
-String FFSjsonFile::readItem(String itemName){
+String FFSjsonFile::readItem(String itemName) {
   DynamicJsonBuffer JsonBuffer;
-  JsonObject& rootObject = JsonBuffer.parseObject(root);
+  JsonObject &rootObject = JsonBuffer.parseObject(root);
   if (rootObject.success()) {
     return rootObject[itemName].asString();
-  }else{
+  } else {
     return "NIL";
   }
 }
@@ -323,12 +317,12 @@ String FFSjsonFile::readItem(String itemName){
 //...............................................................................
 //  read Item from jsonArrayString
 //...............................................................................
-String FFSjsonFile::readItem(int item){
+String FFSjsonFile::readItem(int item) {
   DynamicJsonBuffer JsonBuffer;
-  JsonArray& rootArray = JsonBuffer.parseArray(root);
+  JsonArray &rootArray = JsonBuffer.parseArray(root);
   if (rootArray.success()) {
     return rootArray[item].asString();
-  }else{
+  } else {
     return "NIL";
   }
 }
@@ -336,18 +330,18 @@ String FFSjsonFile::readItem(int item){
 //...............................................................................
 //  writeItem to jsonObjectString
 //...............................................................................
-bool FFSjsonFile::writeItem(String itemName, String value){
-  //Serial.println(itemName + ":" + value);
+bool FFSjsonFile::writeItem(String itemName, String value) {
+  // logging.info(itemName + ":" + value);
   DynamicJsonBuffer jsonBuffer;
-  JsonObject& json = jsonBuffer.parseObject(root);
-  if (json.success()){
-    //json.printTo(Serial);
+  JsonObject &json = jsonBuffer.parseObject(root);
+  if (json.success()) {
+    // json.printTo(Serial);
     json[itemName] = value;
-    root = "";           //printTo(String) is additive!!
+    root = ""; // printTo(String) is additive!!
     json.printTo(root);
-    //json.printTo(Serial);
+    // json.printTo(Serial);
     return true;
-  }else{
+  } else {
     return false;
   }
 }
@@ -359,31 +353,31 @@ bool FFSjsonFile::writeItem(String itemName, String value){
 //...............................................................................
 //  read json-root-string from File
 //...............................................................................
-String FFSjsonFile::readJsonString(){
+String FFSjsonFile::readJsonString() {
 
   File jsonFile;
   String jsonData;
 
-  Serial.print("reading " + filePath + "...");
+  logging.info("reading " + filePath);
   if (SPIFFS.exists(filePath)) {
     jsonFile = SPIFFS.open(filePath, "r");
     if (jsonFile) {
-      Serial.println("OK");
+      logging.debug("file opened");
       size = jsonFile.size();
 
       DynamicJsonBuffer jsonBuffer;
       JsonVariant json = jsonBuffer.parse(jsonFile);
       if (json.is<JsonArray>()) {
-        JsonArray& arr = json.as<JsonArray>();
+        JsonArray &arr = json.as<JsonArray>();
         json.printTo(jsonData);
       }
       if (json.is<JsonObject>()) {
-        JsonObject& obj = json.as<JsonObject>();
-          json.printTo(jsonData);
-          itemsCount = parseJsonObject(obj);
+        JsonObject &obj = json.as<JsonObject>();
+        json.printTo(jsonData);
+        itemsCount = parseJsonObject(obj);
       }
-    }else{
-      Serial.println("ERROR openFile");
+    } else {
+      logging.error("could not open file");
       return "NIL";
     }
     jsonFile.close();
@@ -394,14 +388,14 @@ String FFSjsonFile::readJsonString(){
 //...............................................................................
 //  parse jsonObject recursively
 //...............................................................................
-int FFSjsonFile::parseJsonObject(JsonObject& jsonObject){
+int FFSjsonFile::parseJsonObject(JsonObject &jsonObject) {
   int count = 0;
-  //Serial.println("parseJsonObject");
-  for (auto &element : jsonObject){
+  // logging.info("parseJsonObject");
+  for (auto &element : jsonObject) {
     String strKey = element.key;
     String strValue = element.value;
-    //Serial.print(strKey);Serial.print("      ");Serial.println(strValue);
-    count ++;
+    // logging.info(strKey);logging.info("      ");logging.info(strValue);
+    count++;
   }
   return count;
 }
@@ -409,14 +403,14 @@ int FFSjsonFile::parseJsonObject(JsonObject& jsonObject){
 //...............................................................................
 //  parse jsonArray recursively
 //...............................................................................
-void FFSjsonFile::parseJsonArray(JsonArray& jsonArray){
-  for (auto &element : jsonArray){
-    if (element.is<JsonArray&>()){
-      Serial.println("-->>");//Serial.println(i);
-      JsonArray& nestedArray = element;
+void FFSjsonFile::parseJsonArray(JsonArray &jsonArray) {
+  for (auto &element : jsonArray) {
+    if (element.is<JsonArray &>()) {
+      logging.info("-->>"); // logging.info(i);
+      JsonArray &nestedArray = element;
       parseJsonArray(nestedArray);
-    }else{
-      Serial.println(element.asString()); //Serial.print(" | ");Serial.println(i);
+    } else {
+      logging.info(element.asString()); // logging.info(" | ");logging.info(i);
     }
   }
 }

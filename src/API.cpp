@@ -3,45 +3,57 @@
 //###############################################################################
 //  API
 //###############################################################################
-API::API(SysUtils& sysUtils,FFS& ffs):
-     sysUtils(sysUtils),
-     ffs(ffs){
-}
+API::API(Controller &controller) : controller(controller) {}
 
 //-------------------------------------------------------------------------------
 //  API public
 //-------------------------------------------------------------------------------
+
+void API::start() {
+  info("API started for device with chip ID "+call("~/get/esp/chipId"));
+}
+
 //...............................................................................
 //  API call distributing
 //...............................................................................
-String API::call(Topic& topic){
-  String ret = "NIL";
 
-//set
-  if (topic.itemIs(1, "set")){
-    if (topic.itemIs(2, "ffs")){
-      return ffs.set(topic);
-    }else if (topic.itemIs(2, "sysUtils")) {
-      return sysUtils.set(topic);
-    }else if (topic.itemIs(2, "mqtt")) {
-      //return mqtt.set(topic);
-    }else{
-      return "NIL";
-    }
-//get
-  }else if (topic.itemIs(1, "get")){
-    if (topic.itemIs(2, "ffs")){
-      return ffs.get(topic);
-    }else if (topic.itemIs(2, "sysUtils")) {
-      return sysUtils.get(topic);
-    }else if (topic.itemIs(2, "mqtt")) {
-      //return mqtt.get(topic);
-    }else{
-      return "NIL";
-    }
-  }else{
-    return "NIL";
+String API::call(Topic &topic) {
+
+  // just a pass through
+  return controller.call(topic);
+}
+
+// convenience function
+String API::call(String topicsArgs) {
+  Topic tmpTopic(topicsArgs);
+  debug("API call "+tmpTopic.asString());
+  String result= call(tmpTopic);
+  if(result == nullptr) {
+      result= String("no result");
   }
+  debug("result: "+result);
+  return result;
+}
+
+// convenience function
+String API::call(string topicsArgs) {
+  return call(String(topicsArgs));
+}
+
+
+// these are convenience functions
+// a more convoluted way would be via a topic ~/log/info
+
+void API::info(const String &msg) {
+  controller.logging.info(msg);
+}
+
+void API::error(const String &msg) {
+  controller.logging.error(msg);
+}
+
+void API::debug(const String &msg) {
+  controller.logging.debug(msg);
 }
 
 //-------------------------------------------------------------------------------

@@ -1,20 +1,26 @@
 #pragma once
-  #include <Arduino.h>
-  #include "SysUtils.h"
-  #include "Topic.h"
-  #include "FFS.h"
-  //#include "MQTT.h"
+#include "Controller.h"
+#include "Topic.h"
+#include <Arduino.h>
 
 //#############################################################################
 //  API
 //#############################################################################
-class API{
-public:
-  API(SysUtils& sysUtils, FFS& ffs);
-  SysUtils& sysUtils;
-  FFS& ffs;
-  //MQTT mqtt;
+class API {
 
-  String call(Topic& topic);
+public:
+  // constructor
+  API(Controller& controller);
+
+  Controller& controller;
+
+  void start();
+  String call(Topic &topic);
+  String call(String topicsArgs);
+  String call(string topicsArgs);
+  void info(const String &msg);
+  void error(const String &msg);
+  void debug(const String &msg);
+
 private:
 };

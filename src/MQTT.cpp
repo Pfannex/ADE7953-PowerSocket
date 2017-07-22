@@ -1,15 +1,16 @@
 #include "MQTT.h"
+#include "SysUtils.h"
+#include <ArduinoJson.h>
+#include <ESP8266WiFi.h>
 
 //###############################################################################
 //  MQTT client
 //###############################################################################
-MQTT::MQTT(SysUtils& sysUtils, API& api, FFS& ffs, I2C& i2c, WIFI& wifi):
-    sysUtils(sysUtils),
+MQTT::MQTT(API& api):
     api(api),
-    ffs(ffs),
-    i2c(i2c),
-    wifi(wifi),
-    client(wifi.client){
+    espClient(),
+    client(espClient)
+{
 
 //callbacks
     client.setCallback(std::bind(&MQTT::on_incommingSubcribe, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
@@ -24,28 +25,34 @@ MQTT::MQTT(SysUtils& sysUtils, API& api, FFS& ffs, I2C& i2c, WIFI& wifi):
 bool MQTT::start(){
   bool MQTTOK = false;
 
-  String strIP = ffs.cfg.readItem("mqttServer");
-  IPAddress IP = sysUtils.net.strToIP(strIP);
-  int port = ffs.cfg.readItem("mqttPort").toInt();
-  String deviceName = ffs.cfg.readItem("mqttDeviceName");
+  String strIP = api.call("~/get/ffs/cfg/item/mqttServer");
+  IPAddress IP = SysUtils::strToIP(strIP);
+  int port = api.call("~/get/ffs/cfg/item/mqttPort").toInt();
+  String deviceName = api.call("~/get/ffs/cfg/item/mqttDeviceName");
   String lastWillTopic = "Devices/" + deviceName;
 
-  sysUtils.logging.log("MQTT", "connecting to: " + strIP + ":" + String(port));
+  api.info("MQTT client connecting to " + strIP + ":" + String(port));
+  /*
   i2c.lcd.clear();
   i2c.lcd.println("MQTTBroker:", ArialMT_Plain_10, 0);
   i2c.lcd.println(strIP + ":" + String(port), ArialMT_Plain_16,  10);
+  */
 
-  client.setServer(IP, port);
   client.disconnect();
+  client.setServer(IP, port);
   if (client.connect(deviceName.c_str(), lastWillTopic.c_str() , 0, false, "Dead")) {
     MQTTOK = true;
-    sysUtils.logging.log("MQTT", "connected to Broker");
-    i2c.lcd.println("...connected", ArialMT_Plain_10, 31);
+    api.info("MQTT client connected to MQTT broker");
+    /*
+    i2c.lcd.println("...connected", ArialMT_Plain_10, 31); */
     client.publish(lastWillTopic.c_str(), "Alive");
+
+    String root;
 
     //global subscribe
     DynamicJsonBuffer global_JsonBuffer;
-    JsonObject& global_rootObject = global_JsonBuffer.parseObject(ffs.subGlobal.root);
+    root= api.call("~/get/ffs/subGlobal/root");
+    JsonObject& global_rootObject = global_JsonBuffer.parseObject(root);
     if (global_rootObject.success()) {
       for (auto &element : global_rootObject){
         //String strKey = element.key;
@@ -55,11 +62,12 @@ bool MQTT::start(){
         client.loop();
       }
     }else{
-      sysUtils.logging.error("reading ffs.subGlobal.root failed");
+      api.error("reading ffs.subGlobal.root failed");
     }
     //device subscribe
     DynamicJsonBuffer device_JsonBuffer;
-    JsonObject& device_rootObject = device_JsonBuffer.parseObject(ffs.sub.root);
+    root= api.call("~/get/ffs/sub/root");
+    JsonObject& device_rootObject = device_JsonBuffer.parseObject(root);
     if (device_rootObject.success()) {
       for (auto &element : device_rootObject){
         //String strKey = element.key;
@@ -70,7 +78,7 @@ bool MQTT::start(){
         client.loop();
       }
     }else{
-      sysUtils.logging.error("reading ffs.sub.root failed");
+      api.error("reading ffs.sub.root failed");
     }
   }
   return MQTTOK;
@@ -91,13 +99,13 @@ bool MQTT::handle(){
 //  EVENT incomming MQTT subcribe
 //...............................................................................
 void MQTT::on_incommingSubcribe(char* topics, byte* payload, unsigned int length){
-  sysUtils.logging.debugMem_start();
+  //api.debugMem_start();
 
   char* args = new char[length+1];
   strncpy(args, (char*)payload, length+1);
   args[length] = '\0';
 
-  sysUtils.logging.log("MQTT", String(topics) + " | " + String(args));
+  api.debug("MQTT incoming subscribe: "+ String(topics) + " " + String(args));
 
   //String str = String(topics) + " " + String(args);
   //Topic tmpTopic(str);
@@ -126,6 +134,7 @@ void MQTT::pub(String topic, String value){
 mqtt
   └─connect
 */
+/*
 String MQTT::set(Topic& topic){
   if (topic.itemIs(3, "connect")){
     start();
@@ -137,6 +146,7 @@ String MQTT::set(Topic& topic){
 
   }
 }
+*/
 
 //...............................................................................
 //  MQTT GET
@@ -145,6 +155,7 @@ String MQTT::set(Topic& topic){
 mqtt
   └─status
 */
+/*
 String MQTT::get(Topic& topic){
   String str = "NIL";
 //status
@@ -156,7 +167,7 @@ String MQTT::get(Topic& topic){
     }
   }
 }
-
+*/
 //-------------------------------------------------------------------------------
 //  MQTT private
 //-------------------------------------------------------------------------------
