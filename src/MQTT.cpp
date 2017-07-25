@@ -25,26 +25,21 @@ MQTT::MQTT(API& api):
 bool MQTT::start(){
   bool MQTTOK = false;
 
-  String strIP = api.call("~/get/ffs/cfg/item/mqttServer");
+  String strIP = api.call("~/get/ffs/cfg/item/mqtt_ip");
   IPAddress IP = SysUtils::strToIP(strIP);
-  int port = api.call("~/get/ffs/cfg/item/mqttPort").toInt();
-  String deviceName = api.call("~/get/ffs/cfg/item/mqttDeviceName");
+  int port = api.call("~/get/ffs/cfg/item/mqtt_port").toInt();
+  String deviceName = api.call("~/get/ffs/cfg/item/device_name");
   String lastWillTopic = "Devices/" + deviceName;
 
   api.info("MQTT client connecting to " + strIP + ":" + String(port));
-  /*
-  i2c.lcd.clear();
-  i2c.lcd.println("MQTTBroker:", ArialMT_Plain_10, 0);
-  i2c.lcd.println(strIP + ":" + String(port), ArialMT_Plain_16,  10);
-  */
+  api.info("MQTT DeviceName: " + deviceName);
 
   client.disconnect();
   client.setServer(IP, port);
   if (client.connect(deviceName.c_str(), lastWillTopic.c_str() , 0, false, "Dead")) {
     MQTTOK = true;
     api.info("MQTT client connected to MQTT broker");
-    /*
-    i2c.lcd.println("...connected", ArialMT_Plain_10, 31); */
+
     client.publish(lastWillTopic.c_str(), "Alive");
 
     String root;

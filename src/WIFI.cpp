@@ -16,8 +16,8 @@ WIFI::WIFI(LOGGING &logging, FFS &ffs) : logging(logging), ffs(ffs) {}
 bool WIFI::start() {
   WiFiStatus = false;
 
-  String ssid = ffs.cfg.readItem("wifiSSID");
-  String psk = ffs.cfg.readItem("wifiPSK");
+  String ssid = ffs.cfg.readItem("wifi_ssid");
+  String psk = ffs.cfg.readItem("wifi_password");
 
   logging.info("connecting WiFi to network with SSID " + ssid);
   /*

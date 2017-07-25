@@ -69,7 +69,6 @@ public:
   void mount();
   String loadString(String filePath);
   bool isValidJson(String root);
-  void TEST();
 //API
   String set(Topic& topic);
   String get(Topic& topic);

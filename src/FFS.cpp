@@ -60,36 +60,6 @@ bool FFS::isValidJson(String root) {
   return json.success();
 }
 
-//...............................................................................
-//  TEST
-//...............................................................................
-void FFS::TEST() {
-  logging.info(cfg.readItem("apName"));
-  logging.info(cfg.readItem("wifiSSID"));
-  logging.info(cfg.readItem("wifiPSK"));
-  logging.info(cfg.readItem("mqttServer"));
-  logging.info(String(cfg.size));
-
-  cfg.writeItem("apName", "ESP8266_1032096");
-  cfg.writeItem("wifiSSID", "Pf@nne-NET");
-  cfg.writeItem("wifiPSK", "Pf@nneNETwlan_ACCESS");
-  cfg.writeItem("mqttServer", "192.168.1.203");
-  cfg.saveFile();
-
-  logging.info(cfg.readItem("apName"));
-  logging.info(cfg.readItem("wifiSSID"));
-  logging.info(cfg.readItem("wifiPSK"));
-  logging.info(cfg.readItem("mqttServer"));
-  logging.info(String(cfg.size));
-
-  /*
-  i2c.lcd.println(sub.readItem("1.0"), ArialMT_Plain_16, 0);
-  i2c.lcd.println(cfg.readItem("wifiSSID"), ArialMT_Plain_16, 16);
-  i2c.lcd.println(cfg.readItem("wifiPSK"), ArialMT_Plain_16, 24);
-  i2c.lcd.println(cfg.readItem("mqttServer"), ArialMT_Plain_16, 32);
-  */
-}
-
 //-------------------------------------------------------------------------------
 //  FFS API
 //-------------------------------------------------------------------------------
