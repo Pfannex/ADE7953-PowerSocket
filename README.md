@@ -14,7 +14,7 @@ Unterstütz werden bislang folgende Funktionen:
 - I2C
 - 1-Wire
 
-[CodeStruktur](https://pfannex.github.io/ESP8266_template/index.html)
+[CodeStruktur](https://pfannex.github.io/ESP8266_template/html/index.html)
 
 ***
 
