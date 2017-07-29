@@ -3,9 +3,14 @@
 //###############################################################################
 //  Controller
 //###############################################################################
-Controller::Controller()
-    : logging(clock), i2c(logging), ffs(logging, i2c), clock(), espTools(logging),
-      wifi(logging, ffs) {
+Controller::Controller():
+            logging(clock),
+            i2c(logging),
+            ffs(logging, i2c),
+            clock(),
+            espTools(logging),
+            wifi(logging, ffs)
+            {
 
   // callback Events
   // WiFi
@@ -76,12 +81,14 @@ void Controller::handle() {
 //...............................................................................
 //  EVENT Wifi has connected
 //...............................................................................
-void Controller::on_wifiConnected() { logging.info("WiFi has connected"); }
+void Controller::on_wifiConnected(){
+  logging.info("WiFi has connected");
+}
 
 //...............................................................................
 //  EVENT wifi has disconnected
 //...............................................................................
-void Controller::on_wifiDisconnected() {
+void Controller::on_wifiDisconnected(){
   logging.info("WiFi has disconnected");
 }
 

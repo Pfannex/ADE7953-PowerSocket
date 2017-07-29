@@ -1,0 +1,5 @@
+<map id="I2C" name="I2C">
+<area shape="rect" id="node2" href="$class_l_c_d.html" title="LCD" alt="" coords="5,95,52,121"/>
+<area shape="rect" id="node3" href="$class_l_o_g_g_i_n_g.html" title="LOGGING" alt="" coords="76,95,157,121"/>
+<area shape="rect" id="node4" href="$class_clock.html" title="Clock" alt="" coords="89,5,144,32"/>
+</map>

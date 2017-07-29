@@ -1,5 +1,5 @@
 {
-  "device_name":            "Node52",
+  "device_name":            "ESP_xxx",
   "device_username":        "admin",
   "device_password":        "admin",
 
@@ -9,6 +9,10 @@
   "wifi_ip":                "",
   "wifi_netmask":           "255.255.255.0",
   "wifi_gateway":           "",
+
+  "ap":                     "auto",
+  "ap_ssid":                "ESP_xxx",
+  "ap_password":            "admin",
 
   "lan":                    "off",
   "lan_ip":                 "",

@@ -76,6 +76,7 @@ bool MQTT::start(){
       api.error("reading ffs.sub.root failed");
     }
   }
+
   return MQTTOK;
 }
 

@@ -53,6 +53,7 @@ void setup() {
   // the viewers communicate with the susbsystems via the API
   webif.start();
   mqtt.start();
+  api.info("startup finished");
 
   // Timer
   SoftTimer.add(&t1);
