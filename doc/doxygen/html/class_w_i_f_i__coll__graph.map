@@ -1,8 +1,0 @@
-<map id="WIFI" name="WIFI">
-<area shape="rect" id="node2" href="$class_l_o_g_g_i_n_g.html" title="LOGGING" alt="" coords="40,95,121,121"/>
-<area shape="rect" id="node4" href="$class_f_f_s.html" title="FFS" alt="" coords="75,332,121,359"/>
-<area shape="rect" id="node5" href="$class_f_f_sjson_file.html" title="FFSjsonFile" alt="" coords="128,184,220,211"/>
-<area shape="rect" id="node6" href="$class_i2_c.html" title="I2C" alt="" coords="244,184,285,211"/>
-<area shape="rect" id="node3" href="$class_clock.html" title="Clock" alt="" coords="53,5,108,32"/>
-<area shape="rect" id="node7" href="$class_l_c_d.html" title="LCD" alt="" coords="241,95,288,121"/>
-</map>

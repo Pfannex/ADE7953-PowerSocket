@@ -1,7 +1,0 @@
-<map id="FFS" name="FFS">
-<area shape="rect" id="node2" href="$class_f_f_sjson_file.html" title="FFSjsonFile" alt="" coords="216,184,308,211"/>
-<area shape="rect" id="node3" href="$class_l_o_g_g_i_n_g.html" title="LOGGING" alt="" coords="105,95,187,121"/>
-<area shape="rect" id="node5" href="$class_i2_c.html" title="I2C" alt="" coords="56,184,97,211"/>
-<area shape="rect" id="node4" href="$class_clock.html" title="Clock" alt="" coords="119,5,173,32"/>
-<area shape="rect" id="node6" href="$class_l_c_d.html" title="LCD" alt="" coords="5,95,52,121"/>
-</map>
