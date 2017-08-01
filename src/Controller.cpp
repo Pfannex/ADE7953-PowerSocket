@@ -6,7 +6,7 @@
 Controller::Controller():
             logging(clock),
             i2c(logging),
-            ffs(logging, i2c),
+            ffs(logging),
             clock(),
             espTools(logging),
             wifi(logging, ffs)

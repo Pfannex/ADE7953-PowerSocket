@@ -6,7 +6,6 @@
   #include "Logger.h"
   #include "Topic.h"
   #include "Setup.h"
-  #include "I2C.h"
 
 //###############################################################################
 //  stringFile
@@ -54,9 +53,8 @@ private:
 
 class FFS {
 public:
-  FFS(LOGGING& logging, I2C& i2c);
+  FFS(LOGGING& logging);
   LOGGING& logging;
-  I2C& i2c;
 
 //Files
   FFSjsonFile cfg;

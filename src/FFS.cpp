@@ -4,8 +4,8 @@
 //  FFS
 //###############################################################################
 
-FFS::FFS(LOGGING &logging, I2C &i2c)
-    : logging(logging), i2c(i2c),
+FFS::FFS(LOGGING &logging)
+    : logging(logging),
       // jsonFiles
       cfg(logging, CFG_PATH, TYPE_OBJECT), sub(logging, SUB_PATH, TYPE_OBJECT),
       subGlobal(logging, SUB_GLOBAL_PATH, TYPE_OBJECT), pub(logging, PUB_PATH, TYPE_OBJECT),
