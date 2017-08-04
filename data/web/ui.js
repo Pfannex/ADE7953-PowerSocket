@@ -126,7 +126,12 @@ function set_config() {
             console.log(json);
             // set inputs
             configForm.find('input:text').val( function() {
-              console.log("Setting "+this.name+" to "+json[this.name]);
+              console.log("Setting text input "+this.name+" to "+json[this.name]);
+              return json[this.name];
+            });
+            // set passwords
+            configForm.find('input:password').val( function() {
+              console.log("Setting password input "+this.name+" to "+json[this.name]);
               return json[this.name];
             });
             // set radio groups
@@ -178,7 +183,7 @@ function set_readings() {
   $.ajax(
     {     type: "POST",
           url: "/api.html",
-          data: "call=~/get/sysUtils/clock/root",
+          data: "call=~/get/clock/root",
           statusCode: {
             404: function() {
               window.location="/";
@@ -193,7 +198,7 @@ function set_readings() {
               console.log("Setting div with id "+this.id+" to "+readings[this.id]);
               return readings[this.id];
             });
-            setTimeout("set_readings()", 5000);
+            setTimeout("set_readings()", 10000);
           },
           error: function() {
             window.location="/";

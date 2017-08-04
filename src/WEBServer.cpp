@@ -77,12 +77,12 @@ void WEBIF::applyConfiguration() {
   api.info("applying configuration");
   for(int i= 0; i< webServer.args(); i++) {
     api.debug(webServer.argName(i) + ": " + webServer.arg(i));
-    //ffs.cfg.writeItem(webServer.argName(i), webServer.arg(i));
-    String strName = webServer.argName(i);
-    String strArg = webServer.arg(i);
+    api.call("~/set/ffs/cfg/item/"+webServer.argName(i)+" "+webServer.arg(i));
+    //String strName = webServer.argName(i);
+    //String strArg = webServer.arg(i);
     //api.call(strName, strArg);
   };
-  //ffs.cfg.saveFile();
+  api.call("~/set/ffs/cfg/saveFile");
 
 }
 
@@ -90,7 +90,7 @@ void WEBIF::applyConfiguration() {
 //  WEBIF::getConfiguration()
 //...............................................................................
 String WEBIF::getConfiguration() {
-  //return ffs.cfg.root;
+  return api.call("~/get/ffs/cfg/root");
 }
 
 
@@ -111,7 +111,7 @@ String WEBIF::subst(String data) {
     }
   }*/
   data.replace("$DATA(MACADDRESS)", api.call("~/get/wifi/macAddress"));
-  data.replace("$DATA(DEVICEID)", api.call("~/get/esp/chipID"));
+  data.replace("$DATA(DEVICEID)", api.call("~/get/esp/chipId"));
   return data;
 
 }

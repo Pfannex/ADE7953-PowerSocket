@@ -5,6 +5,8 @@
 //###############################################################################
 Topic::Topic(String& topicsArgs) {
 
+  // check what happens if an empty string is delivered
+
   int splitAt= topicsArgs.indexOf(" ");
   if(splitAt< 0) {
     // no args

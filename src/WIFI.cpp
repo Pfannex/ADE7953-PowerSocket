@@ -97,7 +97,7 @@ String WIFI::macAddress() {
 //  API
 //...............................................................................
 String WIFI::get(Topic &topic) {
-  if (topic.itemIs(4, "macAddress")) {
+  if (topic.itemIs(3, "macAddress")) {
     return macAddress();
   } else {
     return TOPIC_NO;
