@@ -1,11 +1,11 @@
 #include "Topic.h"
 
+#include "Arduino.h"
+
 //###############################################################################
 //  data exchange Topic
 //###############################################################################
 Topic::Topic(String& topicsArgs) {
-
-  // check what happens if an empty string is delivered
 
   int splitAt= topicsArgs.indexOf(" ");
   if(splitAt< 0) {
@@ -21,8 +21,15 @@ Topic::Topic(String& topicsArgs) {
     strcpy(topics, str.c_str());
     // args
     str = topicsArgs.substring(splitAt+1);
-    args = new char[str.length()];
-    strcpy(args, str.c_str());
+    int len= str.length();
+    if(!len) {
+      // empty argument
+      args = new char[1];
+      args[0]= '\0';
+    } else {
+      args = new char[str.length()];
+      strcpy(args, str.c_str());
+    }
   }
 
   item = nullptr;
