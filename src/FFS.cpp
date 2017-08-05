@@ -117,12 +117,16 @@ String FFS::set(Topic &topic) {
 
       // writeItem
     } else if (topic.itemIs(4, "item")) {
-      if (topic.countItems > 5 and topic.countArgs > 0) {
-        tmpFile->writeItem(topic.item[5], topic.arg[0]);
+      if (topic.countItems > 5) {
+        if(topic.countArgs > 0) {
+          tmpFile->writeItem(topic.item[5], topic.arg[0]);
+        } else {
+          tmpFile->writeItem(topic.item[5], "");
+        }
         return tmpFile->readItem(topic.item[5]);
       } else {
-        logging.error("topic or argument not found");
-        return "topic or argument not found!";
+        logging.error("no configuration item given");
+        return "no configuration item given";
       }
     }
     // ERROR--------------------------------------------------
