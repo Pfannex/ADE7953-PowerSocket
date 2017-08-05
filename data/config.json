@@ -3,12 +3,12 @@
   "device_username":        "admin",
   "device_password":        "admin",
 
-  "wifi":                   "dhcp",
-  "wifi_ssid":              "Pf@nne-NET",
-  "wifi_password":          "Pf@nneNETwlan_ACCESS",
-  "wifi_ip":                "",
+  "wifi":                   "manual",
+  "wifi_ssid":              "Neubert-Volmar",
+  "wifi_password":          "pw",
+  "wifi_ip":                "192.168.31.52",
   "wifi_netmask":           "255.255.255.0",
-  "wifi_gateway":           "",
+  "wifi_gateway":           "192.168.31.1",
 
   "ap":                     "auto",
   "ap_ssid":                "ESP_xxx",
@@ -23,7 +23,7 @@
   "ntp_serverip":           "europe.pool.ntp.org",
 
   "update_localpath":       "",
-  "update_auto":            "off",
+  "update":                 "manual",
   "update_remoteurl":       "",
 
   "mqtt":                   "off",

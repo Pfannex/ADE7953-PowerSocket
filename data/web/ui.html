@@ -116,10 +116,12 @@
         </div>
         <div data-role="collapsible">
           <h1>Network Time</h1>
-          <select data-role="slider" id="ntp" name="ntp">
-                            <option value="off">Off</option>
-                            <option value="on">On</option>
-                        </select>
+          <fieldset data-role="controlgroup" data-type="horizontal">
+            <input name="ntp" id="ntp-off" value="off" type="radio" />
+            <label for="ntp-off">Off</label>
+            <input name="ntp" id="ntp-on" value="on" type="radio" />
+            <label for="ntp-on">On</label>
+          </fieldset>
           <div id="ntp_details">
             <div data-role="fieldcontain">
               <label for="ntp_serverip">NTP Server IP Address</label>
@@ -140,7 +142,12 @@
           </div>
           <div data-role="collapsible">
             <h1>Remote Update</h1>
-            <input type="checkbox" data-role="flipswitch" data-on-text="Auto" data-off-text="Manual" id="update" checked data-wrapper-class="custom-size-flipswitch">
+            <fieldset data-role="controlgroup" data-type="horizontal">
+              <input name="update" id="update-manual" value="manual" type="radio" />
+              <label for="update-manual">Manual</label>
+              <input name="update" id="update-auto" value="auto" type="radio" />
+              <label for="update-auto">Auto</label>
+            </fieldset>
             <div data-role="fieldcontain">
               <label for="update_remoteurl">URL</label>
               <input type="text" id="update_remoteurl" name="update_remoteurl" placeholder="URL of remote update information" />
@@ -150,14 +157,16 @@
         </div>
         <div data-role="collapsible">
           <h1>MQTT</h1>
-          <select data-role="slider" id="mqtt" name="mqtt">
-                            <option value="off">Off</option>
-                            <option value="on">On</option>
-                        </select>
+          <fieldset data-role="controlgroup" data-type="horizontal">
+            <input name="mqtt" id="mqtt-off" value="off" type="radio" />
+            <label for="mqtt-off">Off</label>
+            <input name="mqtt" id="mqtt-on" value="on" type="radio" />
+            <label for="mqtt-on">On</label>
+          </fieldset>
           <div id="mqtt_details">
             <div data-role="fieldcontain">
               <label for="mqtt_ip">Broker IP Address</label>
-              <input type="text" id="mqtt_ip" name=="mqtt_ip" />
+              <input type="text" id="mqtt_ip" name="mqtt_ip" />
             </div>
             <div data-role="fieldcontain">
               <label for="mqtt_port">Broker Port</label>

@@ -48,8 +48,8 @@ function set_radio_handlers() {
             show_details("wifi_details", $(this), "dhcp|manual");
           } );
         $(document).on("change", "input[name=lan]", function() { show_details("lan_net_details", $(this), "manual"); } );
-        $(document).on("change", "select[name=ntp]", function() { show_details("ntp_details", $(this), "on"); } );
-        $(document).on("change", "select[name=mqtt]", function() { show_details("mqtt_details", $(this), "on"); } );
+        $(document).on("change", "input[name=ntp]", function() { show_details("ntp_details", $(this), "on"); } );
+        $(document).on("change", "input[name=mqtt]", function() { show_details("mqtt_details", $(this), "on"); } );
 
 }
 
@@ -137,6 +137,9 @@ function set_config() {
             // set radio groups
             set_radio("wifi", json["wifi"]);
             set_radio("lan", json["lan"]);
+            set_radio("ntp", json["ntp"]);
+            set_radio("update", json["update"]);
+            set_radio("mqtt", json["mqtt"]);
           }
     }
   );
