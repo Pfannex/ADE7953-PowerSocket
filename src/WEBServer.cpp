@@ -73,15 +73,29 @@ void WEBIF::handle() {
 //  configuration
 //...............................................................................
 void WEBIF::applyConfiguration() {
+  String root = "{";
 
   api.info("applying configuration");
   for(int i= 0; i< webServer.args(); i++) {
+    Serial.println("");
     api.debug(webServer.argName(i) + ": " + webServer.arg(i));
-    api.call("~/set/ffs/cfg/item/"+webServer.argName(i)+" "+webServer.arg(i));
+
+    root += "\"";
+    root += webServer.argName(i);
+    root += "\":\"";
+    root += webServer.arg(i);
+    root += "\"";
+    if (i < webServer.args()-1) root += ",";
+
+    //api.call("~/set/ffs/cfg/item/"+webServer.argName(i)+" "+webServer.arg(i));
+    //yield();
     //String strName = webServer.argName(i);
     //String strArg = webServer.arg(i);
     //api.call(strName, strArg);
   };
+  root += "}";
+  Serial.println(root);
+  api.call("~/set/ffs/cfg/root " + root);
   api.call("~/set/ffs/cfg/saveFile");
 
 }
