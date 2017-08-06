@@ -8,11 +8,14 @@
   - ~~SoftClock und SoftTimer~~ 
   - ~~NTP jede h~~
   - start AP
-  - wenn device_name = ESP_xxx -> ESP_deviceID generieren
-  - wenn ap_ssid     = ESP_xxx -> ESP_deviceID generieren
+  - wenn device_name = "" -> ESP_deviceID generieren
+  - wenn ap_ssid     = "" -> ESP_deviceID generieren
   - I2C sinnvoll einbinden
   
   - zuerst Template erstellen, dann erst ADE einbinden
+  
+  - **API**
+    callbacks
 
 - **UI**
   - ~~erstellen der Readings-Übersicht (PF)~~
