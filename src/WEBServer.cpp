@@ -108,7 +108,7 @@ String WEBIF::subst(String data) {
     }
   }*/
   data.replace("$DATA(MACADDRESS)", api.call("~/get/wifi/macAddress"));
-  data.replace("$DATA(DEVICEID)", api.call("~/get/esp/chipId"));
+  data.replace("$DATA(DEVICENAME)", api.call("~/get/ffs/cfg/item/device_name"));
   return data;
 }
 

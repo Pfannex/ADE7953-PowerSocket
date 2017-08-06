@@ -23,6 +23,7 @@ public:
   int stackCorrupted();
   void reboot();
   long chipId();
+  String genericName();
 
   void debugMem();
   void debugMem_start();
@@ -34,4 +35,6 @@ public:
 
 private:
   int stackStart = 0;
+  char deviceName[10];
+
 };

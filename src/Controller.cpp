@@ -3,14 +3,9 @@
 //###############################################################################
 //  Controller
 //###############################################################################
-Controller::Controller():
-            logging(clock),
-            i2c(logging),
-            ffs(logging),
-            clock(),
-            espTools(logging),
-            wifi(logging, ffs)
-            {
+Controller::Controller()
+    : logging(clock), i2c(logging), ffs(logging), clock(), espTools(logging),
+      wifi(logging, ffs) {
 
   // callback Events
   // WiFi
@@ -39,16 +34,31 @@ void Controller::start() {
   // fire up the FFS
   ffs.mount();
 
+  // set ESP name on first start ever
+  if (ffs.cfg.readItem("device_name") == "") {
+    String deviceName = espTools.genericName();
+    logging.info("setting device name " + deviceName + " for the first time");
+    ffs.cfg.writeItem("device_name", deviceName);
+    logging.info("setting access point SSID " + deviceName +
+                 " for the first time");
+    ffs.cfg.writeItem("ap_ssid", deviceName);
+    ffs.cfg.saveFile();
+  }
+
   // start the network connections
   if (startConnections()) {
 
-    // start the clock with NTP updater
-    char txt[128];
-    sprintf(txt, "starting NTP client for %s", NTP_SERVER);
-    logging.info(txt);
-    clock.start(NTP_SERVER, SUMMER_TIME, NTP_UPDATE_INTERVAL);
+    if (ffs.cfg.readItem("ntp") == "on") {
+      // start the clock with NTP updater
+      String ntpServer = ffs.cfg.readItem("ntp_serverip");
+      char txt[128];
+      sprintf(txt, "starting NTP client for %s", ntpServer.c_str());
+      logging.info(txt);
+      clock.start(ntpServer.c_str(), SUMMER_TIME, NTP_UPDATE_INTERVAL);
+    } else {
+      logging.info("NTP client is off");
+    }
   }
-
 
   startPeriphery();
 
@@ -60,7 +70,7 @@ void Controller::start() {
 //...............................................................................
 void Controller::handle() {
 
-  if(!wifi.handle()) {
+  if (!wifi.handle()) {
     wifi.start();
   }
 
@@ -81,14 +91,12 @@ void Controller::handle() {
 //...............................................................................
 //  EVENT Wifi has connected
 //...............................................................................
-void Controller::on_wifiConnected(){
-  logging.info("WiFi has connected");
-}
+void Controller::on_wifiConnected() { logging.info("WiFi has connected"); }
 
 //...............................................................................
 //  EVENT wifi has disconnected
 //...............................................................................
-void Controller::on_wifiDisconnected(){
+void Controller::on_wifiDisconnected() {
   logging.info("WiFi has disconnected");
 }
 

@@ -4,13 +4,16 @@
 //###############################################################################
 //  ESP
 //###############################################################################
-ESP_Tools::ESP_Tools(LOGGING& logging): logging(logging) {}
+ESP_Tools::ESP_Tools(LOGGING &logging) : logging(logging) {}
 
 //-------------------------------------------------------------------------------
 //  ESP public
 //-------------------------------------------------------------------------------
 
-void ESP_Tools::start() { checkFlash(); }
+void ESP_Tools::start() {
+  checkFlash();
+  sprintf(deviceName, "%06x", chipId());
+}
 
 //...............................................................................
 //  check FlashConfiguration
@@ -31,14 +34,14 @@ void ESP_Tools::checkFlash() {
   sprintf(txt, "flash ide speed: %u", ESP.getFlashChipSpeed());
   logging.debug(txt);
   sprintf(txt, "flash ide mode:  %s",
-                (ideMode == FM_QIO
-                     ? "QIO"
-                     : ideMode == FM_QOUT
-                           ? "QOUT"
-                           : ideMode == FM_DIO
-                                 ? "DIO"
-                                 : ideMode == FM_DOUT ? "DOUT" : "UNKNOWN"));
-                                 logging.debug(txt);
+          (ideMode == FM_QIO
+               ? "QIO"
+               : ideMode == FM_QOUT
+                     ? "QOUT"
+                     : ideMode == FM_DIO
+                           ? "DIO"
+                           : ideMode == FM_DOUT ? "DOUT" : "UNKNOWN"));
+  logging.debug(txt);
 
   if (ideSize != realSize) {
     logging.error("flash chip configuration wrong");
@@ -78,6 +81,8 @@ int ESP_Tools::stackCorrupted() { return cont_check(&g_cont); }
 //...............................................................................
 long ESP_Tools::chipId() { return ESP.getChipId(); }
 
+String ESP_Tools::genericName() { return String(deviceName); }
+
 //...............................................................................
 //  DEBUG MEM
 //...............................................................................
@@ -113,12 +118,12 @@ void ESP_Tools::debugMem_stop() {
      └─restart
 */
 String ESP_Tools::set(Topic &topic) {
-    if (topic.itemIs(3, "restart")) {
-      reboot();
-      return TOPIC_OK;
-    } else {
-      return TOPIC_NO;
-    }
+  if (topic.itemIs(3, "restart")) {
+    reboot();
+    return TOPIC_OK;
+  } else {
+    return TOPIC_NO;
+  }
 }
 
 //...............................................................................
@@ -136,8 +141,7 @@ String ESP_Tools::set(Topic &topic) {
 String ESP_Tools::get(Topic &topic) {
   if (topic.itemIs(3, "chipId")) {
     return String(chipId());
-  } else
-  if (topic.itemIs(3, "freeHeapSize")) {
+  } else if (topic.itemIs(3, "freeHeapSize")) {
     return String(freeHeapSize());
   } else {
     return TOPIC_NO;
