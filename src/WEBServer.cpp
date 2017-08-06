@@ -4,29 +4,32 @@
 //  web interface
 //###############################################################################
 
-WEBIF::WEBIF(API& api):
-       api(api),
-       webServer(80),
-       auth(api) {
+WEBIF::WEBIF(API &api) : api(api), webServer(80), auth(api) {
 
   httpUpdater.setup(&webServer);
 
   // static pages
   // we need short file names on SPIFFS, else they do not load
-  webServer.serveStatic("/lib/jquery.js", SPIFFS, "/web/lib/jquery.js", "max-age=86400");
-  webServer.serveStatic("/lib/jquery.mobile.js", SPIFFS, "/web/lib/jquery.mobile.js", "max-age=86400");
-  webServer.serveStatic("/css/jquery.mobile.css", SPIFFS, "/web/css/jquery.mobile.css", "max-age=86400");
-  webServer.serveStatic("/auth.js", SPIFFS, "/web/auth.js" /*, "max-age=86400"*/);
-  webServer.serveStatic("/config.js", SPIFFS, "/web/config.js" /*, "max-age=86400"*/);
-  webServer.serveStatic("/panels.js", SPIFFS, "/web/panels.js" /*, "max-age=86400"*/);
+  webServer.serveStatic("/lib/jquery.js", SPIFFS, "/web/lib/jquery.js",
+                        "max-age=86400");
+  webServer.serveStatic("/lib/jquery.mobile.js", SPIFFS,
+                        "/web/lib/jquery.mobile.js", "max-age=86400");
+  webServer.serveStatic("/css/jquery.mobile.css", SPIFFS,
+                        "/web/css/jquery.mobile.css", "max-age=86400");
+  webServer.serveStatic("/auth.js", SPIFFS,
+                        "/web/auth.js" /*, "max-age=86400"*/);
+  webServer.serveStatic("/config.js", SPIFFS,
+                        "/web/config.js" /*, "max-age=86400"*/);
+  webServer.serveStatic("/panels.js", SPIFFS,
+                        "/web/panels.js" /*, "max-age=86400"*/);
   webServer.serveStatic("/ui.js", SPIFFS, "/web/ui.js" /*, "max-age=86400"*/);
-  webServer.serveStatic("/css/images/ajax-loader.gif", SPIFFS, "/web/css/images/ajax-loader.gif", "max-age=86400");
+  webServer.serveStatic("/css/images/ajax-loader.gif", SPIFFS,
+                        "/web/css/images/ajax-loader.gif", "max-age=86400");
   // dynamic pages
   webServer.on("/", std::bind(&WEBIF::rootPageHandler, this));
   webServer.on("/auth.html", std::bind(&WEBIF::authPageHandler, this));
   webServer.on("/api.html", std::bind(&WEBIF::apiPageHandler, this));
   webServer.onNotFound(std::bind(&WEBIF::handleNotFound, this));
-
 }
 
 //-------------------------------------------------------------------------------
@@ -40,31 +43,27 @@ void WEBIF::start() {
   api.info("starting webserver");
 
   // pages served
-  numPagesServed= 0;
+  numPagesServed = 0;
 
   // Authentificator
   auth.reset();
 
-  //here the list of headers to be recorded
-  const char* headerkeys[] = {"User-Agent","Cookie"} ;
-  size_t headerkeyssize = sizeof(headerkeys)/sizeof(char*);
+  // here the list of headers to be recorded
+  const char *headerkeys[] = {"User-Agent", "Cookie"};
+  size_t headerkeyssize = sizeof(headerkeys) / sizeof(char *);
 
-  //ask server to track these headers
-  webServer.collectHeaders(headerkeys, headerkeyssize );
+  // ask server to track these headers
+  webServer.collectHeaders(headerkeys, headerkeyssize);
 
   // start serving requests
   webServer.begin();
   api.info("webserver started.");
-
 }
 
 //...............................................................................
 //  web interface handle
 //...............................................................................
-void WEBIF::handle() {
-
-   webServer.handleClient();
-}
+void WEBIF::handle() { webServer.handleClient(); }
 
 //-------------------------------------------------------------------------------
 //  web interface private
@@ -73,40 +72,24 @@ void WEBIF::handle() {
 //  configuration
 //...............................................................................
 void WEBIF::applyConfiguration() {
-  String root = "{";
 
   api.info("applying configuration");
-  for(int i= 0; i< webServer.args(); i++) {
-    Serial.println("");
-    api.debug(webServer.argName(i) + ": " + webServer.arg(i));
-
-    root += "\"";
-    root += webServer.argName(i);
-    root += "\":\"";
-    root += webServer.arg(i);
-    root += "\"";
-    if (i < webServer.args()-1) root += ",";
-
-    //api.call("~/set/ffs/cfg/item/"+webServer.argName(i)+" "+webServer.arg(i));
-    //yield();
-    //String strName = webServer.argName(i);
-    //String strArg = webServer.arg(i);
-    //api.call(strName, strArg);
+  if (webServer.args()) {
+    String root =
+        "{\"" + webServer.argName(0) + "\":\"" + webServer.arg(0) + "\"";
+    for (int i = 0; i < webServer.args(); i++) {
+      root += ",\"" + webServer.argName(i) + "\":\"" + webServer.arg(i) + "\"";
+    }
+    root += "}";
+    api.call("~/set/ffs/cfg/root " + root);
+    api.call("~/set/ffs/cfg/saveFile");
   };
-  root += "}";
-  Serial.println(root);
-  api.call("~/set/ffs/cfg/root " + root);
-  api.call("~/set/ffs/cfg/saveFile");
-
 }
 
 //...............................................................................
 //  WEBIF::getConfiguration()
 //...............................................................................
-String WEBIF::getConfiguration() {
-  return api.call("~/get/ffs/cfg/root");
-}
-
+String WEBIF::getConfiguration() { return api.call("~/get/ffs/cfg/root"); }
 
 //...............................................................................
 //  page handlers and related functions
@@ -127,30 +110,30 @@ String WEBIF::subst(String data) {
   data.replace("$DATA(MACADDRESS)", api.call("~/get/wifi/macAddress"));
   data.replace("$DATA(DEVICEID)", api.call("~/get/esp/chipId"));
   return data;
-
 }
-
 
 //...............................................................................
 //  WEBIF::send
 //...............................................................................
-void WEBIF::send(const String &description, int code, char *content_type, const String &content) {
+void WEBIF::send(const String &description, int code, char *content_type,
+                 const String &content) {
 
   numPagesServed++;
-  api.info("serving "+description);
-  //api.debugMem();
+  api.info("serving " + description);
+  // api.debugMem();
   webServer.send(code, content_type, content);
 }
 
 //...............................................................................
 //  WEBIF::sendFile
 //...............................................................................
-void WEBIF::sendFile(const String &description, int code, char *content_type, const String filePath) {
+void WEBIF::sendFile(const String &description, int code, char *content_type,
+                     const String filePath) {
   // http://esp8266.github.io/Arduino/versions/2.0.0/doc/filesystem.html
   // https://github.com/pellepl/spiffs/wiki/Using-spiffs
   File f;
 
-  api.info("serving "+description);
+  api.info("serving " + description);
   api.debug("reading " + filePath);
   if (SPIFFS.exists(filePath)) {
     f = SPIFFS.open(filePath, "r");
@@ -159,14 +142,12 @@ void WEBIF::sendFile(const String &description, int code, char *content_type, co
       webServer.send(code, content_type, subst(f.readString()));
       f.close();
     } else {
-      api.error("cannot open "+filePath);
+      api.error("cannot open " + filePath);
     }
   } else {
-      api.error("file "+filePath+" does not exist.");
+    api.error("file " + filePath + " does not exist.");
   }
-
 }
-
 
 //...............................................................................
 //  WEBIF::checkAuthentification
@@ -174,29 +155,29 @@ void WEBIF::sendFile(const String &description, int code, char *content_type, co
 bool WEBIF::checkAuthentification() {
 
   // check for cookie
-  if(webServer.hasHeader("Cookie")) {
+  if (webServer.hasHeader("Cookie")) {
     String cookie = webServer.header("Cookie");
-    api.info("client provided cookie: "+cookie);
-    int p= cookie.indexOf("sessionId=");
-    if(p< 0) {
+    api.info("client provided cookie: " + cookie);
+    int p = cookie.indexOf("sessionId=");
+    if (p < 0) {
       api.info("no sessionId provided.");
       return false;
     }
     // check if cookie corresponds to active session
-    String sessionId= cookie.substring(p+10,p+74);
-    api.info("sessionId "+sessionId+" provided.");
-    SessionPtr session= auth.getSession(sessionId);
-    if(!session) {
-      //api.debug("no session found.");
+    String sessionId = cookie.substring(p + 10, p + 74);
+    api.info("sessionId " + sessionId + " provided.");
+    SessionPtr session = auth.getSession(sessionId);
+    if (!session) {
+      // api.debug("no session found.");
       return false;
     }
-    if(session->isExpired()) {
-      //api.debug("session expired.");
+    if (session->isExpired()) {
+      // api.debug("session expired.");
       // delete the session
       auth.deleteSession(sessionId);
       return false;
     }
-    //api.debug("session found.");
+    // api.debug("session found.");
     session->touch();
     return true;
   } else {
@@ -212,33 +193,33 @@ void WEBIF::rootPageHandler() {
   api.info("serving root page");
 
   // Debug only
-  //Serial.println("Headers:");
-  //for(int i= 0; i< webServer.headers(); Serial.println(webServer.header(i++)));
+  // Serial.println("Headers:");
+  // for(int i= 0; i< webServer.headers();
+  // Serial.println(webServer.header(i++)));
 
-  if(webServer.hasHeader("User-Agent")) {
-    api.info("User-Agent: "+webServer.header("User-Agent"));
+  if (webServer.hasHeader("User-Agent")) {
+    api.info("User-Agent: " + webServer.header("User-Agent"));
   }
 
-  bool authenticated= checkAuthentification();
+  bool authenticated = checkAuthentification();
 
+  if (authenticated) {
 
-  if(authenticated) {
-
-    String action= webServer.arg("action");
+    String action = webServer.arg("action");
 
     // reboot
-    if(action == "reboot") {
+    if (action == "reboot") {
       api.info("action: reboot");
       webServer.send(200, "text/plain", "true");
       api.call("~/set/esp/restart"); // never returns
     }
     // config
-    if(action == "apply") {
+    if (action == "apply") {
       api.info("action: apply config");
       // https://code.tutsplus.com/tutorials/jquery-mobile-framework-a-forms-tutorial--mobile-4500
       applyConfiguration();
       webServer.send(200, "text/plain", "true");
-    } else if(action == "config") {
+    } else if (action == "config") {
       api.info("action: get config");
       webServer.send(200, "application/json", getConfiguration());
     } else {
@@ -258,67 +239,65 @@ void WEBIF::rootPageHandler() {
 //...............................................................................
 void WEBIF::authPageHandler() {
 
-  String action= webServer.arg("action");
+  String action = webServer.arg("action");
 
-  if(action == "login") {
+  if (action == "login") {
 
     // --- login
-    String username= webServer.arg("username");
-    String password= webServer.arg("password");
+    String username = webServer.arg("username");
+    String password = webServer.arg("password");
 
-    if(auth.checkPassword(username, password)) {
+    if (auth.checkPassword(username, password)) {
       // password ok
-      api.info("user "+username+" authenticated.");
-      SessionPtr session= auth.createSession(username);
-      if(!session) {
+      api.info("user " + username + " authenticated.");
+      SessionPtr session = auth.createSession(username);
+      if (!session) {
         // could not create a session
         api.info("could not create a session.");
-        webServer.sendHeader("Location","/");
-        webServer.sendHeader("Cache-Control","no-cache");
+        webServer.sendHeader("Location", "/");
+        webServer.sendHeader("Cache-Control", "no-cache");
         webServer.send(200, "text/plain", "false");
         return;
       }
-      webServer.sendHeader("Location","/");
-      webServer.sendHeader("Cache-Control","no-cache");
-      webServer.sendHeader("Set-Cookie","sessionId="+session->getSessionId());
+      webServer.sendHeader("Location", "/");
+      webServer.sendHeader("Cache-Control", "no-cache");
+      webServer.sendHeader("Set-Cookie",
+                           "sessionId=" + session->getSessionId());
       webServer.send(200, "text/plain", "true");
 
     } else {
       // password not ok
-      api.info("user "+username+" authentification failed");
-      webServer.sendHeader("Location","/");
-      webServer.sendHeader("Cache-Control","no-cache");
+      api.info("user " + username + " authentification failed");
+      webServer.sendHeader("Location", "/");
+      webServer.sendHeader("Cache-Control", "no-cache");
       webServer.send(200, "text/plain", "false");
-
     }
 
-  } else if(action == "logout") {
+  } else if (action == "logout") {
 
     // --- logout
     api.info("logging out");
-    webServer.sendHeader("Location","/");
-    webServer.sendHeader("Cache-Control","no-cache");
-    webServer.sendHeader("Set-Cookie","sessionId=");
+    webServer.sendHeader("Location", "/");
+    webServer.sendHeader("Cache-Control", "no-cache");
+    webServer.sendHeader("Set-Cookie", "sessionId=");
     webServer.send(200, "text/plain", "true");
   }
-
 }
 
 //...............................................................................
 //  WEBIF::apiPageHandler
 //...............................................................................
 
-
 void WEBIF::apiPageHandler() {
 
-  String call= webServer.arg("call");
-  api.info("webserver handling API call "+call);
-  if(checkAuthentification()) {
+  String call = webServer.arg("call");
+  api.info("webserver handling API call " + call);
+  if (checkAuthentification()) {
 
     Topic tmpTopic(call);
 
-    String result= api.call(tmpTopic);
-    api.debug("returning "+result);
+    String result = api.call(tmpTopic);
+    api.debug("returning " + result);
     webServer.send(200, "text/plain", result);
   } else {
     api.debug("client is not authenticated.");
@@ -331,7 +310,7 @@ void WEBIF::apiPageHandler() {
 //...............................................................................
 void WEBIF::handleNotFound() {
 
-  api.error("URI "+webServer.uri()+" not found.");
+  api.error("URI " + webServer.uri() + " not found.");
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += webServer.uri();
@@ -341,7 +320,7 @@ void WEBIF::handleNotFound() {
   message += webServer.args();
   message += "\n";
 
-  for (uint8_t i = 0; i < webServer.args(); i++){
+  for (uint8_t i = 0; i < webServer.args(); i++) {
     message += " " + webServer.argName(i) + ": " + webServer.arg(i) + "\n";
   }
   webServer.send(404, "text/plain", message);
