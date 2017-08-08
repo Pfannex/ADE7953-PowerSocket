@@ -36,7 +36,7 @@ void Controller::start() {
 
   // set ESP name on first start ever
   if (ffs.cfg.readItem("device_name") == "") {
-    String deviceName = espTools.genericName();
+    String deviceName = "ESP8266_" + espTools.genericName();
     logging.info("setting device name " + deviceName + " for the first time");
     ffs.cfg.writeItem("device_name", deviceName);
     logging.info("setting access point SSID " + deviceName +
