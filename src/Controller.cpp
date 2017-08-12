@@ -13,6 +13,13 @@ Controller::Controller()
                      std::bind(&Controller::on_wifiDisconnected, this));
 }
 
+//...............................................................................
+//  API set callback
+//...............................................................................
+void Controller::set_callback(CallbackFunction pubMQTT) {
+  on_pubMQTT = pubMQTT;
+}
+
 //-------------------------------------------------------------------------------
 //  start
 //-------------------------------------------------------------------------------
@@ -143,6 +150,11 @@ void Controller::t_1s_Update() {}
 void Controller::t_short_Update() {
   clock.update();
   espTools.debugMem();
+
+  //TEST TEST
+  if (on_pubMQTT != nullptr) on_pubMQTT();
+
+
 }
 
 void Controller::t_long_Update() {}

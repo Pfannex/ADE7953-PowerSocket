@@ -9,14 +9,25 @@
 MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
 
   // callbacks
+  //pubSubClient
   client.setCallback(std::bind(&MQTT::on_incommingSubcribe, this,
                                std::placeholders::_1, std::placeholders::_2,
                                std::placeholders::_3));
+  //API
+  api.set_callback(std::bind(&MQTT::on_pubMQTT, this));
 }
 
 //-------------------------------------------------------------------------------
 //  MQTT public
 //-------------------------------------------------------------------------------
+
+//...............................................................................
+//  EVENT publish Topic
+//...............................................................................
+void MQTT::on_pubMQTT() {
+  api.controller.logging.info("callback -> MQTT::on_pubMQTT()");
+}
+
 //...............................................................................
 //  WiFi start connection
 //...............................................................................

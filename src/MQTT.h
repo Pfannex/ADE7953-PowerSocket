@@ -13,6 +13,8 @@ public:
   MQTT(API &api);
   API &api;
 
+  void on_pubMQTT();
+
   bool start();
   bool handle();
   void setCallback(MQTT_CALLBACK_SIGNATURE);

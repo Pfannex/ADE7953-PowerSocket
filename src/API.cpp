@@ -9,6 +9,16 @@ API::API(Controller &controller) : controller(controller) {}
 //  API public
 //-------------------------------------------------------------------------------
 
+//...............................................................................
+//  API set callback
+//...............................................................................
+void API::set_callback(CallbackFunction pubMQTT) {
+  on_pubMQTT = pubMQTT;
+}
+
+//...............................................................................
+//  API start
+//...............................................................................
 void API::start() {
   info("API started for device with chip ID "+call("~/get/esp/chipId"));
 }
@@ -18,6 +28,10 @@ void API::start() {
 //...............................................................................
 
 String API::call(Topic &topic) {
+
+//TEST TEST
+  if (on_pubMQTT != nullptr) on_pubMQTT();
+
 
   // just a pass through
   return controller.call(topic);

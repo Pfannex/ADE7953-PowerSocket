@@ -11,8 +11,9 @@ class API {
 public:
   // constructor
   API(Controller& controller);
-
   Controller& controller;
+
+  void set_callback(CallbackFunction pubMQTT);
 
   void start();
   String call(Topic &topic);
@@ -23,4 +24,5 @@ public:
   void debug(const String &msg);
 
 private:
+  CallbackFunction on_pubMQTT;
 };

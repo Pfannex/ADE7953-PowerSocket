@@ -10,6 +10,9 @@
 #include "WIFI.h"
 #include "oWire.h"
 
+#include <functional>
+typedef std::function<void(void)> CallbackFunction;
+
 //###############################################################################
 //  BasicTemplate
 //###############################################################################
@@ -17,6 +20,8 @@ class Controller {
 public:
   // constructor
   Controller();
+
+  void set_callback(CallbackFunction pubMQTT);
 
   void start();
   void handle();
@@ -45,4 +50,6 @@ public:
 private:
   bool startConnections();
   void startPeriphery();
+  
+  CallbackFunction on_pubMQTT;
 };
