@@ -5,6 +5,10 @@
 #include <IPAddress.h>
 #include <PubSubClient.h>
 
+#include <functional>
+typedef std::function<void(void)> CallbackFunction;
+typedef std::function<void(Topic&)> Topic_CallbackFunction;
+
 //###############################################################################
 //  MQTT client
 //###############################################################################
@@ -13,12 +17,16 @@ public:
   MQTT(API &api);
   API &api;
 
-  void on_pubMQTT();
+  void setCallback(MQTT_CALLBACK_SIGNATURE);
 
   bool start();
   bool handle();
-  void setCallback(MQTT_CALLBACK_SIGNATURE);
+  // Callback Events
+  // pubSubClient
   void on_incommingSubcribe(char *topic, byte *payload, unsigned int length);
+  // API
+  void on_pubMQTT(Topic &topic);
+
   void pub(String topic, String value);
 
 private:

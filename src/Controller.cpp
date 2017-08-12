@@ -16,8 +16,8 @@ Controller::Controller()
 //...............................................................................
 //  API set callback
 //...............................................................................
-void Controller::set_callback(CallbackFunction viewUpdate) {
-  on_viewUpdate = viewUpdate;
+void Controller::set_callback(Topic_CallbackFunction viewsUpdate) {
+  on_viewsUpdate = viewsUpdate;
 }
 
 //-------------------------------------------------------------------------------
@@ -150,9 +150,7 @@ void Controller::t_1s_Update() {}
 void Controller::t_short_Update() {
   clock.update();
   espTools.debugMem();
-
-  logging.info("callback: Controller::t_1s_Update -> API::on_viewUpdate()");
-  if (on_viewUpdate != nullptr) on_viewUpdate();
+  viewsUpdate();
 }
 
 void Controller::t_long_Update() {}
@@ -184,4 +182,14 @@ bool Controller::startConnections() {
 void Controller::startPeriphery() {
   logging.info("starting periphery");
   i2c.start();
+}
+
+//...............................................................................
+//  update Views
+//...............................................................................
+void Controller::viewsUpdate(){
+
+  logging.debug("-> Controller::viewsUpdate()");
+  Topic tmpTopic("Node52/test", "Hello World!");
+  if (on_viewsUpdate != nullptr) on_viewsUpdate(tmpTopic);
 }

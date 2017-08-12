@@ -14,8 +14,9 @@
   #include "FS.h"
   #include "Hash.h"
 
-  //#include <functional>
-  //typedef std::function<void(void)> CallbackFunction;
+  #include <functional>
+  typedef std::function<void(void)> CallbackFunction;
+  typedef std::function<void(Topic&)> Topic_CallbackFunction;
 
 //###############################################################################
 //  web interface
@@ -26,10 +27,11 @@ class WEBIF {
 public:
   WEBIF(API& api);
 
-  void on_pubWEBIF();
-
   void start();
   void handle();
+  // Callback Events
+  // API
+  void on_pubWEBIF(Topic &topic);
 
 private:
   ESP8266WebServer webServer;

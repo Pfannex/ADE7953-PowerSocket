@@ -14,7 +14,8 @@ MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
                                std::placeholders::_1, std::placeholders::_2,
                                std::placeholders::_3));
   //API
-  api.set_callbackMQTT(std::bind(&MQTT::on_pubMQTT, this));
+  api.set_callbackMQTT(std::bind(&MQTT::on_pubMQTT, this,
+                                 std::placeholders::_1));
 }
 
 //-------------------------------------------------------------------------------
@@ -24,8 +25,9 @@ MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
 //...............................................................................
 //  EVENT publish Topic
 //...............................................................................
-void MQTT::on_pubMQTT() {
-  api.controller.logging.info("callback: -> MQTT::on_pubMQTT()");
+void MQTT::on_pubMQTT(Topic &topic) {
+  api.controller.logging.debug("-> MQTT::on_pubMQTT()");
+  api.controller.logging.debug(topic.asString());
 }
 
 //...............................................................................
@@ -139,50 +141,6 @@ void MQTT::pub(String topic, String value) {
   client.loop();
 }
 
-//-------------------------------------------------------------------------------
-//  MQTT API
-//-------------------------------------------------------------------------------
-//...............................................................................
-//  MQTT SET
-//...............................................................................
-/*
-mqtt
-  └─connect
-*/
-/*
-String MQTT::set(Topic& topic){
-  if (topic.itemIs(3, "connect")){
-    start();
-    if (handle()){
-      return "connected";
-    }else{
-      return "disconnected";
-    }
-
-  }
-}
-*/
-
-//...............................................................................
-//  MQTT GET
-//...............................................................................
-/*
-mqtt
-  └─status
-*/
-/*
-String MQTT::get(Topic& topic){
-  String str = "NIL";
-//status
-  if (topic.itemIs(3, "status")){
-    if (handle()){
-      return "connected";
-    }else{
-      return "disconnected";
-    }
-  }
-}
-*/
 //-------------------------------------------------------------------------------
 //  MQTT private
 //-------------------------------------------------------------------------------

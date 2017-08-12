@@ -8,7 +8,8 @@ WEBIF::WEBIF(API &api) : api(api), webServer(80), auth(api) {
 
   // callbacks
   //API
-  api.set_callbackWEBIF(std::bind(&WEBIF::on_pubWEBIF, this));
+  api.set_callbackWEBIF(std::bind(&WEBIF::on_pubWEBIF, this,
+                                 std::placeholders::_1));
 
   httpUpdater.setup(&webServer);
 
@@ -43,8 +44,9 @@ WEBIF::WEBIF(API &api) : api(api), webServer(80), auth(api) {
 //...............................................................................
 //  EVENT publish Topic
 //...............................................................................
-void WEBIF::on_pubWEBIF() {
-  api.controller.logging.info("callback: -> WEBIF::on_pubWEBIF()");
+void WEBIF::on_pubWEBIF(Topic &topic) {
+  api.controller.logging.debug("-> WEBIF::on_pubWEBIF()");
+  api.controller.logging.debug(topic.asString());
 }
 
 //...............................................................................

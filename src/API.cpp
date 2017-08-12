@@ -5,7 +5,10 @@
 //###############################################################################
 API::API(Controller &controller) : controller(controller) {
 
-  controller.set_callback(std::bind(&API::on_viewUpdate, this));
+  // callback Events
+  // controller
+  controller.set_callback(std::bind(&API::on_viewsUpdate, this,
+                                    std::placeholders::_1));
 }
 
 //-------------------------------------------------------------------------------
@@ -15,21 +18,11 @@ API::API(Controller &controller) : controller(controller) {
 //...............................................................................
 //  API set callback
 //...............................................................................
-void API::set_callbackMQTT(CallbackFunction pubMQTT) {
+void API::set_callbackMQTT(Topic_CallbackFunction pubMQTT) {
   on_pubMQTT = pubMQTT;
 }
-void API::set_callbackWEBIF(CallbackFunction pubWEBIF) {
+void API::set_callbackWEBIF(Topic_CallbackFunction pubWEBIF) {
   on_pubWEBIF = pubWEBIF;
-}
-
-//...............................................................................
-//  EVENT ViewUpdate
-//...............................................................................
-void API::on_viewUpdate(){
-  controller.logging.info("callback: API::on_viewUpdate() -> MQTT::on_pubMQTT()");
-  if (on_pubMQTT != nullptr) on_pubMQTT();
-  controller.logging.info("callback: API::on_viewUpdate() -> WEB::on_pubWEBIF()");
-  if (on_pubWEBIF != nullptr) on_pubWEBIF();
 }
 
 //...............................................................................
@@ -40,15 +33,21 @@ void API::start() {
 }
 
 //...............................................................................
+//  EVENT ViewUpdate
+//...............................................................................
+void API::on_viewsUpdate(Topic &topic){
+  controller.logging.debug("-> API::on_viewsUpdate()");
+  controller.logging.debug(topic.asString());
+
+  if (on_pubMQTT != nullptr) on_pubMQTT(topic);
+  if (on_pubWEBIF != nullptr) on_pubWEBIF(topic);
+}
+
+//...............................................................................
 //  API call distributing
 //...............................................................................
 
 String API::call(Topic &topic) {
-
-//TEST TEST
-  //if (on_pubMQTT != nullptr) on_pubMQTT();
-
-
   // just a pass through
   return controller.call(topic);
 }

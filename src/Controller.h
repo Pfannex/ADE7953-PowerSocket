@@ -12,6 +12,7 @@
 
 #include <functional>
 typedef std::function<void(void)> CallbackFunction;
+typedef std::function<void(Topic&)> Topic_CallbackFunction;
 
 //###############################################################################
 //  BasicTemplate
@@ -21,7 +22,7 @@ public:
   // constructor
   Controller();
 
-  void set_callback(CallbackFunction viewUpdate);
+  void set_callback(Topic_CallbackFunction viewsUpdate);
 
   void start();
   void handle();
@@ -50,6 +51,7 @@ public:
 private:
   bool startConnections();
   void startPeriphery();
+  void viewsUpdate();
 
-  CallbackFunction on_viewUpdate;
+  Topic_CallbackFunction on_viewsUpdate;
 };

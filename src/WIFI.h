@@ -8,6 +8,7 @@
 
 #include <functional>
 typedef std::function<void(void)> CallbackFunction;
+typedef std::function<void(Topic&)> Topic_CallbackFunction;
 
 //###############################################################################
 //  WiFi client
