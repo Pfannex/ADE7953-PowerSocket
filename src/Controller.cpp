@@ -9,15 +9,15 @@ Controller::Controller()
 
   // callback Events
   // WiFi
-  wifi.set_callbacks(std::bind(&Controller::on_wifiConnected, this),
-                     std::bind(&Controller::on_wifiDisconnected, this));
+  wifi.set_callback(std::bind(&Controller::on_wifiConnected, this),
+                    std::bind(&Controller::on_wifiDisconnected, this));
 }
 
 //...............................................................................
 //  API set callback
 //...............................................................................
-void Controller::set_callback(CallbackFunction xpubMQTT) {
-  on_xpubMQTT = xpubMQTT;
+void Controller::set_callback(CallbackFunction viewUpdate) {
+  on_viewUpdate = viewUpdate;
 }
 
 //-------------------------------------------------------------------------------
@@ -151,10 +151,8 @@ void Controller::t_short_Update() {
   clock.update();
   espTools.debugMem();
 
-  //TEST TEST
-  if (on_xpubMQTT != nullptr) on_xpubMQTT();
-
-
+  logging.info("callback: Controller::t_1s_Update -> API::on_viewUpdate()");
+  if (on_viewUpdate != nullptr) on_viewUpdate();
 }
 
 void Controller::t_long_Update() {}

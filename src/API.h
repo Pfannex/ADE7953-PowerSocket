@@ -14,7 +14,7 @@ public:
   Controller& controller;
 
   void set_callback(CallbackFunction pubMQTT);
-  void on_xpubMQTT();
+  void on_viewUpdate();
 
   void start();
   String call(Topic &topic);

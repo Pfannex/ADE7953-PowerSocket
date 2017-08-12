@@ -25,7 +25,7 @@ MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
 //  EVENT publish Topic
 //...............................................................................
 void MQTT::on_pubMQTT() {
-  api.controller.logging.info("callback -> MQTT::on_pubMQTT()");
+  api.controller.logging.info("callback: -> MQTT::on_pubMQTT()");
 }
 
 //...............................................................................

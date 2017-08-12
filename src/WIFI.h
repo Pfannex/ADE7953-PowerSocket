@@ -22,8 +22,8 @@ public:
 
   WiFiClient client;
   bool WiFiStatus= false;
-  void set_callbacks(CallbackFunction wifiConnected,
-                     CallbackFunction wifiDisconnected);
+  void set_callback(CallbackFunction wifiConnected,
+                    CallbackFunction wifiDisconnected);
 
   bool start();
   bool handle();
@@ -31,7 +31,7 @@ public:
 
   // API
   String get(Topic &topic);
-  
+
 
 private:
   CallbackFunction on_wifiConnected;

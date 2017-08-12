@@ -5,7 +5,7 @@
 //###############################################################################
 API::API(Controller &controller) : controller(controller) {
 
-  controller.set_callback(std::bind(&API::on_xpubMQTT, this));
+  controller.set_callback(std::bind(&API::on_viewUpdate, this));
 }
 
 //-------------------------------------------------------------------------------
@@ -20,10 +20,10 @@ void API::set_callback(CallbackFunction pubMQTT) {
 }
 
 //...............................................................................
-//  EVENT Wifi has connected
+//  EVENT ViewUpdate
 //...............................................................................
-void API::on_xpubMQTT(){
-  //TEST TEST
+void API::on_viewUpdate(){
+  controller.logging.info("callback: API::on_viewUpdate() -> MQTT::on_pubMQTT()");
   if (on_pubMQTT != nullptr) on_pubMQTT();
 }
 

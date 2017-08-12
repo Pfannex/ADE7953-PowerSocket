@@ -75,8 +75,8 @@ bool WIFI::handle() {
 //...............................................................................
 //  WiFi set callbacks
 //...............................................................................
-void WIFI::set_callbacks(CallbackFunction wifiConnected,
-                         CallbackFunction wifiDisconnected) {
+void WIFI::set_callback(CallbackFunction wifiConnected,
+                        CallbackFunction wifiDisconnected) {
   on_wifiConnected = wifiConnected;
   on_wifiDisconnected = wifiDisconnected;
 }
