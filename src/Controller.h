@@ -21,7 +21,7 @@ public:
   // constructor
   Controller();
 
-  void set_callback(CallbackFunction pubMQTT);
+  void set_callback(CallbackFunction xpubMQTT);
 
   void start();
   void handle();
@@ -50,6 +50,6 @@ public:
 private:
   bool startConnections();
   void startPeriphery();
-  
-  CallbackFunction on_pubMQTT;
+
+  CallbackFunction on_xpubMQTT;
 };

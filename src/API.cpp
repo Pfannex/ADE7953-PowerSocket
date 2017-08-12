@@ -3,7 +3,10 @@
 //###############################################################################
 //  API
 //###############################################################################
-API::API(Controller &controller) : controller(controller) {}
+API::API(Controller &controller) : controller(controller) {
+
+  controller.set_callback(std::bind(&API::on_xpubMQTT, this));
+}
 
 //-------------------------------------------------------------------------------
 //  API public
@@ -14,6 +17,14 @@ API::API(Controller &controller) : controller(controller) {}
 //...............................................................................
 void API::set_callback(CallbackFunction pubMQTT) {
   on_pubMQTT = pubMQTT;
+}
+
+//...............................................................................
+//  EVENT Wifi has connected
+//...............................................................................
+void API::on_xpubMQTT(){
+  //TEST TEST
+  if (on_pubMQTT != nullptr) on_pubMQTT();
 }
 
 //...............................................................................
@@ -30,7 +41,7 @@ void API::start() {
 String API::call(Topic &topic) {
 
 //TEST TEST
-  if (on_pubMQTT != nullptr) on_pubMQTT();
+  //if (on_pubMQTT != nullptr) on_pubMQTT();
 
 
   // just a pass through

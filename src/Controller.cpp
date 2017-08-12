@@ -16,8 +16,8 @@ Controller::Controller()
 //...............................................................................
 //  API set callback
 //...............................................................................
-void Controller::set_callback(CallbackFunction pubMQTT) {
-  on_pubMQTT = pubMQTT;
+void Controller::set_callback(CallbackFunction xpubMQTT) {
+  on_xpubMQTT = xpubMQTT;
 }
 
 //-------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ void Controller::t_short_Update() {
   espTools.debugMem();
 
   //TEST TEST
-  if (on_pubMQTT != nullptr) on_pubMQTT();
+  if (on_xpubMQTT != nullptr) on_xpubMQTT();
 
 
 }
