@@ -14,8 +14,8 @@
   #include "FS.h"
   #include "Hash.h"
 
-  #include <functional>
-  typedef std::function<void(void)> CallbackFunction;
+  //#include <functional>
+  //typedef std::function<void(void)> CallbackFunction;
 
 //###############################################################################
 //  web interface
@@ -25,6 +25,9 @@
 class WEBIF {
 public:
   WEBIF(API& api);
+
+  void on_pubWEBIF();
+
   void start();
   void handle();
 

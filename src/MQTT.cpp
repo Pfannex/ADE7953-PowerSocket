@@ -14,7 +14,7 @@ MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
                                std::placeholders::_1, std::placeholders::_2,
                                std::placeholders::_3));
   //API
-  api.set_callback(std::bind(&MQTT::on_pubMQTT, this));
+  api.set_callbackMQTT(std::bind(&MQTT::on_pubMQTT, this));
 }
 
 //-------------------------------------------------------------------------------

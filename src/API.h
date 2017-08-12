@@ -13,7 +13,8 @@ public:
   API(Controller& controller);
   Controller& controller;
 
-  void set_callback(CallbackFunction pubMQTT);
+  void set_callbackMQTT(CallbackFunction pubMQTT);
+  void set_callbackWEBIF(CallbackFunction pubWEBIF);
   void on_viewUpdate();
 
   void start();
@@ -26,4 +27,5 @@ public:
 
 private:
   CallbackFunction on_pubMQTT;
+  CallbackFunction on_pubWEBIF;
 };

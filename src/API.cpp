@@ -15,8 +15,11 @@ API::API(Controller &controller) : controller(controller) {
 //...............................................................................
 //  API set callback
 //...............................................................................
-void API::set_callback(CallbackFunction pubMQTT) {
+void API::set_callbackMQTT(CallbackFunction pubMQTT) {
   on_pubMQTT = pubMQTT;
+}
+void API::set_callbackWEBIF(CallbackFunction pubWEBIF) {
+  on_pubWEBIF = pubWEBIF;
 }
 
 //...............................................................................
@@ -25,6 +28,8 @@ void API::set_callback(CallbackFunction pubMQTT) {
 void API::on_viewUpdate(){
   controller.logging.info("callback: API::on_viewUpdate() -> MQTT::on_pubMQTT()");
   if (on_pubMQTT != nullptr) on_pubMQTT();
+  controller.logging.info("callback: API::on_viewUpdate() -> WEB::on_pubWEBIF()");
+  if (on_pubWEBIF != nullptr) on_pubWEBIF();
 }
 
 //...............................................................................

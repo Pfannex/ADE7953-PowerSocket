@@ -6,6 +6,10 @@
 
 WEBIF::WEBIF(API &api) : api(api), webServer(80), auth(api) {
 
+  // callbacks
+  //API
+  api.set_callbackWEBIF(std::bind(&WEBIF::on_pubWEBIF, this));
+
   httpUpdater.setup(&webServer);
 
   // static pages
@@ -35,6 +39,14 @@ WEBIF::WEBIF(API &api) : api(api), webServer(80), auth(api) {
 //-------------------------------------------------------------------------------
 //  web interface public
 //-------------------------------------------------------------------------------
+
+//...............................................................................
+//  EVENT publish Topic
+//...............................................................................
+void WEBIF::on_pubWEBIF() {
+  api.controller.logging.info("callback: -> WEBIF::on_pubWEBIF()");
+}
+
 //...............................................................................
 //  web interface start
 //...............................................................................
