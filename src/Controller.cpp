@@ -5,7 +5,7 @@
 //###############################################################################
 Controller::Controller()
     : logging(clock), i2c(logging), ffs(logging), clock(), espTools(logging),
-      wifi(logging, ffs) {
+      wifi(logging, ffs), gpio(logging) {
 
   // callback Events
   // WiFi
@@ -80,6 +80,7 @@ void Controller::handle() {
   if (!wifi.handle()) {
     wifi.start();
   }
+  gpio.handle();
 
   /*
   if (wifi.handle()) {
@@ -182,6 +183,7 @@ bool Controller::startConnections() {
 void Controller::startPeriphery() {
   logging.info("starting periphery");
   i2c.start();
+  gpio.start();
 }
 
 //...............................................................................

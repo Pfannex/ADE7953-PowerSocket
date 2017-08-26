@@ -186,3 +186,48 @@ void Topic::printTopic(){
   }
   Serial.println("............................................");
 }
+
+//###############################################################################
+//  Topic Queue
+//###############################################################################
+
+TopicQueue::TopicQueue() {
+
+}
+
+void TopicQueue::clear() {
+  while(count) get();
+}
+
+void TopicQueue::put(String& topicsArgs) {
+  // create a new element
+  element_t* e= new element_t;
+  e->topicsArgs= new char[topicsArgs.length()];
+  strcpy(e->topicsArgs, topicsArgs.c_str());
+  // prepend to tail
+  e->next= tail;
+  if(count) {
+    // if the queue has elements, backlink previous tail to new element
+    tail->prev= e;
+  } else {
+    // else the new element is also made the head
+    head= e;
+  }
+  // the new element is made the tail
+  tail= e;
+  // increase count
+  count++;
+}
+
+String TopicQueue::get() {
+
+  if(count) {
+    element_t* e= head;
+    String topicsArgs= String(e->topicsArgs);
+    head= head->prev;
+    delete e;
+    count--;
+  } else {
+    return String(""); // if you get here then you have made an programming error
+  }
+}

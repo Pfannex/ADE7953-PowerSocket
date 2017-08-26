@@ -34,6 +34,12 @@
   #define I2C_SDA 4
   #define I2C_SCL 5
 
+  #define HAS_LED
+  //#define HAS_NEOPIXEL
+  #define HAS_BUTTON
+  #define HAS_RELAY
+
+
 //###############################################################################
 //  I2C slave addresses
 //###############################################################################

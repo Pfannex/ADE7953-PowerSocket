@@ -36,6 +36,28 @@ private:
 };
 
 //###############################################################################
+//  Topic Queue
+//###############################################################################
+
+struct element_t {
+  struct element_t* prev;
+  struct element_t* next;
+  char* topicsArgs;
+};
+
+class TopicQueue {
+public:
+    TopicQueue();
+    void clear();  // clear the Queue
+    void put(String& topicsArgs);
+    String get();
+    int count= 0;
+private:
+    element_t* head= NULL; // we get from head
+    element_t* tail= NULL; // we put to tail
+};
+
+//###############################################################################
 //  API types
 //###############################################################################
 struct TTopic{

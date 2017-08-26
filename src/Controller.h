@@ -9,6 +9,7 @@
 #include "Topic.h"
 #include "WIFI.h"
 #include "oWire.h"
+#include "GPIO.h"
 
 #include <functional>
 typedef std::function<void(void)> CallbackFunction;
@@ -39,6 +40,7 @@ public:
   I2C i2c;
   OWIRE oWire;
   ESP_Tools espTools;
+  GPIO gpio;
 
   // the API
   String call(Topic &topic);
