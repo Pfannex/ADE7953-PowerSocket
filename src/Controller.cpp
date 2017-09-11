@@ -3,9 +3,25 @@
 //###############################################################################
 //  Controller
 //###############################################################################
+
+/*
+ * The controller has two main entry points: call() and handleEvent().
+ * call() is called from the API and calls get or set functions in the
+ * devices. The devices may react with events which they put in the
+ * topicQueue to be handled by handleEvent(). Other spontaneously
+ * received information from the devices are also pout in the topicQueue.
+ * handleEvent() dispatches the events to the views via viewsUpdate().
+ * This routine also contains the particular logic of the firmware:
+ * depending on the event received, an action is carried out, i.e. a
+ * function of a device is called.
+ */
+
+//...............................................................................
+//  constructor
+//...............................................................................
 Controller::Controller()
     : logging(clock), i2c(logging), ffs(logging), clock(), espTools(logging),
-      wifi(logging, ffs), gpio(logging) {
+      wifi(logging, ffs), gpio(logging, topicQueue) {
 
   // callback Events
   // WiFi
@@ -69,6 +85,8 @@ void Controller::start() {
 
   startPeriphery();
 
+  setLedMode();
+
   logging.info("controller started");
 }
 
@@ -81,6 +99,13 @@ void Controller::handle() {
     wifi.start();
   }
   gpio.handle();
+
+  // if(topicQueue.count) logging.debug(String(topicQueue.count) + " event(s) in
+  // queue");
+  while (topicQueue.count) {
+    String topicsArgs = topicQueue.get();
+    handleEvent(topicsArgs);
+  }
 
   /*
   if (wifi.handle()) {
@@ -97,15 +122,65 @@ void Controller::handle() {
 }
 
 //...............................................................................
+//  handle events
+//...............................................................................
+
+void Controller::setLedMode() {
+
+  if (!configMode) {
+    if (power)
+      gpio.setLedMode(ON);
+    else
+      gpio.setLedMode(OFF);
+  } else
+    gpio.setLedMode(BLINK);
+}
+
+void Controller::handleEvent(String &topicsArgs) {
+
+  //
+  // this is the central routine that dispatches events from devices
+  // and views
+  //
+
+  logging.debug("handling event " + topicsArgs);
+  Topic topic = Topic(topicsArgs);
+
+  // propagate event to views
+  viewsUpdate(topic);
+
+  if (topic.itemIs(2, "gpio")) {
+    if (topic.itemIs(3, "button")) {
+      // events from button
+      if (topic.itemIs(4, "short")) {
+        power = topic.argIs(0, "1");
+        logging.info("power on/off by button");
+        gpio.setRelayMode(power);
+        setLedMode();
+      }
+      if (topic.itemIs(4, "long")) {
+        configMode = topic.argIs(0, "1");
+        logging.info("config mode on/off by button");
+        setLedMode();
+      }
+    }
+  }
+}
+
+//...............................................................................
 //  EVENT Wifi has connected
 //...............................................................................
-void Controller::on_wifiConnected() { logging.info("WiFi has connected"); }
+void Controller::on_wifiConnected() {
+  logging.info("WiFi has connected");
+  topicQueue.put("~/event/wifi/connected 1");
+}
 
 //...............................................................................
 //  EVENT wifi has disconnected
 //...............................................................................
 void Controller::on_wifiDisconnected() {
   logging.info("WiFi has disconnected");
+  topicQueue.put("~/event/wifi/connected 0");
 }
 
 //...............................................................................
@@ -151,7 +226,6 @@ void Controller::t_1s_Update() {}
 void Controller::t_short_Update() {
   clock.update();
   espTools.debugMem();
-  viewsUpdate();
 }
 
 void Controller::t_long_Update() {}
@@ -189,9 +263,8 @@ void Controller::startPeriphery() {
 //...............................................................................
 //  update Views
 //...............................................................................
-void Controller::viewsUpdate(){
+void Controller::viewsUpdate(Topic &topic) {
 
-  logging.debug("-> Controller::viewsUpdate()");
-  Topic tmpTopic("Node52/test", "Hello World!");
-  if (on_viewsUpdate != nullptr) on_viewsUpdate(tmpTopic);
+  if (on_viewsUpdate != nullptr)
+    on_viewsUpdate(topic);
 }

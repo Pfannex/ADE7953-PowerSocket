@@ -14,6 +14,7 @@ class Topic{
 public:
   Topic(String& topicsArgs);       // "foo/bar arg1,arg2,arg3"
   Topic(char* topics, char* args); // "foo/bar","arg1,arg2,arg3"
+  Topic(char* topics, int value); // "foo/bar",1
   ~Topic();
 
   string* item;
@@ -29,6 +30,7 @@ public:
   void dissectTopic(char* topics, char* arg);
   String modifyTopic(int index);
   bool itemIs(int index, const string topicName);
+  bool argIs(int index, const string value);
 
 private:
   bool isValidJson(String root);
@@ -38,6 +40,8 @@ private:
 //###############################################################################
 //  Topic Queue
 //###############################################################################
+
+#define TOPIC_QUEUE_MAX 10
 
 struct element_t {
   struct element_t* prev;
@@ -50,6 +54,7 @@ public:
     TopicQueue();
     void clear();  // clear the Queue
     void put(String& topicsArgs);
+    void put(const char*);
     String get();
     int count= 0;
 private:

@@ -8,11 +8,12 @@
 //-------------------------------------------------------------------------------
 //  GPIO public
 //-------------------------------------------------------------------------------
-GPIO::GPIO(LOGGING &logging) : logging(logging) {}
+GPIO::GPIO(LOGGING &logging, TopicQueue &topicQueue)
+    : logging(logging), topicQueue(topicQueue) {}
 
 void GPIO::start() {
 
-logging.info("starting GPIO");
+  logging.info("starting GPIO");
 // pinMode(LED2_PIN, OUTPUT);
 // pinMode(LED3_PIN, OUTPUT);
 
@@ -22,6 +23,8 @@ logging.info("starting GPIO");
     buttonPinState[i] = 0;
     lastDebounceTime[i] = 0;
   }
+  currentButtonMode.t = 0;
+  currentButtonMode.idle = 0;
 #endif
 
 #ifdef HAS_LED
@@ -40,47 +43,186 @@ logging.info("starting GPIO");
 }
 
 //...............................................................................
+// setLedMode
+//...............................................................................
+
+void GPIO::setLedMode(ledMode_t ledMode) {
+
+//
+// LED
+//
+
+#ifdef HAS_LED
+  currentLedMode = ledMode;
+  if (currentLedMode == ON)
+    topicQueue.put("~/event/gpio/led on");
+  else if (currentLedMode == OFF)
+    topicQueue.put("~/event/gpio/led off");
+  else if (currentLedMode == BLINK)
+    topicQueue.put("~/event/gpio/led blink");
+#endif
+}
+
+//...............................................................................
+// setNeoPixelMode
+//...............................................................................
+
+void GPIO::setNeoPixelMode(int value) {
+
+//
+// Neopixel
+//
+
+#ifdef HAS_NEOPIXEL
+  Neopixel(value);
+  if(value)
+    topicQueue.put("~/event/gpio/neopixel 1");
+  else
+    topicQueue.put("~/event/gpio/neopixel 0");
+#endif
+}
+
+//...............................................................................
+// setRelayMode
+//...............................................................................
+
+void GPIO::setRelayMode(int value) {
+
+//
+// Relay
+//
+
+#ifdef HAS_RELAY
+  Relay(value);
+  if(value)
+    topicQueue.put("~/event/gpio/relay 1");
+  else
+    topicQueue.put("~/event/gpio/relay 0");
+#endif
+}
+
+//...............................................................................
 // handle
 //...............................................................................
 
 void GPIO::handle() {
 
-#ifdef HAS_BUTTON
-  // how to use the buttonMode?
-  // - state signals if the button is up (0) or down (1)
-  // - statex signals if state has been the same for at least BTIME milliseconds
-  // - a short press of the button toggles the modeS between off (0) and on (1)
-  // - a long press of the button toggles the modeL between off (0) and on (1)
+  unsigned long now = millis();
 
+//
+// LED
+//
+
+#ifdef HAS_LED
+  int ledOn = (currentLedMode == ON);
+  if (currentLedMode == BLINK) {
+    ledOn = (now / BLINKTIME) % 2;
+  }
+  Led(ledOn);
+#endif
+
+#ifdef HAS_NEOPIXEL
+  int neopixelOn = (currentLedMode == ON);
+  if (currentLedMode == BLINK) {
+    neopixelOn = (now / BLINKTIME) % 2;
+  }
+  Neopixel(neopixelOn);
+#endif
+
+
+//
+// button
+//
+
+#ifdef HAS_BUTTON
+  /* this can be replaced by interrupts:
+  https://techtutorialsx.com/2016/12/11/esp8266-external-interrupts/
+  */
   int buttonPinState = getButtonPinState(BUTTON_PIN);
   if (buttonPinState < 0)
     return; // still bouncing
 
-  unsigned long now = millis();
+  // on button press:
+  // - do nothing, start time measurement
+  // on button release:
+  // - if in long mode leave long mode if less than LONGPRESSTIME has passed
+  // - if not in long mode toggle short mode
+  // on idling:
+  // - leave long mode
+
+  unsigned long tl = now - currentButtonMode.t;
+  int idling = (tl >= IDLETIME);
+  int longtime = (tl >= LONGPRESSTIME);
 
   buttonMode_t mode = currentButtonMode;
   mode.state = !buttonPinState; // down if pin is 0
   if (mode.state != currentButtonMode.state) {
     // button changed
     mode.t = now;
-    logging.debug("Button changed to "+
-      String(mode.state)+" @ "+String(mode.t));
+    /*logging.debug("Button changed to " + String(mode.state) + " @ " +
+                  String(mode.t));*/
+    // handle button press or release
     if (!mode.state) {
       // button up
-      if (mode.idle)
-        mode.L = !mode.L;
-      else
+      /*logging.debug("button released, time=" + String(tl) +
+                    " longtime=" + String(longtime));*/
+      if (mode.L) {
+        if (!longtime)
+          mode.L = 0;
+      } else
         mode.S = !mode.S;
+    } else {
+      // button down
+      mode.L = 0; // drop out of long mode
     }
     mode.idle = 0;
     setButtonMode(mode);
   } else {
-    if (!mode.idle && (now - mode.t >= BTIME)) {
-      mode.idle = 1;
+    // button did not change
+    if (!mode.L && mode.state && longtime) {
+      // not in long mode and button pressed for a long time
+      mode.L = 1; // this sets long mode even before the button is released
+      mode.idle = 0;
       setButtonMode(mode);
+    } else {
+      if (!mode.idle && idling) {
+        mode.idle = 1;
+        setButtonMode(mode);
+      }
     }
   }
+
 #endif
+}
+
+//...............................................................................
+//  GPIO set
+//...............................................................................
+
+String GPIO::set(Topic &topic) {
+  /*
+  ~/set
+    └─gpio
+        └─led (on, off, blink)
+  */
+
+  logging.debug("GPIO set topic " + topic.topic_asString() + " to " +
+                topic.arg_asString());
+
+  if (topic.itemIs(3, "led")) {
+    if (topic.argIs(0, "on"))
+      currentLedMode == ON;
+    else if (topic.argIs(0, "off"))
+      currentLedMode = OFF;
+    else if (topic.argIs(0, "blink"))
+      currentLedMode = BLINK;
+    else
+      return TOPIC_NO;
+    logging.debug("LED mode set");
+    return TOPIC_OK;
+  } else {
+    return TOPIC_NO;
+  }
 }
 
 //-------------------------------------------------------------------------------
@@ -112,14 +254,64 @@ int GPIO::getButtonPinState(int buttonPin) {
 }
 
 void GPIO::printButtonMode(String msg, buttonMode_t mode) {
-  logging.info(msg + ": Button mode S= " + String(mode.S) +
-                 " L= " + String(mode.L) + " button= " + String(mode.state) +
-                 " idle= " + String(mode.idle));
+  logging.debug(msg + ": Button mode S= " + String(mode.S) +
+                " L= " + String(mode.L) + " button= " + String(mode.state) +
+                " idle= " + String(mode.idle));
 }
 
 void GPIO::setButtonMode(buttonMode_t mode) {
 
-  onSetButtonMode(currentButtonMode, mode);
+  buttonMode_t oldMode= currentButtonMode;
+  buttonMode_t newMode= mode;
+
+  // printButtonMode("old", oldMode);
+  // printButtonMode("new", newMode);
+
+  // change in button (pressed or released)
+  if (newMode.state != oldMode.state) {
+    // queue button event
+    if (newMode.state)
+      topicQueue.put("~/event/gpio/button/down 1");
+    else
+      topicQueue.put("~/event/gpio/button/down 0");
+  }
+
+  // change in short mode
+  if (newMode.S != oldMode.S) {
+    // enqueue change in short mode
+    if (newMode.S) {
+      topicQueue.put("~/event/gpio/button/short 1");
+    } else {
+      topicQueue.put("~/event/gpio/button/short 0");
+    }
+    // the controller will decide what to do with the event
+  }
+
+  // enter idling
+  if (newMode.idle) {
+    if (!oldMode.idle) {
+      // enter idle mode
+      topicQueue.put("~/event/gpio/button/idle 1");
+      // drop out of long mode
+      newMode.L = 0;
+    }
+  } else {
+    if (oldMode.idle) {
+      // leave idle mode
+      topicQueue.put("~/event/gpio/button/idle 0");
+    }
+  }
+
+  // change in long mode
+  if (newMode.L != oldMode.L) {
+    // enqueue change in long mode
+    if (newMode.L) {
+      topicQueue.put("~/event/gpio/button/long 1");
+    } else {
+      topicQueue.put("~/event/gpio/button/long 0");
+    }
+  };
+
   currentButtonMode = mode;
 }
 #endif
@@ -131,6 +323,10 @@ void GPIO::setButtonMode(buttonMode_t mode) {
 #ifdef HAS_LED
 void GPIO::Led(int on) { digitalWrite(LED_PIN, on); }
 #endif
+
+//...............................................................................
+// Neoxpixel routines
+//...............................................................................
 
 #ifdef HAS_NEOPIXEL
 void GPIO::Neopixel(int on) {
@@ -150,62 +346,9 @@ void GPIO::Neopixel(int on) {
 #endif
 
 //...............................................................................
-// relay routines
+// Relay routines
 //...............................................................................
 
 #ifdef HAS_RELAY
 void GPIO::Relay(int on) { digitalWrite(RELAY_PIN, on); }
 #endif
-
-//===> button mode service routine --------------------------------------------
-
-void GPIO::onSetButtonMode(buttonMode_t oldMode, buttonMode_t newMode) {
-
-  // examples for how to use the idle flag:
-  // - if button is pressed, indicate that releasing the button will toggle the L mode
-  // - leave an input mode when not button is pressed for some time
-
-  /*printButtonMode("old", oldMode);
-  printButtonMode("new", newMode);*/
-  if(newMode.S != oldMode.S)  {
-      // here we enqueue the event
-      //queue.put("~/foo/button/shortPress")
-      // the controller will decide what to do with the event
-  }
-
-
-  if(newMode.L != oldMode.L) {
-    if(newMode.L)
-      // queue.put("~/foo/button/long 1");
-      Serial.println("God mode is on.");
-    else
-    // queue.put("~/foo/button/long 0");
-      Serial.println("God mode is off.");
-  } else {
-    if(newMode.state && newMode.idle != oldMode.idle && newMode.idle) {
-      if(newMode.L) {
-        Serial.println("Prepare to leave God mode.");
-        if(newMode.S) currentLedMode= ON; else currentLedMode= OFF;
-      } else  {
-        Serial.println("Prepare to enter God mode.");
-        currentLedMode= BLINK;
-      }
-    }
-  }
-}
-
-/*
-void GPIO::switchRelay(int state) {
-  if (state == 1){
-    if(!currentButtonMode.L) currentLedMode= ON;   // signalisation of Mode L takes precedence
-      Relay(1);
-      pub(3,0, "on");
-      Serial.println("Relay is on.");
-    } else {
-      if(!currentButtonMode.L) currentLedMode= OFF; // signalisation of Mode L takes precedence
-      Relay(0);
-      pub(3,0, "off");
-     Serial.println("Relay is off.");
-    }
-}
-*/

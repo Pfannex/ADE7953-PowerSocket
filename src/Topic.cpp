@@ -1,5 +1,4 @@
 #include "Topic.h"
-
 #include "Arduino.h"
 
 //###############################################################################
@@ -42,6 +41,16 @@ Topic::Topic(char* topics, char* args) {
   arg = nullptr;
   dissectTopic(topics, args);
 }
+
+Topic::Topic(char* topics, int value) {
+  char* args = new char[20];
+  sprintf(args, "%d", value);
+  item = nullptr;
+  arg = nullptr;
+  dissectTopic(topics, args);
+  delete[] args;
+}
+
 Topic::~Topic(){
   if (item != NULL) delete[] item;
   if (arg != NULL)  delete[] arg;
@@ -161,6 +170,16 @@ bool Topic::itemIs(int index, string topicName){
     return false;
 }
 
+//...............................................................................
+//  compare topic.arg by index with string
+//...............................................................................
+bool Topic::argIs(int index, const string value){
+  if (index < countArgs)
+    return !strcmp(arg[index], value);
+  else
+    return false;
+}
+
 //-------------------------------------------------------------------------------
 //  Topic private
 //-------------------------------------------------------------------------------
@@ -200,9 +219,12 @@ void TopicQueue::clear() {
 }
 
 void TopicQueue::put(String& topicsArgs) {
+
+  if(count>= TOPIC_QUEUE_MAX) return;
   // create a new element
+  //Serial.println("queue: put "+topicsArgs);
   element_t* e= new element_t;
-  e->topicsArgs= new char[topicsArgs.length()];
+  e->topicsArgs= new char[topicsArgs.length()+1]; // +1 for trailing 0
   strcpy(e->topicsArgs, topicsArgs.c_str());
   // prepend to tail
   e->next= tail;
@@ -217,16 +239,25 @@ void TopicQueue::put(String& topicsArgs) {
   tail= e;
   // increase count
   count++;
+  //Serial.println("queue: put done");
+}
+
+void TopicQueue::put(const char* topicsArgs) {
+  String t= String(topicsArgs);
+  put(t);
 }
 
 String TopicQueue::get() {
 
+  //Serial.println("queue: get begin");
   if(count) {
     element_t* e= head;
     String topicsArgs= String(e->topicsArgs);
     head= head->prev;
-    delete e;
+    delete[] e;
     count--;
+    //Serial.println("queue: get "+topicsArgs);
+    return topicsArgs;
   } else {
     return String(""); // if you get here then you have made an programming error
   }

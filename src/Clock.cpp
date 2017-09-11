@@ -76,10 +76,8 @@ void Clock::adjustTimeOffset() {
 void Clock::update() {
 
   if (ntpClient != nullptr) {
-
     // this polls the NTP server only if NTP_UPDATE_INTERVAL has elapsed
     ntpClient->update();
-
     adjustTimeOffset();
   }
 }
@@ -87,10 +85,7 @@ void Clock::update() {
 void Clock::forceUpdate() {
 
   if (ntpClient != nullptr) {
-
-    // this polls the NTP server only if NTP_UPDATE_INTERVAL has elapsed
     ntpClient->forceUpdate();
-
     adjustTimeOffset();
   }
 }
@@ -110,7 +105,7 @@ String Clock::root() {
 }
 
 //...............................................................................
-//  Clock GET
+//  Clock SET
 //...............................................................................
 
 String Clock::set(Topic &topic) {

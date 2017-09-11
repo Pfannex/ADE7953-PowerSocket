@@ -1,5 +1,6 @@
-#include "Setup.h"
 #include "Logger.h"
+#include "Setup.h"
+#include "Topic.h"
 
 //
 // Neopixel
@@ -14,14 +15,18 @@
 #ifdef HAS_BUTTON
 // Arduino Pin 12 = = IO12 = Physical Pin 6 = NodeMCU/WeMos Pin D6
 #define BUTTON_PIN 12
-#define BTIME 5000
+// time in ms button needs to be pressed to detect long mode
+#define LONGPRESSTIME 5000
+// time in ms pin must be stable before reporting change
 #define DEBOUNCETIME 50
+// time in ms to detect idling
+#define IDLETIME 30000
 typedef struct {
   int S;           // mode S 0 or 1
   int L;           // mode L 0 or 1
-  unsigned long t; // time of last change
+  unsigned long t; // time of last change of button (not mode!)
   int state;       // button down 0 or 1
-  int idle;        // state lasts longer than >= BTIME
+  int idle;        // no press/release for IDLETIME
 } buttonMode_t;
 #endif
 
@@ -32,7 +37,8 @@ typedef struct {
 // Arduino Pin 15 = IO15 = Physical Pin 16 = NodeMCU/WeMos Pin D8
 #define LED_PIN 15
 typedef enum ledMode_t { OFF, ON, BLINK };
-#define BLINK_T 5 // in multiples of TIMER_T
+// time in ms for blinking
+#define BLINKTIME 100
 #endif
 
 //
@@ -50,13 +56,17 @@ typedef enum ledMode_t { OFF, ON, BLINK };
 class GPIO {
 
 public:
-  GPIO(LOGGING &logging);
+  GPIO(LOGGING &logging, TopicQueue &topicQueue);
   void start();
   void handle();
+  String set(Topic &topic);
+  void setLedMode(ledMode_t ledMode);
+  void setRelayMode(int value);
+  void setNeoPixelMode(int value);
 
 private:
   LOGGING &logging;
-
+  TopicQueue &topicQueue;
 
 // button
 #ifdef HAS_BUTTON
@@ -67,7 +77,6 @@ private:
   int getButtonPinState(int buttonPin);
   void printButtonMode(String msg, buttonMode_t mode);
   void setButtonMode(buttonMode_t mode);
-  void onSetButtonMode(buttonMode_t oldMode, buttonMode_t newMode);
 #endif
 
 // led
@@ -76,16 +85,15 @@ private:
   void Led(int on);
 #endif
 
-// relay
-#ifdef HAS_RELAY
-  void Relay(int on);
-  //void switchRelay(int state) 
-#endif
-
 // neopixel
 #ifdef HAS_NEOPIXEL
   Adafruit_NeoPixel WS_LED =
       Adafruit_NeoPixel(1, LED_PIN, NEO_GRB + NEO_KHZ800);
   void Neopixel(int on);
+#endif
+
+// relay
+#ifdef HAS_RELAY
+  void Relay(int on);
 #endif
 };

@@ -36,8 +36,8 @@ void API::start() {
 //  EVENT ViewUpdate
 //...............................................................................
 void API::on_viewsUpdate(Topic &topic){
-  controller.logging.debug("-> API::on_viewsUpdate()");
-  controller.logging.debug(topic.asString());
+  //controller.logging.debug("-> API::on_viewsUpdate()");
+  //controller.logging.debug(topic.asString());
 
   if (on_pubMQTT != nullptr) on_pubMQTT(topic);
   if (on_pubWEBIF != nullptr) on_pubWEBIF(topic);
