@@ -23,8 +23,10 @@ void GPIO::start() {
     buttonPinState[i] = 0;
     lastDebounceTime[i] = 0;
   }
-  currentButtonMode.t = 0;
-  currentButtonMode.idle = 0;
+  lastButtonState = 0;
+  buttonChangeTime = 0;
+  buttonIdle = 0;
+
 #endif
 
 #ifdef HAS_LED
@@ -75,7 +77,7 @@ void GPIO::setNeoPixelMode(int value) {
 
 #ifdef HAS_NEOPIXEL
   Neopixel(value);
-  if(value)
+  if (value)
     topicQueue.put("~/event/gpio/neopixel 1");
   else
     topicQueue.put("~/event/gpio/neopixel 0");
@@ -94,7 +96,7 @@ void GPIO::setRelayMode(int value) {
 
 #ifdef HAS_RELAY
   Relay(value);
-  if(value)
+  if (value)
     topicQueue.put("~/event/gpio/relay 1");
   else
     topicQueue.put("~/event/gpio/relay 0");
@@ -129,7 +131,6 @@ void GPIO::handle() {
   Neopixel(neopixelOn);
 #endif
 
-
 //
 // button
 //
@@ -142,54 +143,40 @@ void GPIO::handle() {
   if (buttonPinState < 0)
     return; // still bouncing
 
-  // on button press:
-  // - do nothing, start time measurement
-  // on button release:
-  // - if in long mode leave long mode if less than LONGPRESSTIME has passed
-  // - if not in long mode toggle short mode
-  // on idling:
-  // - leave long mode
-
-  unsigned long tl = now - currentButtonMode.t;
+  unsigned long t = now;
+  unsigned long tl = t - buttonChangeTime;
   int idling = (tl >= IDLETIME);
   int longtime = (tl >= LONGPRESSTIME);
 
-  buttonMode_t mode = currentButtonMode;
-  mode.state = !buttonPinState; // down if pin is 0
-  if (mode.state != currentButtonMode.state) {
-    // button changed
-    mode.t = now;
-    /*logging.debug("Button changed to " + String(mode.state) + " @ " +
-                  String(mode.t));*/
-    // handle button press or release
-    if (!mode.state) {
-      // button up
-      /*logging.debug("button released, time=" + String(tl) +
-                    " longtime=" + String(longtime));*/
-      if (mode.L) {
-        if (!longtime)
-          mode.L = 0;
-      } else
-        mode.S = !mode.S;
+  if (buttonPinState == lastButtonState) {
+    // button unchanged
+    if (buttonPinState) {
+      // button is pressed
+      if (!buttonLongPress && longtime) {
+        buttonLongPress = 1;
+        topicQueue.put("~/event/gpio/button/long");
+      }
     } else {
-      // button down
-      mode.L = 0; // drop out of long mode
-    }
-    mode.idle = 0;
-    setButtonMode(mode);
-  } else {
-    // button did not change
-    if (!mode.L && mode.state && longtime) {
-      // not in long mode and button pressed for a long time
-      mode.L = 1; // this sets long mode even before the button is released
-      mode.idle = 0;
-      setButtonMode(mode);
-    } else {
-      if (!mode.idle && idling) {
-        mode.idle = 1;
-        setButtonMode(mode);
+      // button is not pressed
+      if (!buttonIdle && idling) {
+        buttonIdle = 1;
+        topicQueue.put("~/event/gpio/button/idle 1");
       }
     }
+    return;
+  } else {
+    // button changed
+    buttonLongPress = 0;
+    buttonChangeTime = t;
+    if (buttonPinState)
+      topicQueue.put("~/event/gpio/button/state 1");
+    else
+      topicQueue.put("~/event/gpio/button/state 0");
+    if (buttonIdle) {
+      buttonIdle = 0;
+      topicQueue.put("~/event/gpio/button/idle 0");
+    }
+    lastButtonState = buttonPinState;
   }
 
 #endif
@@ -248,72 +235,11 @@ int GPIO::getButtonPinState(int buttonPin) {
   if (buttonPinState[buttonPin] != lastButtonPinState)
     lastDebounceTime[buttonPin] = now;
   if (now - lastDebounceTime[buttonPin] > DEBOUNCETIME)
-    return buttonPinState[buttonPin];
+    return !buttonPinState[buttonPin]; // inverse logic
   else
     return -1; // undecided, still bouncing
 }
 
-void GPIO::printButtonMode(String msg, buttonMode_t mode) {
-  logging.debug(msg + ": Button mode S= " + String(mode.S) +
-                " L= " + String(mode.L) + " button= " + String(mode.state) +
-                " idle= " + String(mode.idle));
-}
-
-void GPIO::setButtonMode(buttonMode_t mode) {
-
-  buttonMode_t oldMode= currentButtonMode;
-  buttonMode_t newMode= mode;
-
-  // printButtonMode("old", oldMode);
-  // printButtonMode("new", newMode);
-
-  // change in button (pressed or released)
-  if (newMode.state != oldMode.state) {
-    // queue button event
-    if (newMode.state)
-      topicQueue.put("~/event/gpio/button/down 1");
-    else
-      topicQueue.put("~/event/gpio/button/down 0");
-  }
-
-  // change in short mode
-  if (newMode.S != oldMode.S) {
-    // enqueue change in short mode
-    if (newMode.S) {
-      topicQueue.put("~/event/gpio/button/short 1");
-    } else {
-      topicQueue.put("~/event/gpio/button/short 0");
-    }
-    // the controller will decide what to do with the event
-  }
-
-  // enter idling
-  if (newMode.idle) {
-    if (!oldMode.idle) {
-      // enter idle mode
-      topicQueue.put("~/event/gpio/button/idle 1");
-      // drop out of long mode
-      newMode.L = 0;
-    }
-  } else {
-    if (oldMode.idle) {
-      // leave idle mode
-      topicQueue.put("~/event/gpio/button/idle 0");
-    }
-  }
-
-  // change in long mode
-  if (newMode.L != oldMode.L) {
-    // enqueue change in long mode
-    if (newMode.L) {
-      topicQueue.put("~/event/gpio/button/long 1");
-    } else {
-      topicQueue.put("~/event/gpio/button/long 0");
-    }
-  };
-
-  currentButtonMode = mode;
-}
 #endif
 
 //...............................................................................

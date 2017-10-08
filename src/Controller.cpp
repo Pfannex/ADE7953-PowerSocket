@@ -20,8 +20,8 @@
 //  constructor
 //...............................................................................
 Controller::Controller()
-    : logging(clock), i2c(logging), ffs(logging), clock(), espTools(logging),
-      wifi(logging, ffs), gpio(logging, topicQueue) {
+    : logging(clock), i2c(logging), ffs(logging), clock(topicQueue),
+      espTools(logging), wifi(logging, ffs), gpio(logging, topicQueue) {
 
   // callback Events
   // WiFi
@@ -99,11 +99,12 @@ void Controller::handle() {
     wifi.start();
   }
   gpio.handle();
-
+  clock.handle();
   // if(topicQueue.count) logging.debug(String(topicQueue.count) + " event(s) in
   // queue");
   while (topicQueue.count) {
     String topicsArgs = topicQueue.get();
+    yield();
     handleEvent(topicsArgs);
   }
 
@@ -122,9 +123,23 @@ void Controller::handle() {
 }
 
 //...............................................................................
-//  handle events
+//  mode setter
 //...............................................................................
 
+void Controller::setPowerMode(int value) {
+  power = value;
+  gpio.setRelayMode(power);
+  setLedMode();
+}
+
+void Controller::setConfigMode(int value) {
+  configMode = value;
+  if (configMode > 0)
+    topicQueue.put("~/event/controller/configMode 1");
+  else if (!configMode)
+    topicQueue.put("~/event/controller/configMode 0");
+  setLedMode();
+}
 void Controller::setLedMode() {
 
   if (!configMode) {
@@ -136,6 +151,9 @@ void Controller::setLedMode() {
     gpio.setLedMode(BLINK);
 }
 
+//...............................................................................
+//  handle Event
+//...............................................................................
 void Controller::handleEvent(String &topicsArgs) {
 
   //
@@ -149,20 +167,28 @@ void Controller::handleEvent(String &topicsArgs) {
   // propagate event to views
   viewsUpdate(topic);
 
+  // central business logic
   if (topic.itemIs(2, "gpio")) {
     if (topic.itemIs(3, "button")) {
+      //
       // events from button
-      if (topic.itemIs(4, "short")) {
-        power = topic.argIs(0, "1");
-        logging.info("power on/off by button");
-        gpio.setRelayMode(power);
-        setLedMode();
+      //
+      // - state
+      if (topic.itemIs(4, "state")) {
+        if (topic.argIs(0, "0")) // button released
+          if (configMode < 0)
+            setConfigMode(1);
+          else if (configMode > 0)
+            setConfigMode(0);
+          else
+            setPowerMode(!power);
       }
-      if (topic.itemIs(4, "long")) {
-        configMode = topic.argIs(0, "1");
-        logging.info("config mode on/off by button");
-        setLedMode();
-      }
+      // - long
+      if (topic.itemIs(4, "long"))
+        setConfigMode(-1);
+      // - idle
+      if (topic.itemIs(4, "idle"))
+        setConfigMode(0);
     }
   }
 }
@@ -223,10 +249,7 @@ String Controller::call(Topic &topic) {
 //...............................................................................
 void Controller::t_1s_Update() {}
 
-void Controller::t_short_Update() {
-  clock.update();
-  espTools.debugMem();
-}
+void Controller::t_short_Update() { espTools.debugMem(); }
 
 void Controller::t_long_Update() {}
 

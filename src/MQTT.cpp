@@ -26,8 +26,10 @@ MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
 //  EVENT publish Topic
 //...............................................................................
 void MQTT::on_pubMQTT(Topic &topic) {
-  api.controller.logging.debug("-> MQTT::on_pubMQTT()");
-  api.controller.logging.debug(topic.asString());
+  //api.controller.logging.debug("-> MQTT::on_pubMQTT()");
+  //api.controller.logging.debug(topic.asString());
+
+  //publish + DeviceName
 }
 
 //...............................................................................

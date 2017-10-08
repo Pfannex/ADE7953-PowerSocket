@@ -12,13 +12,13 @@
 class Clock {
 
 public:
-  Clock();
+  Clock(TopicQueue &topicQueue);
   ~Clock();
   void start();
   // offset in seconds, updateInterval in milliseconds
   void start(const char* poolServerName, int timeOffset, int updateInterval);
   void stop();
-  void update();
+  void handle();
   void forceUpdate();
   time_t now();   // current time in seconds since the epoch
 
@@ -28,8 +28,10 @@ public:
 
 
 private:
+  TopicQueue &topicQueue;
   WiFiUDP ntpUDP;
   NTPClient *ntpClient = nullptr;
   void adjustTimeOffset();
+  unsigned long lastTime= 0; // lastTime in seconds to detect clock tick
 
 };

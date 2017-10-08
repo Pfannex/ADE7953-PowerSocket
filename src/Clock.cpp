@@ -8,7 +8,7 @@
 //  NTP clock public
 //-------------------------------------------------------------------------------
 
-Clock::Clock() {}
+Clock::Clock(TopicQueue &topicQueue): topicQueue(topicQueue) {}
 
 Clock::~Clock() {
   stop();
@@ -42,6 +42,7 @@ void Clock::stop() {
     delete ntpClient;
     ntpClient = nullptr;
   }
+  lastTime = 0;
 }
 
 //...............................................................................
@@ -62,6 +63,7 @@ time_t Clock::now() {
 //...............................................................................
 
 void Clock::adjustTimeOffset() {
+  if (ntpClient == nullptr) return;
   // change between summer time (DST) and winter time
   time_t t = now();
   // Sommerzeit = letzter Sonntag im März von 2h -> 3h
@@ -73,12 +75,20 @@ void Clock::adjustTimeOffset() {
 }
 
 // this function needs to be called periodically
-void Clock::update() {
+void Clock::handle() {
 
+  unsigned long t;
   if (ntpClient != nullptr) {
     // this polls the NTP server only if NTP_UPDATE_INTERVAL has elapsed
     ntpClient->update();
     adjustTimeOffset();
+    // when time changes send event ~/event/clock/time <time>
+  }
+  t= now();
+  if(t != lastTime) {
+    lastTime = t;
+    adjustTimeOffset();
+    topicQueue.put("~/event/clock/time "+SysUtils::strDateTime(t));
   }
 }
 

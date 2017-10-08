@@ -50,16 +50,17 @@ public:
   void t_short_Update();
   void t_long_Update();
 
+private:
   // the central modes
   int power = 0;
   int configMode = 0;
 
-
-private:
   bool startConnections();
   void startPeriphery();
   void viewsUpdate(Topic& topic);
   void handleEvent(String& topicsArgs);
+  void setConfigMode(int value);
+  void setPowerMode(int value);
   void setLedMode();
 
   TopicQueue topicQueue;

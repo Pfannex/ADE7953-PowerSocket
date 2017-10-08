@@ -21,13 +21,6 @@
 #define DEBOUNCETIME 50
 // time in ms to detect idling
 #define IDLETIME 30000
-typedef struct {
-  int S;           // mode S 0 or 1
-  int L;           // mode L 0 or 1
-  unsigned long t; // time of last change of button (not mode!)
-  int state;       // button down 0 or 1
-  int idle;        // no press/release for IDLETIME
-} buttonMode_t;
 #endif
 
 //
@@ -72,11 +65,11 @@ private:
 #ifdef HAS_BUTTON
   int buttonPinState[17];             // the last pin state
   unsigned long lastDebounceTime[17]; // when the pin state changed last
-  buttonMode_t currentButtonMode;
+  int lastButtonState= 0;
   unsigned long buttonChangeTime = 0;
   int getButtonPinState(int buttonPin);
-  void printButtonMode(String msg, buttonMode_t mode);
-  void setButtonMode(buttonMode_t mode);
+  int buttonIdle= 0;
+  int buttonLongPress = 0;
 #endif
 
 // led
