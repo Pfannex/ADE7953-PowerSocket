@@ -81,14 +81,14 @@ void Clock::handle() {
   if (ntpClient != nullptr) {
     // this polls the NTP server only if NTP_UPDATE_INTERVAL has elapsed
     ntpClient->update();
-    adjustTimeOffset();
-    // when time changes send event ~/event/clock/time <time>
   }
   t= now();
   if(t != lastTime) {
     lastTime = t;
     adjustTimeOffset();
+    // using SysUtils::strDateTime() makes the firmware crash after 6 minutes
     topicQueue.put("~/event/clock/time "+SysUtils::strDateTime(t));
+    //topicQueue.put("~/event/clock/time", t);
   }
 }
 

@@ -48,27 +48,29 @@ void API::on_viewsUpdate(Topic &topic){
 //...............................................................................
 
 String API::call(Topic &topic) {
+  //D("API: begin call(&Topic)");
   // just a pass through
-  return controller.call(topic);
-}
-
-// convenience function
-String API::call(String topicsArgs) {
-  Topic tmpTopic(topicsArgs);
-  debug("API call "+tmpTopic.asString());
-  String result= call(tmpTopic);
+  debug("API call "+topic.asString());
+  String result= controller.call(topic);
   if(result == nullptr) {
-      result= String("no result");
+      result= String("<no result>");
   }
-  debug("result: "+result);
   return result;
 }
 
 // convenience function
-String API::call(string topicsArgs) {
-  return call(String(topicsArgs));
+String API::call(String topicsArgs) {
+    return call(topicsArgs.c_str());
 }
 
+// convenience function
+String API::call(string topicsArgs) {
+  //D("API: call");
+  //D(topicsArgs);
+  Topic topic(topicsArgs);
+  //Dl;
+  return call(topic);
+}
 
 // these are convenience functions
 // a more convoluted way would be via a topic ~/log/info

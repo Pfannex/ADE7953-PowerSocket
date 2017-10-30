@@ -24,7 +24,7 @@ void LOGGING::start() {
 //...............................................................................
 void LOGGING::log(const String &channel, const String &msg) {
   char txt[1024];
-  String T = SysUtils::strDateTime_ms(clock.now());
+  String T = SysUtils::strDateTime(clock.now());
   sprintf(txt, "%s %5s %s", T.c_str(), channel.c_str(), msg.c_str());
   Serial.println(txt);
 }

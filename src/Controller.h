@@ -1,6 +1,7 @@
 #pragma once
 
 // Controller
+#include "Debug.h"
 #include "Clock.h"
 #include "ESP.h"
 #include "FFS.h"
@@ -54,6 +55,8 @@ private:
   // the central modes
   int power = 0;
   int configMode = 0;
+  //
+  int longPress = 0; // button press was long -> prepare to enter config mode
 
   bool startConnections();
   void startPeriphery();

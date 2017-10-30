@@ -1,5 +1,7 @@
 #include "Controller.h"
 
+#include "ESP.h"
+
 //###############################################################################
 //  Controller
 //###############################################################################
@@ -88,6 +90,23 @@ void Controller::start() {
   setLedMode();
 
   logging.info("controller started");
+
+  logging.debug("############# START provoking memory leak (1)");
+  espTools.debugMem();
+  Topic* topic1= new Topic("~/foo/bar/baz/bat 1");
+  espTools.debugMem();
+  delete topic1;
+  espTools.debugMem();
+  logging.debug("############# END provoking memory leak (1)");
+
+  logging.debug("############# START provoking memory leak (2)");
+  espTools.debugMem();
+  Topic* topic2= new Topic("foo/bar", 1);
+  espTools.debugMem();
+  delete topic2;
+  espTools.debugMem();
+  logging.debug("############# END provoking memory leak (2)");
+
 }
 
 //...............................................................................
@@ -133,15 +152,14 @@ void Controller::setPowerMode(int value) {
 }
 
 void Controller::setConfigMode(int value) {
+  if (configMode == value)
+    return;
   configMode = value;
-  if (configMode > 0)
-    topicQueue.put("~/event/controller/configMode 1");
-  else if (!configMode)
-    topicQueue.put("~/event/controller/configMode 0");
+  topicQueue.put("~/event/controller/configMode", configMode);
   setLedMode();
 }
-void Controller::setLedMode() {
 
+void Controller::setLedMode() {
   if (!configMode) {
     if (power)
       gpio.setLedMode(ON);
@@ -162,35 +180,45 @@ void Controller::handleEvent(String &topicsArgs) {
   //
 
   logging.debug("handling event " + topicsArgs);
-  Topic topic = Topic(topicsArgs);
+  //D("Controller: create Topic object");
+  //Topic topic = Topic(topicsArgs);
+  Topic topic(topicsArgs);
 
   // propagate event to views
+  //D("Controller: viewsUpdate");
   viewsUpdate(topic);
 
+  //D("Controller: business logic");
   // central business logic
   if (topic.itemIs(2, "gpio")) {
+    //Dl;
     if (topic.itemIs(3, "button")) {
       //
       // events from button
       //
       // - state
+      //Dl;
       if (topic.itemIs(4, "state")) {
+        //Dl;
         if (topic.argIs(0, "0")) // button released
-          if (configMode < 0)
-            setConfigMode(1);
-          else if (configMode > 0)
-            setConfigMode(0);
-          else
-            setPowerMode(!power);
+          // enter config mode if the last press was a long press
+          // else leave the config mode
+          setConfigMode(longPress);
+        else
+          setPowerMode(!power);
+        longPress = 0;
       }
       // - long
+      //Dl;
       if (topic.itemIs(4, "long"))
-        setConfigMode(-1);
+        longPress = 1;
       // - idle
+      //Dl;
       if (topic.itemIs(4, "idle"))
         setConfigMode(0);
     }
   }
+  //D("Controller: event handled");
 }
 
 //...............................................................................
@@ -198,7 +226,7 @@ void Controller::handleEvent(String &topicsArgs) {
 //...............................................................................
 void Controller::on_wifiConnected() {
   logging.info("WiFi has connected");
-  topicQueue.put("~/event/wifi/connected 1");
+  topicQueue.put("~/event/wifi/connected", 1);
 }
 
 //...............................................................................
@@ -206,7 +234,7 @@ void Controller::on_wifiConnected() {
 //...............................................................................
 void Controller::on_wifiDisconnected() {
   logging.info("WiFi has disconnected");
-  topicQueue.put("~/event/wifi/connected 0");
+  topicQueue.put("~/event/wifi/connected", 0);
 }
 
 //...............................................................................
@@ -215,6 +243,7 @@ void Controller::on_wifiDisconnected() {
 
 String Controller::call(Topic &topic) {
 
+  //D("Controller: begin call");
   // set
   if (topic.itemIs(1, "set")) {
     if (topic.itemIs(2, "ffs")) {
@@ -242,6 +271,7 @@ String Controller::call(Topic &topic) {
   } else {
     return TOPIC_NO;
   }
+  //D("Controller: end call");
 }
 
 //...............................................................................

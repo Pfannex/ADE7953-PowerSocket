@@ -20,6 +20,7 @@
 #include "Controller.h"
 #include "WEBServer.h"
 #include "MQTT.h"
+#include "Debug.h"
 
 Controller tc;
 API api(tc);
@@ -45,13 +46,17 @@ void setup() {
 
   // we first start the controller
   // the controller initializes all subsystems in order
+  //D("starting controller");
   tc.start();
 
   // we have the API as a level of abstraction
+  //D("starting API");
   api.start();
 
   // the viewers communicate with the susbsystems via the API
+  //D("starting web interface");
   webif.start();
+  //D("starting MQTT");
   mqtt.start();
   api.info("startup finished");
 
