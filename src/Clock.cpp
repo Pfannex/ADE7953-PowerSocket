@@ -8,11 +8,12 @@
 //  NTP clock public
 //-------------------------------------------------------------------------------
 
-Clock::Clock(TopicQueue &topicQueue): topicQueue(topicQueue) {}
-
-Clock::~Clock() {
-  stop();
+Clock::Clock(TopicQueue &topicQueue) : topicQueue(topicQueue) {
+  uptimeLo = 0;
+  uptimeHi = 0;
 }
+
+Clock::~Clock() { stop(); }
 //...............................................................................
 //  start
 //...............................................................................
@@ -46,13 +47,28 @@ void Clock::stop() {
 }
 
 //...............................................................................
+//  uptime routines
+//...............................................................................
+
+void Clock::updateUptime() {
+  unsigned long ms = millis();
+  if (ms < uptimeLo) {
+    // counter wraparound
+    uptimeHi++;
+  }
+  uptimeLo = ms;
+}
+
+double Clock::uptime() { return uptimeLo / 1000.0 + uptimeHi * 4294967.296; }
+
+//...............................................................................
 //  now
 //...............................................................................
 
 time_t Clock::now() {
 
   if (ntpClient == nullptr) {
-    return millis() / 1000;
+    return (time_t)uptime();
   } else {
     return ntpClient->getEpochTime();
   }
@@ -63,7 +79,8 @@ time_t Clock::now() {
 //...............................................................................
 
 void Clock::adjustTimeOffset() {
-  if (ntpClient == nullptr) return;
+  if (ntpClient == nullptr)
+    return;
   // change between summer time (DST) and winter time
   time_t t = now();
   // Sommerzeit = letzter Sonntag im März von 2h -> 3h
@@ -77,18 +94,19 @@ void Clock::adjustTimeOffset() {
 // this function needs to be called periodically
 void Clock::handle() {
 
+  updateUptime();
   unsigned long t;
   if (ntpClient != nullptr) {
     // this polls the NTP server only if NTP_UPDATE_INTERVAL has elapsed
     ntpClient->update();
   }
-  t= now();
-  if(t != lastTime) {
+  t = now();
+  if (t != lastTime) {
     lastTime = t;
     adjustTimeOffset();
     // using SysUtils::strDateTime() makes the firmware crash after 6 minutes
-    topicQueue.put("~/event/clock/time "+SysUtils::strDateTime(t));
-    //topicQueue.put("~/event/clock/time", t);
+    topicQueue.put("~/event/clock/time " + SysUtils::strDateTime(t));
+    // topicQueue.put("~/event/clock/time", t);
   }
 }
 
@@ -109,8 +127,8 @@ String Clock::root() {
   time_t t = now();
   return "{\"date\":\"" + SysUtils::strDate(t) + "\"," + "\"time\":\"" +
          SysUtils::strTime(t) + "\"," + "\"time_ms\":\"" +
-         SysUtils::strTime_ms(t) + "\"," + "\"dateTime\":\"" +
-         SysUtils::strDateTime(t) + "\"," + "\"dateTime_ms\":\"" +
+         // SysUtils::strTime_ms(t) + "\"," + "\"dateTime\":\"" +
+         // SysUtils::strDateTime(t) + "\"," + "\"dateTime_ms\":\"" +
          SysUtils::strDateTime(t) + "\"}";
 }
 
@@ -128,7 +146,9 @@ String Clock::set(Topic &topic) {
   if (topic.itemIs(3, "forceNTPUpdate")) {
     forceUpdate();
     return TOPIC_OK;
-  } else { return TOPIC_NO; }
+  } else {
+    return TOPIC_NO;
+  }
 }
 
 //...............................................................................
@@ -145,17 +165,17 @@ String Clock::set(Topic &topic) {
       └─DateTime_ms
 */
 String Clock::get(Topic &topic) {
-    if (topic.itemIs(3, "root")) {
-      return root();
-    } else if (topic.itemIs(3, "time")) {
-      return SysUtils::strTime(now());
-    } else if (topic.itemIs(3, "date")) {
-      return SysUtils::strDate(now());
-    } else if (topic.itemIs(3, "dateTime")) {
-      return SysUtils::strDateTime(now());
-    } else if (topic.itemIs(3, "dateTime_ms")) {
-      return SysUtils::strDateTime_ms(now());
-    } else {
-      return TOPIC_NO;
-    }
+  if (topic.itemIs(3, "root")) {
+    return root();
+  } else if (topic.itemIs(3, "time")) {
+    return SysUtils::strTime(now());
+  } else if (topic.itemIs(3, "date")) {
+    return SysUtils::strDate(now());
+  } else if (topic.itemIs(3, "dateTime")) {
+    return SysUtils::strDateTime(now());
+    /*} else if (topic.itemIs(3, "dateTime_ms")) {
+      return SysUtils::strDateTime_ms(now());*/
+  } else {
+    return TOPIC_NO;
+  }
 }

@@ -21,6 +21,7 @@ public:
   void handle();
   void forceUpdate();
   time_t now();   // current time in seconds since the epoch
+  double uptime(); // uptime in s (with ms accuracy)
 
   String set(Topic& topic);
   String get(Topic& topic);
@@ -32,6 +33,9 @@ private:
   WiFiUDP ntpUDP;
   NTPClient *ntpClient = nullptr;
   void adjustTimeOffset();
+  void updateUptime();
   unsigned long lastTime= 0; // lastTime in seconds to detect clock tick
+  unsigned long uptimeLo= 0; // in ms
+  unsigned long uptimeHi= 0; // in 4294967296 ms
 
 };

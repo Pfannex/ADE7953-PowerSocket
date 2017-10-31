@@ -148,6 +148,9 @@ void GPIO::handle() {
   int idling = (tl >= IDLETIME);
   int longtime = (tl >= LONGPRESSTIME);
 
+  // note the difference:
+  // the short event is created when the button is released after a short time
+  // the long event is created when the button is pressed for a long time
   if (buttonPinState == lastButtonState) {
     // button unchanged
     if (buttonPinState) {
@@ -170,8 +173,15 @@ void GPIO::handle() {
     buttonChangeTime = t;
     if (buttonPinState)
       topicQueue.put("~/event/gpio/button/state 1");
-    else
+    else {
       topicQueue.put("~/event/gpio/button/state 0");
+      if(!longtime) {
+        topicQueue.put("~/event/gpio/button/short");
+        if(t-buttonReleaseTime <= DOUBLECLICKTIME)
+          topicQueue.put("~/event/gpio/button/double");
+        buttonReleaseTime= t;
+      }
+    }
     if (buttonIdle) {
       buttonIdle = 0;
       topicQueue.put("~/event/gpio/button/idle 0");

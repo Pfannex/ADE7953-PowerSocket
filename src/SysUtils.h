@@ -21,7 +21,8 @@ public:
   // date and time utils
   static String strDate(time_t t);
   static String strTime(time_t t);
-  static String strTime_ms(time_t t);
+  //static String strTime_ms(time_t t);
   static String strDateTime(time_t t);
-  static String strDateTime_ms(time_t t);
+  //static String strDateTime_ms(time_t t);
+  static String uptimeStr(time_t t);
 };

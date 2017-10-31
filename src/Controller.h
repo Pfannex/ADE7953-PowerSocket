@@ -11,6 +11,7 @@
 #include "WIFI.h"
 #include "oWire.h"
 #include "GPIO.h"
+#include "SysUtils.h"
 
 #include <functional>
 typedef std::function<void(void)> CallbackFunction;
@@ -55,8 +56,6 @@ private:
   // the central modes
   int power = 0;
   int configMode = 0;
-  //
-  int longPress = 0; // button press was long -> prepare to enter config mode
 
   bool startConnections();
   void startPeriphery();

@@ -1,7 +1,5 @@
 #include "Controller.h"
 
-#include "ESP.h"
-
 //###############################################################################
 //  Controller
 //###############################################################################
@@ -90,23 +88,6 @@ void Controller::start() {
   setLedMode();
 
   logging.info("controller started");
-
-  logging.debug("############# START provoking memory leak (1)");
-  espTools.debugMem();
-  Topic* topic1= new Topic("~/foo/bar/baz/bat 1");
-  espTools.debugMem();
-  delete topic1;
-  espTools.debugMem();
-  logging.debug("############# END provoking memory leak (1)");
-
-  logging.debug("############# START provoking memory leak (2)");
-  espTools.debugMem();
-  Topic* topic2= new Topic("foo/bar", 1);
-  espTools.debugMem();
-  delete topic2;
-  espTools.debugMem();
-  logging.debug("############# END provoking memory leak (2)");
-
 }
 
 //...............................................................................
@@ -180,45 +161,39 @@ void Controller::handleEvent(String &topicsArgs) {
   //
 
   logging.debug("handling event " + topicsArgs);
-  //D("Controller: create Topic object");
-  //Topic topic = Topic(topicsArgs);
+  // D("Controller: create Topic object");
+  // Topic topic = Topic(topicsArgs);
   Topic topic(topicsArgs);
 
   // propagate event to views
-  //D("Controller: viewsUpdate");
+  // D("Controller: viewsUpdate");
   viewsUpdate(topic);
 
-  //D("Controller: business logic");
+  // D("Controller: business logic");
   // central business logic
   if (topic.itemIs(2, "gpio")) {
-    //Dl;
+    // Dl;
     if (topic.itemIs(3, "button")) {
       //
       // events from button
       //
-      // - state
-      //Dl;
-      if (topic.itemIs(4, "state")) {
-        //Dl;
-        if (topic.argIs(0, "0")) // button released
-          // enter config mode if the last press was a long press
-          // else leave the config mode
-          setConfigMode(longPress);
+      // - short
+      if (topic.itemIs(4, "short")) {
+        if(configMode)
+          setConfigMode(0);
         else
           setPowerMode(!power);
-        longPress = 0;
       }
       // - long
-      //Dl;
       if (topic.itemIs(4, "long"))
-        longPress = 1;
+        setConfigMode(!configMode);
       // - idle
-      //Dl;
+      // Dl;
       if (topic.itemIs(4, "idle"))
         setConfigMode(0);
     }
   }
-  //D("Controller: event handled");
+  // D("Controller: event handled");
 }
 
 //...............................................................................
@@ -243,7 +218,7 @@ void Controller::on_wifiDisconnected() {
 
 String Controller::call(Topic &topic) {
 
-  //D("Controller: begin call");
+  // D("Controller: begin call");
   // set
   if (topic.itemIs(1, "set")) {
     if (topic.itemIs(2, "ffs")) {
@@ -271,7 +246,7 @@ String Controller::call(Topic &topic) {
   } else {
     return TOPIC_NO;
   }
-  //D("Controller: end call");
+  // D("Controller: end call");
 }
 
 //...............................................................................
@@ -279,7 +254,10 @@ String Controller::call(Topic &topic) {
 //...............................................................................
 void Controller::t_1s_Update() {}
 
-void Controller::t_short_Update() { espTools.debugMem(); }
+void Controller::t_short_Update() {
+  espTools.debugMem();
+  logging.debug("uptime: "+SysUtils::uptimeStr(clock.uptime()));
+};
 
 void Controller::t_long_Update() {}
 

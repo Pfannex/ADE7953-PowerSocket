@@ -78,16 +78,28 @@ String SysUtils::strTime(time_t t) {
   sprintf(txt, "%02d:%02d:%02d", hour(t), minute(t), second(t));
   return String(txt);
 }
-
-String SysUtils::strTime_ms(time_t t) {
+/*String SysUtils::strTime_ms(time_t t) {
   char txt[128];
   long ms = 1000 * (t - floor(t));
   sprintf(txt, "%02d:%02d:%02d.%03d", hour(t), minute(t), second(t), ms);
   return String(txt);
-}
+}*/
 
 String SysUtils::strDateTime(time_t t) { return strDate(t) + " " + strTime(t); }
 
-String SysUtils::strDateTime_ms(time_t t) {
+/*String SysUtils::strDateTime_ms(time_t t) {
   return strDate(t) + " " + strTime_ms(t);
+}*/
+
+String SysUtils::uptimeStr(time_t t) {
+
+  long int days= t/86400;
+  t-= days*86400;
+  int hours= t/3600;
+  t-= hours*3600;
+  int minutes= t/60;
+  t-= minutes*60;
+  char txt[128];
+  sprintf(txt, "%dd %02d:%02d:%02d", days, hours, minutes, t);
+  return String(txt);
 }

@@ -17,6 +17,8 @@
 #define BUTTON_PIN 12
 // time in ms button needs to be pressed to detect long mode
 #define LONGPRESSTIME 5000
+// time in ms button needs to be released againg to detect double click
+#define DOUBLECLICKTIME 750
 // time in ms pin must be stable before reporting change
 #define DEBOUNCETIME 50
 // time in ms to detect idling
@@ -70,6 +72,7 @@ private:
   int getButtonPinState(int buttonPin);
   int buttonIdle= 0;
   int buttonLongPress = 0;
+  unsigned long buttonReleaseTime = 0;
 #endif
 
 // led
