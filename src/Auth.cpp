@@ -1,18 +1,19 @@
 #include <Arduino.h>
 #include "Auth.h"
+#include "SysUtils.h"
 
 //###############################################################################
 //  Session
 //###############################################################################
 
-Session::Session(String username, SysUtils sysUtils):
+Session::Session(String username, API& api):
   username(username),
-  sysUtils(sysUtils) {
+  api(api) {
 
   // the session id should be as random as possible
   sessionId= "";
   for(int i= 0; i< 32; i++) {
-    sessionId.concat(String(sysUtils.rand(256), HEX));
+    sessionId.concat(String(SysUtils::rand(256), HEX));
   }
   touch();
 }
@@ -28,22 +29,22 @@ String Session::getUsername() {
 bool Session::isExpired() {
   bool expired= millis() - lastTouch > sessionLifetime;
   if(expired) {
-    sysUtils.logging.debug("session "+sessionId+" has expired.");
+    api.debug("session "+sessionId+" has expired.");
   }
   return expired;
 }
 
 void Session::touch() {
   lastTouch= millis();
-  sysUtils.logging.debug("session "+sessionId+" renewed.");
+  api.debug("session "+sessionId+" renewed.");
 }
 
 //###############################################################################
 //  Authentification
 //###############################################################################
 
-Auth::Auth(SysUtils& sysUtils):
-  sysUtils(sysUtils) {
+Auth::Auth(API& api):
+  api(api) {
 
   sessions= new SessionPtr[maxSessions];
   numSessions= 0;
@@ -75,7 +76,7 @@ void Auth::reset() {
 bool Auth::checkPassword(String username, String password) {
 
   String sha1hash= sha1(password);
-  sysUtils.logging.info("authentificating user "+username+" with SHA1 hash "+sha1hash+"... ");
+  api.info("authentificating user "+username+" with SHA1 hash "+sha1hash+"... ");
 
   // this is a stub!
   return (username == "admin") && (password == "admin");
@@ -88,12 +89,12 @@ bool Auth::checkPassword(String username, String password) {
 SessionPtr Auth::createSession(String username) {
 
   if(numSessions== maxSessions) {
-    sysUtils.logging.error("maximum number of sessions reached.");
+    api.error("maximum number of sessions reached.");
     return nullptr;
   } else {
-    SessionPtr session= new Session(username, sysUtils);
+    SessionPtr session= new Session(username, api);
     sessions[numSessions++]= session;
-    sysUtils.logging.info("session " + session->getSessionId() +
+    api.info("session " + session->getSessionId() +
       " created for user " + session->getUsername());
     return session;
   }
@@ -106,7 +107,7 @@ SessionPtr Auth::createSession(String username) {
 
 void Auth::deleteSession(String sessionId) {
 
-  sysUtils.logging.info("deleting session " + sessionId);
+  api.info("deleting session " + sessionId);
   for(int i= 0; i< numSessions; i++) {
       if(sessions[i]->getSessionId()== sessionId) {
         delete sessions[i];
@@ -126,7 +127,7 @@ void Auth::deleteSession(String sessionId) {
 SessionPtr Auth::getSession(String sessionId) {
 
   // check if we have a session with this ID
-  sysUtils.logging.info("checking session " + sessionId);
+  api.info("checking session " + sessionId);
   for(int i= 0; i< numSessions; i++) {
     //String sessionIdi= sessions[i]->getSessionId();
     //sysUtils.logging.debug("session has sessionId "+sessionIdi);

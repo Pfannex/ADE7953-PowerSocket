@@ -1,15 +1,10 @@
-#include <ESP8266WiFi.h>            //https://github.com/esp8266/Arduino
 #include "WIFI.h"
+#include <ESP8266WiFi.h> //https://github.com/esp8266/Arduino
 
 //###############################################################################
 //  WiFi
 //###############################################################################
-WIFI::WIFI(SysUtils& sysUtils, API& api, FFS& ffs, I2C& i2c):
-      sysUtils(sysUtils),
-      api(api),
-      ffs(ffs),
-      i2c(i2c){
-}
+WIFI::WIFI(LOGGING &logging, FFS &ffs) : logging(logging), ffs(ffs) {}
 
 //-------------------------------------------------------------------------------
 //  WiFi public
@@ -18,56 +13,96 @@ WIFI::WIFI(SysUtils& sysUtils, API& api, FFS& ffs, I2C& i2c):
 //...............................................................................
 //  WiFi start connection
 //...............................................................................
-bool WIFI::start(){
-  bool WiFiOK = false;
+bool WIFI::start() {
+  WiFiStatus = false;
 
-  String ssid = ffs.cfg.readItem("wifiSSID");
-  String psk = ffs.cfg.readItem("wifiPSK");
+  String ssid = ffs.cfg.readItem("wifi_ssid");
+  String psk = ffs.cfg.readItem("wifi_password");
 
-  sysUtils.logging.log("WIFI", "Connecting WiFi to: " + ssid);
+  logging.info("connecting WiFi to network with SSID " + ssid);
+  /*
   i2c.lcd.println("Connecting WiFi to:", ArialMT_Plain_10, 0);
   i2c.lcd.println(ssid, ArialMT_Plain_16,  10);
+  */
 
-  WiFi.mode(WIFI_STA);                     //exit AP-Mode if set once
-  WiFi.begin(ssid.c_str(),psk.c_str());
+  WiFi.mode(WIFI_STA); // exit AP-Mode if set once
+  WiFi.begin(ssid.c_str(), psk.c_str());
   int i = 0;
-  while (WiFi.status() != WL_CONNECTED and i < 31) {
-    delay(500);
+  // wait 30 seconds for connection
+  while (WiFi.status() != WL_CONNECTED and i <= 30) {
+    delay(1000);
     i++;
+    if (!(i % 5)) {
+      logging.info("still trying to connect...");
+    }
   }
 
-  if (WiFi.status() == WL_CONNECTED){
-    WiFiOK = true;
-    sysUtils.logging.log("DHCP", WiFi.localIP().toString());
-    i2c.lcd.println("DHCP-IP:", ArialMT_Plain_10, 31);
-    i2c.lcd.println(WiFi.localIP().toString(), ArialMT_Plain_16, 41);
-
-    if (on_wifiConnected != nullptr) on_wifiConnected();  //callback event
-  }else{
-    sysUtils.logging.error("Wifi unable to connect");
-    //start AP Ã¼ber Button!!! (GodMode?)
+  if (WiFi.status() == WL_CONNECTED) {
+    WiFiStatus = true;
+    logging.info("local IP address: " + WiFi.localIP().toString());
+    if (on_wifiConnected != nullptr)
+      on_wifiConnected(); // callback event
+  } else {
+    logging.error("WiFi unable to connect");
+    // start AP Ã¼ber Button!!! (GodMode?)
   }
-  Serial.println("............................................");
-  return WiFiOK;
+  return WiFiStatus;
 }
 
 //...............................................................................
-//  WiFi start connection
+//  WiFi handle connection
 //...............................................................................
-bool WIFI::handle(){
-  if (WiFi.status() == WL_CONNECTED)
-    return true;
-  else
-    return false;
+bool WIFI::handle() {
+
+  if (WiFi.status() == WL_CONNECTED) {
+    if (!WiFiStatus) {
+      WiFiStatus = true;
+      if (on_wifiConnected != nullptr)
+        on_wifiConnected();
+    }
+  }
+
+  else {
+    if (WiFiStatus) {
+      WiFiStatus = false;
+      if (on_wifiDisconnected != nullptr)
+        on_wifiDisconnected();
+    }
+  }
+  return WiFiStatus;
 }
 
 //...............................................................................
-//  WiFi start connection
+//  WiFi set callbacks
 //...............................................................................
-void WIFI::set_callbacks(CallbackFunction wifiConnected,
-                         CallbackFunction x){
+void WIFI::set_callback(CallbackFunction wifiConnected,
+                        CallbackFunction wifiDisconnected) {
   on_wifiConnected = wifiConnected;
-  on_x = x;
+  on_wifiDisconnected = wifiDisconnected;
+}
+
+//...............................................................................
+//  get MACAddress
+//...............................................................................
+String WIFI::macAddress() {
+    uint8_t mac[6];
+    char maddr[18];
+    WiFi.macAddress(mac);
+      sprintf(maddr, "%02x:%02x:%02x:%02x:%02x:%02x",
+                mac[0],mac[1],mac[2],mac[3],mac[4],mac[5]);
+    return String(maddr);
+}
+
+//...............................................................................
+//  API
+//...............................................................................
+String WIFI::get(Topic &topic) {
+  if (topic.itemIs(3, "macAddress")) {
+    return macAddress();
+  } else {
+    return TOPIC_NO;
+  }
+
 }
 
 //-------------------------------------------------------------------------------

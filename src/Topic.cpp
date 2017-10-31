@@ -1,32 +1,37 @@
+#include "Arduino.h"
+#include "Debug.h"
 #include "Topic.h"
 
 //###############################################################################
 //  data exchange Topic
 //###############################################################################
-Topic::Topic(String& topicsArgs) {
-//topics
-  String str = topicsArgs.substring(0, topicsArgs.indexOf(" "));
-  topics = new char[str.length()];
-  strcpy(topics, str.c_str());
-//args
-  str = topicsArgs.substring(topicsArgs.indexOf(" ")+1);
-  args = new char[str.length()];
-  strcpy(args, str.c_str());
+Topic::Topic(string topicsArgs) {
+  // D("Topic: begin constructor(string)");
+  //DF("Topic::Topic(string topicsArgs) begin");
+  initTopic(topicsArgs);
+  //DF("Topic::Topic(string topicsArgs) end");
+  // D("Topic: end constructor(string)");
+}
 
-  item = nullptr;
-  arg = nullptr;
+Topic::Topic(String &topicsArgs) {
+  // D("Topic: begin constructor(String&)");
+  initTopic(topicsArgs.c_str());
+  // D("Topic: end constructor(String&)");
+}
+
+Topic::Topic(string topics, string args) { dissectTopic(topics, args); }
+
+Topic::Topic(string topics, int value) {
+  char args[20];
+  sprintf(args, "%d", value);
   dissectTopic(topics, args);
 }
 
-Topic::Topic(char* topics, char* args) {
-  item = nullptr;
-  arg = nullptr;
-  dissectTopic(topics, args);
-}
-Topic::~Topic(){
-  if (item != NULL) delete[] item;
-  if (arg != NULL)  delete[] arg;
-  if (topics != NULL)  delete[] topics;
+Topic::~Topic() {
+  //DF("Topic::~Topic() begin");
+  item.clear();
+  arg.clear();
+  //DF("Topic::~Topic() end");
 }
 
 //-------------------------------------------------------------------------------
@@ -35,96 +40,34 @@ Topic::~Topic(){
 //...............................................................................
 //  Topic strings
 //...............................................................................
-String Topic::topic_asString(){
-  Serial.println("Topic::topic_asString()");
-  Serial.println(String(item[0]));
-  String str = String(item[0]);
-  if (countItems > 1) for (size_t i = 1; i < countItems; i++) {
-    str += "/" + String(item[i]);
+String Topic::topic_asString() {
+  Di("Topic: begin topic_asString", item.getCount());
+  String str = String(item.string[0]);
+  for (int i = 1; i < item.getCount(); i++) {
+    str += "/" + String(item.string[i]);
   }
   return str;
 }
-String Topic::arg_asString(){
+String Topic::arg_asString() {
   String str = "";
-  if (countArgs > 0) str = String(arg[0]);
-  if (countArgs > 1) for (size_t i = 1; i < countArgs; i++) {
-    str += "/" + String(arg[i]);
+  if (arg.getCount() > 0)
+    str = String(arg.string[0]);
+  for (int i = 1; i < arg.getCount(); i++) {
+    str += "," + String(arg.string[i]);
   }
   return str;
 }
-String Topic::asString(){
-  return topic_asString() + " | " + arg_asString();
-}
-//...............................................................................
-//  dissect Topic
-//...............................................................................
-void Topic::dissectTopic(char* topics, char* args){
-//clean up topics & args
-  while (topics[strlen(topics) - 1] == '/')
-    topics[strlen(topics) - 1] = '\0';
-
-  while (args[strlen(args) - 1] == ',')
-    args[strlen(args) - 1] = '\0';
-  while (args[0] == ','){
-    for (size_t i = 0; i < strlen(args)-1; i++) {
-      args[i] = args[i+1];
-    }
-    args[strlen(args) - 1] = '\0';
-  }
-
-  char* ch;
-//topics
-  if(*topics) {
-    ch= topics;
-    countItems= 1;
-    while(*ch) if(*ch++ == '/') countItems++;
-    item = new string[countItems];
-
-    if (countItems == 1) {
-      item[0] = topics;
-    }else{
-      int i= 0;
-      item[i] = strtok(topics, "/");
-      while(item[i++] != NULL) {
-        //printf("%s\n", ptr);
-     	  item[i] = strtok(NULL, "/");
-      }
-    }
-  }
-//args
-  if(*args) {
-    ch= args;
-    countArgs= 1;
-    if (isValidJson(String(args))) {
-      arg = new string[1];
-      arg[0] = args;
-    }else{
-      while(*ch) if(*ch++ == ',') countArgs++;
-      arg = new string[countArgs];
-
-      if (countArgs == 1) {
-        arg[0] = args;
-      }else{
-        int i= 0;
-        arg[i] = strtok(args, ",");
-        while(arg[i++] != NULL) {
-     	  arg[i] = strtok(NULL, ",");
-        }
-      }
-    }
-  }
-}
-
+String Topic::asString() { return topic_asString() + " " + arg_asString(); }
 //...............................................................................
 //  delete TopicItem in return String
 //...............................................................................
-String Topic::modifyTopic(int index){
+String Topic::modifyTopic(int index) {
   String str = "";
 
-  for (int i = 0; i < countItems; i++) {
+  for (int i = 0; i < item.getCount(); i++) {
     if (i != index) {
-      str += String(item[i]);
-      if (i != countItems-1) {
+      str += String(item.string[i]);
+      if (i != item.getCount() - 1) {
         str += "/";
       }
     }
@@ -135,9 +78,22 @@ String Topic::modifyTopic(int index){
 //...............................................................................
 //  compare topic.item by index with string
 //...............................................................................
-bool Topic::itemIs(int index, string topicName){
-  if (index < countItems)
-    return !strcmp(item[index], topicName);
+bool Topic::itemIs(int index, string topicName) {
+  // D("Topic: begin itemIs");
+  // Di(topicName, index);
+  if (index < item.getCount())
+    return !strcmp(item.string[index], topicName);
+  else
+    return false;
+  // D("Topic: end itemIs");
+}
+
+//...............................................................................
+//  compare topic.arg by index with string
+//...............................................................................
+bool Topic::argIs(int index, const string value) {
+  if (index < arg.getCount())
+    return !strcmp(arg.string[index], value);
   else
     return false;
 }
@@ -145,25 +101,158 @@ bool Topic::itemIs(int index, string topicName){
 //-------------------------------------------------------------------------------
 //  Topic private
 //-------------------------------------------------------------------------------
+
+//...............................................................................
+//  init from string
+//...............................................................................
+void Topic::initTopic(string topicsArgs) {
+
+  // D("Topic: begin initTopic");
+  // D(topicsArgs);
+
+  char *topics, *args;
+  char *tmp = strdup(topicsArgs);
+  topics = strtok(tmp, " ");
+  args = strtok(NULL, "\0");
+  dissectTopic(topics, args);
+  free(tmp);
+  // D("Topic: end initTopic");
+}
+
+//...............................................................................
+//  break into tokens
+//...............................................................................
+
+// str can be an empty string but it cannot be NULL
+int Topic::tokenize(strings &tokens, string str, string delimiters) {
+  // D("tokenize...");
+  tokens.clear();
+  char *token;
+  char *s = strdup(str);
+  // D(s);
+  token = strtok(s, delimiters);
+  // Dl;
+  while (token != NULL) {
+    // D(token);
+    if (*token) {
+      tokens.append(strdup(token));
+      // Di(tokens.string[tokens.getCount() - 1], tokens.getCount());
+    }
+    token = strtok(NULL, delimiters);
+    // Dl;
+  }
+  free(s);
+  return tokens.getCount();
+}
+
 //...............................................................................
 //  check for valid JSON-String
 //...............................................................................
-bool Topic::isValidJson(String root){
+bool Topic::isValidJson(String root) {
   DynamicJsonBuffer jsonBuffer;
-  JsonObject& json = jsonBuffer.parseObject(root);
+  JsonObject &json = jsonBuffer.parseObject(root);
   return json.success();
 }
 
 //...............................................................................
-//  print Topic
+//  dissect Topic
 //...............................................................................
-void Topic::printTopic(){
-  Serial.println("............................................");
-  for (int i = 0; i < countItems; i++) {
-    Serial.println(item[i]);
+// topics and args can be empty or NULL
+void Topic::dissectTopic(string topics, string args) {
+
+  // D("Topic: begin dissectTopic");
+  // Dl;
+  // items
+  item.clear();
+  if (topics != NULL)
+    tokenize(item, topics, "/");
+  // Di("items=", item.getCount());
+  // args
+  arg.clear();
+  if (args != NULL) {
+    if (isValidJson(String(args))) {
+      arg.append(strdup(args));
+    } else {
+      tokenize(arg, args, ",");
+      // Di("args=", arg.getCount());
+    }
   }
-  for (int i = 0; i < countArgs; i++) {
-    Serial.println(arg[i]);
+  // D("Topic: end dissectTopic");
+}
+
+//###############################################################################
+//  Topic Queue
+//###############################################################################
+
+TopicQueue::TopicQueue() {}
+
+void TopicQueue::clear() {
+  while (count)
+    get();
+}
+
+void TopicQueue::put(element_t *e) {
+  //DF("TopicQueue::put(element_t) begin");
+  if (count < TOPIC_QUEUE_MAX) {
+    // prepend to tail
+    e->next = tail;
+    if (count) {
+      // if the queue has elements, backlink previous tail to new element
+      tail->prev = e;
+    } else {
+      // else the new element is also made the head
+      head = e;
+    }
+    // the new element is made the tail
+    tail = e;
+    // increase count
+    count++;
+    // Serial.println("queue: put done");
+  } else {
+    // queue is full, throw the element away
+    delete e;
   }
-  Serial.println("............................................");
+  //DF("TopicQueue::put(element_t) end");
+}
+
+void TopicQueue::put(String &topicsArgs) {
+  // Serial.println("queue: put "+topicsArgs);
+  // create a new element
+  element_t *e = new element_t;
+  e->topicsArgs = strdup(topicsArgs.c_str());
+  put(e);
+}
+
+void TopicQueue::put(const char *topicsArgs) {
+  // create a new element
+  element_t *e = new element_t;
+  e->topicsArgs = strdup(topicsArgs);
+  put(e);
+}
+
+void TopicQueue::put(const char *topics, int arg) {
+  char topicsArgs[128];
+  sprintf(topicsArgs, "%s %d", topics, arg);
+  put(topicsArgs);
+}
+
+String TopicQueue::get() {
+
+  // D("queue: get begin");
+  //DF("TopicQueue::get() begin");
+  if (count) {
+    element_t *e = head;
+    String topicsArgs = String(e->topicsArgs);
+    free(e->topicsArgs);
+    head = head->prev;
+    delete e;
+    count--;
+    // D("queue: get done");
+    //DF("TopicQueue::get() end");
+    return topicsArgs;
+  } else {
+    // D("queue: get error");
+    return String(
+        ""); // if you get here then you have made an programming error
+  }
 }

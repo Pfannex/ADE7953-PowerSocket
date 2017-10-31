@@ -48,8 +48,8 @@ function set_radio_handlers() {
             show_details("wifi_details", $(this), "dhcp|manual");
           } );
         $(document).on("change", "input[name=lan]", function() { show_details("lan_net_details", $(this), "manual"); } );
-        $(document).on("change", "select[name=ntp]", function() { show_details("ntp_details", $(this), "on"); } );
-        $(document).on("change", "select[name=mqtt]", function() { show_details("mqtt_details", $(this), "on"); } );
+        $(document).on("change", "input[name=ntp]", function() { show_details("ntp_details", $(this), "on"); } );
+        $(document).on("change", "input[name=mqtt]", function() { show_details("mqtt_details", $(this), "on"); } );
 
 }
 
@@ -126,12 +126,20 @@ function set_config() {
             console.log(json);
             // set inputs
             configForm.find('input:text').val( function() {
-              console.log("Setting "+this.name+" to "+json[this.name]);
+              console.log("Setting text input "+this.name+" to "+json[this.name]);
+              return json[this.name];
+            });
+            // set passwords
+            configForm.find('input:password').val( function() {
+              console.log("Setting password input "+this.name+" to "+json[this.name]);
               return json[this.name];
             });
             // set radio groups
             set_radio("wifi", json["wifi"]);
             set_radio("lan", json["lan"]);
+            set_radio("ntp", json["ntp"]);
+            set_radio("update", json["update"]);
+            set_radio("mqtt", json["mqtt"]);
           }
     }
   );
@@ -178,7 +186,7 @@ function set_readings() {
   $.ajax(
     {     type: "POST",
           url: "/api.html",
-          data: "call=~/get/sysUtils/clock/root",
+          data: "call=~/get/clock/root",
           statusCode: {
             404: function() {
               window.location="/";
@@ -193,7 +201,7 @@ function set_readings() {
               console.log("Setting div with id "+this.id+" to "+readings[this.id]);
               return readings[this.id];
             });
-            setTimeout("set_readings()", 5000);
+            setTimeout("set_readings()", 10000);
           },
           error: function() {
             window.location="/";

@@ -1,16 +1,34 @@
 {
-  "webUser":        "ESPuser",
-  "webPassword":    "ESPpass",
-  "apName":         "Node52",
-  "apPassword":     "ESP8266config",
-  "wifi":           "dhcp",
-  "lan":            "manual",
-  "wifiSSID":       "Pf@nne-NET",
-  "wifiPSK":        "Pf@nneNETwlan_ACCESS",
-  "wifiIP":         "",
-  "mqttServer":     "192.168.1.3",
-  "mqttPort":       "1883",
-  "mqttDeviceName": "Node52",
-  "updateServer":   "192.168.1.3",
-  "filePath":       "/bin/ESP8266_AktSen.ino.bin"
+  "device_name":            "ESP_xxx",
+  "device_username":        "admin",
+  "device_password":        "admin",
+
+  "wifi":                   "manual",
+  "wifi_ssid":              "Neubert-Volmar",
+  "wifi_password":          "pw",
+  "wifi_ip":                "192.168.31.52",
+  "wifi_netmask":           "255.255.255.0",
+  "wifi_gateway":           "192.168.31.1",
+
+  "ap":                     "auto",
+  "ap_ssid":                "ESP_xxx",
+  "ap_password":            "admin",
+
+  "lan":                    "off",
+  "lan_ip":                 "",
+  "lan_netmask":            "255.255.255.0",
+  "lan_gateway":            "",
+
+  "ntp":                    "off",
+  "ntp_serverip":           "europe.pool.ntp.org",
+
+  "update_localpath":       "",
+  "update":                 "manual",
+  "update_remoteurl":       "",
+
+  "mqtt":                   "off",
+  "mqtt_ip":                "52.58.157.180",
+  "mqtt_port":              "1883",
+  "mqtt_username":          "",
+  "mqtt_password":          ""
 }

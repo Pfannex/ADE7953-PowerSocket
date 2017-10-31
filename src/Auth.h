@@ -1,7 +1,8 @@
 #pragma once
   #include <Arduino.h>
-  #include "SysUtils.h"
+  #include "Logger.h"
   #include "Hash.h"
+  #include "API.h"
 
 //###############################################################################
 //  Session
@@ -12,7 +13,7 @@
 class Session {
 
 public:
-   Session(String username, SysUtils sysUtils);
+   Session(String username, API& api);
    String getSessionId();
    String getUsername();
    bool isExpired();
@@ -20,7 +21,7 @@ public:
 
 
  private:
-   SysUtils sysUtils;
+   API& api;
    String username;
    String sessionId;
    long lastTouch;
@@ -40,7 +41,7 @@ class Auth {
   public:
 
     // constructor
-    Auth(SysUtils& sysUtils);
+    Auth(API& api);
 
     // destructor
     ~Auth();
@@ -58,7 +59,7 @@ class Auth {
     void deleteSession(String sessionId);
 
   private:
-    SysUtils& sysUtils;
+    API& api;
     int numSessions= 0;
     SessionPtr* sessions;
 

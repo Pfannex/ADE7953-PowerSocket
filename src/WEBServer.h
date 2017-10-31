@@ -16,6 +16,7 @@
 
   #include <functional>
   typedef std::function<void(void)> CallbackFunction;
+  typedef std::function<void(Topic&)> Topic_CallbackFunction;
 
 //###############################################################################
 //  web interface
@@ -24,14 +25,17 @@
 
 class WEBIF {
 public:
-  WEBIF(SysUtils& sysUtils, API& api);
+  WEBIF(API& api);
+
   void start();
   void handle();
+  // Callback Events
+  // API
+  void on_pubWEBIF(Topic &topic);
 
 private:
   ESP8266WebServer webServer;
   ESP8266HTTPUpdateServer httpUpdater;
-  SysUtils& sysUtils;
   API& api;
 
   // authenticator

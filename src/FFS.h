@@ -3,10 +3,9 @@
   #include <FS.h>                     //this needs to be first, or it all crashes and burns...
   #include <ArduinoJson.h>
   #include <Arduino.h>
-  #include "SysUtils.h"
+  #include "Logger.h"
   #include "Topic.h"
   #include "Setup.h"
-  #include "I2C.h"
 
 //###############################################################################
 //  stringFile
@@ -14,8 +13,9 @@
 
 class FFSstringFile {
 public:
-    FFSstringFile(String filePath);
+    FFSstringFile(LOGGING& logging, String filePath);
     String filePath;
+    LOGGING& logging;
     String data;
 
     void loadFile();
@@ -27,8 +27,9 @@ public:
 //###############################################################################
 class FFSjsonFile{
 public:
-  FFSjsonFile(String filePath, int type);
+  FFSjsonFile(LOGGING& logging, String filePath, int type);
   String filePath;
+  LOGGING& logging;
   size_t size;                               //filled in readJsonString()
   int itemsCount;
   int type;                                  //0=Object; 1=Array
@@ -52,9 +53,8 @@ private:
 
 class FFS {
 public:
-  FFS(SysUtils& sysUtils, I2C& i2c);
-  SysUtils& sysUtils;
-  I2C& i2c;
+  FFS(LOGGING& logging);
+  LOGGING& logging;
 
 //Files
   FFSjsonFile cfg;
@@ -67,7 +67,6 @@ public:
   void mount();
   String loadString(String filePath);
   bool isValidJson(String root);
-  void TEST();
 //API
   String set(Topic& topic);
   String get(Topic& topic);
