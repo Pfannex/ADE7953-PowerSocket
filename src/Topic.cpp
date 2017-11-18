@@ -41,7 +41,7 @@ Topic::~Topic() {
 //  Topic strings
 //...............................................................................
 String Topic::topic_asString() {
-  Di("Topic: begin topic_asString", item.getCount());
+  //Di("Topic: begin topic_asString", item.getCount());
   String str = String(item.string[0]);
   for (int i = 1; i < item.getCount(); i++) {
     str += "/" + String(item.string[i]);
