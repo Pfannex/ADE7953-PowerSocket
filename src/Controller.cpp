@@ -1,5 +1,7 @@
 #include "Controller.h"
 
+#include "WebSocket.h"
+
 //###############################################################################
 //  Controller
 //###############################################################################
@@ -98,6 +100,7 @@ void Controller::handle() {
   if (!wifi.handle()) {
     wifi.start();
   }
+  websocket_handle();
   gpio.handle();
   clock.handle();
   // if(topicQueue.count) logging.debug(String(topicQueue.count) + " event(s) in

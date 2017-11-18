@@ -24,6 +24,10 @@ void API::set_callbackMQTT(Topic_CallbackFunction pubMQTT) {
 void API::set_callbackWEBIF(Topic_CallbackFunction pubWEBIF) {
   on_pubWEBIF = pubWEBIF;
 }
+void API::set_callbackWEBSocket(Topic_CallbackFunction pubWEBSocket) {
+  on_pubWEBSocket = pubWEBSocket;
+}
+
 
 //...............................................................................
 //  API start
@@ -41,6 +45,7 @@ void API::on_viewsUpdate(Topic &topic){
 
   if (on_pubMQTT != nullptr) on_pubMQTT(topic);
   if (on_pubWEBIF != nullptr) on_pubWEBIF(topic);
+  if (on_pubWEBSocket != nullptr) on_pubWEBSocket(topic);
 }
 
 //...............................................................................

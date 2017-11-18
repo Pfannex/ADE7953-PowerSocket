@@ -19,6 +19,7 @@ public:
 
   void set_callbackMQTT(Topic_CallbackFunction pubMQTT);
   void set_callbackWEBIF(Topic_CallbackFunction pubWEBIF);
+  void set_callbackWEBSocket(Topic_CallbackFunction pubWEBSocket);
 
   void start();
   // Callback Events
@@ -35,4 +36,5 @@ public:
 private:
   Topic_CallbackFunction on_pubMQTT;
   Topic_CallbackFunction on_pubWEBIF;
+  Topic_CallbackFunction on_pubWEBSocket;
 };

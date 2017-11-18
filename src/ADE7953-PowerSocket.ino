@@ -19,6 +19,7 @@
 #include "API.h"
 #include "Controller.h"
 #include "WEBServer.h"
+#include "WebSocket.h"
 #include "MQTT.h"
 #include "Debug.h"
 
@@ -26,6 +27,8 @@ Controller tc;
 API api(tc);
 WEBIF webif(api);
 MQTT mqtt(api);
+// WEBSocket websocket(api);
+
 
 // Timer
 void Loop(Task *me);
@@ -56,6 +59,7 @@ void setup() {
   // the viewers communicate with the susbsystems via the API
   //D("starting web interface");
   webif.start();
+  websocket_start(api);
   //D("starting MQTT");
   mqtt.start();
   api.info("startup finished");
