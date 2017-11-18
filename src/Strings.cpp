@@ -7,7 +7,7 @@ strings::~strings() {
   clear();
 }
 
-void strings::resize(int n) {
+void strings::resize(unsigned int n) {
   if (count) {
     string = (char **)realloc(string, n * sizeof(char **));
   } else {
@@ -29,6 +29,13 @@ void strings::append(char *s) {
   string[count-1]= s;
 }
 
-int strings::getCount() {
+void strings::replace(unsigned int i, char *s) {
+  if(i< count) {
+    free(string[i]);
+    string[i]= s;
+  }
+}
+
+unsigned int strings::getCount() {
   return count;
 }

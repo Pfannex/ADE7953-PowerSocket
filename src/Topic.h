@@ -25,6 +25,7 @@ public:
   String asString();
 
   String modifyTopic(int index);
+  void setItem(unsigned int index, const string topicName);
   bool itemIs(int index, const string topicName);
   bool argIs(int index, const string value);
 

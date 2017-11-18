@@ -58,6 +58,16 @@ String Topic::arg_asString() {
   return str;
 }
 String Topic::asString() { return topic_asString() + " " + arg_asString(); }
+
+//...............................................................................
+//  set item
+//...............................................................................
+
+void Topic::setItem(unsigned int index, const string topicName) {
+  if(index< item.getCount()) {
+    item.replace(index, strdup(topicName));
+  }
+}
 //...............................................................................
 //  delete TopicItem in return String
 //...............................................................................

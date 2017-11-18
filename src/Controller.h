@@ -56,6 +56,7 @@ private:
   // the central modes
   int power = 0;
   int configMode = 0;
+  String deviceName;
 
   bool startConnections();
   void startPeriphery();

@@ -59,9 +59,10 @@ void Controller::start() {
   // fire up the FFS
   ffs.mount();
 
-  // set ESP name on first start ever
-  if (ffs.cfg.readItem("device_name") == "") {
-    String deviceName = "ESP8266_" + espTools.genericName();
+  // set ESP name
+  deviceName= ffs.cfg.readItem("device_name");
+  if (deviceName == "") {
+    deviceName = "ESP8266_" + espTools.genericName();
     logging.info("setting device name " + deviceName + " for the first time");
     ffs.cfg.writeItem("device_name", deviceName);
     logging.info("setting access point SSID " + deviceName +
@@ -300,5 +301,6 @@ void Controller::startPeriphery() {
 void Controller::viewsUpdate(Topic &topic) {
 
   if (on_viewsUpdate != nullptr)
+    topic.setItem(0, deviceName.c_str());
     on_viewsUpdate(topic);
 }

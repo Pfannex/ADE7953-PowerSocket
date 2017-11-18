@@ -9,11 +9,12 @@ class strings {
 public:
   strings();
   ~strings();
-  int getCount();
+  unsigned int getCount();
   char** string;
-  void resize(int n);
+  void resize(unsigned int n);
   void clear();
   void append(char *s);
+  void replace(unsigned int i, char *s);
 private:
   int count= 0;
 
