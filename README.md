@@ -14,6 +14,7 @@ Unterstütz werden bislang folgende Funktionen:
 - I2C
 - 1-Wire
 
+[CodeStruktur](https://pfannex.github.io/ESP8266_template/html/index.html)
 
 ***
 
@@ -26,7 +27,7 @@ Unterstütz werden bislang folgende Funktionen:
   - [Readings](https://github.com/Pfannex/ADE7953-PowerSocket/wiki/UI_Readings)
 - **API**
   - [Übersicht](https://github.com/Pfannex/ADE7953-PowerSocket/wiki/API_%C3%9Cbersicht)
-
+  
 ***
 [ToDo](https://github.com/Pfannex/BasicTemplate/blob/master/ToDo.md)  
 [changeLOG](https://github.com/Pfannex/BasicTemplate/blob/master/changeLOG.md)
