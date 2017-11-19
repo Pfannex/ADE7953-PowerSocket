@@ -98,11 +98,24 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload,
   }
 }
 
-void websocket_on_pubWEBIF(Topic &topic) {
-  String msg= topic.asString();
+void websocket_broadcast(const String &type, const String &subtype, const String &value) {
+  String msg;
+  msg= "{\"type\":\""+type+"\",";
+  if(subtype != "") msg+= "\"subtype\":\""+subtype+"\",";
+  msg+= "\"value\":\""+value+"\"}";
   webSocket.broadcastTXT(msg);
-    //api.controller.logging.debug("-> WEBIF::on_pubWEBIF()");
-  //api.controller.logging.debug(topic.asString());
+}
+
+void websocket_on_pubWEBIF(Topic &topic) {
+  String type("event");
+  String subtype("");
+  String msg= topic.asString();
+  websocket_broadcast(type, subtype, msg);
+}
+
+void websocket_onLog(const String &channel, const String &msg) {
+  String type("log");
+  websocket_broadcast(type, channel, msg);
 }
 
 void websocket_handle() { webSocket.loop(); }

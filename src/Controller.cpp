@@ -52,6 +52,7 @@ void Controller::start() {
 
   // enable the logging subsystem
   logging.start();
+  logging.setLogFunction(websocket_onLog);
 
   // start esp tools
   espTools.start();

@@ -32,3 +32,6 @@ private:
 */
 void websocket_handle();
 void websocket_start(API& api);
+void websocket_onLog(const String &channel, const String &msg);
+// private
+void websocket_broadcast(const String &type, const String &subtype, const String &value);
