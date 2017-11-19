@@ -31,7 +31,7 @@
 #ifdef HAS_LED
 // Arduino Pin 15 = IO15 = Physical Pin 16 = NodeMCU/WeMos Pin D8
 #define LED_PIN 15
-typedef enum ledMode_t { OFF, ON, BLINK };
+enum ledMode_t { OFF, ON, BLINK };
 // time in ms for blinking
 #define BLINKTIME 100
 #endif
