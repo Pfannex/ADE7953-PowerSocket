@@ -25,6 +25,7 @@ public:
   // Callback Events
   // controller
   void on_viewsUpdate(Topic &topic);
+  // called with a log entry
 
   String call(Topic &topic);
   String call(String topicsArgs);
@@ -37,4 +38,7 @@ private:
   Topic_CallbackFunction on_pubMQTT;
   Topic_CallbackFunction on_pubWEBIF;
   Topic_CallbackFunction on_pubWEBSocket;
+
+  void onLog(const String& channel, const String& message);
+
 };

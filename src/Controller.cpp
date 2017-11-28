@@ -1,7 +1,5 @@
 #include "Controller.h"
 
-#include "WebSocket.h"
-
 //###############################################################################
 //  Controller
 //###############################################################################
@@ -52,7 +50,6 @@ void Controller::start() {
 
   // enable the logging subsystem
   logging.start();
-  logging.setLogFunction(websocket_onLog);
 
   // start esp tools
   espTools.start();
@@ -102,7 +99,6 @@ void Controller::handle() {
   if (!wifi.handle()) {
     wifi.start();
   }
-  websocket_handle();
   gpio.handle();
   clock.handle();
   // if(topicQueue.count) logging.debug(String(topicQueue.count) + " event(s) in

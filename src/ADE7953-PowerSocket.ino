@@ -18,16 +18,14 @@
 
 #include "API.h"
 #include "Controller.h"
-#include "WEBServer.h"
-#include "WebSocket.h"
+#include "WebServer.h"
 #include "MQTT.h"
 #include "Debug.h"
 
-Controller tc;
-API api(tc);
-WEBIF webif(api);
+Controller controller;
+API api(controller);
+WebServer webServer(api);
 MQTT mqtt(api);
-// WEBSocket websocket(api);
 
 
 // Timer
@@ -50,7 +48,7 @@ void setup() {
   // we first start the controller
   // the controller initializes all subsystems in order
   //D("starting controller");
-  tc.start();
+  controller.start();
 
   // we have the API as a level of abstraction
   //D("starting API");
@@ -58,10 +56,11 @@ void setup() {
 
   // the viewers communicate with the susbsystems via the API
   //D("starting web interface");
-  webif.start();
-  websocket_start(api);
+  webServer.start();
   //D("starting MQTT");
   mqtt.start();
+
+  // done
   api.info("startup finished");
 
   // Timer
@@ -70,8 +69,8 @@ void setup() {
   SoftTimer.add(&t3);
   SoftTimer.add(&t4);
 
-  // tc.api.set("/Hello/World/foo/bar", "arg1,arg2,3,4,5");
-  // tc.api.set("/Hello/World/foo/bar arg1,arg2,3,4,5");
+  // controller.api.set("/Hello/World/foo/bar", "arg1,arg2,3,4,5");
+  // controller.api.set("/Hello/World/foo/bar arg1,arg2,3,4,5");
 }
 
 //-------------------------------------------------------------------------------
@@ -79,13 +78,11 @@ void setup() {
 //-------------------------------------------------------------------------------
 void Loop(Task *me) {
   yield(); //  yield to allow ESP8266 background functions
-  tc.handle();
-  yield(); //  yield to allow ESP8266 background functions
-  webif.handle();
+  controller.handle();
   yield(); //  yield to allow ESP8266 background functions
   mqtt.handle();
 }
 
-void t_1s(Task *me) { tc.t_1s_Update(); }
-void t_short(Task *me) { tc.t_short_Update(); }
-void t_long(Task *me) { tc.t_long_Update(); }
+void t_1s(Task *me) { controller.t_1s_Update(); }
+void t_short(Task *me) { controller.t_short_Update(); }
+void t_long(Task *me) { controller.t_long_Update(); }
