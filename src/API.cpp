@@ -9,6 +9,9 @@ API::API(Controller &controller) : controller(controller) {
   // controller
   controller.set_callback(std::bind(&API::on_viewsUpdate, this,
                                     std::placeholders::_1));
+  controller.logging.setLogFunction(std::bind(&API::onLog, this,
+                                    std::placeholders::_1,
+                                    std::placeholders::_2));
 }
 
 //-------------------------------------------------------------------------------
