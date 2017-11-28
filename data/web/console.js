@@ -214,8 +214,8 @@ function consFill() {
   if (consConn) {
     consConn.close();
   }
-  consConn = new WebSocket(loc.replace(/[&?].*/, '')
-    .replace(/^http/i, "ws") + query);
+  var url= loc.replace(/[&?].*/, '').replace(/^http/i, "ws") + query;
+  consConn = new WebSocket(url) /*, [], { headers: { "token": "foobar"}});*/
   consConn.onclose =
     consConn.onerror =
     consConn.onmessage = consUpdate;
