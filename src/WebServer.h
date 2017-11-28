@@ -1,50 +1,43 @@
-
+#include "API.h"
+#include "Auth.h"
 #include "ESPAsyncTCP.h"
 #include "ESPAsyncWebServer.h"
-#include "API.h"
 #include "Setup.h"
-
 
 class WebServer {
 public:
-  WebServer(API& api);
-
+  WebServer(API &api);
   void start();
-  void handle();
-  // Callback Events
-  // API
-  void on_pubWEBIF(Topic &topic);
 
 private:
   AsyncWebServer webServer;
   AsyncWebSocket webSocket;
-  ESP8266HTTPUpdateServer httpUpdater;
-  API& api;
+  API &api;
 
   // authenticator
   Auth auth;
-  bool checkAuthentification();
-
-  // number of pages served
-  long numPagesServed= 0;
-
-  // serve file with some logging
-  void send(const String &description, int code, char *content_type, const String &content);
-
-  // send a file
-  void sendFile(const String &description, int code, char *content_type, const String filePath);
+  bool checkAuthentification(AsyncWebServerRequest *request);
 
   // page handler
-  void rootPageHandler();
-  void authPageHandler();
-  void apiPageHandler();
-  void handleNotFound();
+  void rootPageHandler(AsyncWebServerRequest *request);
+  void authPageHandler(AsyncWebServerRequest *request);
+  void apiPageHandler(AsyncWebServerRequest *request);
+  void notFoundPageHandler(AsyncWebServerRequest *request);
 
-  // variable substitution
-  String subst(String data);
+  // variable substitution in templates
+  String subst(const String &var);
 
   // configuration
-  void applyConfiguration();
+  void applyConfiguration(AsyncWebServerRequest *request);
   String getConfiguration();
 
+  // websocket event
+  void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client,
+               AwsEventType type, void *arg, uint8_t *data, size_t len);
+
+  // send Topics abd log entries to websocket
+  void broadcast(const String &type, const String &subtype,
+                 const String &value);
+  void logFunction(const String &channel, const String &msg);
+  void topicFunction(const time_t, Topic &topic);
 };

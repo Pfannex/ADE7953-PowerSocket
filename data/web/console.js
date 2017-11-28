@@ -13,7 +13,7 @@ var timers = Object.create(null);
 // ------------------------------------------------------------------------
 
 function message(msg) {
-  $("#message").html(msg);
+  //$("#message").html(msg);
 }
 
 function message_clear() {
@@ -208,13 +208,13 @@ function consUpdate(evt) {
 function consFill() {
   message_clear();
 
-  var query = "";
-  var location = "http://node52.home.neubert-volmar.de:81";
-  var loc = ("" + location).replace(/\?.*/, "");
+  var location = window.location.href; //"http://node52.home.neubert-volmar.de:80/goo.html";
+  var parts= location.split("/");
+  var url= 'ws://'+parts[2]+'/ws';
   if (consConn) {
     consConn.close();
   }
-  var url= loc.replace(/[&?].*/, '').replace(/^http/i, "ws") + query;
+  console.log("Console connecting to "+url);
   consConn = new WebSocket(url) /*, [], { headers: { "token": "foobar"}});*/
   consConn.onclose =
     consConn.onerror =
@@ -256,4 +256,4 @@ function consStart() {
 }
 
 
-window.onload = consStart;
+//window.onload = consStart;

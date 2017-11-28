@@ -4,10 +4,7 @@
 #include <Arduino.h>
 #include <IPAddress.h>
 #include <PubSubClient.h>
-
-#include <functional>
-typedef std::function<void(void)> CallbackFunction;
-typedef std::function<void(Topic&)> Topic_CallbackFunction;
+#include <TimeLib.h>
 
 //###############################################################################
 //  MQTT client
@@ -25,7 +22,7 @@ public:
   // pubSubClient
   void on_incommingSubcribe(char *topic, byte *payload, unsigned int length);
   // API
-  void on_pubMQTT(Topic &topic);
+  void on_pubMQTT(time_t t, Topic &topic);
 
   void pub(String topic, String value);
 

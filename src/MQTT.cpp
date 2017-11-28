@@ -14,8 +14,9 @@ MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
                                std::placeholders::_1, std::placeholders::_2,
                                std::placeholders::_3));
   //API
-  api.set_callbackMQTT(std::bind(&MQTT::on_pubMQTT, this,
-                                 std::placeholders::_1));
+  api.registerTopicFunction(std::bind(&MQTT::on_pubMQTT, this,
+                                 std::placeholders::_1,
+                                 std::placeholders::_2));
 }
 
 //-------------------------------------------------------------------------------
@@ -25,11 +26,11 @@ MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
 //...............................................................................
 //  EVENT publish Topic
 //...............................................................................
-void MQTT::on_pubMQTT(Topic &topic) {
+void MQTT::on_pubMQTT(time_t t, Topic &topic) {
   //api.controller.logging.debug("-> MQTT::on_pubMQTT()");
   //api.controller.logging.debug(topic.asString());
 
-  //publish + DeviceName
+
 }
 
 //...............................................................................
