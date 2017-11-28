@@ -8,7 +8,7 @@ $(document).ready( function() {
         set_radio_handlers();
         //set_select_handlers();
         set_config();
-        set_readings();
+        consStart();
         }
 );
 
@@ -164,51 +164,6 @@ function apply() {
     // hide popup
     $("#popupProcessing").popup("close");
   });
-
-
-
-}
-
-// ---------------------------
-// readings
-// ---------------------------
-
-
-//
-// get readings as JSON and populate text fields
-//
-function set_readings() {
-
-  console.log("Setting readings...")
-  // form
-  var readingsDiv= $('#readings');
-
-  $.ajax(
-    {     type: "POST",
-          url: "/api.html",
-          data: "call=~/get/clock/root",
-          statusCode: {
-            404: function() {
-              window.location="/";
-            }
-          },
-          success: function(json) {
-            // log json
-            console.log(json);
-            var readings= JSON.parse(json);
-            // set inputs
-            readingsDiv.find('div').html( function() {
-              console.log("Setting div with id "+this.id+" to "+readings[this.id]);
-              return readings[this.id];
-            });
-            setTimeout("set_readings()", 10000);
-          },
-          error: function() {
-            window.location="/";
-          }
-    }
-
-  );
 
 
 

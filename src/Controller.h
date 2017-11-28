@@ -12,10 +12,8 @@
 #include "oWire.h"
 #include "GPIO.h"
 #include "SysUtils.h"
+#include "TimeLib.h"
 
-#include <functional>
-typedef std::function<void(void)> CallbackFunction;
-typedef std::function<void(Topic&)> Topic_CallbackFunction;
 
 //###############################################################################
 //  BasicTemplate
@@ -25,7 +23,8 @@ public:
   // constructor
   Controller();
 
-  void set_callback(Topic_CallbackFunction viewsUpdate);
+  // set the callback function for Topics
+  void setTopicFunction(TopicFunction topicFn);
 
   void start();
   void handle();
@@ -60,13 +59,16 @@ private:
 
   bool startConnections();
   void startPeriphery();
-  void viewsUpdate(Topic& topic);
+  void viewsUpdate(time_t t, Topic& topic);
   void handleEvent(String& topicsArgs);
   void setConfigMode(int value);
   void setPowerMode(int value);
   void setLedMode();
 
   TopicQueue topicQueue;
-  Topic_CallbackFunction on_viewsUpdate;
+
+  // if a new Topic is received this function is called
+  TopicFunction topicFunction;
+
 
 };

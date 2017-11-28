@@ -5,10 +5,12 @@
 //###############################################################################
 API::API(Controller &controller) : controller(controller) {
 
-  // callback Events
-  // controller
-  controller.set_callback(std::bind(&API::on_viewsUpdate, this,
-                                    std::placeholders::_1));
+  // register to receive Topics
+  controller.setTopicFunction(std::bind(
+      &API::onTopic, this, std::placeholders::_1, std::placeholders::_2));
+  // register to reveice log entries
+  controller.logging.setLogFunction(std::bind(
+      &API::onLog, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 //-------------------------------------------------------------------------------
@@ -16,36 +18,24 @@ API::API(Controller &controller) : controller(controller) {
 //-------------------------------------------------------------------------------
 
 //...............................................................................
-//  API set callback
+//  API register callbacks
 //...............................................................................
-void API::set_callbackMQTT(Topic_CallbackFunction pubMQTT) {
-  on_pubMQTT = pubMQTT;
-}
-void API::set_callbackWEBIF(Topic_CallbackFunction pubWEBIF) {
-  on_pubWEBIF = pubWEBIF;
-}
-void API::set_callbackWEBSocket(Topic_CallbackFunction pubWEBSocket) {
-  on_pubWEBSocket = pubWEBSocket;
+void API::registerTopicFunction(TopicFunction TopicFn) {
+  if (topicFunctionCount < MAXTOPICFUNCTIONS) {
+    topicFunction[topicFunctionCount++] = TopicFn;
+  }
 }
 
-
+void API::registerLogFunction(LogFunction LogFn) {
+  if (logFunctionCount < MAXLOGFUNCTIONS) {
+    logFunction[logFunctionCount++] = LogFn;
+  }
+}
 //...............................................................................
 //  API start
 //...............................................................................
 void API::start() {
-  info("API started for device with chip ID "+call("~/get/esp/chipId"));
-}
-
-//...............................................................................
-//  EVENT ViewUpdate
-//...............................................................................
-void API::on_viewsUpdate(Topic &topic){
-  //controller.logging.debug("-> API::on_viewsUpdate()");
-  //controller.logging.debug(topic.asString());
-
-  if (on_pubMQTT != nullptr) on_pubMQTT(topic);
-  if (on_pubWEBIF != nullptr) on_pubWEBIF(topic);
-  if (on_pubWEBSocket != nullptr) on_pubWEBSocket(topic);
+  info("API started for device with chip ID " + call("~/get/esp/chipId"));
 }
 
 //...............................................................................
@@ -53,45 +43,52 @@ void API::on_viewsUpdate(Topic &topic){
 //...............................................................................
 
 String API::call(Topic &topic) {
-  //D("API: begin call(&Topic)");
+  // D("API: begin call(&Topic)");
   // just a pass through
-  debug("API call "+topic.asString());
-  String result= controller.call(topic);
-  if(result == nullptr) {
-      result= String("<no result>");
+  debug("API call " + topic.asString());
+  String result = controller.call(topic);
+  if (result == nullptr) {
+    result = String("<no result>");
   }
   return result;
 }
 
 // convenience function
-String API::call(String topicsArgs) {
-    return call(topicsArgs.c_str());
-}
+String API::call(String topicsArgs) { return call(topicsArgs.c_str()); }
 
 // convenience function
 String API::call(string topicsArgs) {
-  //D("API: call");
-  //D(topicsArgs);
+  // D("API: call");
+  // D(topicsArgs);
   Topic topic(topicsArgs);
-  //Dl;
+  // Dl;
   return call(topic);
 }
 
 // these are convenience functions
 // a more convoluted way would be via a topic ~/log/info
 
-void API::info(const String &msg) {
-  controller.logging.info(msg);
-}
+void API::info(const String &msg) { controller.logging.info(msg); }
 
-void API::error(const String &msg) {
-  controller.logging.error(msg);
-}
+void API::error(const String &msg) { controller.logging.error(msg); }
 
-void API::debug(const String &msg) {
-  controller.logging.debug(msg);
-}
+void API::debug(const String &msg) { controller.logging.debug(msg); }
 
 //-------------------------------------------------------------------------------
 //  API private
 //-------------------------------------------------------------------------------
+
+//...............................................................................
+//  broadcast Topics and log entries
+//...............................................................................
+void API::onTopic(const time_t t, Topic &topic) {
+  for (int i = 0; i < topicFunctionCount; i++) {
+    topicFunction[i](t, topic);
+  }
+}
+
+void API::onLog(const String &channel, const String &message) {
+  for (int i = 0; i < logFunctionCount; i++) {
+    logFunction[i](channel, message);
+  }
+}

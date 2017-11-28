@@ -3,6 +3,7 @@
 <head>
 <title>ESP8266 P&amp;N Authentification</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
 <script src="lib/jquery.js"></script>
 <script src="lib/jquery.mobile.js"></script>
 <link href="css/jquery.mobile.css" rel="stylesheet" />
@@ -13,7 +14,7 @@
 	<div data-role="header">
                 <a href="https://github.com/Pfannex/ADE7953_Breakoutboard/wiki" target="_blank"
                 id="info" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left">Info</a>
-		<h1>ESP8266 P&amp;N Authentification</h1>
+		<h1>%TITLE% Authentification</h1>
 	</div>
 	<div data-role="content">
 		<form id="loginForm" action="/" method="POST">
@@ -39,10 +40,10 @@
           <div id="message"></div>
           <div class="ui-grid-a">
                 <div class="ui-block-a">
-												MAC Address<br>$DATA(MACADDRESS)
+												MAC Address<br>%MACADDRESS%
                 </div>
                 <div class="ui-block-b">
-                        Device Name<br>$DATA(DEVICENAME)
+                        Device Name<br>%DEVICENAME%
                 </div>
           </div>
 	</div>

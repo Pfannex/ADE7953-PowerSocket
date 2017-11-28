@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include "Strings.h"
+#include "TimeLib.h"
 
 //###############################################################################
 //  Topic
@@ -36,6 +37,13 @@ private:
   // splits str into tokens with memory allocations, returns number of tokens
   int tokenize(strings &tokens, string str, string delimiters);
 };
+
+//###############################################################################
+//  Topic Callbacks
+//###############################################################################
+
+#include <functional>
+typedef std::function<void(const time_t, Topic&)> TopicFunction;
 
 //###############################################################################
 //  Topic Queue

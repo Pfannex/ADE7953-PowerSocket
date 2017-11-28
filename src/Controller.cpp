@@ -1,7 +1,5 @@
 #include "Controller.h"
 
-#include "WebSocket.h"
-
 //###############################################################################
 //  Controller
 //###############################################################################
@@ -17,6 +15,10 @@
  * depending on the event received, an action is carried out, i.e. a
  * function of a device is called.
  */
+
+//-------------------------------------------------------------------------------
+//  Controller public
+//-------------------------------------------------------------------------------
 
 //...............................................................................
 //  constructor
@@ -34,8 +36,8 @@ Controller::Controller()
 //...............................................................................
 //  API set callback
 //...............................................................................
-void Controller::set_callback(Topic_CallbackFunction viewsUpdate) {
-  on_viewsUpdate = viewsUpdate;
+void Controller::setTopicFunction(TopicFunction topicFn) {
+  topicFunction= topicFn;
 }
 
 //-------------------------------------------------------------------------------
@@ -52,7 +54,6 @@ void Controller::start() {
 
   // enable the logging subsystem
   logging.start();
-  logging.setLogFunction(websocket_onLog);
 
   // start esp tools
   espTools.start();
@@ -102,7 +103,6 @@ void Controller::handle() {
   if (!wifi.handle()) {
     wifi.start();
   }
-  websocket_handle();
   gpio.handle();
   clock.handle();
   // if(topicQueue.count) logging.debug(String(topicQueue.count) + " event(s) in
@@ -164,15 +164,16 @@ void Controller::handleEvent(String &topicsArgs) {
   // this is the central routine that dispatches events from devices
   // and views
   //
+  time_t t= clock.now();
 
-  logging.debug("handling event " + topicsArgs);
+  //logging.debug("handling event " + topicsArgs);
   // D("Controller: create Topic object");
   // Topic topic = Topic(topicsArgs);
   Topic topic(topicsArgs);
 
   // propagate event to views
   // D("Controller: viewsUpdate");
-  viewsUpdate(topic);
+  viewsUpdate(t, topic);
 
   // D("Controller: business logic");
   // central business logic
@@ -299,9 +300,9 @@ void Controller::startPeriphery() {
 //...............................................................................
 //  update Views
 //...............................................................................
-void Controller::viewsUpdate(Topic &topic) {
+void Controller::viewsUpdate(time_t t, Topic &topic) {
 
-  if (on_viewsUpdate != nullptr)
+  if (topicFunction != nullptr)
     topic.setItem(0, deviceName.c_str());
-    on_viewsUpdate(topic);
+    topicFunction(t, topic);
 }
