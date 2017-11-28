@@ -7,7 +7,7 @@
 //  web sockets
 //###############################################################################
 
-/*
+
 class WEBSocket {
 public:
   WEBSocket(API& api);
@@ -28,7 +28,6 @@ private:
   //bool checkAuthentification();
 
 };
-*/
 
 void websocket_handle();
 void websocket_start(API& api);

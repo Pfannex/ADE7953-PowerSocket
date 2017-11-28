@@ -5,12 +5,12 @@
 #include "Topic.h"
 #include "WebSocket.h"
 
-/*
+
 WEBSocket::WEBSocket(API &api) : api(api) {
 
   webSocket.begin();
   // https://latedev.wordpress.com/2012/08/06/using-stdbind-for-fun-and-profit/
-  webSocket.onEvent( std::bind(&WEBSocket::webSocketEvent, this, std::placeholders::_4) );
+  webSocket.onEvent( std::bind(&WEBSocket::webSocketEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4) );
 }
 
 void WEBSocket::webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload,
@@ -53,8 +53,6 @@ void WEBSocket::webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload,
 }
 
 void WEBSocket::handle() { webSocket.loop(); }
-*/
-
 
 
 WebSocketsServer webSocket = WebSocketsServer(WEBSOCKETSPORT);
