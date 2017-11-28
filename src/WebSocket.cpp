@@ -65,10 +65,8 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload,
   char msg[256];
   switch (type) {
   case WStype_DISCONNECTED:
-    /*
     sprintf(msg, "[%u] Disconnected!\n", num);
-    D(msg)
-    */;
+    D(msg);
     break;
   case WStype_CONNECTED:
     /*
@@ -91,13 +89,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t *payload,
     */
     break;
   }
-}
-
-bool websocket_onValidateHttpHeader(String headerName, String headerValue) {
-    D("checking header");
-    D(headerName.c_str());
-    D(headerValue.c_str());
-    return true;
 }
 
 void websocket_broadcast(const String &type, const String &subtype,
@@ -130,7 +121,4 @@ void websocket_start(API &api) {
   api.set_callbackWEBSocket(websocket_on_pubWEBIF);
   webSocket.begin();
   webSocket.onEvent(webSocketEvent);
-  const char* mandatoryHeaders[1];
-  mandatoryHeaders[0]= "Cookie";
-  webSocket.onValidateHttpHeader(websocket_onValidateHttpHeader, mandatoryHeaders, 1);
 }

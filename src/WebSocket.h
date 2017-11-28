@@ -1,7 +1,7 @@
 
-#include "API.h"
-#include "Setup.h"
 #include <WebSocketsServer.h>
+#include "Setup.h"
+#include "API.h"
 
 //###############################################################################
 //  web sockets
@@ -17,8 +17,7 @@ public:
   // Callback Events
   // API
   void on_pubWEBSocket(Topic &topic);
-  void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t
-length);
+  void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length);
 
 private:
   API& api;
@@ -32,9 +31,7 @@ private:
 */
 
 void websocket_handle();
-void websocket_start(API &api);
+void websocket_start(API& api);
 void websocket_onLog(const String &channel, const String &msg);
 // private
-void websocket_broadcast(const String &type, const String &subtype,
-                         const String &value);
-bool websocket_onValidateHttpHeader(String headerName, String headerValue);
+void websocket_broadcast(const String &type, const String &subtype, const String &value);
