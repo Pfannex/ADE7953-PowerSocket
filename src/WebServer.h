@@ -3,6 +3,7 @@
 #include "ESPAsyncTCP.h"
 #include "ESPAsyncWebServer.h"
 #include "Setup.h"
+#include "Updater.h"
 
 class WebServer {
 public:
@@ -14,7 +15,7 @@ private:
   AsyncWebSocket webSocket;
   API &api;
 
-
+  bool shouldReboot = false;
 
   // authenticator
   Auth auth;
@@ -28,12 +29,12 @@ private:
   void updatePageHandler2(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
   void notFoundPageHandler(AsyncWebServerRequest *request);
 
+  // log error when updating firmware
+  void logUpdateError();
+  String getUpdateErrorString();
+
   // variable substitution in templates
   String subst(const String &var);
-
-  // configuration
-  void applyConfiguration(AsyncWebServerRequest *request);
-  String getConfiguration();
 
   // websocket event
   void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client,

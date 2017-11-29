@@ -23,19 +23,20 @@ void LOGGING::start() {
 //  setLogFunction()
 //...............................................................................
 
-void LOGGING::setLogFunction(const LogFunction lf) {
-  logFunction= lf;
-}
+void LOGGING::setLogFunction(const LogFunction lf) { logFunction = lf; }
 
 //...............................................................................
 //  log
 //...............................................................................
 void LOGGING::log(const String &channel, const String &msg) {
-  char txt[1024];
-  String T = SysUtils::strDateTime(clock.now());
-  sprintf(txt, "%s %5s %s", T.c_str(), channel.c_str(), msg.c_str());
-  Serial.println(txt);
-  if(logFunction != nullptr) logFunction(channel, msg);
+  if ((channel != "DEBUG") || DEBUG) {
+    char txt[1024];
+    String T = SysUtils::strDateTime(clock.now());
+    sprintf(txt, "%s %5s %s", T.c_str(), channel.c_str(), msg.c_str());
+    Serial.println(txt);
+    if (logFunction != nullptr)
+      logFunction(channel, msg);
+  }
 }
 
 //...............................................................................

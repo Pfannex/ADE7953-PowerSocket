@@ -127,7 +127,7 @@ void Auth::deleteSession(String sessionId) {
 SessionPtr Auth::getSession(String sessionId) {
 
   // check if we have a session with this ID
-  api.info("checking session " + sessionId);
+  api.debug("checking session " + sessionId);
   for(int i= 0; i< numSessions; i++) {
     //String sessionIdi= sessions[i]->getSessionId();
     //sysUtils.logging.debug("session has sessionId "+sessionIdi);

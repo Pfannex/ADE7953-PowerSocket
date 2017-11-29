@@ -9,8 +9,7 @@
 //-------------------------------------------------------------------------------
 //  WebServer public
 //-------------------------------------------------------------------------------
-  bool shouldReboot = false;
-  
+
 WebServer::WebServer(API &api)
     : api(api), webServer(WEBSERVERPORT), webSocket("/ws"), auth(api) {
 
@@ -40,51 +39,15 @@ WebServer::WebServer(API &api)
                                                  this, std::placeholders::_1));
   webServer.on("/api.html", HTTP_ANY, std::bind(&WebServer::apiPageHandler,
                                                 this, std::placeholders::_1));
-  webServer.on("/update.html", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "text/html", "<form method='POST' action='/update' "
-                                    "enctype='multipart/form-data'><input "
-                                    "type='file' name='update'><input "
-                                    "type='submit' value='Update'></form>");
-  });
 
   // Simple Firmware Update Form
-  webServer.on("/update", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "text/html", "<form method='POST' action='/update' "
-                                    "enctype='multipart/form-data'><input "
-                                    "type='file' name='update'><input "
-                                    "type='submit' value='Update'></form>");
-  });
   webServer.on(
-      "/update", HTTP_POST,
-      [](AsyncWebServerRequest *request) {
-        shouldReboot = !Update.hasError();
-        AsyncWebServerResponse *response = request->beginResponse(
-            200, "text/plain", shouldReboot ? "OK" : "FAIL");
-        response->addHeader("Connection", "close");
-        request->send(response);
-      },
-      [](AsyncWebServerRequest *request, String filename, size_t index,
-         uint8_t *data, size_t len, bool final) {
-        if (!index) {
-          Serial.printf("Update Start: %s\n", filename.c_str());
-          Update.runAsync(true);
-          if (!Update.begin((ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000)) {
-            Update.printError(Serial);
-          }
-        }
-        if (!Update.hasError()) {
-          if (Update.write(data, len) != len) {
-            Update.printError(Serial);
-          }
-        }
-        if (final) {
-          if (Update.end(true)) {
-            Serial.printf("Update Success: %uB\n", index + len);
-          } else {
-            Update.printError(Serial);
-          }
-        }
-      });
+      "/update.html", HTTP_POST,
+      std::bind(&WebServer::updatePageHandler1, this, std::placeholders::_1),
+      std::bind(&WebServer::updatePageHandler2, this, std::placeholders::_1,
+                std::placeholders::_2, std::placeholders::_3,
+                std::placeholders::_4, std::placeholders::_5,
+                std::placeholders::_6));
 
   // administrative pages
   webServer.onNotFound(
@@ -185,15 +148,15 @@ bool WebServer::checkAuthentification(AsyncWebServerRequest *request) {
   // check for cookie
   if (request->hasHeader("Cookie")) {
     String cookie = request->header("Cookie");
-    api.info("client provided cookie: " + cookie);
+    api.debug("client provided cookie: " + cookie);
     int p = cookie.indexOf("sessionId=");
     if (p < 0) {
-      api.info("no sessionId provided.");
+      api.debug("no sessionId provided.");
       return false;
     }
     // check if cookie corresponds to active session
     String sessionId = cookie.substring(p + 10, p + 74);
-    api.info("sessionId " + sessionId + " provided.");
+    api.debug("sessionId " + sessionId + " provided.");
     SessionPtr session = auth.getSession(sessionId);
     if (!session) {
       // api.debug("no session found.");
@@ -212,30 +175,6 @@ bool WebServer::checkAuthentification(AsyncWebServerRequest *request) {
     return false;
   }
 }
-
-//...............................................................................
-//  apply configuration
-//...............................................................................
-void WebServer::applyConfiguration(AsyncWebServerRequest *request) {
-
-  api.info("applying configuration");
-  if (request->args()) {
-    String root = "{\"";
-    for (int i = 0; i < request->args(); i++) {
-      if (i)
-        root += ",\"";
-      root += request->argName(i) + "\":\"" + request->arg(i) + "\"";
-    }
-    root += "}";
-    api.call("~/set/ffs/cfg/root " + root);
-    api.call("~/set/ffs/cfg/saveFile");
-  };
-}
-
-//...............................................................................
-//  get configuration
-//...............................................................................
-String WebServer::getConfiguration() { return api.call("~/get/ffs/cfg/root"); }
 
 //...............................................................................
 //  template handlung
@@ -277,25 +216,9 @@ void WebServer::rootPageHandler(AsyncWebServerRequest *request) {
 
     String action = request->arg("action");
 
-    // reboot
-    if (action == "reboot") {
-      api.info("action: reboot");
-      request->send(200, "text/plain", "true");
-      api.call("~/set/esp/restart"); // never returns
-    } else if (action == "apply") {
-      api.info("action: apply config");
-      // https://code.tutsplus.com/tutorials/jquery-mobile-framework-a-forms-tutorial--mobile-4500
-      applyConfiguration(request);
-      request->send(200, "text/plain", "true");
-    } else if (action == "config") {
-      api.info("action: get config");
-      request->send(200, "application/json", getConfiguration());
-    } else {
-      // show dashboard
-      api.info("request authenticated.");
-      request->send(SPIFFS, "/web/ui.html", String(), false,
-                    std::bind(&WebServer::subst, this, std::placeholders::_1));
-    }
+    api.info("request authenticated.");
+    request->send(SPIFFS, "/web/ui.html", String(), false,
+                  std::bind(&WebServer::subst, this, std::placeholders::_1));
   } else {
     // send user to login page
     api.info("request not authenticated.");
@@ -375,7 +298,7 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
     Topic tmpTopic(call);
 
     String result = api.call(tmpTopic);
-    api.debug("returning " + result);
+    api.info("returning " + result);
     request->send(200, "text/plain", result);
   } else {
     api.debug("client is not authenticated.");
@@ -387,26 +310,72 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
 //  updatePageHandler
 //...............................................................................
 
+String WebServer::getUpdateErrorString() {
+  uint8_t error = Update.getError();
+  if (error == UPDATE_ERROR_OK) {
+    return ("No Error");
+  } else if (error == UPDATE_ERROR_WRITE) {
+    return ("Flash Write Failed");
+  } else if (error == UPDATE_ERROR_ERASE) {
+    return ("Flash Erase Failed");
+  } else if (error == UPDATE_ERROR_READ) {
+    return ("Flash Read Failed");
+  } else if (error == UPDATE_ERROR_SPACE) {
+    return ("Not Enough Space");
+  } else if (error == UPDATE_ERROR_SIZE) {
+    return ("Bad Size Given");
+  } else if (error == UPDATE_ERROR_STREAM) {
+    return ("Stream Read Timeout");
+  } else if (error == UPDATE_ERROR_MD5) {
+    return ("MD5 Check Failed");
+  } else if (error == UPDATE_ERROR_FLASH_CONFIG) {
+    return ("Flash config wrong");
+  } else if (error == UPDATE_ERROR_NEW_FLASH_CONFIG) {
+    return ("new Flash config wrong");
+  } else if (error == UPDATE_ERROR_MAGIC_BYTE) {
+    return ("Magic byte is wrong, not 0xE9");
+    //  } else if (error == UPDATE_ERROR_BOOTSTRAP) {
+    //    return("Invalid bootstrapping state, reset ESP8266 before updating");
+  } else {
+    return ("Unknown error");
+  }
+}
+
+void WebServer::logUpdateError() { api.error(getUpdateErrorString()); }
+
 void WebServer::updatePageHandler1(AsyncWebServerRequest *request) {
-  api.error("Why are we here?");
+  shouldReboot = !Update.hasError();
+  AsyncWebServerResponse *response = request->beginResponse(
+      200, "text/plain", shouldReboot ? "ok" : getUpdateErrorString());
+  response->addHeader("Connection", "close");
+  request->send(response);
 }
 
 void WebServer::updatePageHandler2(AsyncWebServerRequest *request,
                                    String filename, size_t index, uint8_t *data,
                                    size_t len, bool final) {
 
-  api.debug("handling firmware update...");
-  if (checkAuthentification(request)) {
-    if (!index) {
-      api.info("starting firmware update from file " + filename);
+  if (!index) {
+    api.info("updating firmware from file " + filename);
+    Update.runAsync(true);
+    uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
+    if (!Update.begin(maxSketchSpace)) {
+      logUpdateError();
+      Update.printError(Serial);
     }
-    if (final) {
-      api.info("firmware update finished.");
+  }
+  if (!Update.hasError()) {
+    if (Update.write(data, len) != len) {
+      logUpdateError();
     }
-    request->send(200, "text/plain", "OK");
-  } else {
-    api.debug("client is not authenticated.");
-    request->send(404, "text/plain", "");
+  }
+  if (final) {
+    if (Update.end(true)) {
+      api.info("firmware update successful (" + String(index + len) +
+               " bytes)");
+    } else {
+      logUpdateError();
+    }
   }
 }
 
