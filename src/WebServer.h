@@ -14,6 +14,8 @@ private:
   AsyncWebSocket webSocket;
   API &api;
 
+
+
   // authenticator
   Auth auth;
   bool checkAuthentification(AsyncWebServerRequest *request);
@@ -22,6 +24,8 @@ private:
   void rootPageHandler(AsyncWebServerRequest *request);
   void authPageHandler(AsyncWebServerRequest *request);
   void apiPageHandler(AsyncWebServerRequest *request);
+  void updatePageHandler1(AsyncWebServerRequest *request);
+  void updatePageHandler2(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
   void notFoundPageHandler(AsyncWebServerRequest *request);
 
   // variable substitution in templates

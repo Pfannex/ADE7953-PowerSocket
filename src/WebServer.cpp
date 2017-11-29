@@ -9,7 +9,8 @@
 //-------------------------------------------------------------------------------
 //  WebServer public
 //-------------------------------------------------------------------------------
-
+  bool shouldReboot = false;
+  
 WebServer::WebServer(API &api)
     : api(api), webServer(WEBSERVERPORT), webSocket("/ws"), auth(api) {
 
@@ -26,7 +27,8 @@ WebServer::WebServer(API &api)
                         "/web/config.js" /*, "max-age=86400"*/);
   webServer.serveStatic("/panels.js", SPIFFS,
                         "/web/panels.js" /*, "max-age=86400"*/);
-  webServer.serveStatic("/console.js", SPIFFS, "/web/console.js" /*, "max-age=86400"*/);
+  webServer.serveStatic("/console.js", SPIFFS,
+                        "/web/console.js" /*, "max-age=86400"*/);
   webServer.serveStatic("/ui.js", SPIFFS, "/web/ui.js" /*, "max-age=86400"*/);
   webServer.serveStatic("/css/images/ajax-loader.gif", SPIFFS,
                         "/web/css/images/ajax-loader.gif", "max-age=86400");
@@ -36,6 +38,53 @@ WebServer::WebServer(API &api)
                                         std::placeholders::_1));
   webServer.on("/auth.html", HTTP_ANY, std::bind(&WebServer::authPageHandler,
                                                  this, std::placeholders::_1));
+  webServer.on("/api.html", HTTP_ANY, std::bind(&WebServer::apiPageHandler,
+                                                this, std::placeholders::_1));
+  webServer.on("/update.html", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(200, "text/html", "<form method='POST' action='/update' "
+                                    "enctype='multipart/form-data'><input "
+                                    "type='file' name='update'><input "
+                                    "type='submit' value='Update'></form>");
+  });
+
+  // Simple Firmware Update Form
+  webServer.on("/update", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(200, "text/html", "<form method='POST' action='/update' "
+                                    "enctype='multipart/form-data'><input "
+                                    "type='file' name='update'><input "
+                                    "type='submit' value='Update'></form>");
+  });
+  webServer.on(
+      "/update", HTTP_POST,
+      [](AsyncWebServerRequest *request) {
+        shouldReboot = !Update.hasError();
+        AsyncWebServerResponse *response = request->beginResponse(
+            200, "text/plain", shouldReboot ? "OK" : "FAIL");
+        response->addHeader("Connection", "close");
+        request->send(response);
+      },
+      [](AsyncWebServerRequest *request, String filename, size_t index,
+         uint8_t *data, size_t len, bool final) {
+        if (!index) {
+          Serial.printf("Update Start: %s\n", filename.c_str());
+          Update.runAsync(true);
+          if (!Update.begin((ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000)) {
+            Update.printError(Serial);
+          }
+        }
+        if (!Update.hasError()) {
+          if (Update.write(data, len) != len) {
+            Update.printError(Serial);
+          }
+        }
+        if (final) {
+          if (Update.end(true)) {
+            Serial.printf("Update Success: %uB\n", index + len);
+          } else {
+            Update.printError(Serial);
+          }
+        }
+      });
 
   // administrative pages
   webServer.onNotFound(
@@ -316,6 +365,10 @@ void WebServer::authPageHandler(AsyncWebServerRequest *request) {
 void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
 
   String call = request->arg("call");
+  if (call == "") {
+    api.error("webserver refusing empty API call");
+    return;
+  }
   api.info("webserver handling API call " + call);
   if (checkAuthentification(request)) {
 
@@ -324,6 +377,33 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
     String result = api.call(tmpTopic);
     api.debug("returning " + result);
     request->send(200, "text/plain", result);
+  } else {
+    api.debug("client is not authenticated.");
+    request->send(404, "text/plain", "");
+  }
+}
+
+//...............................................................................
+//  updatePageHandler
+//...............................................................................
+
+void WebServer::updatePageHandler1(AsyncWebServerRequest *request) {
+  api.error("Why are we here?");
+}
+
+void WebServer::updatePageHandler2(AsyncWebServerRequest *request,
+                                   String filename, size_t index, uint8_t *data,
+                                   size_t len, bool final) {
+
+  api.debug("handling firmware update...");
+  if (checkAuthentification(request)) {
+    if (!index) {
+      api.info("starting firmware update from file " + filename);
+    }
+    if (final) {
+      api.info("firmware update finished.");
+    }
+    request->send(200, "text/plain", "OK");
   } else {
     api.debug("client is not authenticated.");
     request->send(404, "text/plain", "");
