@@ -8,7 +8,7 @@
 //  NTP clock public
 //-------------------------------------------------------------------------------
 
-Clock::Clock(TopicQueue &topicQueue) : topicQueue(topicQueue) {
+Clock::Clock(TopicQueue &topicQueue) : topicQueue(topicQueue), tz(CET, CEST) {
   uptimeLo = 0;
   uptimeHi = 0;
 }
@@ -70,26 +70,13 @@ time_t Clock::now() {
   if (ntpClient == nullptr) {
     return (time_t)uptime();
   } else {
-    return ntpClient->getEpochTime();
+    return tz.toLocal(ntpClient->getEpochTime());
   }
 }
 
 //...............................................................................
 //  update clock
 //...............................................................................
-
-void Clock::adjustTimeOffset() {
-  if (ntpClient == nullptr)
-    return;
-  // change between summer time (DST) and winter time
-  time_t t = now();
-  // Sommerzeit = letzter Sonntag im März von 2h -> 3h
-  if (month(t) == 3 and day(t) >= 25 and weekday(t) == 7 and hour(t) == 2)
-    ntpClient->setTimeOffset(SUMMER_TIME);
-  // Winterzeit = letzter Sonntag im Oktober von 3h -> 2h
-  if (month(t) == 10 and day(t) >= 25 and weekday(t) == 7 and hour(t) == 3)
-    ntpClient->setTimeOffset(WINTER_TIME);
-}
 
 // this function needs to be called periodically
 void Clock::handle() {
@@ -103,9 +90,7 @@ void Clock::handle() {
   t = now();
   if (t != lastTime) {
     lastTime = t;
-    adjustTimeOffset();
-    // using SysUtils::strDateTime() makes the firmware crash after 6 minutes
-    topicQueue.put("~/event/clock/time " + SysUtils::strDateTime(t));
+    topicQueue.put("~/event/clock/time " + SysUtils::strDateTime(now()));
     // topicQueue.put("~/event/clock/time", t);
   }
 }
@@ -114,7 +99,6 @@ void Clock::forceUpdate() {
 
   if (ntpClient != nullptr) {
     ntpClient->forceUpdate();
-    adjustTimeOffset();
   }
 }
 

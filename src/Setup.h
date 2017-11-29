@@ -12,10 +12,12 @@
 //###############################################################################
 //  NTP
 //###############################################################################
+
+  // default server if no other is set in the config
   #define NTP_SERVER  "europe.pool.ntp.org"
   #define NTP_UPDATE_INTERVAL 3600000
-  #define SUMMER_TIME 7200   //+2h
-  #define WINTER_TIME 3600   //+1h
+  #define NO_TIME_OFFSET 0
+  #define TZ_CET
 
 //###############################################################################
 //  FlashFileSystem
