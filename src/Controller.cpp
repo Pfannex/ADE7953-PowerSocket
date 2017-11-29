@@ -54,6 +54,7 @@ void Controller::start() {
 
   // enable the logging subsystem
   logging.start();
+  logging.info(SysUtils::fullVersion());
 
   // start esp tools
   espTools.start();

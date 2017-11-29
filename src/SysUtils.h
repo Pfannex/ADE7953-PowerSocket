@@ -25,4 +25,7 @@ public:
   static String strDateTime(time_t t);
   //static String strDateTime_ms(time_t t);
   static String uptimeStr(time_t t);
+
+  // version utils
+  static String fullVersion();
 };

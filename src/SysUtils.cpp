@@ -1,4 +1,5 @@
 #include "SysUtils.h"
+#include "Setup.h"
 
 // we do not need an instance of SysUtils
 // all methods are static (class functions)
@@ -102,4 +103,12 @@ String SysUtils::uptimeStr(time_t t) {
   char txt[128];
   sprintf(txt, "%dd %02d:%02d:%02d", days, hours, minutes, t);
   return String(txt);
+}
+
+//###############################################################################
+//  version utils
+//###############################################################################
+
+String SysUtils::fullVersion() {
+  return String(VERSION) + " " + String(__DATE__) + " " + String(__TIME__);
 }
