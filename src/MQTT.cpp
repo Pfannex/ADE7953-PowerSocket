@@ -14,24 +14,21 @@ MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
                                std::placeholders::_1, std::placeholders::_2,
                                std::placeholders::_3));
   //API
-  api.registerTopicFunction(std::bind(&MQTT::on_pubMQTT, this,
-                                 std::placeholders::_1,
-                                 std::placeholders::_2));
+  // register log function
+  api.registerLogFunction(std::bind(&MQTT::on_logFunction, this,
+                                    std::placeholders::_1,
+                                    std::placeholders::_2));
+
+  // register Topic function
+  api.registerTopicFunction(std::bind(&MQTT::on_topicFunction, this,
+                                      std::placeholders::_1,
+                                      std::placeholders::_2));
+
 }
 
 //-------------------------------------------------------------------------------
 //  MQTT public
 //-------------------------------------------------------------------------------
-
-//...............................................................................
-//  EVENT publish Topic
-//...............................................................................
-void MQTT::on_pubMQTT(time_t t, Topic &topic) {
-  //api.controller.logging.debug("-> MQTT::on_pubMQTT()");
-  //api.controller.logging.debug(topic.asString());
-
-
-}
 
 //...............................................................................
 //  WiFi start connection
@@ -137,13 +134,34 @@ void MQTT::on_incommingSubcribe(char *topics, byte *payload,
 }
 
 //...............................................................................
+//  MQTT publish API log
+//...............................................................................
+void MQTT::on_logFunction(const String &channel, const String &msg) {
+  String deviceName = api.call("~/get/ffs/cfg/item/device_name");
+  String logTopic = deviceName + "/" + channel;
+  pub(logTopic, msg);
+  //String type("log");
+  //broadcast(type, channel, msg);
+}
+
+//...............................................................................
+//  MQTT publish API Topic
+//...............................................................................
+void MQTT::on_topicFunction(const time_t, Topic &topic) {
+  pub(topic.topic_asString(),topic.arg_asString());
+  //String type("event");
+  //String subtype("");
+  //String msg = topic.asString();
+  //broadcast(type, subtype, msg);
+}
+
+//-------------------------------------------------------------------------------
+//  MQTT private
+//-------------------------------------------------------------------------------
+//...............................................................................
 //  MQTT publish
 //...............................................................................
 void MQTT::pub(String topic, String value) {
   client.publish(topic.c_str(), value.c_str());
   client.loop();
 }
-
-//-------------------------------------------------------------------------------
-//  MQTT private
-//-------------------------------------------------------------------------------

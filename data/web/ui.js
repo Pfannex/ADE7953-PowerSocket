@@ -158,7 +158,7 @@ function retrieveConfig(callback) {
 //
 function saveConfig() {
   console.log("Saving configuration in device...");
-  call("~/set/ffs/cfg/root/saveFile");
+  call("~/set/ffs/cfg/saveFile");
 }
 
 function sendConfig(json) {

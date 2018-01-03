@@ -22,11 +22,11 @@ public:
   // pubSubClient
   void on_incommingSubcribe(char *topic, byte *payload, unsigned int length);
   // API
-  void on_pubMQTT(time_t t, Topic &topic);
-
-  void pub(String topic, String value);
+  void on_logFunction(const String &channel, const String &msg);
+  void on_topicFunction(const time_t, Topic &topic);
 
 private:
   WiFiClient espClient;
   PubSubClient client;
+  void pub(String topic, String value);
 };
