@@ -2,7 +2,6 @@
 #include "Setup.h"
 #include "Topic.h"
 #include <NTPClient.h>
-#include <TimeLib.h>
 #include <Timezone.h>
 #include <WiFiUdp.h>
 
@@ -46,6 +45,6 @@ private:
   // Central European Standard Time
   TimeChangeRule CET = {"CET ", Last, Sun, Oct, 3, 60};
   #endif
-  
+
   Timezone tz;
 };
