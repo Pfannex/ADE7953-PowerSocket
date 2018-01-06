@@ -18,11 +18,18 @@ public:
   Topic(string topics, int value); // "foo/bar",1
   ~Topic();
 
-  strings item;
-  strings arg;
   String topic_asString();
   String arg_asString();
   String asString();
+
+  int getItemCount();
+  string getItem(int index);
+  int getArgCount();
+  string getArg(int index);
+  // Function declarations that differ only in the return type cannot be
+  // overloaded. We thus choose another name.
+  // detects and converts hex (0x) and octal (0..) values
+  long getArgAsLong(int index);
 
   String modifyTopic(int index);
   void setItem(unsigned int index, const string topicName);
@@ -30,6 +37,8 @@ public:
   bool argIs(int index, const string value);
 
 private:
+  strings item;
+  strings arg;
   void initTopic(string topicsArgs);
   void dissectTopic(string topics, string arg);
   bool isValidJson(String root);

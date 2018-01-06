@@ -102,9 +102,9 @@ String FFS::set(Topic &topic) {
       return "OK";
       // write rootString
     } else if (topic.itemIs(4, "root")) {
-      if (topic.arg.getCount() > 0) {
-        if (isValidJson(topic.arg.string[0])) {
-          tmpFile->root = topic.arg.string[0];
+      if (topic.getArgCount() > 0) {
+        if (isValidJson(topic.getArg(0))) {
+          tmpFile->root = topic.getArg(0);
           return "OK";
         } else {
           logging.error("no valid JSON string");
@@ -117,13 +117,13 @@ String FFS::set(Topic &topic) {
 
       // writeItem
     } else if (topic.itemIs(4, "item")) {
-      if (topic.item.getCount() > 5) {
-        if(topic.arg.getCount() > 0) {
-          tmpFile->writeItem(topic.item.string[5], topic.arg.string[0]);
+      if (topic.getItemCount() > 5) {
+        if(topic.getArgCount() > 0) {
+          tmpFile->writeItem(topic.getItem(5), topic.getArg(0));
         } else {
-          tmpFile->writeItem(topic.item.string[5], "");
+          tmpFile->writeItem(topic.getItem(5), "");
         }
-        return tmpFile->readItem(topic.item.string[5]);
+        return tmpFile->readItem(topic.getItem(5));
       } else {
         logging.error("no configuration item given");
         return "no configuration item given";
@@ -183,7 +183,7 @@ String FFS::get(Topic &topic) {
       return tmpFile->root;
       // readItem
     } else if (topic.itemIs(4, "item")) {
-      return tmpFile->readItem(topic.item.string[5]);
+      return tmpFile->readItem(topic.getItem(5));
     } else {
       return TOPIC_NO;
     }

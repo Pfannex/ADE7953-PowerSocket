@@ -108,6 +108,59 @@ bool Topic::argIs(int index, const string value) {
     return false;
 }
 
+//...............................................................................
+//  get number of items
+//...............................................................................
+
+int Topic::getItemCount() {
+  return item.getCount();
+}
+//...............................................................................
+//  get argument referenced by index
+//...............................................................................
+
+string Topic::getItem(int index) {
+  if (index < item.getCount())
+    return item.string[index];
+  else
+    return NULL;
+}
+
+//...............................................................................
+//  get number of arguments
+//...............................................................................
+int Topic::getArgCount() {
+    return arg.getCount();
+}
+
+//...............................................................................
+//  get argument referenced by index
+//...............................................................................
+
+string Topic::getArg(int index) {
+  if (index < arg.getCount())
+    return arg.string[index];
+  else
+    return NULL;
+}
+
+long Topic::getArgAsLong(int index) {
+  if (index < arg.getCount())
+    // The  strtol() function converts the initial part of the string
+    // to a long integer value according to the given base, which must
+    // be between 2 and 36 inclusive, or be the special value 0.
+    // The string may begin with an arbitrary amount of white space
+    // (as determined by isspace(3)) followed by a single optional
+    // '+'  or  '-' sign. If base is zero or 16, the string may then
+    // include a "0x" or "0X" prefix, and the number will be read in
+    // base 16; otherwise, a zero base is taken as 10 (decimal) unless
+    //  the next character is '0', in which case it is taken as 8 (octal).
+    return strtol(arg.string[index], NULL, 0);
+  else
+    return 0;
+}
+
+
 //-------------------------------------------------------------------------------
 //  Topic private
 //-------------------------------------------------------------------------------
