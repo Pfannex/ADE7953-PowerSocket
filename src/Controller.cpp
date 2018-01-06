@@ -168,12 +168,9 @@ void Controller::handleEvent(String &topicsArgs) {
   time_t t= clock.now();
 
   //logging.debug("handling event " + topicsArgs);
-  // D("Controller: create Topic object");
-  // Topic topic = Topic(topicsArgs);
   Topic topic(topicsArgs);
 
   // propagate event to views
-  // D("Controller: viewsUpdate");
   viewsUpdate(t, topic);
 
   // D("Controller: business logic");
@@ -184,23 +181,24 @@ void Controller::handleEvent(String &topicsArgs) {
       //
       // events from button
       //
-      // - short
-      if (topic.itemIs(4, "short")) {
-        if(configMode)
-          setConfigMode(0);
-        else
-          setPowerMode(!power);
-      }
-      // - long
-      if (topic.itemIs(4, "long"))
+      // - click
+      if (topic.itemIs(4, "click")) {
+        // -- short
+        if(topic.argIs(0, "short")) {
+          if(configMode)
+            setConfigMode(0);
+          else
+            setPowerMode(!power);
+        }
+      // -- long
+      if (topic.argIs(0, "long"))
         setConfigMode(!configMode);
+      }
       // - idle
-      // Dl;
       if (topic.itemIs(4, "idle"))
         setConfigMode(0);
     }
   }
-  // D("Controller: event handled");
 }
 
 //...............................................................................

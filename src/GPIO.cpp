@@ -157,7 +157,7 @@ void GPIO::handle() {
       // button is pressed
       if (!buttonLongPress && longtime) {
         buttonLongPress = 1;
-        topicQueue.put("~/event/gpio/button/long");
+        topicQueue.put("~/event/gpio/button/click long");
       }
     } else {
       // button is not pressed
@@ -176,9 +176,9 @@ void GPIO::handle() {
     else {
       topicQueue.put("~/event/gpio/button/state 0");
       if(!longtime) {
-        topicQueue.put("~/event/gpio/button/short");
+        topicQueue.put("~/event/gpio/button/click short");
         if(t-buttonReleaseTime <= DOUBLECLICKTIME)
-          topicQueue.put("~/event/gpio/button/double");
+          topicQueue.put("~/event/gpio/button/click double");
         buttonReleaseTime= t;
       }
     }
