@@ -3,6 +3,7 @@
 #include "Controller.h"
 #include "Topic.h"
 #include <Arduino.h>
+#include "Debug.h"
 
 //#############################################################################
 //  API

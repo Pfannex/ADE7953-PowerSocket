@@ -40,7 +40,7 @@ bool MQTT::start() {
     String strIP = api.call("~/get/ffs/cfg/item/mqtt_ip");
     IPAddress IP = SysUtils::strToIP(strIP);
     int port = api.call("~/get/ffs/cfg/item/mqtt_port").toInt();
-    String deviceName = api.call("~/get/ffs/cfg/item/device_name");
+    deviceName = api.call("~/get/ffs/cfg/item/device_name");
     String lastWillTopic = "Devices/" + deviceName;
 
     api.info("MQTT client connecting to " + strIP + ":" + String(port));
@@ -137,7 +137,8 @@ void MQTT::on_incommingSubcribe(char *topics, byte *payload,
 //  MQTT publish API log
 //...............................................................................
 void MQTT::on_logFunction(const String &channel, const String &msg) {
-  String deviceName = api.call("~/get/ffs/cfg/item/device_name");
+  // on_log is not reentrant - do not use API calls here!
+  // String deviceName = api.call("~/get/ffs/cfg/item/device_name");
   String logTopic = deviceName + "/" + channel;
   pub(logTopic, msg);
   //String type("log");

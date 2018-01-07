@@ -3,15 +3,7 @@
 //###############################################################################
 //  API
 //###############################################################################
-API::API(Controller &controller) : controller(controller) {
-
-  // register to receive Topics
-  controller.setTopicFunction(std::bind(
-      &API::onTopic, this, std::placeholders::_1, std::placeholders::_2));
-  // register to reveice log entries
-  controller.logging.setLogFunction(std::bind(
-      &API::onLog, this, std::placeholders::_1, std::placeholders::_2));
-}
+API::API(Controller &controller) : controller(controller) {}
 
 //-------------------------------------------------------------------------------
 //  API public
@@ -35,6 +27,12 @@ void API::registerLogFunction(LogFunction LogFn) {
 //  API start
 //...............................................................................
 void API::start() {
+  // register to receive Topics
+  controller.setTopicFunction(std::bind(
+      &API::onTopic, this, std::placeholders::_1, std::placeholders::_2));
+  // register to reveice log entries
+  controller.logging.setLogFunction(std::bind(
+      &API::onLog, this, std::placeholders::_1, std::placeholders::_2));
   info("API started for device with chip ID " + call("~/get/esp/chipId"));
 }
 
@@ -88,7 +86,10 @@ void API::onTopic(const time_t t, Topic &topic) {
 }
 
 void API::onLog(const String &channel, const String &message) {
+  //D(String("API onLog "+message).c_str());
   for (int i = 0; i < logFunctionCount; i++) {
+    //Di("API onLog", i);
     logFunction[i](channel, message);
   }
+  //Dl;
 }

@@ -25,6 +25,7 @@ public:
   void on_topicFunction(const time_t, Topic &topic);
 
 private:
+  String deviceName;
   WiFiClient espClient;
   PubSubClient client;
   void pub(String topic, String value);
