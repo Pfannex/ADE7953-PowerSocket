@@ -1,33 +1,35 @@
 {
-  "device_name":            "ESP_xxx",
+  "device_name":            "Node52",
   "device_username":        "admin",
   "device_password":        "admin",
 
-  "wifi":                   "dhcp",
-  "wifi_ssid":              "Pf@nne-NET",
-  "wifi_password":          "Pf@nneNETwlan_ACCESS",
+  "wifi":                   "manual",
+  "wifi_ssid":              "xxx",
+  "wifi_password":          "xxx",
   "wifi_ip":                "192.168.31.52",
   "wifi_netmask":           "255.255.255.0",
-  "wifi_gateway":           "192.168.1.1",
+  "wifi_gateway":           "192.168.31.1",
+  "wifi_dns":               "192.168.31.1",
 
   "ap":                     "auto",
-  "ap_ssid":                "ESP_xxx",
+  "ap_ssid":                "",
   "ap_password":            "admin",
 
   "lan":                    "off",
   "lan_ip":                 "",
   "lan_netmask":            "255.255.255.0",
   "lan_gateway":            "",
+  "lan_dns":                "",
 
   "ntp":                    "on",
-  "ntp_serverip":           "europe.pool.ntp.org",
+  "ntp_serverip":           "ntp.home.neubert-volmar.de",
 
   "update_localpath":       "",
   "update":                 "manual",
   "update_remoteurl":       "",
 
   "mqtt":                   "on",
-  "mqtt_ip":                "192.168.1.3",
+  "mqtt_ip":                "192.168.31.41",
   "mqtt_port":              "1883",
   "mqtt_username":          "",
   "mqtt_password":          ""
