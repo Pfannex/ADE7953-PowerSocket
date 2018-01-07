@@ -163,7 +163,7 @@ bool WebServer::checkAuthentification(AsyncWebServerRequest *request) {
       return false;
     }
     if (session->isExpired()) {
-      // api.debug("session expired.");
+      api.debug("session expired.");
       // delete the session
       auth.deleteSession(sessionId);
       return false;
@@ -292,13 +292,15 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
     api.error("webserver refusing empty API call");
     return;
   }
-  api.info("webserver handling API call " + call);
+  // log call only in DEBUG mode, it could contain sensitive information
+  api.debug("webserver handling API call "+call);
   if (checkAuthentification(request)) {
 
     Topic tmpTopic(call);
 
     String result = api.call(tmpTopic);
-    api.info("returning " + result);
+    // contains sensitive information, log only in debug mode
+    api.debug("returning " + result);
     request->send(200, "text/plain", result);
   } else {
     api.debug("client is not authenticated.");
