@@ -282,7 +282,7 @@ String FFSjsonFile::readItem(String itemName) {
   DynamicJsonBuffer JsonBuffer;
   JsonObject &rootObject = JsonBuffer.parseObject(root);
   if (rootObject.success()) {
-    return rootObject[itemName].asString();
+    return rootObject[itemName].as<char*>();
   } else {
     return "NIL";
   }
@@ -295,7 +295,7 @@ String FFSjsonFile::readItem(int item) {
   DynamicJsonBuffer JsonBuffer;
   JsonArray &rootArray = JsonBuffer.parseArray(root);
   if (rootArray.success()) {
-    return rootArray[item].asString();
+    return rootArray[item].as<char*>();
   } else {
     return "NIL";
   }
@@ -384,7 +384,7 @@ void FFSjsonFile::parseJsonArray(JsonArray &jsonArray) {
       JsonArray &nestedArray = element;
       parseJsonArray(nestedArray);
     } else {
-      logging.info(element.asString()); // logging.info(" | ");logging.info(i);
+      logging.info(element.as<char*>()); // logging.info(" | ");logging.info(i);
     }
   }
 }
