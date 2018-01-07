@@ -4,7 +4,7 @@
 //###############################################################################
 //  logging
 //###############################################################################
-LOGGING::LOGGING(Clock &clock) : clock(clock) {}
+LOGGING::LOGGING(Clock &clock) : clock(clock) { logFunction= nullptr; }
 
 //-------------------------------------------------------------------------------
 //  LOGGING public
@@ -15,8 +15,11 @@ LOGGING::LOGGING(Clock &clock) : clock(clock) {}
 //...............................................................................
 
 void LOGGING::start() {
-  Serial.begin(115200);
+  setLogFunction(nullptr);
   info("logging started");
+#ifdef DEBUG
+  debug("log level is DEBUG");
+#endif
 }
 
 //...............................................................................
@@ -29,13 +32,17 @@ void LOGGING::setLogFunction(const LogFunction lf) { logFunction = lf; }
 //  log
 //...............................................................................
 void LOGGING::log(const String &channel, const String &msg) {
+  //Dl;
   if ((channel != "DEBUG") || DEBUG) {
     char txt[1024];
     String T = SysUtils::strDateTime(clock.now());
     sprintf(txt, "%s %5s %s", T.c_str(), channel.c_str(), msg.c_str());
     Serial.println(txt);
-    if (logFunction != nullptr)
+    //Dl;
+    if (logFunction != nullptr) {
+      //D("calling logFunction...");
       logFunction(channel, msg);
+    }
   }
 }
 

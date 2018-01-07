@@ -24,15 +24,16 @@ void ESP_Tools::checkFlash() {
   FlashMode_t ideMode = ESP.getFlashChipMode();
 
   logging.info("checking flash memory");
+return;
   char txt[128];
   sprintf(txt, "flash real id:   %08X", ESP.getFlashChipId());
-  logging.debug(txt);
+  logging.debug(String(txt));
   sprintf(txt, "flash real size: %u", realSize);
-  logging.debug(txt);
+  logging.debug(String(txt));
   sprintf(txt, "flash ide  size: %u", ideSize);
-  logging.debug(txt);
+  logging.debug(String(txt));
   sprintf(txt, "flash ide speed: %u", ESP.getFlashChipSpeed());
-  logging.debug(txt);
+  logging.debug(String(txt));
   sprintf(txt, "flash ide mode:  %s",
           (ideMode == FM_QIO
                ? "QIO"
@@ -41,7 +42,7 @@ void ESP_Tools::checkFlash() {
                      : ideMode == FM_DIO
                            ? "DIO"
                            : ideMode == FM_DOUT ? "DOUT" : "UNKNOWN"));
-  logging.debug(txt);
+  logging.debug(String(txt));
 
   if (ideSize != realSize) {
     logging.error("flash chip configuration wrong");

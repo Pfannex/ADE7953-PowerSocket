@@ -1,6 +1,7 @@
 #pragma once
 #include "Arduino.h"
 #include "Clock.h"
+#include "Debug.h"
 
 //###############################################################################
 //  LOGGING
@@ -26,5 +27,5 @@ public:
   void setLogFunction(const LogFunction lf);
 
 private:
-  LogFunction logFunction= nullptr;
+  LogFunction logFunction;
 };

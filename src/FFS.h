@@ -6,6 +6,7 @@
   #include "Logger.h"
   #include "Topic.h"
   #include "Setup.h"
+  #include "Debug.h"
 
 //###############################################################################
 //  stringFile
