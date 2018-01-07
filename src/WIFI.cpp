@@ -44,13 +44,6 @@ bool WIFI::start() {
     }
 
     logging.info("connecting WiFi to network with SSID " + ssid);
-    /*
-    if(WiFi.config(address, gateway, netmask, dns)) {
-      logging.debug("WiFi static configuration applied");
-    } else {
-      logging.error("could not apply WiFi static configuration");
-    }
-    */
     WiFi.begin(ssid.c_str(), psk.c_str());
     int i = 0;
     // wait 30 seconds for connection
@@ -63,7 +56,16 @@ bool WIFI::start() {
     }
 
     if (WiFi.status() == WL_CONNECTED) {
+      logging.debug("WiFi connection established");
       WiFiStatus = true;
+      // it is ugly and unreasonable to require a connection to
+      // set these parameters but it is the only thing that works;
+      // see https://forum.arduino.cc/index.php?topic=460595.0
+      if(WiFi.config(address, gateway, netmask, dns)) {
+        logging.debug("WiFi static configuration applied");
+      } else {
+        logging.error("could not apply WiFi static configuration");
+      }
       logging.info("local IP address: " + WiFi.localIP().toString());
       if (on_wifiConnected != nullptr)
         on_wifiConnected(); // callback event
