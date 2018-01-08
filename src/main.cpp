@@ -1,9 +1,9 @@
 /******************************************************************************
 
-  ProjectName: Basic template                     ***** *****
+  ProjectName: OmniESP                            ***** *****
   SubTitle   : WLAN/LAN/MQTT/WebIf,LCD           *     *     ************
                                                 *   **   **   *           *
-  Copyright by Pf@nne                          *   *   *   *   *   ****    *
+                                               *   *   *   *   *   ****    *
                                                *   *       *   *   *   *   *
   Last modification by:                        *   *       *   *   ****    *
   - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
