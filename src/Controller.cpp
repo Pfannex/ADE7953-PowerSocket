@@ -25,7 +25,7 @@
 //...............................................................................
 Controller::Controller()
     : logging(clock), i2c(logging), ffs(logging), clock(topicQueue),
-      espTools(logging), wifi(logging, ffs), gpio(logging, topicQueue) {
+      espTools(logging), wifi(logging, ffs), device(logging, topicQueue) {
 
   // callback Events
   // WiFi
@@ -89,9 +89,8 @@ void Controller::start() {
     }
   }
 
-  startPeriphery();
-
-  setLedMode();
+  // startup the device
+  device.start();
 
   logging.info("controller started");
 }
@@ -104,56 +103,15 @@ void Controller::handle() {
   if (!wifi.handle()) {
     wifi.start();
   }
-  gpio.handle();
   clock.handle();
-  // if(topicQueue.count) logging.debug(String(topicQueue.count) + " event(s) in
-  // queue");
+
+  device.handle();
+
   while (topicQueue.count) {
     String topicsArgs = topicQueue.get();
     yield();
     handleEvent(topicsArgs);
   }
-
-  /*
-  if (wifi.handle()) {
-    if (!mqtt.handle()) {
-      Serial.println("MQTT has disconnected!");
-      delay(1000);
-      mqtt.start();
-    }
-    webif.handle();
-  } else {
-    Serial.println("WiFi has disconnected!");
-    wifi.start();
-  }*/
-}
-
-//...............................................................................
-//  mode setter
-//...............................................................................
-
-void Controller::setPowerMode(int value) {
-  power = value;
-  gpio.setRelayMode(power);
-  setLedMode();
-}
-
-void Controller::setConfigMode(int value) {
-  if (configMode == value)
-    return;
-  configMode = value;
-  topicQueue.put("~/event/controller/configMode", configMode);
-  setLedMode();
-}
-
-void Controller::setLedMode() {
-  if (!configMode) {
-    if (power)
-      gpio.setLedMode(ON);
-    else
-      gpio.setLedMode(OFF);
-  } else
-    gpio.setLedMode(BLINK);
 }
 
 //...............................................................................
@@ -170,35 +128,10 @@ void Controller::handleEvent(String &topicsArgs) {
   //logging.debug("handling event " + topicsArgs);
   Topic topic(topicsArgs);
 
-  // propagate event to views
+  // propagate event to views and the device
   viewsUpdate(t, topic);
+  device.on_events(topic);
 
-  // D("Controller: business logic");
-  // central business logic
-  if (topic.itemIs(2, "gpio")) {
-    // Dl;
-    if (topic.itemIs(3, "button")) {
-      //
-      // events from button
-      //
-      // - click
-      if (topic.itemIs(4, "click")) {
-        // -- short
-        if(topic.argIs(0, "short")) {
-          if(configMode)
-            setConfigMode(0);
-          else
-            setPowerMode(!power);
-        }
-      // -- long
-      if (topic.argIs(0, "long"))
-        setConfigMode(!configMode);
-      }
-      // - idle
-      if (topic.itemIs(4, "idle"))
-        setConfigMode(0);
-    }
-  }
 }
 
 //...............................................................................
@@ -232,6 +165,8 @@ String Controller::call(Topic &topic) {
       return clock.set(topic);
     } else if (topic.itemIs(2, "esp")) {
       return espTools.set(topic);
+    } else if (topic.itemIs(2, "device")) {
+      return device.set(topic);
     } else {
       return TOPIC_NO;
     }
@@ -245,6 +180,8 @@ String Controller::call(Topic &topic) {
       return espTools.get(topic);
     } else if (topic.itemIs(2, "wifi")) {
       return wifi.get(topic);
+    } else if (topic.itemIs(2, "device")) {
+      return device.get(topic);
     } else {
       return TOPIC_NO;
     }
@@ -279,21 +216,10 @@ bool Controller::startConnections() {
   bool result = wifi.start();
   if (result) {
 
-    /*
-    i2c.lcd.println("DHCP-IP:", ArialMT_Plain_10, 31);
-    i2c.lcd.println(WiFi.localIP().toString(), ArialMT_Plain_16, 41);
-    */
+    //start after wifi is connected
+
   }
   return result;
-}
-
-//...............................................................................
-//  Start Periphery
-//...............................................................................
-void Controller::startPeriphery() {
-  logging.info("starting periphery");
-  i2c.start();
-  gpio.start();
 }
 
 //...............................................................................

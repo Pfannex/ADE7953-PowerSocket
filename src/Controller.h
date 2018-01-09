@@ -10,9 +10,9 @@
 #include "Topic.h"
 #include "WIFI.h"
 #include "oWire.h"
-#include "GPIO.h"
 #include "SysUtils.h"
-
+// device specific
+#include "Device.h"
 
 //###############################################################################
 //  BasicTemplate
@@ -40,7 +40,7 @@ public:
   I2C i2c;
   OWIRE oWire;
   ESP_Tools espTools;
-  GPIO gpio;
+  Device device;
 
   // the API
   String call(Topic &topic);
@@ -51,23 +51,13 @@ public:
   void t_long_Update();
 
 private:
-  // the central modes
-  int power = 0;
-  int configMode = 0;
   String deviceName;
 
   bool startConnections();
-  void startPeriphery();
   void viewsUpdate(time_t t, Topic& topic);
   void handleEvent(String& topicsArgs);
-  void setConfigMode(int value);
-  void setPowerMode(int value);
-  void setLedMode();
 
   TopicQueue topicQueue;
-
   // if a new Topic is received this function is called
   TopicFunction topicFunction;
-
-
 };
