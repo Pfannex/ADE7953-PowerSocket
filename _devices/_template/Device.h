@@ -1,6 +1,8 @@
 #include "Logger.h"
 #include "Setup.h"
 #include "Topic.h"
+//modules
+//#include "modules/xxx.h"
 
 //###############################################################################
 //  Device
@@ -21,5 +23,5 @@ private:
   TopicQueue &topicQueue;
 
   //define device specific functions here #######################################
-  
+
 };

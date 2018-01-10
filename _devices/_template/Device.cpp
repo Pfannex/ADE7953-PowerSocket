@@ -45,7 +45,7 @@ String Device::set(Topic &topic) {
   logging.debug("Device set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
-
+//e.g.
   if (topic.itemIs(3, "led")) {
     if (topic.itemIs(4, "01")){
       ///## your Event
@@ -74,6 +74,7 @@ String Device::get(Topic &topic) {
   logging.debug("Device get topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
+//e.g.
   if (topic.itemIs(3, "led")) {
     return "get answer";
   }else{

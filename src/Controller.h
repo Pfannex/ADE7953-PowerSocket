@@ -12,7 +12,7 @@
 #include "oWire.h"
 #include "SysUtils.h"
 // device specific
-#include "Device.h"
+#include "device/Device.h"
 
 //###############################################################################
 //  BasicTemplate
