@@ -1,18 +1,27 @@
 {
-   "digitalINPUT":[
-      "IN01",
-      "IN02"
-   ],
-   "digitalOUTPUT":[
-      "OUT01",
-      "OUT02"
-   ],
-   "analogINPUT":[
-      "AIN01",
-      "AIN02"
-   ],
-   "analogOUTPUT":[
-      "AOUT01",
-      "AOUT02"
-   ]
+   "digitalINPUT":
+     [
+       ["IN01",
+       {"Name":"IN01"},
+       {"Type":"pushButton"}],
+       ["IN02",
+       {"Name":"IN02"},
+       {"Type":"Switch"}],
+       ["IN03",
+       {"Name":"IN03"},
+       {"Type":"ToggleButton"}]
+     ],
+   "digitalOUTPUT":
+     [
+       ["OUT01",
+       {"Name":"OUT01"},
+       {"Type":"pushButton"}],
+       ["OUT02",
+       {"Name":"OUT02"},
+       {"Type":"Switch"}],
+       ["OUT03",
+       {"Name":"OUT03"},
+       {"Type":"ToggleButton"}]
+     ]
+
 }
