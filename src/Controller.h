@@ -13,6 +13,7 @@
 #include "SysUtils.h"
 // device specific
 #include "device/Device.h"
+#include "device/DeviceSetup.h"
 
 //###############################################################################
 //  BasicTemplate

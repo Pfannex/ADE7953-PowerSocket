@@ -108,7 +108,6 @@ void GPIO::setRelayMode(int value) {
 //...............................................................................
 
 void GPIO::handle() {
-
   unsigned long now = millis();
 
 //
@@ -236,6 +235,7 @@ int GPIO::getButtonPinState(int buttonPin) {
   // combine with hardware debouncer (100 nF capacitor from buttonPin to GND)
   int lastButtonPinState = buttonPinState[buttonPin];
   buttonPinState[buttonPin] = digitalRead(buttonPin);
+
   unsigned long now = millis();
   /* char s[128];
   sprintf(s, "%d(%d) -> %d(%d)", lastButtonPinState,

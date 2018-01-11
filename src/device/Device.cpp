@@ -21,7 +21,7 @@ void Device::start() {
 
   //start modules
   gpio.start();
-  setLedMode();
+  //setLedMode();
 
 
   logging.info("Device running");
@@ -90,21 +90,6 @@ String Device::get(Topic &topic) {
 //...............................................................................
 void Device::on_events(Topic &topic) {
 
-    //
-    // this is the central routine that dispatches events from devices
-    // and views
-    //
-    //time_t t= clock.now();
-
-    //logging.debug("handling event " + topicsArgs);
-    //Topic topic(topicsArgs);
-
-    // propagate event to views
-
-    //viewsUpdate(t, topic);
-
-    // D("Controller: business logic");
-    // central business logic
     if (topic.itemIs(2, "gpio")) {
       // Dl;
       if (topic.itemIs(3, "button")) {
@@ -115,18 +100,18 @@ void Device::on_events(Topic &topic) {
         if (topic.itemIs(4, "click")) {
           // -- short
           if(topic.argIs(0, "short")) {
-            if(configMode)
-              setConfigMode(0);
-            else
-              setPowerMode(!power);
+            //if(configMode)
+              //setConfigMode(0);
+            //else
+              //setPowerMode(!power);
           }
         // -- long
-        if (topic.argIs(0, "long"))
-          setConfigMode(!configMode);
+        //if (topic.argIs(0, "long"))
+          //setConfigMode(!configMode);
         }
         // - idle
-        if (topic.itemIs(4, "idle"))
-          setConfigMode(0);
+        //if (topic.itemIs(4, "idle"))
+          //setConfigMode(0);
       }
     }
 
@@ -135,31 +120,3 @@ void Device::on_events(Topic &topic) {
 //-------------------------------------------------------------------------------
 //  Device private
 //-------------------------------------------------------------------------------
-
-//...............................................................................
-//  mode setter
-//...............................................................................
-
-void Device::setPowerMode(int value) {
-  power = value;
-  gpio.setRelayMode(power);
-  setLedMode();
-}
-
-void Device::setConfigMode(int value) {
-  if (configMode == value)
-    return;
-  configMode = value;
-  topicQueue.put("~/event/controller/configMode", configMode);
-  setLedMode();
-}
-
-void Device::setLedMode() {
-  if (!configMode) {
-    if (power)
-      gpio.setLedMode(ON);
-    else
-      gpio.setLedMode(OFF);
-  } else
-    gpio.setLedMode(BLINK);
-}

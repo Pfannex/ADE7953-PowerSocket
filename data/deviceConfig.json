@@ -1,0 +1,18 @@
+{
+   "digitalINPUT":[
+      "IN01",
+      "IN02"
+   ],
+   "digitalOUTPUT":[
+      "OUT01",
+      "OUT02"
+   ],
+   "analogINPUT":[
+      "AIN01",
+      "AIN02"
+   ],
+   "analogOUTPUT":[
+      "AOUT01",
+      "AOUT02"
+   ]
+}

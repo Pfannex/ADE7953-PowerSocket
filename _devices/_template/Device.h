@@ -1,6 +1,7 @@
 #include "Logger.h"
 #include "Setup.h"
 #include "Topic.h"
+#include "DeviceSetup.h"
 //modules
 //#include "modules/xxx.h"
 
