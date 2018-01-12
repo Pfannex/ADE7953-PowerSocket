@@ -35,6 +35,7 @@ Unterstütz werden bislang folgende Funktionen:
 - **API**  
   - [Übersicht](https://github.com/Pfannex/ADE7953-PowerSocket/wiki/API_%C3%9Cbersicht)
   
-***[ToDo]
-(https://github.com/Pfannex/BasicTemplate/blob/master/ToDo.md)  
+***
+
+[ToDo](https://github.com/Pfannex/BasicTemplate/blob/master/ToDo.md)  
 [changeLOG](https://github.com/Pfannex/BasicTemplate/blob/master/changeLOG.md)
