@@ -37,5 +37,5 @@ Unterstütz werden bislang folgende Funktionen:
   
 ***
 
-[ToDo](https://github.com/Pfannex/BasicTemplate/blob/master/ToDo.md)  
+[ToDo](https://github.com/Pfannex/BasicTemplate/blob/master/ToDo.md)  
 [changeLOG](https://github.com/Pfannex/BasicTemplate/blob/master/changeLOG.md)
