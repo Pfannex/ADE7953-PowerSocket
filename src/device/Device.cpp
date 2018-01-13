@@ -49,7 +49,7 @@ String Device::set(Topic &topic) {
                 topic.arg_asString());
 
 //e.g.
-  if (topic.itemIs(3, "led")) {
+  if (topic.itemIs(3, "button1")) {
     if (topic.itemIs(4, "01")){
       ///## your Event
       return TOPIC_OK;
