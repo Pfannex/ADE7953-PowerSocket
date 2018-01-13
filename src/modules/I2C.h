@@ -1,5 +1,5 @@
 #pragma once
-#include "Logger.h"
+#include "framework/Utils/Logger.h"
 #include "Setup.h"
 #include <Arduino.h>
 #include <SSD1306.h>

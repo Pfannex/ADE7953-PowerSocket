@@ -1,4 +1,4 @@
-#include "FFS.h"
+#include "framework/Core/FFS.h"
 
 //###############################################################################
 //  FFS
@@ -7,9 +7,10 @@
 FFS::FFS(LOGGING &logging)
     : logging(logging),
       // jsonFiles
-      cfg(logging, CFG_PATH, TYPE_OBJECT), sub(logging, SUB_PATH, TYPE_OBJECT),
-      subGlobal(logging, SUB_GLOBAL_PATH, TYPE_OBJECT), pub(logging, PUB_PATH, TYPE_OBJECT),
-      ade7953(logging, ADE7953_PATH, TYPE_OBJECT) {}
+      cfg(logging, CFG_PATH, TYPE_OBJECT),
+      deviceCFG(logging, DEVICECFG_PATH, TYPE_OBJECT),
+      webCFG(logging, WEBCFG_PATH, TYPE_OBJECT),
+      subGlobal(logging, SUBGLOBAL_PATH, TYPE_OBJECT) {}
 
 //-------------------------------------------------------------------------------
 //  FFS public
@@ -32,10 +33,9 @@ void FFS::mount() {
     // load rootStrings
     logging.info("loading configuration");
     cfg.loadFile();
+    deviceCFG.loadFile();
+    webCFG.loadFile();
     subGlobal.loadFile();
-    sub.loadFile();
-    pub.loadFile();
-    ade7953.loadFile();
     logging.debug("configuration loaded");
   }
 }
@@ -81,14 +81,12 @@ String FFS::set(Topic &topic) {
   FFSjsonFile *tmpFile = NULL;
   if (topic.itemIs(3, "cfg")) {
     tmpFile = &cfg;
-  } else if (topic.itemIs(3, "sub")) {
-    tmpFile = &sub;
+  } else if (topic.itemIs(3, "deviceCFG")) {
+    tmpFile = &deviceCFG;
+  } else if (topic.itemIs(3, "webCFG")) {
+    tmpFile = &webCFG;
   } else if (topic.itemIs(3, "subGlobal")) {
     tmpFile = &subGlobal;
-  } else if (topic.itemIs(3, "pub")) {
-    tmpFile = &pub;
-  } else if (topic.itemIs(3, "ade7953")) {
-    tmpFile = &ade7953;
   }
 
   if (tmpFile != NULL) {
@@ -155,14 +153,12 @@ String FFS::get(Topic &topic) {
   FFSjsonFile *tmpFile = NULL;
   if (topic.itemIs(3, "cfg")) {
     tmpFile = &cfg;
-  } else if (topic.itemIs(3, "sub")) {
-    tmpFile = &sub;
+  } else if (topic.itemIs(3, "deviceCFG")) {
+    tmpFile = &deviceCFG;
+  } else if (topic.itemIs(3, "webCFG")) {
+    tmpFile = &webCFG;
   } else if (topic.itemIs(3, "subGlobal")) {
     tmpFile = &subGlobal;
-  } else if (topic.itemIs(3, "pub")) {
-    tmpFile = &pub;
-  } else if (topic.itemIs(3, "ade7953")) {
-    tmpFile = &ade7953;
   }
 
   if (tmpFile != NULL) {
@@ -355,6 +351,9 @@ String FFSjsonFile::readJsonString() {
       return "NIL";
     }
     jsonFile.close();
+  }else{
+    logging.error("file does not exists!");
+    return "NIL";
   }
   return jsonData;
 }

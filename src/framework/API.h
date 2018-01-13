@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Controller.h"
-#include "Topic.h"
+#include "framework/Controller.h"
+#include "framework/Topic.h"
 #include <Arduino.h>
-#include "Debug.h"
+#include "framework/Utils/Debug.h"
 
 //#############################################################################
 //  API

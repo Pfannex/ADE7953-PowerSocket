@@ -1,5 +1,5 @@
-#include "API.h"
-#include "Auth.h"
+#include "framework/API.h"
+#include "framework/webIF/Auth.h"
 #include "ESPAsyncTCP.h"
 #include "ESPAsyncWebServer.h"
 #include "Setup.h"

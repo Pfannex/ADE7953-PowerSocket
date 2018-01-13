@@ -16,11 +16,11 @@
 #include <SoftTimer.h> //https://github.com/prampec/arduino-softtimer
                        // need https://github.com/prampec/arduino-pcimanager
 
-#include "API.h"
-#include "Controller.h"
-#include "WebServer.h"
-#include "MQTT.h"
-#include "Debug.h"
+#include "framework/API.h"
+#include "framework/Controller.h"
+#include "framework/webIF/WebServer.h"
+#include "framework/MQTT/MQTT.h"
+#include "framework/Utils/Debug.h"
 
 Controller controller;
 API api(controller);

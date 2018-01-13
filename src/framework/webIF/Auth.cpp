@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include "Auth.h"
-#include "SysUtils.h"
+#include "framework/webIF/Auth.h"
+#include "framework/Utils/SysUtils.h"
 
 //###############################################################################
 //  Session

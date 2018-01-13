@@ -1,6 +1,6 @@
 #include "Arduino.h"
-#include "Debug.h"
-#include "Topic.h"
+#include "framework/Utils/Debug.h"
+#include "framework/Topic.h"
 
 //###############################################################################
 //  data exchange Topic

@@ -1,7 +1,7 @@
 #pragma once
 #include "Arduino.h"
-#include "Clock.h"
-#include "Debug.h"
+#include "framework/Core/Clock.h"
+#include "framework/Utils/Debug.h"
 
 //###############################################################################
 //  LOGGING

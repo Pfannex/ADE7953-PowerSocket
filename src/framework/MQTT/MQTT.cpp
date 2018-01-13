@@ -1,5 +1,5 @@
-#include "MQTT.h"
-#include "SysUtils.h"
+#include "framework/MQTT/MQTT.h"
+#include "framework/Utils/SysUtils.h"
 #include <ArduinoJson.h>
 #include <ESP8266WiFi.h>
 
@@ -74,6 +74,14 @@ bool MQTT::start() {
         api.error("reading ffs.subGlobal.root failed");
       }
       // device subscribe
+      String subStr = deviceName + "/set/#";
+      client.subscribe(subStr.c_str());
+      client.loop();
+      subStr = deviceName + "/get/#";
+      client.subscribe(subStr.c_str());
+      client.loop();
+
+      /*
       DynamicJsonBuffer device_JsonBuffer;
       root = api.call("~/get/ffs/sub/root");
       JsonObject &device_rootObject = device_JsonBuffer.parseObject(root);
@@ -90,7 +98,7 @@ bool MQTT::start() {
         }
       } else {
         api.error("reading ffs.sub.root failed");
-      }
+      }*/
     }
   } else {
     api.info("MQTT is switched off");

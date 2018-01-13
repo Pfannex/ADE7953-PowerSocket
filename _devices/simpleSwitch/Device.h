@@ -1,6 +1,6 @@
-#include "Logger.h"
+#include "framework/Utils/Logger.h"
 #include "Setup.h"
-#include "Topic.h"
+#include "framework/Topic.h"
 #include "DeviceSetup.h"
 //modules
 #include "GPIO.h"

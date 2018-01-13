@@ -1,3 +1,9 @@
+#--> Project files <-------------------------
+  #specific config
+    data/cfg.json
+  #device Folder
+    src/device
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

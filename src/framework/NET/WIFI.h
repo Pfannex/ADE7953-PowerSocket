@@ -1,9 +1,9 @@
 #pragma once
-#include "FFS.h"
+#include "framework/Core/FFS.h"
 #include "Setup.h"
 #include <Arduino.h>
 #include <WiFiClient.h>
-#include "Logger.h"
+#include "framework/Utils/Logger.h"
 //#include "I2C.h"
 
 #include <functional>

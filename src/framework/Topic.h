@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include "Strings.h"
+#include "framework/Utils/Strings.h"
 
 //###############################################################################
 //  Topic

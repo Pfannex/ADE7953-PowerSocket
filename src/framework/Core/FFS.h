@@ -3,10 +3,10 @@
   #include <FS.h>                     //this needs to be first, or it all crashes and burns...
   #include <ArduinoJson.h>
   #include <Arduino.h>
-  #include "Logger.h"
-  #include "Topic.h"
+  #include "framework/Utils/Logger.h"
+  #include "framework/Topic.h"
   #include "Setup.h"
-  #include "Debug.h"
+  #include "framework/Utils/Debug.h"
 
 //###############################################################################
 //  stringFile
@@ -59,10 +59,9 @@ public:
 
 //Files
   FFSjsonFile cfg;
-  FFSjsonFile sub;
+  FFSjsonFile deviceCFG;
+  FFSjsonFile webCFG;
   FFSjsonFile subGlobal;
-  FFSjsonFile pub;
-  FFSjsonFile ade7953;
 
 //Functions
   void mount();

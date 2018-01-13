@@ -1,16 +1,14 @@
 #pragma once
 
 // Controller
-#include "Debug.h"
-#include "Clock.h"
-#include "ESP.h"
-#include "FFS.h"
-#include "I2C.h"
-#include "Logger.h"
-#include "Topic.h"
-#include "WIFI.h"
-#include "oWire.h"
-#include "SysUtils.h"
+#include "framework/Utils/Debug.h"
+#include "framework/Core/Clock.h"
+#include "framework/Core/ESP.h"
+#include "framework/Core/FFS.h"
+#include "framework/Utils/Logger.h"
+#include "framework/Topic.h"
+#include "framework/NET/WIFI.h"
+#include "framework/Utils/SysUtils.h"
 // device specific
 #include "device/Device.h"
 #include "device/DeviceSetup.h"
@@ -38,8 +36,6 @@ public:
   LOGGING logging;
   FFS ffs;
   WIFI wifi;
-  I2C i2c;
-  OWIRE oWire;
   ESP_Tools espTools;
   Device device;
 
