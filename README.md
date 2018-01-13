@@ -19,7 +19,7 @@ Unterstütz werden bislang folgende Funktionen:
 - Logging-/ Debugging-Funktionalitäten 
 - Timer über NTP-Synchronisierung 
 - OTA mit Fileupload
-- -OTA über WebServer (automatisiert)-
+- ~OTA über WebServer (automatisiert)~
 - MQTT Anbindung  
 - Modularer Aufbau 
 
