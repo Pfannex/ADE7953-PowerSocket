@@ -55,6 +55,6 @@ Temporary Items
 
 #--> Project files <-------------------------
 #specific config
-data/cfg.json
+*/data/cfg.json
 #device Folder
-src/device/*
+*/src/device/*
