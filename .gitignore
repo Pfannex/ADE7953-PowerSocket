@@ -55,4 +55,4 @@ Temporary Items
 
 #--> Project files <-------------------------
 src/device/
-data/cfg\.json
+data/cfg.json
