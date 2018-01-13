@@ -1,6 +1,6 @@
 #--> Project files <-------------------------
   #specific config
-    data/cfg.json
+    cfg.json
   #device Folder
     src/device
 
