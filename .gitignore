@@ -2,7 +2,7 @@
   #specific config
     cfg.json
   #device Folder
-    src/device
+    src/device/*
 
 # Windows image file caches
 Thumbs.db
