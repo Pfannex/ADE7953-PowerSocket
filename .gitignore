@@ -58,3 +58,7 @@ Temporary Items
 */data/cfg.json
 #device Folder
 */src/device/*
+
+src/device/
+
+data/cfg\.json
