@@ -52,3 +52,9 @@ Temporary Items
 .piolibdeps
 .clang_complete
 .gcc-flags.json
+
+#--> Project files <-------------------------
+#specific config
+*/data/cfg.json
+#device Folder
+*/src/device/*

@@ -7,7 +7,7 @@
 // Debugging
 //###############################################################################
 
-#define DEBUG 1
+#define DEBUG 0
 
 //###############################################################################
 //  Web
@@ -28,33 +28,10 @@
 //###############################################################################
 //  FlashFileSystem
 //###############################################################################
-#ifndef __FFS_PATH__
-#define __FFS_PATH__
-
-#define CFG_PATH "/config.json"
-#define SUB_PATH "/sub.json"
-#define SUB_GLOBAL_PATH "/subGlobal.json"
-#define PUB_PATH "/pub.json"
-#define ADE7953_PATH "/ADE7953.json"
+#define CFG_PATH        "/cfg.json"           //global configuration
+#define DEVICECFG_PATH  "/deviceCFG.json"     //device specific configuration
+#define WEBCFG_PATH     "/webCFG.json"        //WebIF specific configuration
+#define SUBGLOBAL_PATH  "/subGlobal.json"     //global MQTT subscribe
 
 #define TYPE_OBJECT 1
 #define TYPE_ARRAY 0
-#endif
-
-//###############################################################################
-//  GPIO
-//###############################################################################
-// I2C
-#define I2C_SDA 4
-#define I2C_SCL 5
-
-#define HAS_LED
-//#define HAS_NEOPIXEL
-#define HAS_BUTTON
-#define HAS_RELAY
-
-//###############################################################################
-//  I2C slave addresses
-//###############################################################################
-
-#define SSD1306_I2C_adr 0x3c
