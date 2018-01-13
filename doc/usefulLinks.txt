@@ -1,0 +1,2 @@
+ESP8266 Exception Causes
+https://links2004.github.io/Arduino/dc/deb/md_esp8266_doc_exception_causes.html
