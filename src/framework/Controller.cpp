@@ -75,6 +75,7 @@ void Controller::start() {
   }
 
   // start the network connections
+/*
   if (startConnections()) {
 
     if (ffs.cfg.readItem("ntp") == "on") {
@@ -88,7 +89,9 @@ void Controller::start() {
       logging.info("NTP client is off");
     }
   }
-
+*/
+  // start WiFi for the first time
+  wifi.start();
   // startup the device
   device.start();
 
@@ -100,13 +103,14 @@ void Controller::start() {
 //...............................................................................
 void Controller::handle() {
 
-  if (!wifi.handle()) {
-    wifi.start();
-  }
+  //if (!wifi.handle()) {
+  //  wifi.start();
+  //}
+  wifi.handle();  //check wifi-status continuous and start if offline
   clock.handle();
-
   device.handle();
 
+  //handle events
   while (topicQueue.count) {
     String topicsArgs = topicQueue.get();
     yield();
@@ -140,6 +144,7 @@ void Controller::handleEvent(String &topicsArgs) {
 void Controller::on_wifiConnected() {
   logging.info("WiFi has connected");
   topicQueue.put("~/event/wifi/connected", 1);
+  on_netConnected();
 }
 
 //...............................................................................
@@ -148,6 +153,53 @@ void Controller::on_wifiConnected() {
 void Controller::on_wifiDisconnected() {
   logging.info("WiFi has disconnected");
   topicQueue.put("~/event/wifi/connected", 0);
+  on_netDisconnected();
+}
+
+//...............................................................................
+//  EVENT LAN has connected
+//...............................................................................
+void Controller::on_lanConnected() {
+  logging.info("LAN has connected");
+  topicQueue.put("~/event/lan/connected", 1);
+  on_netConnected();
+}
+
+//...............................................................................
+//  EVENT lan has disconnected
+//...............................................................................
+void Controller::on_lanDisconnected() {
+  logging.info("LAN has disconnected");
+  topicQueue.put("~/event/lan/connected", 0);
+  on_netDisconnected();
+}
+//...............................................................................
+//  EVENT Network has connected
+//...............................................................................
+void Controller::on_netConnected() {
+  if (ffs.cfg.readItem("ntp") == "on") {
+    // start the clock with NTP updater
+    String ntpServer = ffs.cfg.readItem("ntp_serverip");
+    char txt[128];
+    sprintf(txt, "starting NTP client for %s", ntpServer.c_str());
+    logging.info(txt);
+    clock.start(ntpServer.c_str(), NO_TIME_OFFSET, NTP_UPDATE_INTERVAL);
+  } else {
+    logging.info("NTP client is off");
+  }
+
+  logging.info("Network connection established");
+  topicQueue.put("~/event/net/connected", 1);
+}
+
+//...............................................................................
+//  EVENT lan has disconnected
+//...............................................................................
+void Controller::on_netDisconnected() {
+  //if LAN is presend
+  //check if LAN AND WiFi are disconnected!!
+  logging.info("Network connection aborted");
+  topicQueue.put("~/event/net/connected", 0);
 }
 
 //...............................................................................

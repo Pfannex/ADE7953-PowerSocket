@@ -27,9 +27,16 @@ public:
   void start();
   void handle();
   // Callback Events
-  // WiFi
-  void on_wifiConnected();
-  void on_wifiDisconnected();
+    // WiFi
+    void on_wifiConnected();
+    void on_wifiDisconnected();
+    //LAN
+    void on_lanConnected();
+    void on_lanDisconnected();
+  //internal Events
+  void on_netConnected();
+  void on_netDisconnected();
+
 
   // the subsystems
   Clock clock;

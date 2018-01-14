@@ -111,10 +111,10 @@ bool MQTT::start() {
 //  WiFi start connection
 //...............................................................................
 bool MQTT::handle() {
-  client.loop();
-  if (client.connected())
+  if (client.connected()){
+    client.loop();
     return true;
-  else
+  }else
     return false;
 }
 
@@ -158,6 +158,18 @@ void MQTT::on_logFunction(const String &channel, const String &msg) {
 //...............................................................................
 void MQTT::on_topicFunction(const time_t, Topic &topic) {
   pub(topic.topic_asString(),topic.arg_asString());
+
+  String topicStr = "~/";
+  topicStr += topic.modifyTopic(0);
+
+  if (topicStr == "~/event/net/connected"){
+    if (topic.getArgAsLong(0)){   //true
+      start();
+    }else{  //false
+      api.info("MQTT client is disconnected");
+    }
+  }
+
   //String type("event");
   //String subtype("");
   //String msg = topic.asString();
@@ -171,6 +183,8 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
 //  MQTT publish
 //...............................................................................
 void MQTT::pub(String topic, String value) {
-  client.publish(topic.c_str(), value.c_str());
-  client.loop();
+  if (client.connected()){
+    client.publish(topic.c_str(), value.c_str());
+    client.loop();
+  }
 }

@@ -11,6 +11,7 @@ public:
   void start();
 
 private:
+  int isRunning = false;
   AsyncWebServer webServer;
   AsyncWebSocket webSocket;
   API &api;

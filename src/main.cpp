@@ -55,10 +55,10 @@ void setup() {
   // the viewers communicate with the susbsystems via the API
   //D("starting web interface");
   // TODO start only if we have WiFi or LAN!
-  webServer.start();
+  //webServer.start();
   //D("starting MQTT");
   // TODO start only if we have WiFi or LAN!
-  mqtt.start();
+  //mqtt.start();
 
   // done
   api.info("startup finished");

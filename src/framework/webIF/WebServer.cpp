@@ -59,6 +59,18 @@ WebServer::WebServer(API &api)
                               std::placeholders::_4, std::placeholders::_5,
                               std::placeholders::_6));
   webServer.addHandler(&webSocket);
+
+  // register log function
+  api.registerLogFunction(std::bind(&WebServer::logFunction, this,
+                                    std::placeholders::_1,
+                                    std::placeholders::_2));
+
+  // register Topic function
+  api.registerTopicFunction(std::bind(&WebServer::topicFunction, this,
+                                      std::placeholders::_1,
+                                      std::placeholders::_2));
+
+
 }
 
 //...............................................................................
@@ -74,7 +86,8 @@ void WebServer::start() {
   // start serving requests
   webServer.begin();
   api.info("webserver started.");
-
+  isRunning = true;
+/*
   // register log function
   api.registerLogFunction(std::bind(&WebServer::logFunction, this,
                                     std::placeholders::_1,
@@ -84,6 +97,7 @@ void WebServer::start() {
   api.registerTopicFunction(std::bind(&WebServer::topicFunction, this,
                                       std::placeholders::_1,
                                       std::placeholders::_2));
+*/
 }
 
 //-------------------------------------------------------------------------------
@@ -134,10 +148,24 @@ void WebServer::logFunction(const String &channel, const String &msg) {
 
 // send Topics to websocket
 void WebServer::topicFunction(const time_t, Topic &topic) {
-  String type("event");
-  String subtype("");
-  String msg = topic.asString();
-  broadcast(type, subtype, msg);
+
+  String topicStr = "~/";
+  topicStr += topic.modifyTopic(0);
+  if (topicStr == "~/event/net/connected"){
+    if (topic.getArgAsLong(0)){   //true
+      start();
+    }else{  //false
+      api.info("Webserver is offline");
+      isRunning = false;
+    }
+  }
+
+  if (isRunning){
+    String type("event");
+    String subtype("");
+    String msg = topic.asString();
+    broadcast(type, subtype, msg);
+  }
 }
 
 //...............................................................................

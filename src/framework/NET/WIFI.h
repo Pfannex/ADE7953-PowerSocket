@@ -27,7 +27,9 @@ public:
                     CallbackFunction wifiDisconnected);
 
   bool start();
-  bool handle();
+  void handle();
+  void on_connected();
+  void on_disconnected();
   String macAddress();
 
   // API
