@@ -12,10 +12,10 @@
 
 class Topic{
 public:
-  Topic(String& topicsArgs);       // "foo/bar arg1,arg2,arg3"
-  Topic(string topicsArgs);       // "foo/bar arg1,arg2,arg3"
+  Topic(String& topicsArgs);         // "foo/bar arg1,arg2,arg3"
+  Topic(string topicsArgs);          // "foo/bar arg1,arg2,arg3"
   Topic(string topics, string args); // "foo/bar","arg1,arg2,arg3"
-  Topic(string topics, int value); // "foo/bar",1
+  Topic(string topics, int value);   // "foo/bar",1
   ~Topic();
 
   String topic_asString();
@@ -24,6 +24,7 @@ public:
 
   int getItemCount();
   string getItem(int index);
+  long getItemAsLong(int index);
   int getArgCount();
   string getArg(int index);
   // Function declarations that differ only in the return type cannot be

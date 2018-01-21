@@ -17,7 +17,7 @@ Device::Device(LOGGING &logging, TopicQueue &topicQueue)
 //...............................................................................
 void Device::start() {
 
-  logging.info("starting Device");
+  logging.info("starting Device " + String(DEVICETYPE) + " V" + String(DEVICEVERSION));
 
   //start modules
   gpio.start();

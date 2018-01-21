@@ -144,7 +144,7 @@ void WIFI::on_connected(){
   // see https://forum.arduino.cc/index.php?topic=460595.0
   if(WiFi.config(address, gateway, netmask, dns)) {
     logging.debug("WiFi configuration applied");
-    logging.info("local IP address switched to: " + WiFi.localIP().toString());
+    //logging.info("local IP address switched to: " + WiFi.localIP().toString());
   } else {
     logging.error("could not apply WiFi configuration");
   }

@@ -41,8 +41,9 @@ void API::start() {
 //...............................................................................
 
 String API::call(Topic &topic) {
-  // D("API: begin call(&Topic)");
+  //D("API: begin call(&Topic)");
   // just a pass through
+  //Serial.println(topic.asString());
   debug("API call " + topic.asString());
   String result = controller.call(topic);
   if (result == nullptr) {

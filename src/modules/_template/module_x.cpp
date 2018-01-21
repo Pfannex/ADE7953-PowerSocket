@@ -1,93 +1,77 @@
-#include "Device.h"
+#include "module_x.h"
 #include <Arduino.h>
 
 //===============================================================================
-//  Device
+//  GPIO
 //===============================================================================
+module_x::module_x(LOGGING &logging, TopicQueue &topicQueue)
+    : logging(logging), topicQueue(topicQueue) {}
+
 
 //-------------------------------------------------------------------------------
-//  Device public
+//  GPIO public
 //-------------------------------------------------------------------------------
-Device::Device(LOGGING &logging, TopicQueue &topicQueue)
-               : logging(logging), topicQueue(topicQueue) {}
-
 //...............................................................................
-// device start
+// start
 //...............................................................................
-void Device::start() {
+void module_x::start() {
 
-  logging.info("starting Device " + String(DEVICETYPE) + " V" + String(DEVICEVERSION));
-
-  //device start instructions
-
-
-  logging.info("Device running");
+  logging.info("starting GPIO");
 
 }
 
 //...............................................................................
-// handle - periodically called by the controller
+// handle
 //...............................................................................
-void Device::handle() {
+void module_x::handle() {
+  unsigned long now = millis();
+
 }
 
 //...............................................................................
-//  Device set
+//  GPIO set
 //...............................................................................
-
-String Device::set(Topic &topic) {
+String module_x::set(Topic &topic) {
   /*
-  ~/set                (Itemlevel 2)
-    └─function         (Itemlevel 3)
-        └─sub function (Itemlevel 4)
+  ~/set
+    └─gpio
+        └─led (on, off, blink)
   */
 
-  logging.debug("Device set topic " + topic.topic_asString() + " to " +
+  logging.debug("GPIO set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
-//e.g.
   if (topic.itemIs(3, "led")) {
-    if (topic.itemIs(4, "01")){
-      ///## your Event
-      return TOPIC_OK;
-    }else if (topic.itemIs(4, "02")){
-      //## your Event
-      return TOPIC_OK;
-    }else{
-      return TOPIC_NO;
-    }
-  }else{
+    return TOPIC_OK;
+  } else {
     return TOPIC_NO;
   }
 }
 //...............................................................................
-//  Device get
+//  GPIO get
 //...............................................................................
-
-String Device::get(Topic &topic) {
+String module_x::get(Topic &topic) {
   /*
-  ~/get                (Itemlevel 2)
-    └─function         (Itemlevel 3)
-        └─sub function (Itemlevel 4)
+  ~/get
+    └─gpio
+        └─led (on, off, blink)
   */
 
-  logging.debug("Device get topic " + topic.topic_asString() + " to " +
+  logging.debug("GPIO get topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
-//e.g.
   if (topic.itemIs(3, "led")) {
-    return "get answer";
-  }else{
+    return TOPIC_OK;
+  } else {
     return TOPIC_NO;
   }
 }
-
 //...............................................................................
-// Eventhandler - called by the controller after receiving a topic (event)
+//  GPIO get
 //...............................................................................
-void Device::on_events(Topic &topic) {
+void module_x::on_events(Topic &topic){
+  //Serial.println(topic.asString());
 }
-
 //-------------------------------------------------------------------------------
-//  Device private
+//  GPIO private
 //-------------------------------------------------------------------------------

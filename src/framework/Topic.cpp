@@ -126,6 +126,21 @@ string Topic::getItem(int index) {
     return NULL;
 }
 
+long Topic::getItemAsLong(int index) {
+  if (index < item.getCount())
+    // The  strtol() function converts the initial part of the string
+    // to a long integer value according to the given base, which must
+    // be between 2 and 36 inclusive, or be the special value 0.
+    // The string may begin with an arbitrary amount of white space
+    // (as determined by isspace(3)) followed by a single optional
+    // '+'  or  '-' sign. If base is zero or 16, the string may then
+    // include a "0x" or "0X" prefix, and the number will be read in
+    // base 16; otherwise, a zero base is taken as 10 (decimal) unless
+    //  the next character is '0', in which case it is taken as 8 (octal).
+    return strtol(item.string[index], NULL, 0);
+  else
+    return 0;
+}
 //...............................................................................
 //  get number of arguments
 //...............................................................................
@@ -172,7 +187,6 @@ void Topic::initTopic(string topicsArgs) {
 
   // D("Topic: begin initTopic");
   // D(topicsArgs);
-
   char *topics, *args;
   char *tmp = strdup(topicsArgs);
   topics = strtok(tmp, " ");
@@ -223,13 +237,15 @@ bool Topic::isValidJson(String root) {
 // topics and args can be empty or NULL
 void Topic::dissectTopic(string topics, string args) {
 
-  // D("Topic: begin dissectTopic");
-  // Dl;
+Serial.println("Topic::dissectTopic: " + String(topics) + " " + String(args));
+
+   //D("Topic: begin dissectTopic");
+   //Dl;
   // items
   item.clear();
   if (topics != NULL)
     tokenize(item, topics, "/");
-  // Di("items=", item.getCount());
+   //Di("items=", item.getCount());
   // args
   arg.clear();
   if (args != NULL) {
@@ -240,7 +256,7 @@ void Topic::dissectTopic(string topics, string args) {
       // Di("args=", arg.getCount());
     }
   }
-  // D("Topic: end dissectTopic");
+   //D("Topic: end dissectTopic");
 }
 
 //###############################################################################
