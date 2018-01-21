@@ -236,9 +236,6 @@ bool Topic::isValidJson(String root) {
 //...............................................................................
 // topics and args can be empty or NULL
 void Topic::dissectTopic(string topics, string args) {
-
-Serial.println("Topic::dissectTopic: " + String(topics) + " " + String(args));
-
    //D("Topic: begin dissectTopic");
    //Dl;
   // items

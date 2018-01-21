@@ -129,11 +129,10 @@ void MQTT::on_incommingSubcribe(char *topics, byte *payload,
   strncpy(args, (char *)payload, length + 1);
   args[length] = '\0';
 
-  api.debug("MQTT incoming subscribe: " + String(topics) + " " + String(args));
-
-  //String str = String(topics) + " " + String(args);
-  //Topic tmpTopic(str);
-  Topic tmpTopic(topics, args);
+  String str = String(topics) + " " + String(args);
+  api.debug("MQTT incoming subscribe: " + str);  //working
+  Topic tmpTopic(str);
+  //Topic tmpTopic(topics, args);
   String tmp = api.call(tmpTopic); // API verändert tmpTopic!!
   pub(tmpTopic.modifyTopic(1), tmp);
 

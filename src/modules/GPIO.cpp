@@ -35,6 +35,7 @@ void GPIO::start() {
 
     currentOutputMode[i] = OFF;
     currentOutputState[i] = 0;
+    lastOftOnTime[i] = 0;
   }
 }
 
@@ -57,35 +58,29 @@ String GPIO::set(Topic &topic) {
     └─device
       └─gpio [pin], [mode](on, off, blink, oft), [oftTime]
   */
-
   logging.debug("GPIO set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
+  //set gpio mode
   int pin = 0;
   outputMode_t mode = OFF;
   int oftTime = 0;
 
   if (topic.itemIs(3, "gpio")) {
-    pin = topic.getItemAsLong(3);
-    if (topic.getArgCount() > 0){
-      if (topic.getArg(0) == "on")    mode = ON;
-      if (topic.getArg(0) == "off")   mode = OFF;
-      if (topic.getArg(0) == "blink") mode = BLINK;
-      if (topic.getArg(0) == "oft")   mode = OFT;
-    }else{
-      return TOPIC_NO;
-    }
-    if (mode == OFT){
-      if (topic.getArgCount() == 2){
-        oftTime = topic.getArgAsLong(1);
+    if (topic.getArgCount() > 1){
+      pin = topic.getArgAsLong(0);
+      if      (topic.argIs(1, "on"))    {mode = ON;}
+      else if (topic.argIs(1, "off"))   {mode = OFF;}
+      else if (topic.argIs(1, "blink")) {mode = BLINK;}
+      else if (topic.argIs(1, "oft") and topic.getArgCount() > 2) {
+        mode = OFT;
+        oftTime = topic.getArgAsLong(2);
       }else{
-        return TOPIC_OK;
+        return TOPIC_NO;
       }
     }
     setOutputMode(pin, mode, oftTime);
     return TOPIC_OK;
-  } else {
-    return TOPIC_NO;
   }
 }
 //...............................................................................
@@ -200,41 +195,58 @@ void GPIO::setOutputMode(int gpioPin, outputMode_t mode, int t){
 
   currentOutputMode[gpioPin] = mode;
   currentOutputOFTtime[gpioPin] = t;
-  if (currentOutputMode[gpioPin] == ON)
-    topicQueue.put("~/event/gpio/" + IO + " on");
-  else if (currentOutputMode[gpioPin] == OFF)
-    topicQueue.put("~/event/gpio/" + IO + " off");
-  else if (currentOutputMode[gpioPin] == BLINK)
-    topicQueue.put("~/event/gpio/" + IO + " blink");
-  else if (currentOutputMode[gpioPin] == OFT)
-    topicQueue.put("~/event/gpio/" + IO + " oft");
+  String modeStr = "";
+  if (currentOutputMode[gpioPin] == ON)          modeStr = "on";
+  else if (currentOutputMode[gpioPin] == OFF)    modeStr = "off";
+  else if (currentOutputMode[gpioPin] == BLINK)  modeStr = "blink";
+  else if (currentOutputMode[gpioPin] == OFT)    modeStr = "oft";
+
+  topicQueue.put("~/event/gpio/" + IO + " " + modeStr);
+  logging.debug("GPIO set outputmode GPIO " + IO + " to " + modeStr);
+
 }
 //...............................................................................
 //  handle output
 //...............................................................................
 void GPIO::handleOutput(int gpioPin){
-
-
+  unsigned long now = millis();
   String IO = String(gpioPin);
 
   if (currentOutputMode[gpioPin] == ON){
-    if (!currentOutputState[gpioPin]){
+    if (!currentOutputState[gpioPin]){  //if is OFF
       digitalWrite(gpioPin, HIGH);
+      currentOutputState[gpioPin] = HIGH;
       topicQueue.put("~/event/gpio/" + IO + " is_on");
     }
   }else if (currentOutputMode[gpioPin] == OFF){
-    if (currentOutputState[gpioPin]){
+    if (currentOutputState[gpioPin]){  //if is ON
       digitalWrite(gpioPin, LOW);
+      currentOutputState[gpioPin] = LOW;
       topicQueue.put("~/event/gpio/" + IO + " is_off");
     }
+  }else if (currentOutputMode[gpioPin] == BLINK){
+    //use arg[2] for frequency
+    int outputOn = (now / BLINKTIME) % 2;
+    if (currentOutputState[gpioPin] != outputOn){
+      digitalWrite(gpioPin, outputOn);
+      currentOutputState[gpioPin] = outputOn;
+      String strState = "";
+      if (outputOn) strState = " is_on"; else strState = " is_off";
+      topicQueue.put("~/event/gpio/" + IO + strState);
+    }
+  }else if (currentOutputMode[gpioPin] == OFT){
+    if (!currentOutputState[gpioPin]){ //if is OFF
+      lastOftOnTime[gpioPin] = now;
+      digitalWrite(gpioPin, HIGH);
+      currentOutputState[gpioPin] = HIGH;
+      topicQueue.put("~/event/gpio/" + IO + " is_on");
+    }else{
+      if ((lastOftOnTime[gpioPin] + currentOutputOFTtime[gpioPin]) < now){
+        digitalWrite(gpioPin, LOW);
+        currentOutputState[gpioPin] = LOW;
+        currentOutputMode[gpioPin] = OFF;
+        topicQueue.put("~/event/gpio/" + IO + " is_off");
+      }
+    }
   }
-
-
-  //int outputOn = (currentOutputMode[gpioPin] == ON);
-  //if (currentOutputMode[gpioPin] == BLINK) {
-    //outputOn = (now / BLINKTIME) % 2;
-  //}
-
-
-
 }

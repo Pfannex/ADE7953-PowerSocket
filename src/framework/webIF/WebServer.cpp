@@ -314,6 +314,7 @@ void WebServer::authPageHandler(AsyncWebServerRequest *request) {
 //...............................................................................
 
 void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
+//http://192.168.1.99/api.html?call=Foo/bar%201,2,3
 
   String call = request->arg("call");
   if (call == "") {

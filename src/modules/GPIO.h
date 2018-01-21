@@ -17,7 +17,7 @@
 
 //OUTPUT
 // time in ms for blinking
-#define BLINKTIME 100
+#define BLINKTIME 500
 
 
 class GPIO {
@@ -53,4 +53,5 @@ private:
   outputMode_t currentOutputMode[17];
   int currentOutputOFTtime[17];
   int currentOutputState[17];
+  unsigned long lastOftOnTime[17];
 };
