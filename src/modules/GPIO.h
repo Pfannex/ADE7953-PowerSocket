@@ -3,7 +3,7 @@
 #include "framework/Topic.h"
 
 //###############################################################################
-//  GPIOinput
+//  GPIO input
 //###############################################################################
 // time in ms button needs to be pressed to detect long mode
 #define LONGPRESSTIME 5000
@@ -40,6 +40,36 @@ private:
   unsigned long pinReleaseTime = -1;     // time delta measurement
 };
 
+//###############################################################################
+//  GPIO output
+//###############################################################################
+
 //OUTPUT
 // time in ms for blinking
 #define BLINKTIME 500
+
+class GPIOoutput {
+
+public:
+  GPIOoutput(int GPIOoutputPin, LOGGING &logging, TopicQueue &topicQueue);
+  int pin;
+
+  void start();
+  void handle();
+  String set(Topic &topic);
+  String get(Topic &topic);
+  void on_events(Topic &topic);
+  
+  enum outputMode_t { OFF, ON, BLINK, OFT};
+
+private:
+  LOGGING &logging;
+  TopicQueue &topicQueue;
+
+  void setOutputMode(outputMode_t mode, int t); // mode setter
+  outputMode_t currentOutputMode;
+  int currentOutputOFTtime;
+  int currentOutputState;
+  unsigned long lastOftOnTime;
+
+};
