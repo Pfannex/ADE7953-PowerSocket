@@ -9,6 +9,8 @@
 #include "framework/Topic.h"
 #include "framework/NET/WIFI.h"
 #include "framework/Utils/SysUtils.h"
+#include <ESP8266FtpServer.h>
+
 // device specific
 #include "device/Device.h"
 #include "device/DeviceSetup.h"
@@ -43,6 +45,7 @@ public:
   LOGGING logging;
   FFS ffs;
   WIFI wifi;
+  FtpServer ftpSrv;
   ESP_Tools espTools;
   Device device;
 

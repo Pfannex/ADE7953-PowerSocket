@@ -74,27 +74,11 @@ void Controller::start() {
     ffs.cfg.saveFile();
   }
 
-  // start the network connections
-/*
-  if (startConnections()) {
-
-    if (ffs.cfg.readItem("ntp") == "on") {
-      // start the clock with NTP updater
-      String ntpServer = ffs.cfg.readItem("ntp_serverip");
-      char txt[128];
-      sprintf(txt, "starting NTP client for %s", ntpServer.c_str());
-      logging.info(txt);
-      clock.start(ntpServer.c_str(), NO_TIME_OFFSET, NTP_UPDATE_INTERVAL);
-    } else {
-      logging.info("NTP client is off");
-    }
-  }
-*/
   // start WiFi for the first time
   wifi.start();
+
   // startup the device
   device.start();
-
   logging.info("controller started");
 }
 
@@ -107,6 +91,7 @@ void Controller::handle() {
   //  wifi.start();
   //}
   wifi.handle();  //check wifi-status continuous and start if offline
+  ftpSrv.handleFTP();
   clock.handle();
   device.handle();
 
@@ -187,6 +172,16 @@ void Controller::on_netConnected() {
   } else {
     logging.info("NTP client is off");
   }
+
+  // add FTP to web-config!
+  //if (ffs.cfg.readItem("ftp") == "on") {
+    logging.info("starting FTP-Server");
+    ftpSrv.begin("esp8266","esp8266");
+    //ftpSrv.begin(ffs.cfg.readItem("ftp_username"),
+    //             ffs.cfg.readItem("ftp_password"));
+  //} else {
+    //logging.info("FTP-Server is off");
+  //}
 
   logging.info("Network connection established");
   topicQueue.put("~/event/net/connected", 1);
