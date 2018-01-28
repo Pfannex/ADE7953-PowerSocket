@@ -25,7 +25,7 @@
 //...............................................................................
 Controller::Controller()
     : logging(clock), ffs(logging), clock(topicQueue),
-      espTools(logging), wifi(logging, ffs), device(logging, topicQueue) {
+      espTools(logging), wifi(logging, ffs), device(logging, topicQueue, ffs) {
 
   // callback Events
   // WiFi
@@ -175,8 +175,10 @@ void Controller::on_netConnected() {
 
   // add FTP to web-config!
   //if (ffs.cfg.readItem("ftp") == "on") {
+
     logging.info("starting FTP-Server");
     ftpSrv.begin("esp8266","esp8266");
+
     //ftpSrv.begin(ffs.cfg.readItem("ftp_username"),
     //             ffs.cfg.readItem("ftp_password"));
   //} else {
