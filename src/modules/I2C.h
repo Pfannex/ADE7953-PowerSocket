@@ -1,35 +1,29 @@
-#pragma once
 #include "framework/Utils/Logger.h"
 #include "Setup.h"
+#include "framework/Topic.h"
 #include <Arduino.h>
-#include <SSD1306.h>
-#include <Wire.h> //IÂ²C
-
-//###############################################################################
-//  LCD Display
-//###############################################################################
-class LCD {
-public:
-  LCD();
-  void init();
-  void println(String txt, const char *fontData, int yPos);
-  void clear();
-
-private:
-  SSD1306 ssd1306;
-};
+#include <Wire.h> //I²C
 
 //###############################################################################
 //  I2C
 //###############################################################################
-class I2C {
-public:
-  I2C(LOGGING &logging);
-  LOGGING &logging;
 
-  LCD lcd;
+class I2C {
+
+public:
+  I2C(int sda, int scl, LOGGING &logging, TopicQueue &topicQueue);
+  int sda;
+  int scl;
   void start();
+  void handle();
+  String set(Topic &topic);
+  String get(Topic &topic);
+  void on_events(Topic &topic);
+
   void scanBus();
 
 private:
+  LOGGING &logging;
+  TopicQueue &topicQueue;
+
 };

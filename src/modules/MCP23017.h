@@ -1,19 +1,15 @@
 #include "framework/Utils/Logger.h"
-#include "framework/Core/FFS.h"
 #include "Setup.h"
 #include "framework/Topic.h"
-#include "DeviceSetup.h"
-//modules
-//#include "modules/xxx.h"
 
 //###############################################################################
-//  Device
+//  GPIO
 //###############################################################################
 
-class Device {
+class MCP23017 {
 
 public:
-  Device(LOGGING &logging, TopicQueue &topicQueue, FFS& ffs);
+  MCP23017(LOGGING &logging, TopicQueue &topicQueue);
   void start();
   void handle();
   String set(Topic &topic);
@@ -23,8 +19,5 @@ public:
 private:
   LOGGING &logging;
   TopicQueue &topicQueue;
-  FFS& ffs;
-  
-  //define device specific functions here #######################################
 
 };

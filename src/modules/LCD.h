@@ -1,19 +1,20 @@
 #include "framework/Utils/Logger.h"
-#include "framework/Core/FFS.h"
 #include "Setup.h"
 #include "framework/Topic.h"
-#include "DeviceSetup.h"
-//modules
-//#include "modules/xxx.h"
+#include <SSD1306.h>
+#include <Wire.h> //I²C
 
 //###############################################################################
-//  Device
+//  LCD
 //###############################################################################
+#define SSD1306_I2C_adr 0x3c
 
-class Device {
+class LCD {
 
 public:
-  Device(LOGGING &logging, TopicQueue &topicQueue, FFS& ffs);
+  LCD(int sda, int scl, LOGGING &logging, TopicQueue &topicQueue);
+  int sda;
+  int scl;
   void start();
   void handle();
   String set(Topic &topic);
@@ -23,8 +24,8 @@ public:
 private:
   LOGGING &logging;
   TopicQueue &topicQueue;
-  FFS& ffs;
-  
-  //define device specific functions here #######################################
+
+  SSD1306 ssd1306;
+  void println(String txt, const char *fontData, int yPos);
 
 };

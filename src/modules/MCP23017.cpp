@@ -1,93 +1,77 @@
-#include "Device.h"
+#include "MCP23017.h"
 #include <Arduino.h>
 
 //===============================================================================
-//  Device
+//  GPIO
 //===============================================================================
+MCP23017::MCP23017(LOGGING &logging, TopicQueue &topicQueue)
+    : logging(logging), topicQueue(topicQueue) {}
+
 
 //-------------------------------------------------------------------------------
-//  Device public
+//  GPIO public
 //-------------------------------------------------------------------------------
-Device::Device(LOGGING &logging, TopicQueue &topicQueue, FFS& ffs)
-               : logging(logging), topicQueue(topicQueue), ffs(ffs) {}
-
 //...............................................................................
-// device start
+// start
 //...............................................................................
-void Device::start() {
+void MCP23017::start() {
 
-  logging.info("starting Device " + String(DEVICETYPE) + " V" + String(DEVICEVERSION));
-
-  //device start instructions
-
-
-  logging.info("Device running");
+  logging.info("starting MCP23017");
 
 }
 
 //...............................................................................
-// handle - periodically called by the controller
+// handle
 //...............................................................................
-void Device::handle() {
+void MCP23017::handle() {
+  unsigned long now = millis();
+
 }
 
 //...............................................................................
-//  Device set
+//  GPIO set
 //...............................................................................
-
-String Device::set(Topic &topic) {
+String MCP23017::set(Topic &topic) {
   /*
-  ~/set                (Itemlevel 2)
-    └─function         (Itemlevel 3)
-        └─sub function (Itemlevel 4)
+  ~/set
+    └─gpio
+        └─led (on, off, blink)
   */
 
-  logging.debug("Device set topic " + topic.topic_asString() + " to " +
+  logging.debug("MCP23017 set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
-//e.g.
   if (topic.itemIs(3, "led")) {
-    if (topic.itemIs(4, "01")){
-      ///## your Event
-      return TOPIC_OK;
-    }else if (topic.itemIs(4, "02")){
-      //## your Event
-      return TOPIC_OK;
-    }else{
-      return TOPIC_NO;
-    }
-  }else{
+    return TOPIC_OK;
+  } else {
     return TOPIC_NO;
   }
 }
 //...............................................................................
-//  Device get
+//  GPIO get
 //...............................................................................
-
-String Device::get(Topic &topic) {
+String MCP23017::get(Topic &topic) {
   /*
-  ~/get                (Itemlevel 2)
-    └─function         (Itemlevel 3)
-        └─sub function (Itemlevel 4)
+  ~/get
+    └─gpio
+        └─led (on, off, blink)
   */
 
-  logging.debug("Device get topic " + topic.topic_asString() + " to " +
+  logging.debug("MCP23017 get topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
-//e.g.
   if (topic.itemIs(3, "led")) {
-    return "get answer";
-  }else{
+    return TOPIC_OK;
+  } else {
     return TOPIC_NO;
   }
 }
-
 //...............................................................................
-// Eventhandler - called by the controller after receiving a topic (event)
+//  GPIO get
 //...............................................................................
-void Device::on_events(Topic &topic) {
+void MCP23017::on_events(Topic &topic){
+  //Serial.println(topic.asString());
 }
-
 //-------------------------------------------------------------------------------
-//  Device private
+//  GPIO private
 //-------------------------------------------------------------------------------
