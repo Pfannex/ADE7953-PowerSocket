@@ -1,13 +1,14 @@
-#include "GPIO.h"
+#include "modules/GPIO.h"
 #include <Arduino.h>
 
 //===============================================================================
 //  GPIOinput
 //===============================================================================
-GPIOinput::GPIOinput(int GPIOinputPin, LOGGING &logging, TopicQueue &topicQueue)
-          :pin(GPIOinputPin), logging(logging), topicQueue(topicQueue){
+GPIOinput::GPIOinput(string name, LOGGING &logging, TopicQueue &topicQueue,
+          int GPIOinputPin)
+          : module(name, logging, topicQueue), pin(GPIOinputPin)
+          {
 }
-
 
 //-------------------------------------------------------------------------------
 //  GPIOinput public
@@ -17,26 +18,29 @@ GPIOinput::GPIOinput(int GPIOinputPin, LOGGING &logging, TopicQueue &topicQueue)
 //...............................................................................
 void GPIOinput::start() {
 
-  logging.info("starting GPIOinput for Pin " + String(pin));
+  module::start();
+  logging.info("setting GPIO pin " + String(pin) + " for input");
   pinMode(pin, INPUT_PULLUP);
-
 }
 
 //...............................................................................
 // handle
 //...............................................................................
 void GPIOinput::handle() {
+
+  module::handle();
+
   unsigned long now = millis();
   int pinState = getInputState();
   if (pinState < 0)
     return; // still bouncing
 
-  String IO = String(pin);
   unsigned long t = now;
   unsigned long tl = t - pinChangeTime;
   int idling = (tl >= IDLETIME);
   int longtime = (tl >= LONGPRESSTIME);
 
+  String eventPrefix= "~/event/device/" + String(name) + "/";
   // note the difference:
   // the short event is created when the button is released after a short time
   // the long event is created when the button is pressed for a long time
@@ -46,13 +50,13 @@ void GPIOinput::handle() {
       // pin is pressed
       if (!pinLongPress && longtime) {
         pinLongPress = 1;
-        topicQueue.put("~/event/gpio/" + IO + "/click long");
+        topicQueue.put(eventPrefix + "click long");
       }
     } else {
       // pin is not pressed
       if (!pinIdle && idling) {
         pinIdle = 1;
-        topicQueue.put("~/event/gpio/" + IO + "/idle 1");
+        topicQueue.put(eventPrefix + "idle 1");
       }
     }
     return;
@@ -61,19 +65,19 @@ void GPIOinput::handle() {
     pinLongPress = 0;
     pinChangeTime = t;
     if (pinState)
-      topicQueue.put("~/event/gpio/" + IO + "/state 1");
+      topicQueue.put(eventPrefix + "state 1");
     else {
-      topicQueue.put("~/event/gpio/" + IO + "/state 0");
-      if(!longtime) {
-        topicQueue.put("~/event/gpio/" + IO + "/click short");
-        if(t-pinReleaseTime <= DOUBLECLICKTIME)
-          topicQueue.put("~/event/gpio/" + IO + "/click double");
+      topicQueue.put(eventPrefix + "state 0");
+      if (!longtime) {
+        topicQueue.put(eventPrefix + "click short");
+        if (t - pinReleaseTime <= DOUBLECLICKTIME)
+          topicQueue.put(eventPrefix + "click double");
         pinReleaseTime = t;
       }
     }
     if (pinIdle) {
       pinIdle = 0;
-      topicQueue.put("~/event/gpio/" + IO + "/idle 0");
+      topicQueue.put(eventPrefix + "idle 0");
     }
     lastPinState = pinState;
   }
@@ -95,7 +99,6 @@ int GPIOinput::getInputState() {
   else
     return -1; // undecided, still bouncing
 }
-
 
 //...............................................................................
 //  GPIOinput set
@@ -138,23 +141,21 @@ String GPIOinput::get(Topic &topic) {
 //...............................................................................
 //  GPIOinput get
 //...............................................................................
-void GPIOinput::on_events(Topic &topic){
-  //Serial.println(topic.asString());
+void GPIOinput::on_events(Topic &topic) {
+  // Serial.println(topic.asString());
 }
 //-------------------------------------------------------------------------------
 //  GPIOinput private
 //-------------------------------------------------------------------------------
 
-
 //###############################################################################
-
 
 //===============================================================================
 //  GPIO output
 //===============================================================================
-GPIOoutput::GPIOoutput(int GPIOoutputPin, LOGGING &logging, TopicQueue &topicQueue)
-          :pin(GPIOoutputPin), logging(logging), topicQueue(topicQueue){
-}
+GPIOoutput::GPIOoutput(string name, LOGGING &logging, TopicQueue &topicQueue,
+                       int GPIOoutputPin)
+    : module(name, logging, topicQueue), pin(GPIOoutputPin) {}
 
 //-------------------------------------------------------------------------------
 //  GPIOoutput public
@@ -164,7 +165,8 @@ GPIOoutput::GPIOoutput(int GPIOoutputPin, LOGGING &logging, TopicQueue &topicQue
 //...............................................................................
 void GPIOoutput::start() {
 
-  logging.info("starting GPIOoutput for Pin " + String(pin));
+  module::start();
+  logging.info("setting GPIO pin " + String(pin) + " for output");
   pinMode(pin, OUTPUT);
   digitalWrite(pin, LOW);
 }
@@ -173,43 +175,47 @@ void GPIOoutput::start() {
 // handle
 //...............................................................................
 void GPIOoutput::handle() {
-  unsigned long now = millis();
-  String IO = String(pin);
+  module::handle();
 
-  if (currentOutputMode == ON){
-    if (!currentOutputState){  //if is OFF
+  String eventPrefix= "~/event/device/"+String(name)+" ";
+  unsigned long now = millis();
+
+  if (currentOutputMode == ON) {
+    if (!currentOutputState) { // if is OFF
       digitalWrite(pin, HIGH);
       currentOutputState = HIGH;
-      topicQueue.put("~/event/gpio/" + IO + " is_on");
+      topicQueue.put(eventPrefix+"is_on");
     }
-  }else if (currentOutputMode == OFF){
-    if (currentOutputState){  //if is ON
+  } else if (currentOutputMode == OFF) {
+    if (currentOutputState) { // if is ON
       digitalWrite(pin, LOW);
       currentOutputState = LOW;
-      topicQueue.put("~/event/gpio/" + IO + " is_off");
+      topicQueue.put(eventPrefix+"is_off");
     }
-  }else if (currentOutputMode == BLINK){
-    //use arg[2] for frequency
-    int outputOn = (now / BLINKTIME) % 2;
-    if (currentOutputState != outputOn){
+  } else if (currentOutputMode == BLINK) {
+    // use arg[2] for frequency
+    int outputOn = (now / currentOutputBlinkTime) % 2;
+    if (currentOutputState != outputOn) {
       digitalWrite(pin, outputOn);
       currentOutputState = outputOn;
       String strState = "";
-      if (outputOn) strState = " is_on"; else strState = " is_off";
-      topicQueue.put("~/event/gpio/" + IO + strState);
+      if (outputOn)
+        topicQueue.put(eventPrefix+"is_on");
+      else
+        topicQueue.put(eventPrefix+"is_off");
     }
-  }else if (currentOutputMode == OFT){
-    if (!currentOutputState){ //if is OFF
+  } else if (currentOutputMode == OFT) {
+    if (!currentOutputState) { // if is OFF
       lastOftOnTime = now;
       digitalWrite(pin, HIGH);
       currentOutputState = HIGH;
-      topicQueue.put("~/event/gpio/" + IO + " is_on");
-    }else{
-      if ((lastOftOnTime + currentOutputOFTtime) < now){
+      topicQueue.put(eventPrefix+"is_on");
+    } else {
+      if ((lastOftOnTime + currentOutputOFTtime) < now) {
         digitalWrite(pin, LOW);
         currentOutputState = LOW;
         currentOutputMode = OFF;
-        topicQueue.put("~/event/gpio/" + IO + " is_off");
+        topicQueue.put(eventPrefix+"is_off");
       }
     }
   }
@@ -218,20 +224,24 @@ void GPIOoutput::handle() {
 //...............................................................................
 //  output mode setter
 //...............................................................................
-void GPIOoutput::setOutputMode(outputMode_t mode, int t){
-  String IO = String(pin);
+void GPIOoutput::setOutputMode(outputMode_t mode, int t) {
 
   currentOutputMode = mode;
-  currentOutputOFTtime = t;
   String modeStr = "";
-  if (currentOutputMode == ON)          modeStr = "on";
-  else if (currentOutputMode == OFF)    modeStr = "off";
-  else if (currentOutputMode == BLINK)  modeStr = "blink";
-  else if (currentOutputMode == OFT)    modeStr = "oft";
+  if (currentOutputMode == ON)
+    modeStr = "on";
+  else if (currentOutputMode == OFF)
+    modeStr = "off";
+  else if (currentOutputMode == BLINK) {
+    currentOutputBlinkTime = (t > 0 ? t : BLINKTIME);
+    modeStr = "blink";
+  } else if (currentOutputMode == OFT) {
+    currentOutputOFTtime = t;
+    modeStr = "oft";
+  }
 
-  topicQueue.put("~/event/gpio/" + IO + " " + modeStr);
-  logging.debug("GPIO set outputmode GPIO " + IO + " to " + modeStr);
-
+  logging.debug("set GPIO " + String(name) + " output mode to " + modeStr +
+   " ("+String(t)+" ms)");
 }
 
 //...............................................................................
@@ -246,25 +256,28 @@ String GPIOoutput::set(Topic &topic) {
   logging.debug("GPIO set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
-  //set gpio mode
+  // set gpio mode
   String strPin = topic.getArg(0);
   outputMode_t mode = OFF;
   int oftTime = 0;
 
   if (topic.itemIs(3, "gpio")) {
-    if (topic.getArgCount() > 1 and strPin.toInt() == pin){
-      if      (topic.argIs(1, "on"))    {mode = ON;}
-      else if (topic.argIs(1, "off"))   {mode = OFF;}
-      else if (topic.argIs(1, "blink")) {mode = BLINK;}
-      else if (topic.argIs(1, "oft") and topic.getArgCount() > 2) {
+    if (topic.getArgCount() > 1 and strPin.toInt() == pin) {
+      if (topic.argIs(1, "on")) {
+        mode = ON;
+      } else if (topic.argIs(1, "off")) {
+        mode = OFF;
+      } else if (topic.argIs(1, "blink")) {
+        mode = BLINK;
+      } else if (topic.argIs(1, "oft") and topic.getArgCount() > 2) {
         mode = OFT;
         oftTime = topic.getArgAsLong(2);
-      }else{
+      } else {
         return TOPIC_NO;
       }
       setOutputMode(mode, oftTime);
       return TOPIC_OK;
-    }else{
+    } else {
       return TOPIC_NO;
     }
   }
@@ -291,8 +304,8 @@ String GPIOoutput::get(Topic &topic) {
 //...............................................................................
 //  GPIOinput get
 //...............................................................................
-void GPIOoutput::on_events(Topic &topic){
-  //Serial.println(topic.asString());
+void GPIOoutput::on_events(Topic &topic) {
+  // Serial.println(topic.asString());
 }
 //-------------------------------------------------------------------------------
 //  GPIOoutput private

@@ -126,15 +126,31 @@ void MQTT::on_incommingSubcribe(char *topics, byte *payload,
   // api.debugMem_start();
 
   char *args = new char[length + 1];
-  strncpy(args, (char *)payload, length + 1);
+  strncpy(args, (char *)payload, length);
   args[length] = '\0';
 
   String str = String(topics) + " " + String(args);
-  api.debug("MQTT incoming subscribe: " + str);  //working
+
+  //api.debug("MQTT incoming subscribe: " + str);  //working
   Topic tmpTopic(str);
   //Topic tmpTopic(topics, args);
+  //!!
+  //grr
+  String h= "HEIL "+String(topics)+ " "+String(args);
+  D(h.c_str());
+  api.debug(h);
+  String k= "KAPUTT "+String(topics)+ " "+String(args);
+  D(k.c_str());
+  api.debug(k);
+  // !!
   String tmp = api.call(tmpTopic); // API verändert tmpTopic!!
-  pub(tmpTopic.modifyTopic(1), tmp);
+  pub(tmpTopic.modifyTopic(1), tmp); // hier sollten wir nur publishen, wenn was zurückkommt
+
+  // Vorschlag
+  // nichts zurueckliefern
+  // alles ueber events machen
+
+  D(h.c_str());
 
   if (args != NULL)
     delete[] args;

@@ -71,7 +71,11 @@ void API::info(const String &msg) { controller.logging.info(msg); }
 
 void API::error(const String &msg) { controller.logging.error(msg); }
 
-void API::debug(const String &msg) { controller.logging.debug(msg); }
+void API::debug(const String &msg) {
+   D(msg.c_str());
+   controller.logging.debug(msg);
+   D(msg.c_str());
+ }
 
 //-------------------------------------------------------------------------------
 //  API private
