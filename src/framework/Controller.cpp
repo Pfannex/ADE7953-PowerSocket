@@ -82,6 +82,13 @@ void Controller::start() {
   logging.info("controller started");
 }
 
+//-------------------------------------------------------------------------------
+//  getDeviceName()
+//-------------------------------------------------------------------------------
+String Controller::getDeviceName() {
+  return deviceName;
+}
+
 //...............................................................................
 //  handle connection
 //...............................................................................
@@ -277,6 +284,6 @@ bool Controller::startConnections() {
 void Controller::viewsUpdate(time_t t, Topic &topic) {
 
   if (topicFunction != nullptr)
-    topic.setItem(0, deviceName.c_str());
+    // this is done in the API topic.setItem(0, deviceName.c_str());
     topicFunction(t, topic);
 }

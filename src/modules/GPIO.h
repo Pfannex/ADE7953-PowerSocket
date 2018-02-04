@@ -24,10 +24,7 @@ public:
 
   void start();
   void handle();
-  String set(Topic &topic);
-  String get(Topic &topic);
-  void on_events(Topic &topic);
-
+  
 private:
   int getInputState();                   // debouncer and state detector
   int pinState = -1;                     // the last pin state
@@ -57,9 +54,6 @@ public:
 
   void start();
   void handle();
-  String set(Topic &topic);
-  String get(Topic &topic);
-  void on_events(Topic &topic);
 
   void setOutputMode(outputMode_t mode, int t= 0); // mode setter
 

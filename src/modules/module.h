@@ -4,6 +4,18 @@
 #include "framework/Topic.h"
 #include "framework/Utils/Strings.h"
 
+/*
+A module represents a physical part in the device. For example, modules can
+be GPIOs, LCDs, A/D converts etc. Several modules can be present in a device.
+A module has a name to discern it from other modules of the same type in the
+device.
+
+The single modules are not controlled by set and get directly. The device
+class controls them by invoking module-specific methods. The modules inform
+the framework about its state by putting events into the topic queue.
+
+*/
+
 //###############################################################################
 //  module
 //###############################################################################

@@ -9,11 +9,11 @@
 MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
 
   // callbacks
-  //pubSubClient
-  client.setCallback(std::bind(&MQTT::on_incommingSubcribe, this,
+  // pubSubClient
+  client.setCallback(std::bind(&MQTT::on_incomingSubscribe, this,
                                std::placeholders::_1, std::placeholders::_2,
                                std::placeholders::_3));
-  //API
+  // API
   // register log function
   api.registerLogFunction(std::bind(&MQTT::on_logFunction, this,
                                     std::placeholders::_1,
@@ -23,7 +23,6 @@ MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
   api.registerTopicFunction(std::bind(&MQTT::on_topicFunction, this,
                                       std::placeholders::_1,
                                       std::placeholders::_2));
-
 }
 
 //-------------------------------------------------------------------------------
@@ -111,47 +110,37 @@ bool MQTT::start() {
 //  WiFi start connection
 //...............................................................................
 bool MQTT::handle() {
-  if (client.connected()){
+  if (client.connected()) {
     client.loop();
     return true;
-  }else
+  } else
     return false;
 }
 
 //...............................................................................
 //  EVENT incomming MQTT subcribe
 //...............................................................................
-void MQTT::on_incommingSubcribe(char *topics, byte *payload,
+void MQTT::on_incomingSubscribe(char *topics, byte *payload,
                                 unsigned int length) {
-  // api.debugMem_start();
 
+  // If we do
+  //   String str = String(topics) + " " + String(args);
+  // and pass str through
+  //   api.debug(str)
+  // then topics but not args is destroyed. We should investigate the reason!
+
+  // workaround
+  char *topics2 = strdup(topics);
   char *args = new char[length + 1];
   strncpy(args, (char *)payload, length);
   args[length] = '\0';
 
-  String str = String(topics) + " " + String(args);
+  // This is the actual action. We throw away the result because the API
+  // itself cares about informing the listeners/views about the executed
+  // command and its result, see API::call().
+  api.call(String(topics2) + " " + String(args));
 
-  //api.debug("MQTT incoming subscribe: " + str);  //working
-  Topic tmpTopic(str);
-  //Topic tmpTopic(topics, args);
-  //!!
-  //grr
-  String h= "HEIL "+String(topics)+ " "+String(args);
-  D(h.c_str());
-  api.debug(h);
-  String k= "KAPUTT "+String(topics)+ " "+String(args);
-  D(k.c_str());
-  api.debug(k);
-  // !!
-  String tmp = api.call(tmpTopic); // API verändert tmpTopic!!
-  pub(tmpTopic.modifyTopic(1), tmp); // hier sollten wir nur publishen, wenn was zurückkommt
-
-  // Vorschlag
-  // nichts zurueckliefern
-  // alles ueber events machen
-
-  D(h.c_str());
-
+  free(topics2);
   if (args != NULL)
     delete[] args;
 }
@@ -160,45 +149,49 @@ void MQTT::on_incommingSubcribe(char *topics, byte *payload,
 //  MQTT publish API log
 //...............................................................................
 void MQTT::on_logFunction(const String &channel, const String &msg) {
-  // on_log is not reentrant - do not use API calls here!
-  // String deviceName = api.call("~/get/ffs/cfg/item/device_name");
-  String logTopic = deviceName + "/" + channel;
+
+  // do not use API calls here to avoid infinite recursions
+
+  String item;
+  if(channel == " INFO") item="info"; else
+  if(channel == "DEBUG") item="debug"; else
+  if(channel == "ERROR") item="error";
+  String logTopic = deviceName + "/log/" + item;
   pub(logTopic, msg);
-  //String type("log");
-  //broadcast(type, channel, msg);
 }
 
 //...............................................................................
 //  MQTT publish API Topic
 //...............................................................................
 void MQTT::on_topicFunction(const time_t, Topic &topic) {
-  pub(topic.topic_asString(),topic.arg_asString());
 
-  String topicStr = "~/";
-  topicStr += topic.modifyTopic(0);
+  // be careful with API calls here to avoid infinite recursions
 
-  if (topicStr == "~/event/net/connected"){
-    if (topic.getArgAsLong(0)){   //true
+  String tail= topic.modifyTopic(0);
+
+  // First react on events that affect us...
+  String topicStr = "~/" + tail;
+  if (topicStr == "~/event/net/connected") {
+    if (topic.getArgAsLong(0)) { // true
       start();
-    }else{  //false
-      api.info("MQTT client is disconnected");
+    } else { // false
+      api.info("MQTT client has disconnected");
     }
   }
 
-  //String type("event");
-  //String subtype("");
-  //String msg = topic.asString();
-  //broadcast(type, subtype, msg);
+  // ..then publish the topic.
+  pub(topic.topic_asString(), topic.arg_asString());
 }
 
 //-------------------------------------------------------------------------------
 //  MQTT private
 //-------------------------------------------------------------------------------
+
 //...............................................................................
 //  MQTT publish
 //...............................................................................
 void MQTT::pub(String topic, String value) {
-  if (client.connected()){
+  if (client.connected()) {
     client.publish(topic.c_str(), value.c_str());
     client.loop();
   }

@@ -55,8 +55,6 @@ String Device::set(Topic &topic) {
 
   if (topic.getItemCount() != 4) // ~/set/device/power
     return TOPIC_NO;
-  if (!topic.itemIs(2, "device"))
-    return TOPIC_NO;
   if (topic.itemIs(3, "power")) {
     setPowerMode(topic.getArgAsLong(0));
     return TOPIC_OK;
@@ -79,9 +77,8 @@ String Device::get(Topic &topic) {
 
   if (topic.getItemCount() != 4) // ~/get/device/power
     return TOPIC_NO;
-  if (!topic.itemIs(2, "device"))
-    return TOPIC_NO;
   if (topic.itemIs(3, "power")) {
+    topicQueue.put("~/event/device/power", power);
     return String(power);
   } else {
     return TOPIC_NO;
@@ -131,10 +128,8 @@ void Device::setPowerMode(int value) {
   topicQueue.put("~/event/device/power", power);
   if (power) {
     relay.setOutputMode(ON);
-    //topicQueue.put("~/event/device/powerMode is_on");
   } else {
     relay.setOutputMode(OFF);
-    //topicQueue.put("~/event/device/powerMode is_off");
   }
   setLedMode();
 }

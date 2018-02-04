@@ -34,6 +34,9 @@ private:
   // the controller
   Controller &controller;
 
+  // device name
+  String deviceName;
+
   // users of the API can register their TopicFunction with registerTopicFunction
   // the API then forwards all Topics to that function
   #define MAXTOPICFUNCTIONS 4

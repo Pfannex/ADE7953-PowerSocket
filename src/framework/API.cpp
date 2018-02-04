@@ -27,6 +27,8 @@ void API::registerLogFunction(LogFunction LogFn) {
 //  API start
 //...............................................................................
 void API::start() {
+  // get the device name
+  deviceName= controller.getDeviceName();
   // register to receive Topics
   controller.setTopicFunction(std::bind(
       &API::onTopic, this, std::placeholders::_1, std::placeholders::_2));
@@ -41,14 +43,29 @@ void API::start() {
 //...............................................................................
 
 String API::call(Topic &topic) {
-  //D("API: begin call(&Topic)");
-  // just a pass through
-  //Serial.println(topic.asString());
-  debug("API call " + topic.asString());
+
+  // set and get commands are passed through the controller to
+  // - the device for handling (device's onEvent handler)
+  // - to the views for display (controller's onTopic handler)
+  // In particular, any command coming in from MQTT is mirrored to MQTT
+  // via the onTopic handler.
+  // The device can trigger zero, one or several events in reaction to a
+  // set or get command. The actual return value is returned in the
+  // ~/api/lastResult topic. The original command is returned in the
+  // ~/api/lastCommand topic.
+
+  String lastCommand= topic.asString();
+  debug("API call " +lastCommand);
   String result = controller.call(topic);
   if (result == nullptr) {
     result = String("<no result>");
   }
+  // here we inform all listeners view about the last api call and its result
+  time_t t= controller.clock.now();
+  Topic topicLastCommand("~/api/lastCommand "+lastCommand);
+  onTopic(t, topicLastCommand);
+  Topic topicLastResult("~/api/lastResult "+result);
+  onTopic(t, topicLastResult);
   return result;
 }
 
@@ -71,11 +88,7 @@ void API::info(const String &msg) { controller.logging.info(msg); }
 
 void API::error(const String &msg) { controller.logging.error(msg); }
 
-void API::debug(const String &msg) {
-   D(msg.c_str());
-   controller.logging.debug(msg);
-   D(msg.c_str());
- }
+void API::debug(const String &msg) { controller.logging.debug(msg); }
 
 //-------------------------------------------------------------------------------
 //  API private
@@ -85,16 +98,18 @@ void API::debug(const String &msg) {
 //  broadcast Topics and log entries
 //...............................................................................
 void API::onTopic(const time_t t, Topic &topic) {
+  // we force the device name into the first item
+  topic.setItem(0, deviceName.c_str());
   for (int i = 0; i < topicFunctionCount; i++) {
     topicFunction[i](t, topic);
   }
 }
 
 void API::onLog(const String &channel, const String &message) {
-  //D(String("API onLog "+message).c_str());
+  // D(String("API onLog "+message).c_str());
   for (int i = 0; i < logFunctionCount; i++) {
-    //Di("API onLog", i);
+    // Di("API onLog", i);
     logFunction[i](channel, message);
   }
-  //Dl;
+  // Dl;
 }

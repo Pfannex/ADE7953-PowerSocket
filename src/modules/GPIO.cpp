@@ -100,50 +100,6 @@ int GPIOinput::getInputState() {
     return -1; // undecided, still bouncing
 }
 
-//...............................................................................
-//  GPIOinput set
-//...............................................................................
-String GPIOinput::set(Topic &topic) {
-  /*
-  ~/set
-    └─GPIOinput
-        └─led (on, off, blink)
-  */
-
-  logging.debug("GPIOinput set topic " + topic.topic_asString() + " to " +
-                topic.arg_asString());
-
-  if (topic.itemIs(3, "led")) {
-    return TOPIC_OK;
-  } else {
-    return TOPIC_NO;
-  }
-}
-//...............................................................................
-//  GPIOinput get
-//...............................................................................
-String GPIOinput::get(Topic &topic) {
-  /*
-  ~/get
-    └─GPIOinput
-        └─led (on, off, blink)
-  */
-
-  logging.debug("GPIOinput get topic " + topic.topic_asString() + " to " +
-                topic.arg_asString());
-
-  if (topic.itemIs(3, "led")) {
-    return TOPIC_OK;
-  } else {
-    return TOPIC_NO;
-  }
-}
-//...............................................................................
-//  GPIOinput get
-//...............................................................................
-void GPIOinput::on_events(Topic &topic) {
-  // Serial.println(topic.asString());
-}
 //-------------------------------------------------------------------------------
 //  GPIOinput private
 //-------------------------------------------------------------------------------
@@ -184,13 +140,13 @@ void GPIOoutput::handle() {
     if (!currentOutputState) { // if is OFF
       digitalWrite(pin, HIGH);
       currentOutputState = HIGH;
-      topicQueue.put(eventPrefix+"is_on");
+      topicQueue.put(eventPrefix+"1");
     }
   } else if (currentOutputMode == OFF) {
     if (currentOutputState) { // if is ON
       digitalWrite(pin, LOW);
       currentOutputState = LOW;
-      topicQueue.put(eventPrefix+"is_off");
+      topicQueue.put(eventPrefix+"0");
     }
   } else if (currentOutputMode == BLINK) {
     // use arg[2] for frequency
@@ -200,22 +156,22 @@ void GPIOoutput::handle() {
       currentOutputState = outputOn;
       String strState = "";
       if (outputOn)
-        topicQueue.put(eventPrefix+"is_on");
+        topicQueue.put(eventPrefix+"1");
       else
-        topicQueue.put(eventPrefix+"is_off");
+        topicQueue.put(eventPrefix+"0");
     }
   } else if (currentOutputMode == OFT) {
     if (!currentOutputState) { // if is OFF
       lastOftOnTime = now;
       digitalWrite(pin, HIGH);
       currentOutputState = HIGH;
-      topicQueue.put(eventPrefix+"is_on");
+      topicQueue.put(eventPrefix+"1");
     } else {
       if ((lastOftOnTime + currentOutputOFTtime) < now) {
         digitalWrite(pin, LOW);
         currentOutputState = LOW;
         currentOutputMode = OFF;
-        topicQueue.put(eventPrefix+"is_off");
+        topicQueue.put(eventPrefix+"0");
       }
     }
   }
@@ -244,69 +200,6 @@ void GPIOoutput::setOutputMode(outputMode_t mode, int t) {
    " ("+String(t)+" ms)");
 }
 
-//...............................................................................
-//  GPIOoutput set
-//...............................................................................
-String GPIOoutput::set(Topic &topic) {
-  /*
-  ~/set
-    └─device
-      └─gpio [pin], [mode](on, off, blink, oft), [oftTime]
-  */
-  logging.debug("GPIO set topic " + topic.topic_asString() + " to " +
-                topic.arg_asString());
-
-  // set gpio mode
-  String strPin = topic.getArg(0);
-  outputMode_t mode = OFF;
-  int oftTime = 0;
-
-  if (topic.itemIs(3, "gpio")) {
-    if (topic.getArgCount() > 1 and strPin.toInt() == pin) {
-      if (topic.argIs(1, "on")) {
-        mode = ON;
-      } else if (topic.argIs(1, "off")) {
-        mode = OFF;
-      } else if (topic.argIs(1, "blink")) {
-        mode = BLINK;
-      } else if (topic.argIs(1, "oft") and topic.getArgCount() > 2) {
-        mode = OFT;
-        oftTime = topic.getArgAsLong(2);
-      } else {
-        return TOPIC_NO;
-      }
-      setOutputMode(mode, oftTime);
-      return TOPIC_OK;
-    } else {
-      return TOPIC_NO;
-    }
-  }
-}
-//...............................................................................
-//  GPIOoutput get
-//...............................................................................
-String GPIOoutput::get(Topic &topic) {
-  /*
-  ~/get
-    └─GPIOoutput
-        └─led (on, off, blink)
-  */
-
-  logging.debug("GPIOoutput get topic " + topic.topic_asString() + " to " +
-                topic.arg_asString());
-
-  if (topic.itemIs(3, "led")) {
-    return TOPIC_OK;
-  } else {
-    return TOPIC_NO;
-  }
-}
-//...............................................................................
-//  GPIOinput get
-//...............................................................................
-void GPIOoutput::on_events(Topic &topic) {
-  // Serial.println(topic.asString());
-}
 //-------------------------------------------------------------------------------
 //  GPIOoutput private
 //-------------------------------------------------------------------------------
