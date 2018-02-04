@@ -45,8 +45,7 @@ void API::start() {
 String API::call(Topic &topic) {
 
   // set and get commands are passed through the controller to
-  // - the device for handling (device's onEvent handler)
-  // - to the views for display (controller's onTopic handler)
+  // the device for handling (device's onEvent handler).
   // In particular, any command coming in from MQTT is mirrored to MQTT
   // via the onTopic handler.
   // The device can trigger zero, one or several events in reaction to a
