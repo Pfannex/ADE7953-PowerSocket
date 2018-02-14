@@ -275,6 +275,7 @@ bool FFSjsonFile::saveFile() {
 //  read Item from jsonObjectString
 //...............................................................................
 String FFSjsonFile::readItem(String itemName) {
+  if(!itemName) return "NIL";
   DynamicJsonBuffer JsonBuffer;
   JsonObject &rootObject = JsonBuffer.parseObject(root);
   if (rootObject.success()) {
@@ -291,6 +292,7 @@ String FFSjsonFile::readItem(int item) {
   DynamicJsonBuffer JsonBuffer;
   JsonArray &rootArray = JsonBuffer.parseArray(root);
   if (rootArray.success()) {
+    if(item>= rootArray.size()) return "NIL";
     return rootArray[item].as<char*>();
   } else {
     return "NIL";

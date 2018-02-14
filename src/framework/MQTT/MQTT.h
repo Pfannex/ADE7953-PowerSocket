@@ -19,7 +19,7 @@ public:
   bool handle();
   // Callback Events
   // pubSubClient
-  void on_incommingSubcribe(char *topic, byte *payload, unsigned int length);
+  void on_incomingSubscribe(char *topic, byte *payload, unsigned int length);
   // API
   void on_logFunction(const String &channel, const String &msg);
   void on_topicFunction(const time_t, Topic &topic);

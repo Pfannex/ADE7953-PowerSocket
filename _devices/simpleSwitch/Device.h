@@ -1,9 +1,10 @@
 #include "framework/Utils/Logger.h"
+#include "framework/Core/FFS.h"
 #include "Setup.h"
 #include "framework/Topic.h"
-#include "DeviceSetup.h"
+#include "device/DeviceSetup.h"
 //modules
-#include "GPIO.h"
+#include "modules/GPIO.h"
 
 //###############################################################################
 //  Device
@@ -12,20 +13,22 @@
 class Device {
 
 public:
-  Device(LOGGING &logging, TopicQueue &topicQueue);
+  Device(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
   void start();
   void handle();
   String set(Topic &topic);
   String get(Topic &topic);
   void on_events(Topic &topic);
 
-  GPIO gpio;
-
 private:
   LOGGING &logging;
   TopicQueue &topicQueue;
+  FFS &ffs;
 
-  //define device specific functions here #######################################
+  GPIOinput button;
+  GPIOoutput led;
+  GPIOoutput relay;
+
   // the central modes
   int power = 0;
   int configMode = 0;

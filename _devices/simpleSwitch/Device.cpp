@@ -1,4 +1,4 @@
-#include "Device.h"
+#include "device/Device.h"
 #include <Arduino.h>
 
 //===============================================================================
@@ -8,30 +8,35 @@
 //-------------------------------------------------------------------------------
 //  Device public
 //-------------------------------------------------------------------------------
-Device::Device(LOGGING &logging, TopicQueue &topicQueue)
-               : logging(logging), topicQueue(topicQueue),
-                 gpio(logging, topicQueue)   {}
+Device::Device(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
+    : logging(logging), topicQueue(topicQueue), ffs(ffs),
+      button("button", logging, topicQueue, PIN_BUTTON),
+      led("led", logging, topicQueue, PIN_LED),
+      relay("relay", logging, topicQueue, PIN_RELAY) {}
 
 //...............................................................................
 // device start
 //...............................................................................
 void Device::start() {
 
-  logging.info("starting Device " + String(DEVICETYPE) + " V" + String(DEVICEVERSION));
+  logging.info("starting " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
 
-  //start modules
-  gpio.start();
+  // start modules
+  button.start();
+  led.start();
+  relay.start();
   setLedMode();
 
-
-  logging.info("Device running");
+  logging.info("device running");
 }
 
 //...............................................................................
 // handle - periodically called by the controller
 //...............................................................................
 void Device::handle() {
-  gpio.handle();
+  button.handle();
+  led.handle();
+  relay.handle();
 }
 
 //...............................................................................
@@ -40,26 +45,20 @@ void Device::handle() {
 
 String Device::set(Topic &topic) {
   /*
-  ~/set                (Itemlevel 2)
-    └─function         (Itemlevel 3)
-        └─sub function (Itemlevel 4)
+  ~/set
+  └─device             (level 2)
+    └─power            (level 3)
   */
 
-  logging.debug("Device set topic " + topic.topic_asString() + " to " +
+  logging.debug("device set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
-//e.g.
-  if (topic.itemIs(3, "led")) {
-    if (topic.itemIs(4, "01")){
-      ///## your Event
-      return TOPIC_OK;
-    }else if (topic.itemIs(4, "02")){
-      //## your Event
-      return TOPIC_OK;
-    }else{
-      return TOPIC_NO;
-    }
-  }else{
+  if (topic.getItemCount() != 4) // ~/set/device/power
+    return TOPIC_NO;
+  if (topic.itemIs(3, "power")) {
+    setPowerMode(topic.getArgAsLong(0));
+    return TOPIC_OK;
+  } else {
     return TOPIC_NO;
   }
 }
@@ -69,18 +68,19 @@ String Device::set(Topic &topic) {
 
 String Device::get(Topic &topic) {
   /*
-  ~/get                (Itemlevel 2)
-    └─function         (Itemlevel 3)
-        └─sub function (Itemlevel 4)
+  ~/get
+  └─device             (level 2)
+    └─power            (level 3)
   */
 
-  logging.debug("Device get topic " + topic.topic_asString() + " to " +
-                topic.arg_asString());
+  logging.debug("device get topic " + topic.topic_asString());
 
-//e.g.
-  if (topic.itemIs(3, "led")) {
-    return "get answer";
-  }else{
+  if (topic.getItemCount() != 4) // ~/get/device/power
+    return TOPIC_NO;
+  if (topic.itemIs(3, "power")) {
+    topicQueue.put("~/event/device/power", power);
+    return String(power);
+  } else {
     return TOPIC_NO;
   }
 }
@@ -90,46 +90,29 @@ String Device::get(Topic &topic) {
 //...............................................................................
 void Device::on_events(Topic &topic) {
 
+  //logging.debug("device handling event " + topic.asString());
+
+  // central business logic
+  if (button.isForModule(topic)) {
+    // events from button
     //
-    // this is the central routine that dispatches events from devices
-    // and views
-    //
-    //time_t t= clock.now();
-
-    //logging.debug("handling event " + topicsArgs);
-    //Topic topic(topicsArgs);
-
-    // propagate event to views
-
-    //viewsUpdate(t, topic);
-
-    // D("Controller: business logic");
-    // central business logic
-    if (topic.itemIs(2, "gpio")) {
-      // Dl;
-      if (topic.itemIs(3, "button")) {
-        //
-        // events from button
-        //
-        // - click
-        if (topic.itemIs(4, "click")) {
-          // -- short
-          if(topic.argIs(0, "short")) {
-            if(configMode)
-              setConfigMode(0);
-            else
-              setPowerMode(!power);
-          }
-        // -- long
-        if (topic.argIs(0, "long"))
-          setConfigMode(!configMode);
-        }
-        // - idle
-        if (topic.itemIs(4, "idle"))
+    // - click
+    if (button.isItem(topic, "click")) {
+      // -- short
+      if (topic.argIs(0, "short")) {
+        if (configMode)
           setConfigMode(0);
+        else
+          setPowerMode(!power);
       }
+      // -- long
+      if (topic.argIs(0, "long"))
+        setConfigMode(!configMode);
     }
-
+    // - idle
+    if (button.isItem(topic, "idle"))
+      setConfigMode(0);
+  }
 }
 
 //-------------------------------------------------------------------------------
@@ -142,7 +125,12 @@ void Device::on_events(Topic &topic) {
 
 void Device::setPowerMode(int value) {
   power = value;
-  gpio.setRelayMode(power);
+  topicQueue.put("~/event/device/power", power);
+  if (power) {
+    relay.setOutputMode(ON);
+  } else {
+    relay.setOutputMode(OFF);
+  }
   setLedMode();
 }
 
@@ -150,16 +138,16 @@ void Device::setConfigMode(int value) {
   if (configMode == value)
     return;
   configMode = value;
-  topicQueue.put("~/event/controller/configMode", configMode);
+  topicQueue.put("~/event/device/configMode", configMode);
   setLedMode();
 }
 
 void Device::setLedMode() {
   if (!configMode) {
     if (power)
-      gpio.setLedMode(ON);
+      led.setOutputMode(ON);
     else
-      gpio.setLedMode(OFF);
+      led.setOutputMode(OFF);
   } else
-    gpio.setLedMode(BLINK);
+    led.setOutputMode(BLINK, 250);
 }

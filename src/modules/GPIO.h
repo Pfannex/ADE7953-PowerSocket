@@ -1,6 +1,8 @@
+#include "modules/module.h"
 #include "framework/Utils/Logger.h"
 #include "Setup.h"
 #include "framework/Topic.h"
+
 
 //###############################################################################
 //  GPIO input
@@ -14,22 +16,16 @@
 // time in ms to detect idling
 #define IDLETIME 30000
 
-class GPIOinput {
+class GPIOinput : public module {
 
 public:
-  GPIOinput(int GPIOinputPin, LOGGING &logging, TopicQueue &topicQueue);
+  GPIOinput(string name, LOGGING &logging, TopicQueue &topicQueue, int GPIOinputPin);
   int pin;
 
   void start();
   void handle();
-  String set(Topic &topic);
-  String get(Topic &topic);
-  void on_events(Topic &topic);
-
+  
 private:
-  LOGGING &logging;
-  TopicQueue &topicQueue;
-
   int getInputState();                   // debouncer and state detector
   int pinState = -1;                     // the last pin state
   unsigned long lastDebounceTime = -1;   // when the pin state changed last
@@ -48,27 +44,23 @@ private:
 // time in ms for blinking
 #define BLINKTIME 500
 
-class GPIOoutput {
+enum outputMode_t { OFF, ON, BLINK, OFT};
+
+class GPIOoutput : public module {
 
 public:
-  GPIOoutput(int GPIOoutputPin, LOGGING &logging, TopicQueue &topicQueue);
+  GPIOoutput(string name, LOGGING &logging, TopicQueue &topicQueue, int GPIOoutputPin);
   int pin;
 
   void start();
   void handle();
-  String set(Topic &topic);
-  String get(Topic &topic);
-  void on_events(Topic &topic);
-  
-  enum outputMode_t { OFF, ON, BLINK, OFT};
+
+  void setOutputMode(outputMode_t mode, int t= 0); // mode setter
 
 private:
-  LOGGING &logging;
-  TopicQueue &topicQueue;
-
-  void setOutputMode(outputMode_t mode, int t); // mode setter
   outputMode_t currentOutputMode;
   int currentOutputOFTtime;
+  int currentOutputBlinkTime;
   int currentOutputState;
   unsigned long lastOftOnTime;
 

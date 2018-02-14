@@ -57,6 +57,9 @@ public:
   void t_short_Update();
   void t_long_Update();
 
+  // deviceName
+  String getDeviceName();
+
 private:
   String deviceName;
 
