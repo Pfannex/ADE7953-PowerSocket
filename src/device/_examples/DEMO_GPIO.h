@@ -5,8 +5,8 @@
 #include "device/deviceSetup.h"
 #include "device/device.h"
 //modules
-#include "modules/GPIO.h"
-#include "modules/MCP23017.h"
+#include "modules/moduleTemplate.h"
+#include "modules/toConvert/MCP23017.h"
 
 //###############################################################################
 //  Device
@@ -19,7 +19,7 @@ public:
   void start();
   void handle();
 
-  //GPIOinput button;
+  GPIOinputX button;
   MCP23017 mcp;
 
 

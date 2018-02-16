@@ -10,7 +10,7 @@
 //-------------------------------------------------------------------------------
 DEMO_GPIO::DEMO_GPIO(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
            :device(logging, topicQueue, ffs),
-            //button("button", logging, topicQueue, PIN_BUTTON),
+            button("Walter", logging, topicQueue),
             mcp(logging, topicQueue){}
 
 //...............................................................................
@@ -20,7 +20,7 @@ void DEMO_GPIO::start() {
   device::start();
   logging.info("child starting " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
 
-  //button.start();
+  button.start();
   mcp.start();
 
   logging.info("device running");

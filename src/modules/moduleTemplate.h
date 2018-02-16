@@ -1,23 +1,24 @@
+#include "modules/module.h"
 #include "framework/Utils/Logger.h"
 #include "Setup.h"
 #include "framework/Topic.h"
+#include <FunctionalInterrupt.h>
 
 //###############################################################################
-//  GPIO
+//  GPIO input
 //###############################################################################
 
-class module_x {
+class GPIOinputX : public module {
 
 public:
-  module_x(LOGGING &logging, TopicQueue &topicQueue);
+  GPIOinputX(string name, LOGGING &logging, TopicQueue &topicQueue);
+  int pin;
+
   void start();
   void handle();
-  String set(Topic &topic);
-  String get(Topic &topic);
-  void on_events(Topic &topic);
 
 private:
-  LOGGING &logging;
-  TopicQueue &topicQueue;
 
+  //void irq();
+  //int irqDetected = 0;
 };
