@@ -2,7 +2,7 @@
 #include "framework/Utils/Logger.h"
 #include "Setup.h"
 #include "framework/Topic.h"
-
+#include <FunctionalInterrupt.h>
 
 //###############################################################################
 //  GPIO input
@@ -24,7 +24,7 @@ public:
 
   void start();
   void handle();
-  
+
 private:
   int getInputState();                   // debouncer and state detector
   int pinState = -1;                     // the last pin state
@@ -34,6 +34,9 @@ private:
   int pinIdle = -1;                      // last time for AUTO-idle
   int pinLongPress = -1;                 // longpress detection
   unsigned long pinReleaseTime = -1;     // time delta measurement
+
+  //void irq();
+  //int irqDetected = 0;
 };
 
 //###############################################################################

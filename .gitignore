@@ -54,5 +54,5 @@ Temporary Items
 .gcc-flags.json
 
 #--> Project files <-------------------------
-src/device/
+#src/device/
 data/cfg.json

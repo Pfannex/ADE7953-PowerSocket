@@ -1,6 +1,7 @@
 #include "framework/Utils/Logger.h"
 #include "Setup.h"
 #include "framework/Topic.h"
+#include <FunctionalInterrupt.h>
 
 //###############################################################################
 //  GPIO
@@ -19,5 +20,8 @@ public:
 private:
   LOGGING &logging;
   TopicQueue &topicQueue;
+
+  void irq();
+  int irqDetected = 0;
 
 };

@@ -21,12 +21,21 @@ void GPIOinput::start() {
   module::start();
   logging.info("setting GPIO pin " + String(pin) + " for input");
   pinMode(pin, INPUT_PULLUP);
+  //attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), RISING);
 }
 
 //...............................................................................
 // handle
 //...............................................................................
 void GPIOinput::handle() {
+/*
+  while (irqDetected > 0){
+    detachInterrupt(pin);
+    irqDetected--;
+    logging.debug("IRQ");
+    attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), RISING);
+  }
+*/
 
   module::handle();
 
@@ -103,6 +112,12 @@ int GPIOinput::getInputState() {
 //-------------------------------------------------------------------------------
 //  GPIOinput private
 //-------------------------------------------------------------------------------
+//...............................................................................
+// IRQ
+//...............................................................................
+//void GPIOinput::irq() {
+  //irqDetected++;
+//}
 
 //###############################################################################
 

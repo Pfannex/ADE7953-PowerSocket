@@ -18,15 +18,31 @@ void MCP23017::start() {
 
   logging.info("starting MCP23017");
 
+  pinMode(12, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(12), std::bind(&MCP23017::irq, this), RISING);
 }
 
 //...............................................................................
 // handle
 //...............................................................................
 void MCP23017::handle() {
-  unsigned long now = millis();
+
+  while (irqDetected > 0){
+    detachInterrupt(12);
+    irqDetected--;
+    logging.debug("IRQ");
+    attachInterrupt(digitalPinToInterrupt(12), std::bind(&MCP23017::irq, this), RISING);
+  }
 
 }
+
+//...............................................................................
+// IRQ
+//...............................................................................
+void MCP23017::irq() {
+  irqDetected++;
+}
+
 
 //...............................................................................
 //  GPIO set
