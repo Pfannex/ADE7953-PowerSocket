@@ -3,7 +3,7 @@
 #include "Setup.h"
 #include "framework/Topic.h"
 #include "device/deviceSetup.h"
-#include "device/device.h"
+#include "device/Device.h"
 //modules
 #include "modules/GPIO.h"
 
