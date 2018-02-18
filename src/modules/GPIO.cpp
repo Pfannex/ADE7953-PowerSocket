@@ -21,25 +21,44 @@ void GPIOinput::start() {
   Module::start();
   logging.info("setting GPIO pin " + String(pin) + " for input");
   pinMode(pin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), RISING);
+  attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), CHANGE);
 }
 
 //...............................................................................
 // handle
 //...............................................................................
 void GPIOinput::handle() {
-
   Module::handle();
+  unsigned long now = millis();
 
-  while (irqDetected){
+  if (irqDetected && !debouncing){
     detachInterrupt(pin);
-    //lastIrqTime = now;
+    int pinState = digitalRead(pin);
+
+    if (pinState){
+
+    }
+
+
+
     irqDetected = 0;
+    lastIrqTime = now;
+    debouncing = 1;
     logging.debug("IRQ");
-    attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), RISING);
+    attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), CHANGE);
+  }
+  if (now - lastIrqTime > DEBOUNCETIME){
+    debouncing = 0;
+    irqDetected = 0;  //clear accrued IRQs during debouncing
   }
 
-  unsigned long now = millis();
+
+
+
+
+//###########################################################################
+
+
   int pinState = getInputState();
   if (pinState < 0)
     return; // still bouncing

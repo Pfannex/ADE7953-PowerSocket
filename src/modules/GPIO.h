@@ -12,7 +12,7 @@
 // time in ms pin needs to be released againg to detect double click
 #define DOUBLECLICKTIME 750
 // time in ms pin must be stable before reporting change
-#define DEBOUNCETIME 50
+#define DEBOUNCETIME 50  //50
 // time in ms to detect idling
 #define IDLETIME 30000
 
@@ -38,6 +38,13 @@ private:
   void irq();
   int irqDetected = 0;
   unsigned long lastIrqTime = -1;
+  int debouncing = 0;
+
+  int firstDOWN    = 0;
+  int firstUP      = 0;
+  int firstRUNNING = 0;
+  int secondDOWN   = 0;
+  int secondUP     = 0;
 };
 
 //###############################################################################
