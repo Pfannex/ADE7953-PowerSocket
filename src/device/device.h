@@ -8,10 +8,10 @@
 //  Device
 //###############################################################################
 
-class device {
+class Device {
 
 public:
-  device(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
+  Device(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
   virtual void start();
   virtual void handle();
   virtual String set(Topic &topic);

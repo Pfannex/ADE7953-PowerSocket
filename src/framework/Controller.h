@@ -11,9 +11,7 @@
 #include "framework/Utils/SysUtils.h"
 #include <ESP8266FtpServer.h>
 
-// device specific
-//#include DEVICEINCFILE
-//#include "device/_examples/DEMO_GPIO.h"
+// THE device
 #include "device/deviceSetup.h"
 #include INCLUDE_FILE(module)
 

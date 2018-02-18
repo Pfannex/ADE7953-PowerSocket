@@ -1,4 +1,4 @@
-#include "modules/module.h"
+#include "modules/Module.h"
 #include "framework/Utils/Logger.h"
 #include "Setup.h"
 #include "framework/Topic.h"
@@ -16,7 +16,7 @@
 // time in ms to detect idling
 #define IDLETIME 30000
 
-class GPIOinput : public module {
+class GPIOinput : public Module {
 
 public:
   GPIOinput(string name, LOGGING &logging, TopicQueue &topicQueue, int GPIOinputPin);
@@ -35,8 +35,9 @@ private:
   int pinLongPress = -1;                 // longpress detection
   unsigned long pinReleaseTime = -1;     // time delta measurement
 
-  //void irq();
-  //int irqDetected = 0;
+  void irq();
+  int irqDetected = 0;
+  unsigned long lastIrqTime = -1;
 };
 
 //###############################################################################
@@ -49,7 +50,7 @@ private:
 
 enum outputMode_t { OFF, ON, BLINK, OFT};
 
-class GPIOoutput : public module {
+class GPIOoutput : public Module {
 
 public:
   GPIOoutput(string name, LOGGING &logging, TopicQueue &topicQueue, int GPIOoutputPin);

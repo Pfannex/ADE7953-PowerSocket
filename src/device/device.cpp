@@ -1,4 +1,4 @@
-#include "device/device.h"
+#include "device/Device.h"
 #include <Arduino.h>
 
 //===============================================================================
@@ -8,39 +8,39 @@
 //-------------------------------------------------------------------------------
 //  Device public
 //-------------------------------------------------------------------------------
-device::device(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
+Device::Device(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
        :logging(logging), topicQueue(topicQueue), ffs(ffs){}
 
 //...............................................................................
-// device start
+// Device start
 //...............................................................................
-void device::start() {
+void Device::start() {
   logging.info("parent starting " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
 
-  //logging.info("device running");
+  //logging.info("Device running");
 }
 
 //...............................................................................
 // handle - periodically called by the controller
 //...............................................................................
-void device::handle() {
+void Device::handle() {
 }
 
 //...............................................................................
 //  Device set
 //...............................................................................
 
-String device::set(Topic &topic) {
+String Device::set(Topic &topic) {
   /*
   ~/set
-  └─device             (level 2)
+  └─Device             (level 2)
     └─power            (level 3)
   */
 
-  logging.debug("device set topic " + topic.topic_asString() + " to " +
+  logging.debug("Device set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
-  if (topic.getItemCount() != 4) // ~/set/device/power
+  if (topic.getItemCount() != 4) // ~/set/Device/power
     return TOPIC_NO;
   if (topic.itemIs(3, "power")) {
     //setPowerMode(topic.getArgAsLong(0));
@@ -53,19 +53,19 @@ String device::set(Topic &topic) {
 //  Device get
 //...............................................................................
 
-String device::get(Topic &topic) {
+String Device::get(Topic &topic) {
   /*
   ~/get
-  └─device             (level 2)
+  └─Device             (level 2)
     └─power            (level 3)
   */
 
-  logging.debug("device get topic " + topic.topic_asString());
+  logging.debug("Device get topic " + topic.topic_asString());
 
-  if (topic.getItemCount() != 4) // ~/get/device/power
+  if (topic.getItemCount() != 4) // ~/get/Device/power
     return TOPIC_NO;
   if (topic.itemIs(3, "power")) {
-    //topicQueue.put("~/event/device/power", power);
+    //topicQueue.put("~/event/Device/power", power);
     //return String(power);
   } else {
     return TOPIC_NO;
@@ -75,9 +75,9 @@ String device::get(Topic &topic) {
 //...............................................................................
 // Eventhandler - called by the controller after receiving a topic (event)
 //...............................................................................
-void device::on_events(Topic &topic) {
+void Device::on_events(Topic &topic) {
 
-  //logging.debug("device handling event " + topic.asString());
+  //logging.debug("Device handling event " + topic.asString());
 /*
   // central business logic
   if (button.isForModule(topic)) {

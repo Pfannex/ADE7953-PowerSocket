@@ -20,10 +20,10 @@ the framework about its state by putting events into the topic queue.
 //  module
 //###############################################################################
 
-class module {
+class Module {
 
 public:
-  module(string name, LOGGING &logging, TopicQueue &topicQueue);
+  Module(string name, LOGGING &logging, TopicQueue &topicQueue);
   virtual void start();
   virtual void handle();
   // check if topic is .../.../device/<name>

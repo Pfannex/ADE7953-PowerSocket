@@ -5,22 +5,23 @@
 #include "device/deviceSetup.h"
 #include "device/device.h"
 //modules
-#include "modules/moduleTemplate.h"
-#include "modules/toConvert/MCP23017.h"
+#include "modules/GPIO.h"
 
 //###############################################################################
 //  Device
 //###############################################################################
 
-class DEMO_GPIO : public device{
+class DEMO_GPIO : public Device{
 
 public:
   DEMO_GPIO(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
   void start();
   void handle();
+  String set(Topic &topic);
+  String get(Topic &topic);
+  void on_events(Topic &topic);
 
-  GPIOinputX button;
-  MCP23017 mcp;
+  GPIOinput button;
 
 
 private:

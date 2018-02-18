@@ -6,7 +6,7 @@
 //===============================================================================
 GPIOinput::GPIOinput(string name, LOGGING &logging, TopicQueue &topicQueue,
           int GPIOinputPin)
-          : module(name, logging, topicQueue), pin(GPIOinputPin)
+          : Module(name, logging, topicQueue), pin(GPIOinputPin)
           {
 }
 
@@ -18,31 +18,33 @@ GPIOinput::GPIOinput(string name, LOGGING &logging, TopicQueue &topicQueue,
 //...............................................................................
 void GPIOinput::start() {
 
-  module::start();
+  Module::start();
   logging.info("setting GPIO pin " + String(pin) + " for input");
   pinMode(pin, INPUT_PULLUP);
-  //attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), RISING);
+  attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), RISING);
 }
 
 //...............................................................................
 // handle
 //...............................................................................
 void GPIOinput::handle() {
-/*
-  while (irqDetected > 0){
+
+  Module::handle();
+
+  while (irqDetected){
     detachInterrupt(pin);
-    irqDetected--;
+    //lastIrqTime = now;
+    irqDetected = 0;
     logging.debug("IRQ");
     attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), RISING);
   }
-*/
-
-  module::handle();
 
   unsigned long now = millis();
   int pinState = getInputState();
   if (pinState < 0)
     return; // still bouncing
+
+
 
   unsigned long t = now;
   unsigned long tl = t - pinChangeTime;
@@ -115,9 +117,9 @@ int GPIOinput::getInputState() {
 //...............................................................................
 // IRQ
 //...............................................................................
-//void GPIOinput::irq() {
-  //irqDetected++;
-//}
+void GPIOinput::irq() {
+  irqDetected = 1;
+}
 
 //###############################################################################
 
@@ -126,7 +128,7 @@ int GPIOinput::getInputState() {
 //===============================================================================
 GPIOoutput::GPIOoutput(string name, LOGGING &logging, TopicQueue &topicQueue,
                        int GPIOoutputPin)
-    : module(name, logging, topicQueue), pin(GPIOoutputPin) {}
+    : Module(name, logging, topicQueue), pin(GPIOoutputPin) {}
 
 //-------------------------------------------------------------------------------
 //  GPIOoutput public
@@ -136,7 +138,7 @@ GPIOoutput::GPIOoutput(string name, LOGGING &logging, TopicQueue &topicQueue,
 //...............................................................................
 void GPIOoutput::start() {
 
-  module::start();
+  Module::start();
   logging.info("setting GPIO pin " + String(pin) + " for output");
   pinMode(pin, OUTPUT);
   digitalWrite(pin, LOW);
@@ -146,7 +148,7 @@ void GPIOoutput::start() {
 // handle
 //...............................................................................
 void GPIOoutput::handle() {
-  module::handle();
+  Module::handle();
 
   String eventPrefix= "~/event/device/"+String(name)+" ";
   unsigned long now = millis();
