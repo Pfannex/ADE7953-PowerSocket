@@ -1,10 +1,20 @@
+"use strict";
+
 // ---------------------------
 // initialization
 // ---------------------------
 
+var muteDashboardActions= 0;
+
 $(document).ready(function() {
   consStart();
 });
+
+// initialize the dashboard
+$(document).on("pagecreate", "#page1", function(event, ui) {
+  console.log('Initializing dashboard...');
+  dashboardBuild();
+})
 
 // initialize the config page
 $(document).on("pagecreate", "#page2", function(event, ui) {
@@ -175,7 +185,7 @@ function setRadio(name, value) {
 
   console.log("Setting radio " + name + " to " + value);
   var radio = $('input:radio[name="' + name + '"]');
-  button = radio.filter('[value="' + value + '"]');
+  var button = radio.filter('[value="' + value + '"]');
   button.prop('checked', true);
   radio.checkboxradio('refresh');
   button.trigger('change');
@@ -246,4 +256,49 @@ function apply() {
   var json= getConfig();
   //console.log(json);
   sendConfig(json);
+}
+
+
+// ---------------------------
+// dashboard
+// ---------------------------
+
+
+
+//
+// dashboard builder
+//
+
+function dashboardBuild() {
+
+  console.log("Building dashboard...");
+}
+
+
+//
+// dashboard action
+//
+function dashboardAction(control) {
+
+  // no action should occur if an event changes the dashboard
+  if(muteDashboardActions) return;
+  console.log("control "+control+" has changed to "+getRadio(control));
+  call("~/set/device/power "+getRadio(control));
+
+}
+
+//
+// dashboardEvalEvent
+//
+
+function dashboardEvalEvent(topics, args) {
+
+  muteDashboardActions= 1;
+  var topicStr= topics.join("/");
+  //debugmsg("dashboard event for topic "+topicStr+" with arg "+args);
+  if(topicStr == "device/power") {
+    setRadio("power", args);
+  }
+  muteDashboardActions= 0;
+
 }

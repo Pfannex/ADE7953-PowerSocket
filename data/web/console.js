@@ -1,6 +1,6 @@
 "use strict";
 
-var debug = 0;
+var debug = 1;
 var log = 1;
 
 var consConn;
@@ -45,7 +45,7 @@ function consoleSet(n, msg) {
 
 function consoleScroll(n) {
   var h = $("#console" + n)[0].scrollHeight;
-  debugmsg("scrolling to " + h);
+  //debugmsg("scrolling to " + h);
   $("#console" + n).scrollTop(h);
 }
 
@@ -115,7 +115,7 @@ function consUpdate(evt) {
   if (new_content == undefined || new_content.length == 0)
     return;
   message("data received");
-  debugmsg("Console received: " + new_content);
+  //debugmsg("Console received: " + new_content);
 
   consEvalContent(new_content);
 
@@ -128,6 +128,7 @@ function consFill() {
   var location = window.location.href; //"http://node52.home.neubert-volmar.de:80/goo.html";
   var parts = location.split("/");
   var url = 'ws://' + parts[2] + '/ws';
+  //url = 'ws://node52.home.neubert-volmar.de/ws';
   if (consConn) {
     consConn.close();
   }
@@ -151,12 +152,12 @@ function consSetScrollFunction(n) {
       element.outerHeight() + 2) {
       if (!mustScroll[n]) {
         mustScroll[n] = 1;
-        debugmsg("Console " + n + " autoscroll restarted");
+        //debugmsg("Console " + n + " autoscroll restarted");
       }
     } else {
       if (mustScroll[n]) {
         mustScroll[n] = 0;
-        debugmsg("Console " + n + " autoscroll stopped");
+        //debugmsg("Console " + n + " autoscroll stopped");
       }
     }
   });
@@ -179,7 +180,7 @@ function consStart() {
 
 function consAddReadings(nodeid) {
 
-  debugmsg("add readings grid to " + nodeid);
+  //debugmsg("add readings grid to " + nodeid);
   // readings grid for topic topic1/topic2/topic3 is
   // identified by readings_topic1_topic2_r
   var gridid = nodeid + "_r";
@@ -197,7 +198,7 @@ function consColorReading(rid, color) {
 
 function consAddReading(gridid, rid, topic) {
 
-  debugmsg("add reading " + topic + " for " + rid + " to " + gridid);
+  //debugmsg("add reading " + topic + " for " + rid + " to " + gridid);
   var content = "<div class='ui-block-a'><div class='ui-bar ui-bar-a' id='" + rid + "_t'>?</div></div>" +
     "<div class='ui-block-b'><div class='ui-bar ui-bar-a' id='" + rid + "'>" + topic + "</div></div>" +
     "<div class='ui-block-c'><div class='ui-bar ui-bar-a' id='" + rid + "_v'>?</div></div>";
@@ -212,7 +213,7 @@ function consAddReading(gridid, rid, topic) {
 }
 
 function consSetReading(rid, time, value) {
-  debugmsg("set time " + time + " and value " + value + " for " + rid);
+  //debugmsg("set time " + time + " and value " + value + " for " + rid);
   $("#" + rid + "_t").text(time);
   value ? $("#" + rid + "_v").text(value) : $("#" + rid + "_v").html("&nbsp;");
   clearTimeout(timers[rid]);
@@ -223,7 +224,7 @@ function consSetReading(rid, time, value) {
 }
 
 function consAddNode(nodeid, rid, topic) {
-  debugmsg("add node for " + rid + " to " + nodeid + " for topic /" + topic + "/");
+  //debugmsg("add node for " + rid + " to " + nodeid + " for topic /" + topic + "/");
   var content = "<div data-role='collapsible' data-collapsed='false' id='" +
     rid + "'><h3>" + topic + "</h3></div>";
   var child = $("#" + nodeid + " div.ui-collapsible-content").filter(":first").append(content);
@@ -235,13 +236,7 @@ function consAddNode(nodeid, rid, topic) {
   return child;
 }
 
-function consEvalEvent(time, content) {
-  var topicsArgs = content.split(" ");
-  var topics = topicsArgs[0].split("/");
-  topics.shift();
-  topics.shift(); // remove device name and "event"
-  topicsArgs.shift();
-  var args = topicsArgs.length > 0 ? topicsArgs.join(" ") : "";
+function consEvalEvent(time, topics, args) {
   var i;
   var rid = "readings";
   for (i = 0; i < topics.length; i++) {
@@ -250,7 +245,7 @@ function consEvalEvent(time, content) {
     rid += "_" + topic;
     var element = document.getElementById(rid);
     if (element == null) {
-      debugmsg(rid + " not found");
+      //debugmsg(rid + " not found");
       if (i < topics.length - 1) {
         // node
         consAddNode(parentid, rid, topic);
@@ -272,11 +267,31 @@ function consEvalEvent(time, content) {
 
 function consEvalContent(content) {
   var fields = JSON.parse(content);
+  //debugmsg("content type "+fields.type);
   if (fields.type == "event") {
     consoleWriteln(0, fields.value);
     var d = new Date();
-    consEvalEvent(d.toLocaleString(), fields.value);
+    var topicsArgs = fields.value.split(" ");
+    var topics = topicsArgs[0].split("/");
+    topics.shift();
+    topics.shift(); // remove device name and "event"
+    topicsArgs.shift();
+    var args = topicsArgs.length > 0 ? topicsArgs.join(" ") : "";
+    consEvalEvent(d.toLocaleString(), topics, args);
+    dashboardEvalEvent(topics, args);
   } else if (fields.type == "log") {
     consoleWriteln(1, fields.subtype + " " + fields.value)
   }
+}
+
+// ------------------------------------------------------------------------
+// dashboard handling
+// ------------------------------------------------------------------------
+
+
+function handleDashboardClick(widget) {
+  //debugmsg("click for "+widget.name);
+  if(widget.type=="checkbox") debugmsg("checkbox "+widget.checked); else
+  if(widget.type=="number") debugmsg("number "+widget.value);
+  if(widget.checkValidity()) debugmsg("Valid"); else debugmsg("INVALID!");
 }

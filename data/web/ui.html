@@ -27,35 +27,44 @@
 
         -->
   <div data-role="page" data-theme="a" id="page1">
+    <!-- header -->
     <div data-role="header">
       <a href="https://github.com/Pfannex/OmniESP/wiki" target="_blank" id="info" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left">Info</a>
       <h1>%TITLE%</h1>
       <a class="ui-btn ui-corner-all ui-shadow ui-icon-delete ui-btn-icon-left" onClick="logout()">Logout</a>
       <div data-role="navbar">
         <ul>
-          <li><a href="#page1" data-transition="flow" data-icon="eye" data-role="button" class="ui-btn-active ui-state-persist">Readings</a></li>
+          <li><a href="#page1" data-transition="flow" data-icon="eye" data-role="button" class="ui-btn-active ui-state-persist">Dashboard</a></li>
           <li><a href="#page2" data-transition="flow" data-icon="gear" data-role="button">Configuration</a></li>
           <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button">Log</a></li>
         </ul>
       </div>
     </div>
+    <!-- content -->
     <div data-role="content">
-      <div data-role="collapsible" data-inset="true" data-collapsed="false" id="readings">
-        <h2>Readings</h2>
+      <div data-role="collapsible" data-inset="true" data-collapsed="false" id="dashboard">
+        <h2>Dashboard</h2>
+
+        <!-- widget: controlgroup -->
+        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true"
+          onChange="dashboardAction('power')">
+          <legend>Powerswitch</legend>
+          <input name="power" id="power-0" value="0" type="radio" />
+          <label for="power-0">Off</label>
+          <input name="power" id="power-1" value="1" type="radio" />
+          <label for="power-1">On</label>
+        </fieldset>
+
       </div>
-      <div data-role="collapsible">
-        <h1>Events</h1>
-        <textarea name="console0" id="console0" style="font-size: smaller; height: 400px; overflow: scroll" readonly="true" data-autogrow="false"></textarea>
-        <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" onClick="consoleClear(0)">Clear</a>
-      </div>
-      <div data-role="footer">
-        <div class="ui-grid-a">
-          <div class="ui-block-a">
-            MAC Address<br>%MACADDRESS%
-          </div>
-          <div class="ui-block-b">
-            Device Name<br>%DEVICENAME%
-          </div>
+    </div>
+    <!-- footer -->
+    <div data-role="footer">
+      <div class="ui-grid-a">
+        <div class="ui-block-a">
+          MAC Address<br>%MACADDRESS%
+        </div>
+        <div class="ui-block-b">
+          Device Name<br>%DEVICENAME%
         </div>
       </div>
     </div>
@@ -72,7 +81,7 @@
       <a class="ui-btn ui-corner-all ui-shadow ui-icon-delete ui-btn-icon-left" onClick="logout()">Logout</a>
       <div data-role="navbar">
         <ul>
-          <li><a href="#page1" data-transition="flow" data-icon="eye" data-role="button">Readings</a></li>
+          <li><a href="#page1" data-transition="flow" data-icon="eye" data-role="button">Dashboard</a></li>
           <li><a href="#page2" data-transition="flow" data-icon="gear" data-role="button" class="ui-btn-active ui-state-persist">Configuration</a></li>
           <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button">Log</a></li>
         </ul>
@@ -284,13 +293,21 @@
       <a class="ui-btn ui-corner-all ui-shadow ui-icon-delete ui-btn-icon-left" onClick="logout()">Logout</a>
       <div data-role="navbar">
         <ul>
-          <li><a href="#page1" data-transition="flow" data-icon="eye" data-role="button">Readings</a></li>
+          <li><a href="#page1" data-transition="flow" data-icon="eye" data-role="button">Dashboard</a></li>
           <li><a href="#page2" data-transition="flow" data-icon="gear" data-role="button">Configuration</a></li>
           <li><a href="#page3" data-transition="flow" data-icon="comment" data-role="button" class="ui-btn-active ui-state-persist">Log</a></li>
         </ul>
       </div>
     </div>
     <div data-role="content">
+      <div data-role="collapsible" data-inset="true" data-collapsed="false" id="readings">
+        <h2>Readings</h2>
+      </div>
+      <div data-role="collapsible">
+        <h1>Events</h1>
+        <textarea name="console0" id="console0" style="font-size: smaller; height: 400px; overflow: scroll" readonly="true" data-autogrow="false"></textarea>
+        <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" onClick="consoleClear(0)">Clear</a>
+      </div>
       <div data-role="collapsible">
         <h1>Device log</h1>
         <textarea name="console1" id="console1" style="font-size: smaller; height: 400px; overflow: scroll" readonly="true" data-autogrow="false"></textarea>
