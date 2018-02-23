@@ -8,11 +8,13 @@
 //  GPIO input
 //###############################################################################
 // time in ms button needs to be pressed to detect long mode
-#define LONGPRESSTIME 5000
+#define LONGPRESSTIME 2000
 // time in ms pin needs to be released againg to detect double click
-#define DOUBLECLICKTIME 750
+#define DOUBLECLICKTIME 300
+// first short click bevor double click
+#define FIRSTOFDOUBLE 120
 // time in ms pin must be stable before reporting change
-#define DEBOUNCETIME 50  //50
+#define DEBOUNCETIME 30  //50
 // time in ms to detect idling
 #define IDLETIME 30000
 
@@ -35,16 +37,26 @@ private:
   int pinLongPress = -1;                 // longpress detection
   unsigned long pinReleaseTime = -1;     // time delta measurement
 
-  void irq();
-  int irqDetected = 0;
-  unsigned long lastIrqTime = -1;
-  int debouncing = 0;
 
-  int firstDOWN    = 0;
-  int firstUP      = 0;
-  int firstRUNNING = 0;
-  int secondDOWN   = 0;
-  int secondUP     = 0;
+//##################################
+  void irq();
+  void irqEnable(int mode);
+  void irqDisable();
+  void irqHandle();
+  int irqDetected = 0;
+
+  unsigned long lastIrqTime = 0;
+  int debouncing = 0;
+  unsigned long doubleOutTime = 0;
+  enum event_t {firstOfDouble, click, doubleClick, longClick, none};
+  event_t lastEvent = none;
+  enum state_t {on, off};
+  state_t lastState = off;
+  int t1 = 0;
+  int t2 = 0;
+  int t3 = 0;
+  int t4  = 0;
+  int tdown  = 0;
 };
 
 //###############################################################################

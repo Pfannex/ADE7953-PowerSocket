@@ -21,7 +21,7 @@ void GPIOinput::start() {
   Module::start();
   logging.info("setting GPIO pin " + String(pin) + " for input");
   pinMode(pin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), CHANGE);
+  irqEnable(FALLING);
 }
 
 //...............................................................................
@@ -29,41 +29,14 @@ void GPIOinput::start() {
 //...............................................................................
 void GPIOinput::handle() {
   Module::handle();
+  irqHandle();
+
+
   unsigned long now = millis();
-
-  if (irqDetected && !debouncing){
-    detachInterrupt(pin);
-    int pinState = digitalRead(pin);
-
-    if (pinState){
-
-    }
-
-
-
-    irqDetected = 0;
-    lastIrqTime = now;
-    debouncing = 1;
-    logging.debug("IRQ");
-    attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), CHANGE);
-  }
-  if (now - lastIrqTime > DEBOUNCETIME){
-    debouncing = 0;
-    irqDetected = 0;  //clear accrued IRQs during debouncing
-  }
-
-
-
-
-
-//###########################################################################
-
 
   int pinState = getInputState();
   if (pinState < 0)
     return; // still bouncing
-
-
 
   unsigned long t = now;
   unsigned long tl = t - pinChangeTime;
@@ -138,6 +111,90 @@ int GPIOinput::getInputState() {
 //...............................................................................
 void GPIOinput::irq() {
   irqDetected = 1;
+}
+void GPIOinput::irqEnable(int mode) {
+  //LOW     = 0
+  //HIGH    = 1
+  //RISING  = 1
+  //FALLING = 2
+  //CHANGE  = 3
+  attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), mode);
+}
+void GPIOinput::irqDisable() {
+  detachInterrupt(pin);
+}
+
+void GPIOinput::irqHandle() {
+  unsigned long now = millis();
+
+  if (irqDetected){
+    irqDisable();
+    //logging.debug("IRQ");
+    irqDetected = 0;
+    lastIrqTime = now;
+    if (t1 == 0){
+      t1 = now;
+    }else{
+      //t2 = now;
+      //logging.debug("UP");
+
+      tdown = now-t1;
+      //logging.debug("downtime = " + String(t1down));
+      if (tdown < FIRSTOFDOUBLE){
+        if (lastEvent == firstOfDouble){
+          lastEvent = doubleClick;
+          logging.debug("doubleClick");
+        }else{
+          lastEvent = firstOfDouble;
+          doubleOutTime = now;
+          //logging.debug("FIRSTOFDOUBLE");
+        }
+      }else{
+        lastEvent = click;
+        logging.debug("CLICK");
+      }
+      t1 = 0;
+      irqEnable(FALLING);
+      //return;
+    }
+  }
+
+
+  if (now - t1 > LONGPRESSTIME && t1 > 0){
+    lastEvent = longClick;
+    logging.debug("longCLICK");
+
+    //ToDo
+    t1 = 0;
+    //irqEnable(RISING);
+  }
+
+
+  if (now - doubleOutTime > DOUBLECLICKTIME && lastEvent == firstOfDouble){
+    //logging.debug("reset double click");
+    lastEvent = none;
+  }
+
+  if (now - lastIrqTime > DEBOUNCETIME && lastIrqTime > 0){
+    //logging.debug("debouncetime is up");
+    irqDetected = 0;  //clear accrued IRQs during debouncing
+    lastIrqTime = 0;
+    if (!digitalRead(pin)){
+
+      logging.debug("on");
+
+      irqEnable(RISING);
+
+    }else{
+      //logging.debug("clear");
+      logging.debug("off");
+      t1 = 0;
+      irqEnable(FALLING);
+      //t2 = 0;
+    }
+  }
+
+
 }
 
 //###############################################################################
