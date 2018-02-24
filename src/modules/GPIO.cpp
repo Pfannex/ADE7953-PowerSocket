@@ -17,10 +17,7 @@ GPIOinput::GPIOinput(string name, LOGGING &logging, TopicQueue &topicQueue,
 // start
 //...............................................................................
 void GPIOinput::start() {
-
   Module::start();
-  //logging.info("starting " + String(pin) + " for input");
-
   logging.info("setting GPIO pin " + String(pin) + " for input");
   pinMode(pin, INPUT_PULLUP);
   irqSetMode(FALLING);
@@ -32,79 +29,7 @@ void GPIOinput::start() {
 void GPIOinput::handle() {
   Module::handle();
   irqHandle();
-
-/*
-  unsigned long now = millis();
-
-  int pinState = getInputState();
-  if (pinState < 0)
-    return; // still bouncing
-
-  unsigned long t = now;
-  unsigned long tl = t - pinChangeTime;
-  int idling = (tl >= IDLETIME);
-  int longtime = (tl >= LONGPRESSTIME);
-
-  String eventPrefix= "~/event/device/" + String(name) + "/";
-  // note the difference:
-  // the short event is created when the button is released after a short time
-  // the long event is created when the button is pressed for a long time
-  if (pinState == lastPinState) {
-    // pin unchanged
-    if (pinState) {
-      // pin is pressed
-      if (!pinLongPress && longtime) {
-        pinLongPress = 1;
-        topicQueue.put(eventPrefix + "click long");
-      }
-    } else {
-      // pin is not pressed
-      if (!pinIdle && idling) {
-        pinIdle = 1;
-        topicQueue.put(eventPrefix + "idle 1");
-      }
-    }
-    return;
-  } else {
-    // pin changed
-    pinLongPress = 0;
-    pinChangeTime = t;
-    if (pinState)
-      topicQueue.put(eventPrefix + "state 1");
-    else {
-      topicQueue.put(eventPrefix + "state 0");
-      if (!longtime) {
-        topicQueue.put(eventPrefix + "click short");
-        if (t - pinReleaseTime <= DOUBLECLICKTIME)
-          topicQueue.put(eventPrefix + "click double");
-        pinReleaseTime = t;
-      }
-    }
-    if (pinIdle) {
-      pinIdle = 0;
-      topicQueue.put(eventPrefix + "idle 0");
-    }
-    lastPinState = pinState;
-  }*/
 }
-
-//...............................................................................
-//  input software debouncer
-//...............................................................................
-/*
-int GPIOinput::getInputState() {
-  // combine with hardware debouncer (100 nF capacitor from gpioPin to GND)
-  int lastpinState = pinState;
-  pinState = digitalRead(pin);
-
-  unsigned long now = millis();
-  if (pinState != lastpinState)
-    lastDebounceTime = now;
-  if (now - lastDebounceTime > DEBOUNCETIME)
-    return !pinState; // inverse logic
-  else
-    return -1; // undecided, still bouncing
-}*/
 
 //...............................................................................
 // getVersion
@@ -122,6 +47,7 @@ String GPIOinput::getVersion() {
 void GPIOinput::irq() {
   irqDetected = 1;
 }
+
 void GPIOinput::irqSetMode(int mode){
   if (mode == 4){
     detachInterrupt(pin);

@@ -6,7 +6,7 @@
 #include "device/DeviceSetup.h"
 
 //setup
-#include "DEMO_GPIO_Setup.h"
+#include "simpleSwitch_Setup.h"
 //modules
 #include "modules/GPIO.h"
 
@@ -14,10 +14,10 @@
 //  Device
 //###############################################################################
 
-class DEMO_GPIO : public Device{
+class simpleSwitch : public Device{
 
 public:
-  DEMO_GPIO(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
+  simpleSwitch(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
   void start();
   void handle();
   String set(Topic &topic);

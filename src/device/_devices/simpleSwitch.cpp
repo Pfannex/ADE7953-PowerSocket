@@ -1,4 +1,4 @@
-#include "DEMO_GPIO.h"
+#include "simpleSwitch.h"
 #include <Arduino.h>
 
 //===============================================================================
@@ -8,7 +8,7 @@
 //-------------------------------------------------------------------------------
 //  Device public
 //-------------------------------------------------------------------------------
-DEMO_GPIO::DEMO_GPIO(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
+simpleSwitch::simpleSwitch(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
            :Device(logging, topicQueue, ffs),
             button("button", logging, topicQueue, PIN_BUTTON),
             led("led", logging, topicQueue, PIN_LED),
@@ -18,7 +18,7 @@ DEMO_GPIO::DEMO_GPIO(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
 //...............................................................................
 // device start
 //...............................................................................
-void DEMO_GPIO::start() {
+void simpleSwitch::start() {
   Device::start();
   logging.info("starting device " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
 
@@ -34,7 +34,7 @@ void DEMO_GPIO::start() {
 //...............................................................................
 // handle - periodically called by the controller
 //...............................................................................
-void DEMO_GPIO::handle() {
+void simpleSwitch::handle() {
   button.handle();
   led.handle();
   relay.handle();
@@ -44,7 +44,7 @@ void DEMO_GPIO::handle() {
 //  Device set
 //...............................................................................
 
-String DEMO_GPIO::set(Topic &topic) {
+String simpleSwitch::set(Topic &topic) {
   /*
   ~/set
   └─device             (level 2)
@@ -67,7 +67,7 @@ String DEMO_GPIO::set(Topic &topic) {
 //  Device get
 //...............................................................................
 
-String DEMO_GPIO::get(Topic &topic) {
+String simpleSwitch::get(Topic &topic) {
   /*
   ~/get
   └─device             (level 2)
@@ -89,7 +89,7 @@ String DEMO_GPIO::get(Topic &topic) {
 //...............................................................................
 // Eventhandler - called by the controller after receiving a topic (event)
 //...............................................................................
-void DEMO_GPIO::on_events(Topic &topic) {
+void simpleSwitch::on_events(Topic &topic) {
 
   // central business logic
   if (button.isForModule(topic)) {
@@ -120,7 +120,7 @@ void DEMO_GPIO::on_events(Topic &topic) {
 //...............................................................................
 //  mode setter
 //...............................................................................
-void DEMO_GPIO::setPowerMode(int value) {
+void simpleSwitch::setPowerMode(int value) {
   power = value;
   topicQueue.put("~/event/device/power", power);
   if (power) {
@@ -131,7 +131,7 @@ void DEMO_GPIO::setPowerMode(int value) {
   setLedMode();
 }
 
-void DEMO_GPIO::setConfigMode(int value) {
+void simpleSwitch::setConfigMode(int value) {
   if (configMode == value)
     return;
   configMode = value;
@@ -139,7 +139,7 @@ void DEMO_GPIO::setConfigMode(int value) {
   setLedMode();
 }
 
-void DEMO_GPIO::setLedMode() {
+void simpleSwitch::setLedMode() {
   if (!configMode) {
     if (power)
       led.setOutputMode(ON);
