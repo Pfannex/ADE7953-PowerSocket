@@ -15,7 +15,7 @@ Device::Device(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
 // Device start
 //...............................................................................
 void Device::start() {
-  logging.info("parent starting " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
+  //logging.info("parent starting " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
 
   //logging.info("Device running");
 }

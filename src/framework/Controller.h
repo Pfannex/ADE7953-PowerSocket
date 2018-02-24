@@ -12,7 +12,7 @@
 #include <ESP8266FtpServer.h>
 
 // THE device
-#include "device/deviceSetup.h"
+#include "device/DeviceSetup.h"
 #include INCLUDE_FILE(module)
 
 //###############################################################################

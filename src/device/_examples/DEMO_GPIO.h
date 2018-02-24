@@ -2,8 +2,11 @@
 #include "framework/Core/FFS.h"
 #include "Setup.h"
 #include "framework/Topic.h"
-#include "device/deviceSetup.h"
 #include "device/Device.h"
+#include "device/DeviceSetup.h"
+
+//setup
+#include "DEMO_GPIO_Setup.h"
 //modules
 #include "modules/GPIO.h"
 

@@ -2,7 +2,7 @@
 #include "framework/Core/FFS.h"
 #include "Setup.h"
 #include "framework/Topic.h"
-#include "device/deviceSetup.h"
+#include "device/DeviceSetup.h"
 
 //###############################################################################
 //  Device

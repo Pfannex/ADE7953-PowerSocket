@@ -19,9 +19,11 @@ GPIOinput::GPIOinput(string name, LOGGING &logging, TopicQueue &topicQueue,
 void GPIOinput::start() {
 
   Module::start();
+  //logging.info("starting " + String(pin) + " for input");
+
   logging.info("setting GPIO pin " + String(pin) + " for input");
   pinMode(pin, INPUT_PULLUP);
-  irqEnable(FALLING);
+  irqSetMode(FALLING);
 }
 
 //...............................................................................
@@ -31,7 +33,7 @@ void GPIOinput::handle() {
   Module::handle();
   irqHandle();
 
-
+/*
   unsigned long now = millis();
 
   int pinState = getInputState();
@@ -83,12 +85,13 @@ void GPIOinput::handle() {
       topicQueue.put(eventPrefix + "idle 0");
     }
     lastPinState = pinState;
-  }
+  }*/
 }
 
 //...............................................................................
 //  input software debouncer
 //...............................................................................
+/*
 int GPIOinput::getInputState() {
   // combine with hardware debouncer (100 nF capacitor from gpioPin to GND)
   int lastpinState = pinState;
@@ -101,6 +104,13 @@ int GPIOinput::getInputState() {
     return !pinState; // inverse logic
   else
     return -1; // undecided, still bouncing
+}*/
+
+//...............................................................................
+// getVersion
+//...............................................................................
+String GPIOinput::getVersion() {
+  return  String(GPIO_Name) + " v" + String(GPIO_Version);
 }
 
 //-------------------------------------------------------------------------------
@@ -112,89 +122,98 @@ int GPIOinput::getInputState() {
 void GPIOinput::irq() {
   irqDetected = 1;
 }
-void GPIOinput::irqEnable(int mode) {
-  //LOW     = 0
-  //HIGH    = 1
-  //RISING  = 1
-  //FALLING = 2
-  //CHANGE  = 3
-  attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), mode);
-}
-void GPIOinput::irqDisable() {
-  detachInterrupt(pin);
+void GPIOinput::irqSetMode(int mode){
+  if (mode == 4){
+    detachInterrupt(pin);
+  }else{
+    //LOW     = 0, HIGH    = 1, RISING  = 1, FALLING = 2
+    //CHANGE  = 3, OFF     = 4
+    attachInterrupt(digitalPinToInterrupt(pin), std::bind(&GPIOinput::irq, this), mode);
+  }
 }
 
 void GPIOinput::irqHandle() {
   unsigned long now = millis();
+  String eventPrefix= "~/event/device/" + String(name) + "/";
 
+// main handling
   if (irqDetected){
-    irqDisable();
-    //logging.debug("IRQ");
+    irqSetMode(irqOFF);
+    //idle handling
+    if (idleState){
+      //toggle idle if idleState = 1
+      idleState = 0;
+      logging.debug("GPIO " + String(pin) + " idle 0");
+      topicQueue.put(eventPrefix + "idle 0");
+    }
+    tIdle = now;   //reset idletimer
+
     irqDetected = 0;
     lastIrqTime = now;
-    if (t1 == 0){
-      t1 = now;
+    if (tstart == 0){
+      //start event with falling edge
+      tstart = now;
     }else{
-      //t2 = now;
-      //logging.debug("UP");
-
-      tdown = now-t1;
-      //logging.debug("downtime = " + String(t1down));
+      //handle event for rising edge
+      tdown = now-tstart;
+      //logging.debug("downtime = " + String(tdown));
       if (tdown < FIRSTOFDOUBLE){
+        //click is shortClick
         if (lastEvent == firstOfDouble){
+          //doubleClick complete
           lastEvent = doubleClick;
-          logging.debug("doubleClick");
+          logging.debug("GPIO " + String(pin) + " doubleClick");
+          topicQueue.put(eventPrefix + "click double");
         }else{
+          //doubleClick in progress
           lastEvent = firstOfDouble;
           doubleOutTime = now;
-          //logging.debug("FIRSTOFDOUBLE");
         }
       }else{
+        //just a simple click
         lastEvent = click;
-        logging.debug("CLICK");
+        logging.debug("GPIO " + String(pin) + " CLICK");
+        topicQueue.put(eventPrefix + "click short");
       }
-      t1 = 0;
-      irqEnable(FALLING);
-      //return;
+      //handling complete, prepare to start again
+      tstart = 0;
+      irqSetMode(FALLING);
     }
   }
 
-
-  if (now - t1 > LONGPRESSTIME && t1 > 0){
+//detect longClick
+  if (now - tstart > LONGPRESSTIME && tstart > 0){
     lastEvent = longClick;
-    logging.debug("longCLICK");
-
-    //ToDo
-    t1 = 0;
-    //irqEnable(RISING);
+    tstart = 0;
+    logging.debug("GPIO " + String(pin) + " longCLICK");
+    topicQueue.put(eventPrefix + "click long");
   }
-
-
+//reset after doubleClick
   if (now - doubleOutTime > DOUBLECLICKTIME && lastEvent == firstOfDouble){
-    //logging.debug("reset double click");
     lastEvent = none;
   }
-
+//debouncing and state detection
   if (now - lastIrqTime > DEBOUNCETIME && lastIrqTime > 0){
-    //logging.debug("debouncetime is up");
     irqDetected = 0;  //clear accrued IRQs during debouncing
     lastIrqTime = 0;
     if (!digitalRead(pin)){
-
-      logging.debug("on");
-
-      irqEnable(RISING);
-
+      logging.debug("GPIO " + String(pin) + " on");
+      topicQueue.put(eventPrefix + "state 1");
+      irqSetMode(RISING);
     }else{
-      //logging.debug("clear");
-      logging.debug("off");
-      t1 = 0;
-      irqEnable(FALLING);
-      //t2 = 0;
+      logging.debug("GPIO " + String(pin) + " off");
+      topicQueue.put(eventPrefix + "state 0");
+      tstart = 0;
+      irqSetMode(FALLING);
     }
   }
-
-
+//idle state
+  if (now - tIdle > IDLETIME && !idleState){
+    tIdle = now;
+    idleState = 1;
+    logging.debug("GPIO " + String(pin) + " idle 1");
+    topicQueue.put(eventPrefix + "idle 1");
+  }
 }
 
 //###############################################################################
@@ -268,6 +287,13 @@ void GPIOoutput::handle() {
       }
     }
   }
+}
+
+//...............................................................................
+// getVersion
+//...............................................................................
+String GPIOoutput::getVersion() {
+  return  String(GPIO_Name) + " v" + String(GPIO_Version);
 }
 
 //...............................................................................

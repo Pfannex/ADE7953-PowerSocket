@@ -18,8 +18,9 @@ DEMO_GPIO::DEMO_GPIO(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
 //...............................................................................
 void DEMO_GPIO::start() {
   Device::start();
-  logging.info("child starting " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
+  logging.info("starting device " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
 
+  logging.info("starting " + button.getVersion()); //only first time a class is started
   button.start();
 
   logging.info("device running");
