@@ -1,3 +1,4 @@
+#pragma once
 #include "modules/Module.h"
 #include "framework/Utils/Logger.h"
 #include "Setup.h"

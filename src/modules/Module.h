@@ -1,3 +1,4 @@
+#pragma once
 #include "framework/Utils/Logger.h"
 #include "Setup.h"
 #include <Arduino.h>

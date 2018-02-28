@@ -12,8 +12,9 @@ DEMO_GPIO::DEMO_GPIO(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
            :Device(logging, topicQueue, ffs),
             button("button", logging, topicQueue, PIN_BUTTON),
             led("led", logging, topicQueue, PIN_LED),
-            relay("relay", logging, topicQueue, PIN_RELAY)
-          {}
+            relay("relay", logging, topicQueue, PIN_RELAY),
+            qre("qre", logging, topicQueue, PIN_QRE)
+            {}
 
 //...............................................................................
 // device start
@@ -28,6 +29,9 @@ void DEMO_GPIO::start() {
   relay.start();
   setLedMode();
 
+  logging.info("starting " + qre.getVersion()); //only first time a class is started
+  qre.start();
+
   logging.info("device running");
 }
 
@@ -38,6 +42,7 @@ void DEMO_GPIO::handle() {
   button.handle();
   led.handle();
   relay.handle();
+  qre.handle();
 }
 
 //...............................................................................

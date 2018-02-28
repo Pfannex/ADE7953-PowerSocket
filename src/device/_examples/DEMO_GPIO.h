@@ -9,6 +9,7 @@
 #include "DEMO_GPIO_Setup.h"
 //modules
 #include "modules/GPIO.h"
+#include "modules/QRE1113.h"
 
 //###############################################################################
 //  Device
@@ -28,6 +29,8 @@ private:
   GPIOinput button;
   GPIOoutput led;
   GPIOoutput relay;
+
+  QRE1113 qre;
 
   // the central modes
   int power = 0;
