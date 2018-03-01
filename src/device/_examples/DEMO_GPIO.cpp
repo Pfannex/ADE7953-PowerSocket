@@ -11,9 +11,10 @@
 DEMO_GPIO::DEMO_GPIO(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
            :Device(logging, topicQueue, ffs),
             button("button", logging, topicQueue, PIN_BUTTON),
-            led("led", logging, topicQueue, PIN_LED),
+            //led("led", logging, topicQueue, PIN_LED),
             relay("relay", logging, topicQueue, PIN_RELAY),
-            qre("qre", logging, topicQueue, PIN_QRE)
+            //qre("qre", logging, topicQueue, PIN_QRE),
+            Drawer_01("ws2812", logging, topicQueue, PIN_WS2812, LEDSCOUNT)
             {}
 
 //...............................................................................
@@ -25,12 +26,15 @@ void DEMO_GPIO::start() {
 
   logging.info("starting " + button.getVersion()); //only first time a class is started
   button.start();
-  led.start();
+  //led.start();
   relay.start();
   setLedMode();
 
-  logging.info("starting " + qre.getVersion()); //only first time a class is started
-  qre.start();
+  //logging.info("starting " + qre.getVersion()); //only first time a class is started
+  //qre.start();
+
+  logging.info("starting " + Drawer_01.getVersion()); //only first time a class is started
+  Drawer_01.start();
 
   logging.info("device running");
 }
@@ -40,9 +44,9 @@ void DEMO_GPIO::start() {
 //...............................................................................
 void DEMO_GPIO::handle() {
   button.handle();
-  led.handle();
+  //led.handle();
   relay.handle();
-  qre.handle();
+  //qre.handle();
 }
 
 //...............................................................................
@@ -130,8 +134,10 @@ void DEMO_GPIO::setPowerMode(int value) {
   topicQueue.put("~/event/device/power", power);
   if (power) {
     relay.setOutputMode(ON);
+    Drawer_01.WS2812_on(1, 55555);
   } else {
     relay.setOutputMode(OFF);
+    Drawer_01.WS2812_on(0, 0);
   }
   setLedMode();
 }
@@ -145,11 +151,11 @@ void DEMO_GPIO::setConfigMode(int value) {
 }
 
 void DEMO_GPIO::setLedMode() {
-  if (!configMode) {
+/* if (!configMode) {
     if (power)
       led.setOutputMode(ON);
     else
       led.setOutputMode(OFF);
   } else
-    led.setOutputMode(BLINK, 250);
+    led.setOutputMode(BLINK, 250);*/
 }

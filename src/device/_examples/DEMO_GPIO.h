@@ -10,6 +10,7 @@
 //modules
 #include "modules/GPIO.h"
 #include "modules/QRE1113.h"
+#include "modules/WS2812.h"
 
 //###############################################################################
 //  Device
@@ -27,10 +28,11 @@ public:
 
 private:
   GPIOinput button;
-  GPIOoutput led;
+  //GPIOoutput led;
   GPIOoutput relay;
 
-  QRE1113 qre;
+  //QRE1113 qre;
+  WS2812 Drawer_01;
 
   // the central modes
   int power = 0;

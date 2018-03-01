@@ -29,3 +29,5 @@ ADC  A0     2     Analog
 // Arduino Pin 14 = IO14 = Physical Pin 5 = NodeMCU/WeMos Pin D5
 #define PIN_RELAY 14
 #define PIN_QRE 13
+#define PIN_WS2812 5
+#define LEDSCOUNT 3
