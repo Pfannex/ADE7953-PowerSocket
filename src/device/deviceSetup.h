@@ -15,14 +15,14 @@
 //...............................................................................
 // DEVICE
 //...............................................................................
+/*
+#define DEVICETYPE      "SimpleSwitch"
+#define DEVICEVERSION   "1.1.0"
 
-//#define DEVICETYPE      "SimpleSwitch"
-//#define DEVICEVERSION   "1.1.0"
-
-//#define DEVICE           simpleSwitch
-//#define QUOTEME(M)       #M
-//#define INCLUDE_FILE(M)  QUOTEME(device/_devices/simpleSwitch.h)
-
+#define DEVICE           simpleSwitch
+#define QUOTEME(M)       #M
+#define INCLUDE_FILE(M)  QUOTEME(device/_devices/simpleSwitch.h)
+*/
 
 //###############################################################################
 // DEMO GPIO
@@ -42,10 +42,36 @@
 // DEVICE
 //...............................................................................
 
-
+/*
 #define DEVICETYPE      "DEMO_GPIO"
 #define DEVICEVERSION   "1.0.0"
 
 #define DEVICE           DEMO_GPIO
 #define QUOTEME(M)       #M
 #define INCLUDE_FILE(M)  QUOTEME(device/_examples/DEMO_GPIO.h)
+*/
+//###############################################################################
+// DEMO I2C
+//###############################################################################
+
+//
+// This device is a .....
+//
+//
+//
+//
+// API:
+// ~/set/device/power 0|1
+// ~/get/device/power
+
+//...............................................................................
+// DEVICE
+//...............................................................................
+
+
+#define DEVICETYPE      "DEMO_I2C"
+#define DEVICEVERSION   "1.0.0"
+
+#define DEVICE           DEMO_I2C
+#define QUOTEME(M)       #M
+#define INCLUDE_FILE(M)  QUOTEME(device/_examples/DEMO_I2C.h)

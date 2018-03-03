@@ -37,18 +37,6 @@ public:
   String getVersion();
 
 private:
-/*
-  int getInputState();                   // debouncer and state detector
-  int pinState = -1;                     // the last pin state
-  unsigned long lastDebounceTime = -1;   // when the pin state changed last
-  int lastPinState = -1;                 // state of the last real toggle
-  unsigned long pinChangeTime = -1;      // time delta measurement
-  int pinIdle = -1;                      // last time for AUTO-idle
-  int pinLongPress = -1;                 // longpress detection
-  unsigned long pinReleaseTime = -1;     // time delta measurement
-//##################################
-*/
-
   void irq();                       // irq jumpTo funktion
   void irqHandle();                 // handle irq function
   #define irqOFF 4                  // irq detachInterrupt mode

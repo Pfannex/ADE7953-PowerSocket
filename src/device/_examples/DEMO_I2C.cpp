@@ -1,4 +1,4 @@
-#include "DEMO_GPIO.h"
+#include "DEMO_I2C.h"
 #include <Arduino.h>
 
 //===============================================================================
@@ -8,33 +8,26 @@
 //-------------------------------------------------------------------------------
 //  Device public
 //-------------------------------------------------------------------------------
-DEMO_GPIO::DEMO_GPIO(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
+DEMO_I2C::DEMO_I2C(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
            :Device(logging, topicQueue, ffs),
-            button("button", logging, topicQueue, PIN_BUTTON),
-            led("led", logging, topicQueue, PIN_LED),
-            relay("relay", logging, topicQueue, PIN_RELAY),
-            qre("qre", logging, topicQueue, PIN_QRE),
-            Drawer_01("ws2812", logging, topicQueue, PIN_WS2812, LEDSCOUNT)
+            i2c("i2c", logging, topicQueue, SDA, SCL),
+            lcd("SSD1306", logging, topicQueue, SDA, SCL),
+            ow("oneWire", logging, topicQueue, OWPIN)
             {}
 
 //...............................................................................
 // device start
 //...............................................................................
-void DEMO_GPIO::start() {
+void DEMO_I2C::start() {
   Device::start();
   logging.info("starting device " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
 
-  logging.info("starting " + button.getVersion()); //only first time a class is started
-  button.start();
-  led.start();
-  relay.start();
-  setLedMode();
-
-  logging.info("starting " + qre.getVersion()); //only first time a class is started
-  qre.start();
-
-  logging.info("starting " + Drawer_01.getVersion()); //only first time a class is started
-  Drawer_01.start();
+  logging.info("starting " + i2c.getVersion()); //only first time a class is started
+  i2c.start();
+  logging.info("starting " + lcd.getVersion()); //only first time a class is started
+  lcd.start();
+  logging.info("starting " + ow.getVersion()); //only first time a class is started
+  ow.start();
 
   logging.info("device running");
 }
@@ -42,18 +35,17 @@ void DEMO_GPIO::start() {
 //...............................................................................
 // handle - periodically called by the controller
 //...............................................................................
-void DEMO_GPIO::handle() {
-  button.handle();
-  led.handle();
-  relay.handle();
-  qre.handle();
+void DEMO_I2C::handle() {
+  i2c.handle();
+  lcd.handle();
+  ow.handle();
 }
 
 //...............................................................................
 //  Device set
 //...............................................................................
 
-String DEMO_GPIO::set(Topic &topic) {
+String DEMO_I2C::set(Topic &topic) {
   /*
   ~/set
   └─device             (level 2)
@@ -76,7 +68,7 @@ String DEMO_GPIO::set(Topic &topic) {
 //  Device get
 //...............................................................................
 
-String DEMO_GPIO::get(Topic &topic) {
+String DEMO_I2C::get(Topic &topic) {
   /*
   ~/get
   └─device             (level 2)
@@ -98,9 +90,14 @@ String DEMO_GPIO::get(Topic &topic) {
 //...............................................................................
 // Eventhandler - called by the controller after receiving a topic (event)
 //...............................................................................
-void DEMO_GPIO::on_events(Topic &topic) {
+void DEMO_I2C::on_events(Topic &topic) {
   // central business logic
 
+  if (topic.modifyTopic(0) == "event/wifi/connected"){
+    lcd.println(ffs.cfg.readItem("wifi_ip"), ArialMT_Plain_16, 0);
+  }
+
+/*
 //button
   if (button.isForModule(topic)) {
     // events from button
@@ -122,50 +119,10 @@ void DEMO_GPIO::on_events(Topic &topic) {
     if (button.isItem(topic, "idle"))
       setConfigMode(0);
   }
+*/
 
-//QRE1113
-  if (qre.isForModule(topic)) {
-    if (qre.isItem(topic, "state")) {
-      if (topic.argIs(0, "1")) {
-        Drawer_01.WS2812_on(1, 55555);
-      }else if (topic.argIs(0, "0")){
-        Drawer_01.WS2812_on(0, 0);
-      }
-    }
-  }
 }
 
 //-------------------------------------------------------------------------------
 //  Device private
 //-------------------------------------------------------------------------------
-//...............................................................................
-//  mode setter
-//...............................................................................
-void DEMO_GPIO::setPowerMode(int value) {
-  power = value;
-  topicQueue.put("~/event/device/power", power);
-  if (power) {
-    relay.setOutputMode(ON);
-  } else {
-    relay.setOutputMode(OFF);
-  }
-  setLedMode();
-}
-
-void DEMO_GPIO::setConfigMode(int value) {
-  if (configMode == value)
-    return;
-  configMode = value;
-  topicQueue.put("~/event/device/configMode", configMode);
-  setLedMode();
-}
-
-void DEMO_GPIO::setLedMode() {
- if (!configMode) {
-    if (power)
-      led.setOutputMode(ON);
-    else
-      led.setOutputMode(OFF);
-  } else
-    led.setOutputMode(BLINK, 250);
-}
