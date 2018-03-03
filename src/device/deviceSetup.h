@@ -69,9 +69,9 @@
 //...............................................................................
 
 
-#define DEVICETYPE      "DEMO_I2C"
+#define DEVICETYPE      "DEMO_I2C_OW"
 #define DEVICEVERSION   "1.0.0"
 
-#define DEVICE           DEMO_I2C
+#define DEVICE           DEMO_I2C_OW
 #define QUOTEME(M)       #M
-#define INCLUDE_FILE(M)  QUOTEME(device/_examples/DEMO_I2C.h)
+#define INCLUDE_FILE(M)  QUOTEME(device/_examples/DEMO_I2C_OW.h)

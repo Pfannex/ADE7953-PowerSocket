@@ -18,7 +18,6 @@ I2C::I2C(string name, LOGGING &logging, TopicQueue &topicQueue, int sda, int scl
 void I2C::start() {
   Module::start();
   logging.info("starting I2C");
-  Wire.begin(sda, scl);
   scanBus();
 }
 
@@ -27,6 +26,13 @@ void I2C::start() {
 //...............................................................................
 void I2C::handle() {
   Module::handle();
+  unsigned long now = millis();
+
+//poll measurement values
+  if (now - tPoll > I2CPOLL){
+    tPoll = now;
+    readBMP180();
+  }
 }
 
 //...............................................................................
@@ -40,6 +46,7 @@ String I2C::getVersion() {
 //  scan I2C-Bus for devices
 //...............................................................................
 void I2C::scanBus() {
+  Wire.begin(sda, scl);
   byte error, address;
   int nDevices;
 
@@ -84,6 +91,22 @@ void I2C::scanBus() {
     logging.info("no I2C devices found");
   else
     logging.info("I2C bus scan done");
+}
+
+//...............................................................................
+// read BMP180
+//...............................................................................
+void I2C::readBMP180() {
+   Adafruit_BMP085 bmp;
+   String eventPrefix= "~/event/device/" + String(name) + "/BMP180/";
+
+   bmp.begin();
+   String value = "temperature " + String(bmp.readTemperature());
+   logging.debug(value);
+   topicQueue.put(eventPrefix + "/" + value);
+   value = "pressure " + String(bmp.readPressure()/100);
+   logging.debug(value);
+   topicQueue.put(eventPrefix + "/" + value);
 }
 
 //-------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-#include "DEMO_I2C.h"
+#include "DEMO_I2C_OW.h"
 #include <Arduino.h>
 
 //===============================================================================
@@ -6,9 +6,9 @@
 //===============================================================================
 
 //-------------------------------------------------------------------------------
-//  Device public
+//  DeviceDEMO_I2C_OW
 //-------------------------------------------------------------------------------
-DEMO_I2C::DEMO_I2C(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
+DEMO_I2C_OW::DEMO_I2C_OW(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
            :Device(logging, topicQueue, ffs),
             i2c("i2c", logging, topicQueue, SDA, SCL),
             lcd("SSD1306", logging, topicQueue, SDA, SCL),
@@ -18,7 +18,7 @@ DEMO_I2C::DEMO_I2C(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
 //...............................................................................
 // device start
 //...............................................................................
-void DEMO_I2C::start() {
+void DEMO_I2C_OW::start() {
   Device::start();
   logging.info("starting device " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
 
@@ -35,7 +35,7 @@ void DEMO_I2C::start() {
 //...............................................................................
 // handle - periodically called by the controller
 //...............................................................................
-void DEMO_I2C::handle() {
+void DEMO_I2C_OW::handle() {
   i2c.handle();
   lcd.handle();
   ow.handle();
@@ -45,7 +45,7 @@ void DEMO_I2C::handle() {
 //  Device set
 //...............................................................................
 
-String DEMO_I2C::set(Topic &topic) {
+String DEMO_I2C_OW::set(Topic &topic) {
   /*
   ~/set
   └─device             (level 2)
@@ -68,7 +68,7 @@ String DEMO_I2C::set(Topic &topic) {
 //  Device get
 //...............................................................................
 
-String DEMO_I2C::get(Topic &topic) {
+String DEMO_I2C_OW::get(Topic &topic) {
   /*
   ~/get
   └─device             (level 2)
@@ -90,7 +90,7 @@ String DEMO_I2C::get(Topic &topic) {
 //...............................................................................
 // Eventhandler - called by the controller after receiving a topic (event)
 //...............................................................................
-void DEMO_I2C::on_events(Topic &topic) {
+void DEMO_I2C_OW::on_events(Topic &topic) {
   // central business logic
 
   if (topic.modifyTopic(0) == "event/wifi/connected"){

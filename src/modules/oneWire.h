@@ -33,6 +33,7 @@ public:
   String getVersion();
 
   void scanBus();
+  void readDS18B20();
   int count = 0;
 
 private:

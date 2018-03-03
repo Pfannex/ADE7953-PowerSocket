@@ -5,6 +5,7 @@
 #include "framework/Topic.h"
 #include <Arduino.h>
 #include <Wire.h> //I²C
+#include <Adafruit_BMP085_BrzoI2C.h>
 
 //###############################################################################
 //  I2C Tools
@@ -15,6 +16,9 @@
 //###############################################################################
 //  I2C
 //###############################################################################
+#define I2CPOLL 5000
+#define I2CDIFF 1
+#define I2CINT 1
 
 class I2C : public Module {
 
@@ -28,6 +32,9 @@ public:
   String getVersion();
 
   void scanBus();
+  void readBMP180();    //BMP180 Luftdruck/Temperatur
 
 private:
+  int tPoll = 0;
+
 };

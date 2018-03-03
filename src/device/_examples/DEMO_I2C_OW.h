@@ -6,7 +6,7 @@
 #include "device/DeviceSetup.h"
 
 //setup
-#include "DEMO_I2C_Setup.h"
+#include "DEMO_I2C_OW_Setup.h"
 //modules
 #include "modules/I2C.h"
 #include "modules/LCD.h"
@@ -18,10 +18,10 @@
 //  Device
 //###############################################################################
 
-class DEMO_I2C : public Device{
+class DEMO_I2C_OW : public Device{
 
 public:
-  DEMO_I2C(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
+  DEMO_I2C_OW(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
   void start();
   void handle();
   String set(Topic &topic);
