@@ -12,7 +12,8 @@ DEMO_I2C_OW::DEMO_I2C_OW(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
            :Device(logging, topicQueue, ffs),
             i2c("i2c", logging, topicQueue, SDA, SCL),
             lcd("SSD1306", logging, topicQueue, SDA, SCL),
-            ow("oneWire", logging, topicQueue, OWPIN)
+            ow("oneWire", logging, topicQueue, OWPIN),
+            mcp("MCP23017", logging, topicQueue, MCPIRQ)
             {}
 
 //...............................................................................
@@ -28,6 +29,8 @@ void DEMO_I2C_OW::start() {
   lcd.start();
   logging.info("starting " + ow.getVersion()); //only first time a class is started
   ow.start();
+  logging.info("starting " + mcp.getVersion()); //only first time a class is started
+  mcp.start();
 
   logging.info("device running");
 }
@@ -39,6 +42,7 @@ void DEMO_I2C_OW::handle() {
   i2c.handle();
   lcd.handle();
   ow.handle();
+  mcp.handle();
 }
 
 //...............................................................................

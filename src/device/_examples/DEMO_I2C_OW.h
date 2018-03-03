@@ -11,6 +11,7 @@
 #include "modules/I2C.h"
 #include "modules/LCD.h"
 #include "modules/oneWire.h"
+#include "modules/MCP23017.h"
 //#include "modules/QRE1113.h"
 //#include "modules/WS2812.h"
 
@@ -32,4 +33,5 @@ private:
   I2C i2c;
   LCD lcd;
   OW ow;
+  MCP23017 mcp;
 };
