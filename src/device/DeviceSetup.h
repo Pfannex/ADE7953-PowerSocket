@@ -1,3 +1,5 @@
+#define QUOTEME(M)       #M
+
 //###############################################################################
 // SimpleSwitch
 //###############################################################################
@@ -20,7 +22,6 @@
 #define DEVICEVERSION   "1.1.0"
 
 #define DEVICE           simpleSwitch
-#define QUOTEME(M)       #M
 #define INCLUDE_FILE(M)  QUOTEME(device/_devices/simpleSwitch.h)
 */
 
@@ -47,7 +48,6 @@
 #define DEVICEVERSION   "1.0.0"
 
 #define DEVICE           DEMO_GPIO
-#define QUOTEME(M)       #M
 #define INCLUDE_FILE(M)  QUOTEME(device/_examples/DEMO_GPIO.h)
 */
 //###############################################################################
@@ -68,10 +68,7 @@
 // DEVICE
 //...............................................................................
 
-
 #define DEVICETYPE      "DEMO_I2C_OW"
 #define DEVICEVERSION   "1.0.0"
-
 #define DEVICE           DEMO_I2C_OW
-#define QUOTEME(M)       #M
 #define INCLUDE_FILE(M)  QUOTEME(device/_examples/DEMO_I2C_OW.h)
