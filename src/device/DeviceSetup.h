@@ -17,13 +17,13 @@
 //...............................................................................
 // DEVICE
 //...............................................................................
-/*
+
 #define DEVICETYPE      "SimpleSwitch"
 #define DEVICEVERSION   "1.1.0"
 
 #define DEVICE           simpleSwitch
 #define INCLUDE_FILE(M)  QUOTEME(device/_devices/simpleSwitch.h)
-*/
+
 
 //###############################################################################
 // DEMO GPIO
@@ -72,3 +72,4 @@
 #define DEVICEVERSION   "1.0.0"
 #define DEVICE           DEMO_I2C_OW
 #define INCLUDE_FILE(M)  QUOTEME(device/_examples/DEMO_I2C_OW.h)
+*/
