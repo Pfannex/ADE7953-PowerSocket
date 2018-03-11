@@ -84,6 +84,7 @@ void MCP23017::irqHandle() {
       Serial.print("  GPIOB - ");Serial.println(mcp.readRegister(MCP23017_GPIOB), BIN);
     }
 */
+
     irqSetMode(FALLING);
   }
 }
