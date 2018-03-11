@@ -23,8 +23,8 @@ void MCP23017::start() {
   pinMode(irqPin, INPUT_PULLUP);
   irqSetMode(FALLING);
 
-  Wire.begin(sda, scl);
-  mcp.begin(0);    //0 = 0x20, 1 = 0x21, ...
+  //Wire.begin(sda, scl);
+  //mcp.begin(0);    //0 = 0x20, 1 = 0x21, ...
   configMCP();
 }
 
@@ -68,8 +68,10 @@ void MCP23017::irqHandle() {
   if (irqDetected){
     irqSetMode(irqOFF);
     irqDetected = false;
+    lastIrqTime = now;
+
     logging.debug("MCP23017 IRQ");
-/*
+
     uint8_t pin = mcp.getLastInterruptPin();
     uint8_t val = mcp.getLastInterruptPinValue();
     uint8_t state = mcp.digitalRead(pin);
@@ -83,10 +85,22 @@ void MCP23017::irqHandle() {
       Serial.print("  GPIOA - ");Serial.println(mcp.readRegister(MCP23017_GPIOA), BIN);
       Serial.print("  GPIOB - ");Serial.println(mcp.readRegister(MCP23017_GPIOB), BIN);
     }
-*/
 
+
+    //irqSetMode(FALLING);
+
+//logging.debug(String(now));
+//logging.debug(String(lastIrqTime));
+  }
+
+//debouncing
+  if (now - lastIrqTime > MCPDEBOUNCETIME && lastIrqTime > 0){
+    //logging.debug("debounce enable IRQ");
+    irqDetected = false;  //clear accrued IRQs during debouncing
+    lastIrqTime = 0;
     irqSetMode(FALLING);
   }
+
 }
 //-------------------------------------------------------------------------------
 //  MCP23017 private
@@ -189,6 +203,13 @@ void MCP23017::configMCP() {
 
   // IOCON.0 allways 0
 
+  while (mcp.readRegister(MCP23017_INTFA) > 0){
+    Serial.println("  hanging.....");
+    //Serial.print("INTFA - ");Serial.println(MCP23017.readRegister(MCP23017_INTFA), BIN);
+    //Serial.print("INTFB - ");Serial.println(MCP23017.readRegister(MCP23017_INTFB), BIN);
+    Serial.print("  GPIOA - ");Serial.println(mcp.readRegister(MCP23017_GPIOA), BIN);
+    Serial.print("  GPIOB - ");Serial.println(mcp.readRegister(MCP23017_GPIOB), BIN);
+  }
 
 
 
