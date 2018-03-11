@@ -1,84 +1,52 @@
 #include "I2C.h"
-//#include <Arduino.h>
 
 //===============================================================================
-//  GPIO
+//  I2C
 //===============================================================================
-I2C::I2C(int sda, int scl, LOGGING &logging, TopicQueue &topicQueue)
-        : sda(sda), scl(scl), logging(logging), topicQueue(topicQueue) {}
+I2C::I2C(string name, LOGGING &logging, TopicQueue &topicQueue, int sda, int scl)
+        :Module(name, logging, topicQueue),
+         sda(sda), scl(scl)
+         {}
 
 
 //-------------------------------------------------------------------------------
-//  GPIO public
+//  I2C public
 //-------------------------------------------------------------------------------
 //...............................................................................
 // start
 //...............................................................................
 void I2C::start() {
-
+  Module::start();
   logging.info("starting I2C");
-  Wire.begin(sda, scl);
   scanBus();
-
 }
 
 //...............................................................................
 // handle
 //...............................................................................
 void I2C::handle() {
+  Module::handle();
   unsigned long now = millis();
 
-}
-
-//...............................................................................
-//  GPIO set
-//...............................................................................
-String I2C::set(Topic &topic) {
-  /*
-  ~/set
-    └─gpio
-        └─led (on, off, blink)
-  */
-
-  logging.debug("GPIO set topic " + topic.topic_asString() + " to " +
-                topic.arg_asString());
-
-  if (topic.itemIs(3, "i2c")) {
-    return TOPIC_OK;
-  } else {
-    return TOPIC_NO;
+//poll measurement values
+  if (now - tPoll > I2CPOLL){
+    tPoll = now;
+    readBMP180();
   }
 }
-//...............................................................................
-//  GPIO get
-//...............................................................................
-String I2C::get(Topic &topic) {
-  /*
-  ~/get
-    └─gpio
-        └─led (on, off, blink)
-  */
 
-  logging.debug("GPIO get topic " + topic.topic_asString() + " to " +
-                topic.arg_asString());
-
-  if (topic.itemIs(3, "led")) {
-    return TOPIC_OK;
-  } else {
-    return TOPIC_NO;
-  }
-}
 //...............................................................................
-//  GPIO get
+// getVersion
 //...............................................................................
-void I2C::on_events(Topic &topic){
-  //Serial.println(topic.asString());
+String I2C::getVersion() {
+  return  String(I2C_Name) + " v" + String(I2C_Version);
 }
 
 //...............................................................................
 //  scan I2C-Bus for devices
 //...............................................................................
 void I2C::scanBus() {
+  Wire.begin(sda, scl);
   byte error, address;
   int nDevices;
 
@@ -98,6 +66,8 @@ void I2C::scanBus() {
         sprintf(device, "0x%02x BMP180", address);
       } else if (address == 0x3c) {
         sprintf(device, "0x%02x SSD1306", address);
+      } else if (address >= 0x20 & address <= 0x27) {
+        sprintf(device, "0x%02x MCP23017", address);
       } else if (address == 0x40) {
         sprintf(device, "0x%02x SI7021", address);
       } else if (address >= 0x70 & address <= 0x77) {
@@ -121,6 +91,22 @@ void I2C::scanBus() {
     logging.info("no I2C devices found");
   else
     logging.info("I2C bus scan done");
+}
+
+//...............................................................................
+// read BMP180
+//...............................................................................
+void I2C::readBMP180() {
+   Adafruit_BMP085 bmp;
+   String eventPrefix= "~/event/device/" + String(name) + "/BMP180/";
+
+   bmp.begin();
+   String value = "temperature " + String(bmp.readTemperature());
+   logging.debug(value);
+   topicQueue.put(eventPrefix + "/" + value);
+   value = "pressure " + String(bmp.readPressure()/100);
+   logging.debug(value);
+   topicQueue.put(eventPrefix + "/" + value);
 }
 
 //-------------------------------------------------------------------------------

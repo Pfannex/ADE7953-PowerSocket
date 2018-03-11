@@ -1,10 +1,10 @@
-#include "modules/module.h"
+#include "modules/Module.h"
 
 //===============================================================================
 //  module
 //===============================================================================
-module::module(string name, LOGGING &logging, TopicQueue &topicQueue)
-    : name(name), logging(logging), topicQueue(topicQueue) {}
+Module::Module(string name, LOGGING &logging, TopicQueue &topicQueue)
+       :name(name), logging(logging), topicQueue(topicQueue) {}
 
 //-------------------------------------------------------------------------------
 //  module public
@@ -12,7 +12,7 @@ module::module(string name, LOGGING &logging, TopicQueue &topicQueue)
 //...............................................................................
 // start
 //...............................................................................
-void module::start() {
+void Module::start() {
   logging.info("starting module "+String(name));
   nameItemCount= 1;
   for(string p= name; *p; nameItemCount+= (*p++=='/'));
@@ -24,7 +24,7 @@ void module::start() {
 //...............................................................................
 // handle
 //...............................................................................
-void module::handle() {
+void Module::handle() {
   // intentionally left blank
 }
 
@@ -32,7 +32,7 @@ void module::handle() {
 // isModule
 //-------------------------------------------------------------------------------
 
-bool module::isForModule(Topic &topic) {
+bool Module::isForModule(Topic &topic) {
   /*
   ~/get|set|event     0 1
     └─device          2
@@ -56,7 +56,7 @@ bool module::isForModule(Topic &topic) {
 // isItem
 //-------------------------------------------------------------------------------
 
-bool module::isItem(Topic &topic, string item) {
+bool Module::isItem(Topic &topic, string item) {
   /*
   ~/get|set|event     0 1
     └─device          2

@@ -1,3 +1,5 @@
+#pragma once
+#include "modules/Module.h"
 #include "framework/Utils/Logger.h"
 #include "Setup.h"
 #include "framework/Topic.h"
@@ -7,25 +9,27 @@
 //###############################################################################
 //  LCD
 //###############################################################################
+
+#define LCD_Name    "module::LCD SSD1306"
+#define LCD_Version "0.1.0"
+
+//###############################################################################
+//  LCD
+//###############################################################################
 #define SSD1306_I2C_adr 0x3c
 
-class LCD {
+class LCD : public Module {
 
 public:
-  LCD(int sda, int scl, LOGGING &logging, TopicQueue &topicQueue);
+  LCD(string name, LOGGING &logging, TopicQueue &topicQueue, int sda, int scl);
   int sda;
   int scl;
   void start();
   void handle();
-  String set(Topic &topic);
-  String get(Topic &topic);
-  void on_events(Topic &topic);
+  String getVersion();
 
-private:
-  LOGGING &logging;
-  TopicQueue &topicQueue;
-
-  SSD1306 ssd1306;
   void println(String txt, const char *fontData, int yPos);
 
+private:
+  SSD1306 ssd1306;
 };

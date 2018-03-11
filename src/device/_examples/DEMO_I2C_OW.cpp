@@ -1,143 +1,177 @@
-#include "MCP23017.h"
+#include "DEMO_I2C_OW.h"
 #include <Arduino.h>
 
 //===============================================================================
-//  MCP23017
+//  Device
 //===============================================================================
-MCP23017::MCP23017(string name, LOGGING &logging, TopicQueue &topicQueue,
-                   int GPIOIrqPin, int sda, int scl)
-         :Module(name, logging, topicQueue),
-          irqPin(GPIOIrqPin), sda(sda), scl(scl)
-         {}
-
 
 //-------------------------------------------------------------------------------
-//  MCP23017 public
+//  DeviceDEMO_I2C_OW
 //-------------------------------------------------------------------------------
-//...............................................................................
-// start
-//...............................................................................
-void MCP23017::start() {
-  Module::start();
-  logging.info("setting GPIO pin " + String(irqPin) + " to IRQ-Pin");
-  pinMode(irqPin, INPUT_PULLUP);
-  irqSetMode(FALLING);
+DEMO_I2C_OW::DEMO_I2C_OW(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
+           :Device(logging, topicQueue, ffs),
+            i2c("i2c", logging, topicQueue, SDA, SCL),
+            lcd("SSD1306", logging, topicQueue, SDA, SCL),
+            ow("oneWire", logging, topicQueue, OWPIN),
+            mcpGPIO("MCP23017", logging, topicQueue, MCPIRQ, SDA, SCL)
+            {}
 
-  Wire.begin(sda, scl);
-  mcp.begin(0);    //0 = 0x20, 1 = 0x21, ...
-  configMCP();
+//...............................................................................
+// device start
+//...............................................................................
+void DEMO_I2C_OW::start() {
+  Device::start();
+  logging.info("starting device " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
+
+  logging.info("starting " + i2c.getVersion()); //only first time a class is started
+  i2c.start();
+  logging.info("starting " + lcd.getVersion()); //only first time a class is started
+  lcd.start();
+  logging.info("starting " + ow.getVersion()); //only first time a class is started
+  ow.start();
+  logging.info("starting " + mcpGPIO.getVersion()); //only first time a class is started
+  mcpGPIO.start();
+  //configMCP();
+
+  logging.info("device running");
 }
 
 //...............................................................................
-// handle
+// handle - periodically called by the controller
 //...............................................................................
-void MCP23017::handle() {
-  Module::handle();
-  irqHandle();
+void DEMO_I2C_OW::handle() {
+  i2c.handle();
+  lcd.handle();
+  ow.handle();
+  mcpGPIO.handle();
 }
 
 //...............................................................................
-// getVersion
+//  Device set
 //...............................................................................
-String MCP23017::getVersion() {
-  return  String(MCP23017_Name) + " v" + String(MCP23017_Version);
-}
 
-//...............................................................................
-// IRQ
-//...............................................................................
-void MCP23017::irq() {
-  irqDetected = true;
-}
+String DEMO_I2C_OW::set(Topic &topic) {
+  /*
+  ~/set
+  └─device             (level 2)
+    └─power            (level 3)
+  */
 
-void MCP23017::irqSetMode(int mode){
-  if (mode == 4){
-    detachInterrupt(irqPin);
-  }else{
-    //LOW     = 0, HIGH    = 1, RISING  = 1, FALLING = 2
-    //CHANGE  = 3, OFF     = 4
-    attachInterrupt(digitalPinToInterrupt(irqPin), std::bind(&MCP23017::irq, this), mode);
+  logging.debug("device set topic " + topic.topic_asString() + " to " +
+                topic.arg_asString());
+
+  if (topic.getItemCount() != 4) // ~/set/device/power
+    return TOPIC_NO;
+  if (topic.itemIs(3, "power")) {
+    //setPowerMode(topic.getArgAsLong(0));
+    return TOPIC_OK;
+  } else {
+    return TOPIC_NO;
+  }
+}
+//...............................................................................
+//  Device get
+//...............................................................................
+
+String DEMO_I2C_OW::get(Topic &topic) {
+  /*
+  ~/get
+  └─device             (level 2)
+    └─power            (level 3)
+  */
+
+  logging.debug("device get topic " + topic.topic_asString());
+
+  if (topic.getItemCount() != 4) // ~/get/device/power
+    return TOPIC_NO;
+  if (topic.itemIs(3, "power")) {
+    //topicQueue.put("~/event/device/power", power);
+    //return String(power);
+  } else {
+    return TOPIC_NO;
   }
 }
 
-void MCP23017::irqHandle() {
-  unsigned long now = millis();
-  String eventPrefix= "~/event/device/" + String(name) + "/";
+//...............................................................................
+// Eventhandler - called by the controller after receiving a topic (event)
+//...............................................................................
+void DEMO_I2C_OW::on_events(Topic &topic) {
+  // central business logic
 
-// main handling
-  if (irqDetected){
-    irqSetMode(irqOFF);
-    irqDetected = false;
-    logging.debug("MCP23017 IRQ");
+  if (topic.modifyTopic(0) == "event/wifi/connected"){
+    lcd.println(ffs.cfg.readItem("wifi_ip"), ArialMT_Plain_16, 0);
+  }
+
 /*
-    uint8_t pin = mcp.getLastInterruptPin();
-    uint8_t val = mcp.getLastInterruptPinValue();
-    uint8_t state = mcp.digitalRead(pin);
-
-    logging.debug("mcpGPIO " + String(pin) + " | " + String(val) + " | " + String(state));
-
-    while (mcp.readRegister(MCP23017_INTFA) > 0){
-      Serial.println("  hanging.....");
-      //Serial.print("INTFA - ");Serial.println(MCP23017.readRegister(MCP23017_INTFA), BIN);
-      //Serial.print("INTFB - ");Serial.println(MCP23017.readRegister(MCP23017_INTFB), BIN);
-      Serial.print("  GPIOA - ");Serial.println(mcp.readRegister(MCP23017_GPIOA), BIN);
-      Serial.print("  GPIOB - ");Serial.println(mcp.readRegister(MCP23017_GPIOB), BIN);
+//button
+  if (button.isForModule(topic)) {
+    // events from button
+    //
+    // - click
+    if (button.isItem(topic, "click")) {
+      // -- short
+      if (topic.argIs(0, "short")) {
+        if (configMode)
+          setConfigMode(0);
+        else
+          setPowerMode(!power);
+      }
+      // -- long
+      if (topic.argIs(0, "long"))
+        setConfigMode(!configMode);
     }
-*/
-    irqSetMode(FALLING);
+    // - idle
+    if (button.isItem(topic, "idle"))
+      setConfigMode(0);
   }
-}
-//-------------------------------------------------------------------------------
-//  MCP23017 private
-//-------------------------------------------------------------------------------
+*/
 
+}
+
+//-------------------------------------------------------------------------------
+//  Device private
+//-------------------------------------------------------------------------------
 //...............................................................................
 // config MCP23017
 //...............................................................................
-void MCP23017::configMCP() {
-  logging.debug("MCP23017::configMCP");
-
+void DEMO_I2C_OW::configMCP() {
+/*
   pinMode(15, OUTPUT);
   digitalWrite(15, LOW);
   delay(100);
   digitalWrite(15, HIGH);
 
-
-  Wire.begin(sda, scl);
-  mcp.begin(0);    //0 = 0x20, 1 = 0x21, ...
-
   // IODIRx [RW] Datenrichtungsregister der GPIO-Ports:
   // 1 = INPUT; 0 = OUTPUT
-  logging.debug("write");
-  //mcp.writeRegister(MCP23017_IODIRA, B10101010);
-  mcp.writeRegister(MCP23017_IODIRA, B11111111);
-  //mcp.writeRegister(MCP23017_IODIRB, B11111111);
+  mcpGPIO.mcp.writeRegister(MCP23017_IODIRA, B11111111);
+  //Serial.println(mcpGPIO.mcp.readRegister(MCP23017_IODIRA), BIN);
+  mcpGPIO.mcp.writeRegister(MCP23017_IODIRB, B11111111);
 
   // IPOLx [RW] Polarität
   // 1 = invertiert; 0 = nicht invertiert
-  mcp.writeRegister(MCP23017_IPOLA, B11111111);
-  //mcp.writeRegister(MCP23017_IPOLB, B11111111);
+  mcpGPIO.mcp.writeRegister(MCP23017_IPOLA, B11111111);
+  mcpGPIO.mcp.writeRegister(MCP23017_IPOLB, B11111111);
 
   // GPINTENx [RW] Interrupt-On-Change-Funktion
   // 1 = IRQ enabled; 0 = IRQ disabled
   // Es müssen zusätzlich die DEFVAL- und INTCON-Register konfiguriert werden.
-  mcp.writeRegister(MCP23017_GPINTENA, B11111111);
-  //mcp.writeRegister(MCP23017_GPINTENB, B11111111);
+  mcpGPIO.mcp.writeRegister(MCP23017_GPINTENA, B11111111);
+  mcpGPIO.mcp.writeRegister(MCP23017_GPINTENB, B11111111);
 
   // DEFVALx [RW] IRQ-Vergleichsregister
   // Vergleich GPIO mit DEFVALx bei Opposition und aktivem IRQ über GPINTEN und INTCON wird ein Interrupt ausgelöst.
-  mcp.writeRegister(MCP23017_DEFVALA, B00000000);
-  //mcp.writeRegister(MCP23017_DEFVALB, B00000000);
+  mcpGPIO.mcp.writeRegister(MCP23017_DEFVALA, B00000000);
+  mcpGPIO.mcp.writeRegister(MCP23017_DEFVALB, B00000000);
 
   // INTCONx [RW] Interruptmode
   // 1 = vergleich mit DEFVALx; 0 = Interrupt-On-Change
-  mcp.writeRegister(MCP23017_INTCONA, B00000000);
-  //mcp.writeRegister(MCP23017_INTCONB, B00000000);
+  mcpGPIO.mcp.writeRegister(MCP23017_INTCONA, B00000000);
+  mcpGPIO.mcp.writeRegister(MCP23017_INTCONB, B00000000);
 
   // GPPUx [RW] INPUT Pull-Up 100k
   // 1 = enabled, 0 = disabled
-  mcp.writeRegister(MCP23017_GPPUA, B11111111);
-  //mcp.writeRegister(MCP23017_GPPUB, B11111111);
+  mcpGPIO.mcp.writeRegister(MCP23017_GPPUA, B11111111);
+  mcpGPIO.mcp.writeRegister(MCP23017_GPPUB, B11111111);
 
   // INTFx [R] Interrupt detected
   // 1 = IRQ detected; 0 = no IRQ detected
@@ -156,7 +190,7 @@ void MCP23017::configMCP() {
   // die als Ausgänge konfiguriert sind.
 
   // IOCON [RW] IO-Konfigurationsregister
-  mcp.writeRegister(MCP23017_IOCONA, B01000000);
+  mcpGPIO.mcp.writeRegister(MCP23017_IOCONA, B01000000);
 
   // IOCON.7 Bank-Konfiguration
   //   Ist BANK = 1, werden die Register nach Ports getrennt.
@@ -197,5 +231,5 @@ void MCP23017::configMCP() {
   //mcpGPIO.mcp.setupInterrupts(true,false,LOW);
   //mcpGPIO.mcp.pinMode(2, INPUT);
   //mcpGPIO.mcp.pullUp(2, HIGH);
-  //mcpGPIO.mcp.setupInterruptPin(2,FALLING);
+  //mcpGPIO.mcp.setupInterruptPin(2,FALLING);*/
 }
