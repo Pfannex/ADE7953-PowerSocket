@@ -230,7 +230,7 @@ function getConfig() {
   console.log("Getting configuration from inputs...");
 
   var config = {};
-  configForm= $("#config");
+  var configForm= $("#config");
   // get text inputs
   configForm.find('input:text').each(function() {
     config[$(this).attr("id")]= $(this).val();
