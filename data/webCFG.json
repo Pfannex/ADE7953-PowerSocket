@@ -1,9 +1,36 @@
-{
-  "Label":   "Input_01",
-  "Type":    "switch",
-  "call": { "topic": "~/set/device/button1", "on": "1", "off": "0" },
-  "callON":  ["~/set/device/button1 1", "~/set/device/button1 0"],
-  "callOFF": "~/set/device/button1 0",
-  "eventON": "~/event/device/relay1 1",
-  "eventOFF":"~/event/device/relay1 0",
-}
+[
+  {
+    "type": "text",
+    "name": "clock",
+    "legend": "Time",
+    "readonly": 1,
+    "event": "~/event/clock/time",
+    "inputtype": "datetime"
+  },
+
+  {
+    "type": "controlgroup",
+    "name": "power",
+    "legend": "Power",
+    "action": "~/set/device/power",
+    "event": "~/event/device/power",
+    "data": [{
+        "label": "Off",
+        "value": 0
+      },
+      {
+        "label": "On",
+        "value": 1
+      },
+    ]
+  },
+
+  {
+    "type": "text",
+    "name": "brightness",
+    "legend": "brightness",
+    "action": "~/set/device/brightness",
+    "event": "~/event/device/brightness",
+    "inputtype": "number"
+  }
+]

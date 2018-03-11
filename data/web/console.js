@@ -1,43 +1,13 @@
 "use strict";
 
-var debug = 1;
-var log = 1;
-
-var consConn;
-
-var consLastIndex = 0;
 var withLog = 0;
 var mustScroll = [1, 1];
 var lines = [0, 0];
 var timers = Object.create(null);
 
 // ------------------------------------------------------------------------
-// browser console log and debug
-// ------------------------------------------------------------------------
-
-function debugmsg(msg) {
-  if (debug) {
-    console.log("DEBUG: " + msg);
-  }
-}
-
-function logmsg(msg) {
-  if (log) {
-    console.log("LOG  : " + msg);
-  }
-}
-
-// ------------------------------------------------------------------------
 // display consoles
 // ------------------------------------------------------------------------
-
-function message(msg) {
-  //$("#message").html(msg);
-}
-
-function message_clear() {
-  message("");
-}
 
 function consoleSet(n, msg) {
   $("#console" + n).html(msg);
@@ -70,77 +40,6 @@ function consoleClear(n) {
 // console handling
 // ------------------------------------------------------------------------
 
-function consCloseConn() {
-  if (!consConn)
-    return;
-  if (typeof consConn.close == "function")
-    consConn.close();
-  else if (typeof consConn.abort == "function")
-    consConn.abort();
-  consConn = undefined;
-}
-
-function consUpdate(evt) {
-  var errstr = "Connection lost, trying to reconnect every 5 seconds.";
-  var new_content = "";
-
-  if ((typeof WebSocket == "function" || typeof WebSocket == "object") && evt &&
-    evt.target instanceof WebSocket) {
-    if (evt.type == 'close') {
-      message(errstr);
-      consCloseConn();
-      setTimeout(consFill, 5000);
-      return;
-    }
-    new_content = evt.data;
-    consLastIndex = 0;
-
-  } else {
-    if (consConn.readyState == 4) {
-      message(errstr);
-      setTimeout(consFill, 5000);
-      return;
-    }
-
-    if (consConn.readyState != 3)
-      return;
-
-    var len = consConn.responseText.length;
-    if (consLastIndex == len) // No new data
-      return;
-
-    new_content = consConn.responseText.substring(consLastIndex, len);
-    consLastIndex = len;
-  }
-  if (new_content == undefined || new_content.length == 0)
-    return;
-  message("data received");
-  //debugmsg("Console received: " + new_content);
-
-  consEvalContent(new_content);
-
-}
-
-
-function consFill() {
-  message_clear();
-
-  var location = window.location.href; //"http://node52.home.neubert-volmar.de:80/goo.html";
-  var parts = location.split("/");
-  var url = 'ws://' + parts[2] + '/ws';
-  //url = 'ws://node52.home.neubert-volmar.de/ws';
-  if (consConn) {
-    consConn.close();
-  }
-  logmsg("Console connecting to " + url);
-  consConn = new WebSocket(url) /*, [], { headers: { "token": "foobar"}});*/
-  consConn.onclose =
-    consConn.onerror =
-    consConn.onmessage = consUpdate;
-
-  consLastIndex = 0;
-}
-
 
 function consSetScrollFunction(n) {
 
@@ -166,10 +65,9 @@ function consSetScrollFunction(n) {
 
 function consStart() {
 
-  logmsg("Console is opening");
+  logmsg("Starting consoles...");
   consSetScrollFunction(0);
   consSetScrollFunction(1);
-  setTimeout(consFill, 1000);
 
 }
 
@@ -239,7 +137,9 @@ function consAddNode(nodeid, rid, topic) {
 function consEvalEvent(time, topics, args) {
   var i;
   var rid = "readings";
-  for (i = 0; i < topics.length; i++) {
+  // do not modify time, topics, args here
+  // skip device name and "event"
+  for (i = 2; i < topics.length; i++) {
     var topic = topics[i];
     var parentid = rid;
     rid += "_" + topic;
@@ -263,35 +163,4 @@ function consEvalEvent(time, topics, args) {
       consSetReading(rid, time, args);
     }
   }
-}
-
-function consEvalContent(content) {
-  var fields = JSON.parse(content);
-  //debugmsg("content type "+fields.type);
-  if (fields.type == "event") {
-    consoleWriteln(0, fields.value);
-    var d = new Date();
-    var topicsArgs = fields.value.split(" ");
-    var topics = topicsArgs[0].split("/");
-    topics.shift();
-    topics.shift(); // remove device name and "event"
-    topicsArgs.shift();
-    var args = topicsArgs.length > 0 ? topicsArgs.join(" ") : "";
-    consEvalEvent(d.toLocaleString(), topics, args);
-    dashboardEvalEvent(topics, args);
-  } else if (fields.type == "log") {
-    consoleWriteln(1, fields.subtype + " " + fields.value)
-  }
-}
-
-// ------------------------------------------------------------------------
-// dashboard handling
-// ------------------------------------------------------------------------
-
-
-function handleDashboardClick(widget) {
-  //debugmsg("click for "+widget.name);
-  if(widget.type=="checkbox") debugmsg("checkbox "+widget.checked); else
-  if(widget.type=="number") debugmsg("number "+widget.value);
-  if(widget.checkValidity()) debugmsg("Valid"); else debugmsg("INVALID!");
 }

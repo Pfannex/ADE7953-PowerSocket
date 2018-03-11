@@ -8,9 +8,12 @@
   <script src="lib/jquery.js"></script>
   <script src="lib/jquery.mobile.js"></script>
   <link href="css/jquery.mobile.css" rel="stylesheet" />
+  <script src="log.js"></script>
   <script src="auth.js"></script>
+  <script src="dashboard.js"></script>
   <script src="console.js"></script>
   <script src="ui.js"></script>
+  <script src="main.js"></script>
   <style>
     .ui-bar-a {
       background-color: white;
@@ -44,17 +47,6 @@
     <div data-role="content">
       <div data-role="collapsible" data-inset="true" data-collapsed="false" id="dashboard">
         <h2>Dashboard</h2>
-
-        <!-- widget: controlgroup -->
-        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true"
-          onChange="dashboardAction('power')">
-          <legend>Powerswitch</legend>
-          <input name="power" id="power-0" value="0" type="radio" />
-          <label for="power-0">Off</label>
-          <input name="power" id="power-1" value="1" type="radio" />
-          <label for="power-1">On</label>
-        </fieldset>
-
       </div>
     </div>
     <!-- footer -->
@@ -102,7 +94,7 @@
           </div>
           <div data-role="fieldcontain">
             <label for="device_password">Password</label>
-            <input type="password" id="device_password" name="device_password" placeholder "password for user"/>
+            <input type="password" id="device_password" name="device_password" placeholder="password for user"/>
           </div>
           <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" id="reboot" onClick="reboot()">Reboot</a>
         </div>

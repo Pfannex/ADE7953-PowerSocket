@@ -24,11 +24,14 @@ WebServer::WebServer(API &api)
                         "/web/auth.js" /*, "max-age=86400"*/);
   webServer.serveStatic("/config.js", SPIFFS,
                         "/web/config.js" /*, "max-age=86400"*/);
-  webServer.serveStatic("/panels.js", SPIFFS,
-                        "/web/panels.js" /*, "max-age=86400"*/);
+  webServer.serveStatic("/dashboard.js", SPIFFS,
+                        "/web/dashboard.js" /*, "max-age=86400"*/);
+  webServer.serveStatic("/log.js", SPIFFS,
+                        "/web/log.js" /*, "max-age=86400"*/);
   webServer.serveStatic("/console.js", SPIFFS,
                         "/web/console.js" /*, "max-age=86400"*/);
   webServer.serveStatic("/ui.js", SPIFFS, "/web/ui.js" /*, "max-age=86400"*/);
+  webServer.serveStatic("/main.js", SPIFFS, "/web/main.js" /*, "max-age=86400"*/);
   webServer.serveStatic("/css/images/ajax-loader.gif", SPIFFS,
                         "/web/css/images/ajax-loader.gif", "max-age=86400");
 
