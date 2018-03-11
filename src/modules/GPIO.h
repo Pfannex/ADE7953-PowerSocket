@@ -42,7 +42,7 @@ private:
   #define irqOFF 4                  // irq detachInterrupt mode
   void irqSetMode(int mode);        // irq mode setter
 
-  int irqDetected = 0;
+  volatile bool irqDetected = false;
   unsigned long lastIrqTime = 0;
   unsigned long doubleOutTime = 0;
   int idleState = 0;

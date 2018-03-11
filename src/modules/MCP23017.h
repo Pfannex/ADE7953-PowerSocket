@@ -4,6 +4,7 @@
 #include "Setup.h"
 #include "framework/Topic.h"
 #include <FunctionalInterrupt.h>
+#include "Adafruit_MCP23017.h"
 
 //###############################################################################
 //  GPIO
@@ -19,17 +20,23 @@
 class MCP23017 : public Module {
 
 public:
-  MCP23017(string name, LOGGING &logging, TopicQueue &topicQueue, int GPIOIrqPin);
+  MCP23017(string name, LOGGING &logging, TopicQueue &topicQueue,
+           int GPIOIrqPin, int sda, int scl);
   int irqPin;
+  int sda;
+  int scl;
 
   void start();
   void handle();
   String getVersion();
 
+  Adafruit_MCP23017 mcp;
+
 private:
-  void irq();                       // irq jumpTo funktion
-  void irqHandle();                 // handle irq function
-  #define irqOFF 4                  // irq detachInterrupt mode
-  void irqSetMode(int mode);        // irq mode setter
-  int irqDetected = 0;
+  void configMCP();
+  void irq();                         // irq jumpTo funktion
+  void irqHandle();                   // handle irq function
+  #define irqOFF 4                    // irq detachInterrupt mode
+  void irqSetMode(int mode);          // irq mode setter
+  volatile bool irqDetected = false;
 };

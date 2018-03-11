@@ -45,7 +45,7 @@ String GPIOinput::getVersion() {
 // IRQ
 //...............................................................................
 void GPIOinput::irq() {
-  irqDetected = 1;
+  irqDetected = true;
 }
 
 void GPIOinput::irqSetMode(int mode){
@@ -74,7 +74,7 @@ void GPIOinput::irqHandle() {
     }
     tIdle = now;   //reset idletimer
 
-    irqDetected = 0;
+    irqDetected = false;
     lastIrqTime = now;
     if (tstart == 0){
       //start event with falling edge

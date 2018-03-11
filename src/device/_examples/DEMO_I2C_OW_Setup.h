@@ -25,4 +25,4 @@ ADC  A0     2     Analog
 #define SDA 4
 #define SCL 5
 #define OWPIN 0
-#define MCPIRQ 2
+#define MCPIRQ 13

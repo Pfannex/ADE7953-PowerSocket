@@ -33,5 +33,6 @@ private:
   I2C i2c;
   LCD lcd;
   OW ow;
-  MCP23017 mcp;
+  MCP23017 mcpGPIO;
+  void configMCP();
 };
