@@ -9,7 +9,7 @@ FFS::FFS(LOGGING &logging)
       // jsonFiles
       cfg(logging, CFG_PATH, TYPE_OBJECT),
       deviceCFG(logging, DEVICECFG_PATH, TYPE_OBJECT),
-      webCFG(logging, WEBCFG_PATH, TYPE_OBJECT),
+      webCFG(logging, DASHBOARD_PATH, TYPE_OBJECT),
       subGlobal(logging, SUBGLOBAL_PATH, TYPE_OBJECT) {}
 
 //-------------------------------------------------------------------------------

@@ -21,7 +21,7 @@
       {
         "label": "On",
         "value": 1
-      },
+      }
     ]
   },
 
@@ -32,5 +32,14 @@
     "action": "~/set/device/brightness",
     "event": "~/event/device/brightness",
     "inputtype": "number"
+  },
+
+  {
+    "type": "text",
+    "name": "led",
+    "legend": "LED",
+    "event": "~/event/device/led",
+    "inputtype": "number"
   }
+
 ]

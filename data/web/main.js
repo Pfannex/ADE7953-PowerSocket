@@ -12,7 +12,7 @@ $(document).ready(function() {
 // initialize the dashboard
 $(document).on("pagecreate", "#page1", function(event, ui) {
   logmsg('Initializing dashboard...');
-  dashboardBuild();
+  var json = retrieveDashboard(dashboardBuild);
 })
 
 // initialize the config page
@@ -57,7 +57,7 @@ function openConnection() {
   var location = window.location.href; //"http://node52.home.neubert-volmar.de:80/goo.html";
   var parts = location.split("/");
   var url = 'ws://' + parts[2] + '/ws';
-  url = 'ws://node52.home.neubert-volmar.de/ws';
+  //url = 'ws://node52.home.neubert-volmar.de/ws';
   if (connection) {
     connection.close();
   }

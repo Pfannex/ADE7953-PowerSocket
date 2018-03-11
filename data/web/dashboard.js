@@ -1,52 +1,11 @@
 "use strict";
 
-var w1 = {
-  "type": "controlgroup",
-  "name": "power",
-  "legend": "Power",
-  "action": "~/set/device/power",
-  "event": "~/event/device/power",
-  "data": [{
-      "label": "Off",
-      "value": 0
-    },
-    {
-      "label": "On",
-      "value": 1
-    },
-  ]
-}
-
-var w0 = {
-  "type": "text",
-  "name": "clock",
-  "legend": "Time",
-  "readonly": 1,
-  "event": "~/event/clock/time",
-  "inputtype": "datetime"
-}
-
-var w2 = {
-  "type": "text",
-  "name": "brightness",
-  "legend": "brightness",
-  "action": "~/set/device/brightness",
-  "event": "~/event/device/brightness",
-  "inputtype": "number"
-}
-
-
-
-var widgets = [w0, w1, w2];
-
-
-
 // ---------------------------
 // dashboard
 // ---------------------------
 
 var muteDashboardActions = 0;
-
+var widgets;
 
 
 //
@@ -110,11 +69,20 @@ function dashboardAddText(w) {
 // dashboard builder
 //
 
-function dashboardBuild() {
+//
+// retrieve configuration from device
+//
+function retrieveDashboard(callback) {
+  logmsg("Retrieving dashboard from device...");
+  return call("~/get/ffs/webCFG/root", callback);
+}
+
+
+function dashboardBuild(json) {
 
   logmsg("Building dashboard...");
-
-  // widget= JSON.parse(text)
+  debugmsg(json);
+  widgets= JSON.parse(json);
 
   var i;
   for (i = 0; i < widgets.length; i++) {
@@ -122,7 +90,6 @@ function dashboardBuild() {
     switch (w.type) {
       case "controlgroup":
         dashboardAddControlgroup(w);
-        ""
         break;
       case "text":
         dashboardAddText(w);
