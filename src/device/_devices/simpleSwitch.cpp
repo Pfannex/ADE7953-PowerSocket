@@ -57,7 +57,7 @@ String simpleSwitch::set(Topic &topic) {
   if (topic.getItemCount() != 4) // ~/set/device/power
     return TOPIC_NO;
   if (topic.itemIs(3, "power")) {
-    //setPowerMode(topic.getArgAsLong(0));
+    setPowerMode(topic.getArgAsLong(0));
     return TOPIC_OK;
   } else {
     return TOPIC_NO;
@@ -79,8 +79,8 @@ String simpleSwitch::get(Topic &topic) {
   if (topic.getItemCount() != 4) // ~/get/device/power
     return TOPIC_NO;
   if (topic.itemIs(3, "power")) {
-    //topicQueue.put("~/event/device/power", power);
-    //return String(power);
+    topicQueue.put("~/event/device/power", power);
+    return TOPIC_OK;
   } else {
     return TOPIC_NO;
   }
