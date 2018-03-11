@@ -11,9 +11,9 @@
 #include "framework/Utils/SysUtils.h"
 #include <ESP8266FtpServer.h>
 
-// device specific
-#include "device/Device.h"
+// THE device
 #include "device/DeviceSetup.h"
+#include INCLUDE_FILE(module)
 
 //###############################################################################
 //  BasicTemplate
@@ -47,7 +47,7 @@ public:
   WIFI wifi;
   FtpServer ftpSrv;
   ESP_Tools espTools;
-  Device device;
+  DEVICE device;
 
   // the API
   String call(Topic &topic);

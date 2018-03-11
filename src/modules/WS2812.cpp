@@ -2,13 +2,12 @@
 #include <Arduino.h>
 
 //===============================================================================
-//  GPIO
+//  WS2812
 //===============================================================================
-WS2812::WS2812(int GPIOOutputPin, int LEDsCount,
-               LOGGING &logging, TopicQueue &topicQueue)
-              :pin(GPIOOutputPin), count(LEDsCount),
-               logging(logging), topicQueue(topicQueue) {}
-
+WS2812::WS2812(string name, LOGGING &logging, TopicQueue &topicQueue,
+               int GPIOoutputPin, int LEDsCount)
+          : Module(name, logging, topicQueue), pin(GPIOoutputPin), count(LEDsCount)
+          {}
 
 //-------------------------------------------------------------------------------
 //  GPIO public
@@ -17,73 +16,25 @@ WS2812::WS2812(int GPIOOutputPin, int LEDsCount,
 // start
 //...............................................................................
 void WS2812::start() {
-  logging.info("starting WS2812");
+  Module::start();
+  logging.info("setting GPIO pin " + String(pin) + " for WS2812 output");
   pinMode(pin, OUTPUT);
   ws2812.setBrightness(100);
   ws2812.begin();
-  ws2812.show(); // Initialize all pixels to 'off'
-
+  ws2812.clear();
 }
 
 //...............................................................................
 // handle
 //...............................................................................
 void WS2812::handle() {
-  //unsigned long now = millis();
-
-}
-
-//...............................................................................
-//  GPIO set
-//...............................................................................
-String WS2812::set(Topic &topic) {
-  /*
-  ~/set
-    └─gpio
-        └─led (on, off, blink)
-  */
-
-  logging.debug("WS2812 set topic " + topic.topic_asString() + " to " +
-                topic.arg_asString());
-
-  String strPin = topic.getArg(0);
-
-  if (topic.itemIs(3, "ws2812")) {
-    if (topic.getArgCount() > 1 and strPin.toInt() == pin){
-      WS2812_setColor(topic.getArgAsLong(1));
-      return TOPIC_OK;
-    }
-  } else {
-    return TOPIC_NO;
-  }
 }
 //...............................................................................
-//  GPIO get
+// getVersion
 //...............................................................................
-String WS2812::get(Topic &topic) {
-  /*
-  ~/get
-    └─gpio
-        └─led (on, off, blink)
-  */
-
-  logging.debug("WS2812 get topic " + topic.topic_asString() + " to " +
-                topic.arg_asString());
-
-  if (topic.itemIs(3, "led")) {
-    return TOPIC_OK;
-  } else {
-    return TOPIC_NO;
-  }
+String WS2812::getVersion() {
+  return  String(WS2812_Name) + " v" + String(WS2812_Version);
 }
-
-//...............................................................................
-//  WS2812::on_events
-//...............................................................................
-void WS2812::on_events(Topic &topic){
-  //Serial.println(topic.asString());
-}
-
 //...............................................................................
 //  WS2812_on
 //...............................................................................
@@ -109,14 +60,19 @@ void WS2812::WS2812_setColor(uint32_t R, uint32_t G, uint32_t B) {
   }
   ws2812.show();
 }
+
 void WS2812::WS2812_setColor(uint32_t color) {
+  String eventPrefix= "~/event/device/" + String(name) + "/";
+
   for (int i = 0; i<count; i++){
     ws2812.setPixelColor(i, color);
   }
   ws2812.show();
   if (color != 0){
-    topicQueue.put("~/event/Device/WS2812 on");
+    logging.debug("WS2812 " + String(pin) + " on " + String(color));
+    topicQueue.put(eventPrefix + "/state 1");
   }else{
-    topicQueue.put("~/event/Device/WS2812 off");
+    logging.debug("WS2812 " + String(pin) + " off " + String(color));
+    topicQueue.put(eventPrefix + "/state 0");
   }
 }
