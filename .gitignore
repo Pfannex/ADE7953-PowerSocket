@@ -54,5 +54,7 @@ Temporary Items
 .gcc-flags.json
 
 #--> Project files <-------------------------
-#src/device/
 data/cfg.json
+
+# files needed for gulp
+node_modules
