@@ -36,6 +36,7 @@ public:
 
 private:
   void configMCP();
+  void clearIRQ();
   void irq();                         // irq jumpTo funktion
   void irqHandle();                   // handle irq function
   #define irqOFF 4                    // irq detachInterrupt mode

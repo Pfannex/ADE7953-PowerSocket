@@ -29,8 +29,8 @@ void DEMO_I2C_OW::start() {
   lcd.start();
   logging.info("starting " + ow.getVersion()); //only first time a class is started
   ow.start();
-  logging.info("starting " + mcpGPIO.getVersion()); //only first time a class is started
-  mcpGPIO.start();
+  //logging.info("starting " + mcpGPIO.getVersion()); //only first time a class is started
+  //mcpGPIO.start();
   //configMCP();
 
   logging.info("device running");
@@ -43,7 +43,7 @@ void DEMO_I2C_OW::handle() {
   i2c.handle();
   lcd.handle();
   ow.handle();
-  mcpGPIO.handle();
+  //mcpGPIO.handle();
 }
 
 //...............................................................................

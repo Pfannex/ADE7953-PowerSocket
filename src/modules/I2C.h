@@ -4,8 +4,13 @@
 #include "Setup.h"
 #include "framework/Topic.h"
 #include <Arduino.h>
-#include <Wire.h> //I²C
-#include <Adafruit_BMP085_BrzoI2C.h>
+
+//I²C
+#include <Wire.h>
+#include <brzo_i2c.h>
+#include <Adafruit_BMP085.h>
+#include <Adafruit_Si7021.h>
+#include "Adafruit_MCP23017.h"
 
 //###############################################################################
 //  I2C Tools
@@ -19,6 +24,7 @@
 #define I2CPOLL 5000
 #define I2CDIFF 1
 #define I2CINT 1
+#define I2C_CLOCK 800
 
 class I2C : public Module {
 
@@ -32,9 +38,21 @@ public:
   String getVersion();
 
   void scanBus();
-  void readBMP180();    //BMP180 Luftdruck/Temperatur
+  uint8_t writeByte(uint8_t i2cAddr, uint8_t address, uint8_t val);
+  uint8_t writeBuf(uint8_t i2cAddr, uint8_t address, uint8_t val[], int bytesCount);
+  uint8_t readByte(uint8_t i2cAddr, uint8_t address);
+  //uint8_t readBuf(uint8_t address);
+
+
+
+
+
+  //void readBMP180();    //BMP180 Luftdruck/Temperatur
+  //void readSi7021();    //SI7021 Luftfeuchtigkeit/Temperatur
+
+  void testBRZO();
 
 private:
-  int tPoll = 0;
+  //int tPoll = 0;
 
 };
