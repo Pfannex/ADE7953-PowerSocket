@@ -94,7 +94,6 @@ gulp.task('html', function() {
         .pipe(useref())
         .pipe(plumber())
         .pipe(gulpif('*.css', cleancss()))
-        /*
         .pipe(gulpif('*.js', uglify()))
         .pipe(gulpif('*.html', htmlmin({
             collapseWhitespace: true,
@@ -102,7 +101,7 @@ gulp.task('html', function() {
             minifyCSS: true,
             minifyJS: true
         })))
-*/        //.pipe(gzip()) // if we gzip, the subst in the webserver does not work
+        //.pipe(gzip()) // if we gzip, the subst in the webserver does not work
         .pipe(gulp.dest(webdir));
 });
 
