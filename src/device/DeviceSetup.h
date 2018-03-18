@@ -25,6 +25,8 @@
 #define INCLUDE_FILE(M)  QUOTEME(device/_devices/simpleSwitch.h)
 */
 
+#define DASHBOARD_PATH   "/dashboards/simpleSwitch.json"
+
 //###############################################################################
 // DEMO GPIO
 //###############################################################################

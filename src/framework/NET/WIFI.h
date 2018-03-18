@@ -3,6 +3,7 @@
 #include "Setup.h"
 #include <Arduino.h>
 #include <WiFiClient.h>
+#include <ESP8266WiFi.h>
 #include "framework/Utils/Logger.h"
 //#include "I2C.h"
 
@@ -26,7 +27,7 @@ public:
   void set_callback(CallbackFunction wifiConnected,
                     CallbackFunction wifiDisconnected);
 
-  bool start();
+  wl_status_t start();
   void handle();
   void on_connected();
   void on_disconnected();
@@ -37,6 +38,12 @@ public:
 
 
 private:
+  // true if status has changed since last update
+  bool updateStatus(wl_status_t status);
+
   CallbackFunction on_wifiConnected;
   CallbackFunction on_wifiDisconnected;
+
+  // https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/include/wl_definitions.h
+  wl_status_t wl_status= WL_DISCONNECTED;
 };

@@ -7,6 +7,7 @@
   #include "framework/Topic.h"
   #include "Setup.h"
   #include "framework/Utils/Debug.h"
+  #include "device/DeviceSetup.h"
 
 //###############################################################################
 //  stringFile
