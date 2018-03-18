@@ -34,6 +34,7 @@ void DEMO_I2C_OW::start() {
   //configMCP();
 
   logging.info("device running");
+  logging.info(ffs.deviceCFG.readItem("NEW"));
 }
 
 //...............................................................................
