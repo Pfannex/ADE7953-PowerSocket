@@ -24,7 +24,7 @@
 #define I2CPOLL 5000
 #define I2CDIFF 1
 #define I2CINT 1
-#define I2C_CLOCK 800
+#define I2C_CLOCK 400
 
 class I2C : public Module {
 
@@ -37,14 +37,23 @@ public:
   void handle();
   String getVersion();
 
+  void setBus(uint8_t i2cAddr, int clockSpeed);
+  uint8_t _i2cAddr = 0x00;
+  int _clockSpeed = 400;
   void scanBus();
-  uint8_t writeByte(uint8_t i2cAddr, uint8_t address, uint8_t val);
-  uint8_t writeBuf(uint8_t i2cAddr, uint8_t address, uint8_t val[], int bytesCount);
-  uint8_t readByte(uint8_t i2cAddr, uint8_t address);
-  //uint8_t readBuf(uint8_t address);
 
+  uint8_t write(uint8_t i2cAddr, int clockSpeed, uint8_t buf[], int bufCount);
+  uint8_t write(uint8_t i2cAddr, int clockSpeed,
+                uint16_t reg, uint8_t regSize,
+                uint32_t val, uint8_t valSize);
+  uint8_t write(uint8_t reg, uint8_t val);
+  uint8_t write_8_16(uint8_t reg, uint16_t val);
+  uint8_t write_16_16(uint16_t reg, uint16_t val);
+  uint8_t write_16_32(uint16_t reg, uint32_t val);
 
-
+  uint8_t* read(uint8_t i2cAddr, int clockSpeed,
+                uint32_t reg, uint8_t regSize,
+                uint8_t val[], uint8_t valSize);
 
 
   //void readBMP180();    //BMP180 Luftdruck/Temperatur
