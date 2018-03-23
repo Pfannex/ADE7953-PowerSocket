@@ -47,20 +47,23 @@ public:
                 uint16_t reg, uint8_t regSize,
                 uint32_t val, uint8_t valSize);
   uint8_t write(uint8_t reg, uint8_t val);
-  uint8_t write_8_16(uint8_t reg, uint16_t val);
-  uint8_t write_16_16(uint16_t reg, uint16_t val);
-  uint8_t write_16_32(uint16_t reg, uint32_t val);
+  uint8_t write8_16(uint8_t reg, uint16_t val);
+  uint8_t write16_8(uint16_t reg, uint8_t val);
+  uint8_t write16_16(uint16_t reg, uint16_t val);
+  uint8_t write16_32(uint16_t reg, uint32_t val);
 
   uint8_t* read(uint8_t i2cAddr, int clockSpeed,
                 uint32_t reg, uint8_t regSize,
                 uint8_t val[], uint8_t valSize);
+  uint8_t  read(uint8_t reg);
+  uint16_t read8_16(uint8_t reg);
+  uint8_t  read16_8(uint16_t reg);
+  uint16_t read16_16(uint16_t reg);
+  uint32_t read16_32(uint16_t reg);
 
 
   //void readBMP180();    //BMP180 Luftdruck/Temperatur
   //void readSi7021();    //SI7021 Luftfeuchtigkeit/Temperatur
-
-  void testBRZO();
-
 private:
   //int tPoll = 0;
 
