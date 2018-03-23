@@ -1,3 +1,5 @@
+#pragma once
+
 #define QUOTEME(M)       #M
 
 //###############################################################################
@@ -17,12 +19,14 @@
 //...............................................................................
 // DEVICE
 //...............................................................................
-
+/*
 #define DEVICETYPE      "SimpleSwitch"
 #define DEVICEVERSION   "1.1.0"
 
 #define DEVICE           simpleSwitch
 #define INCLUDE_FILE(M)  QUOTEME(device/_devices/simpleSwitch.h)
+#define DASHBOARD_PATH   "/dashboards/simpleSwitch.json"
+*/
 
 
 //###############################################################################
@@ -49,6 +53,7 @@
 
 #define DEVICE           DEMO_GPIO
 #define INCLUDE_FILE(M)  QUOTEME(device/_examples/DEMO_GPIO.h)
+#define DASHBOARD_PATH   "/dashboards/DEMO_GPIO.json"
 */
 //###############################################################################
 // DEMO I2C
@@ -67,9 +72,10 @@
 //...............................................................................
 // DEVICE
 //...............................................................................
-/*
+
 #define DEVICETYPE      "DEMO_I2C_OW"
 #define DEVICEVERSION   "1.0.0"
 #define DEVICE           DEMO_I2C_OW
 #define INCLUDE_FILE(M)  QUOTEME(device/_examples/DEMO_I2C_OW.h)
-*/
+#define DASHBOARD_PATH   "/dashboards/DEMO_I2C_OW.json"
+#define DEVICECFG_PATH   "/cfg/examples/DEMO_I2C_OW.json"

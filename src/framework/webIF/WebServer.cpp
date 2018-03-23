@@ -20,15 +20,8 @@ WebServer::WebServer(API &api)
                         "/web/lib/jquery.mobile.js", "max-age=86400");
   webServer.serveStatic("/css/jquery.mobile.css", SPIFFS,
                         "/web/css/jquery.mobile.css", "max-age=86400");
-  webServer.serveStatic("/auth.js", SPIFFS,
-                        "/web/auth.js" /*, "max-age=86400"*/);
-  webServer.serveStatic("/config.js", SPIFFS,
-                        "/web/config.js" /*, "max-age=86400"*/);
-  webServer.serveStatic("/panels.js", SPIFFS,
-                        "/web/panels.js" /*, "max-age=86400"*/);
-  webServer.serveStatic("/console.js", SPIFFS,
-                        "/web/console.js" /*, "max-age=86400"*/);
-  webServer.serveStatic("/ui.js", SPIFFS, "/web/ui.js" /*, "max-age=86400"*/);
+  webServer.serveStatic("/omniesp.js", SPIFFS,
+                        "/web/omniesp.js" /*, "max-age=86400"*/);
   webServer.serveStatic("/css/images/ajax-loader.gif", SPIFFS,
                         "/web/css/images/ajax-loader.gif", "max-age=86400");
 

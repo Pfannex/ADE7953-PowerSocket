@@ -1,43 +1,13 @@
 "use strict";
 
-var debug = 0;
-var log = 1;
-
-var consConn;
-
-var consLastIndex = 0;
 var withLog = 0;
 var mustScroll = [1, 1];
 var lines = [0, 0];
 var timers = Object.create(null);
 
 // ------------------------------------------------------------------------
-// browser console log and debug
-// ------------------------------------------------------------------------
-
-function debugmsg(msg) {
-  if (debug) {
-    console.log("DEBUG: " + msg);
-  }
-}
-
-function logmsg(msg) {
-  if (log) {
-    console.log("LOG  : " + msg);
-  }
-}
-
-// ------------------------------------------------------------------------
 // display consoles
 // ------------------------------------------------------------------------
-
-function message(msg) {
-  //$("#message").html(msg);
-}
-
-function message_clear() {
-  message("");
-}
 
 function consoleSet(n, msg) {
   $("#console" + n).html(msg);
@@ -45,7 +15,7 @@ function consoleSet(n, msg) {
 
 function consoleScroll(n) {
   var h = $("#console" + n)[0].scrollHeight;
-  debugmsg("scrolling to " + h);
+  //debugmsg("scrolling to " + h);
   $("#console" + n).scrollTop(h);
 }
 
@@ -70,76 +40,6 @@ function consoleClear(n) {
 // console handling
 // ------------------------------------------------------------------------
 
-function consCloseConn() {
-  if (!consConn)
-    return;
-  if (typeof consConn.close == "function")
-    consConn.close();
-  else if (typeof consConn.abort == "function")
-    consConn.abort();
-  consConn = undefined;
-}
-
-function consUpdate(evt) {
-  var errstr = "Connection lost, trying to reconnect every 5 seconds.";
-  var new_content = "";
-
-  if ((typeof WebSocket == "function" || typeof WebSocket == "object") && evt &&
-    evt.target instanceof WebSocket) {
-    if (evt.type == 'close') {
-      message(errstr);
-      consCloseConn();
-      setTimeout(consFill, 5000);
-      return;
-    }
-    new_content = evt.data;
-    consLastIndex = 0;
-
-  } else {
-    if (consConn.readyState == 4) {
-      message(errstr);
-      setTimeout(consFill, 5000);
-      return;
-    }
-
-    if (consConn.readyState != 3)
-      return;
-
-    var len = consConn.responseText.length;
-    if (consLastIndex == len) // No new data
-      return;
-
-    new_content = consConn.responseText.substring(consLastIndex, len);
-    consLastIndex = len;
-  }
-  if (new_content == undefined || new_content.length == 0)
-    return;
-  message("data received");
-  debugmsg("Console received: " + new_content);
-
-  consEvalContent(new_content);
-
-}
-
-
-function consFill() {
-  message_clear();
-
-  var location = window.location.href; //"http://node52.home.neubert-volmar.de:80/goo.html";
-  var parts = location.split("/");
-  var url = 'ws://' + parts[2] + '/ws';
-  if (consConn) {
-    consConn.close();
-  }
-  logmsg("Console connecting to " + url);
-  consConn = new WebSocket(url) /*, [], { headers: { "token": "foobar"}});*/
-  consConn.onclose =
-    consConn.onerror =
-    consConn.onmessage = consUpdate;
-
-  consLastIndex = 0;
-}
-
 
 function consSetScrollFunction(n) {
 
@@ -151,12 +51,12 @@ function consSetScrollFunction(n) {
       element.outerHeight() + 2) {
       if (!mustScroll[n]) {
         mustScroll[n] = 1;
-        debugmsg("Console " + n + " autoscroll restarted");
+        //debugmsg("Console " + n + " autoscroll restarted");
       }
     } else {
       if (mustScroll[n]) {
         mustScroll[n] = 0;
-        debugmsg("Console " + n + " autoscroll stopped");
+        //debugmsg("Console " + n + " autoscroll stopped");
       }
     }
   });
@@ -165,10 +65,9 @@ function consSetScrollFunction(n) {
 
 function consStart() {
 
-  logmsg("Console is opening");
+  logmsg("Starting consoles...");
   consSetScrollFunction(0);
   consSetScrollFunction(1);
-  setTimeout(consFill, 1000);
 
 }
 
@@ -179,7 +78,7 @@ function consStart() {
 
 function consAddReadings(nodeid) {
 
-  debugmsg("add readings grid to " + nodeid);
+  //debugmsg("add readings grid to " + nodeid);
   // readings grid for topic topic1/topic2/topic3 is
   // identified by readings_topic1_topic2_r
   var gridid = nodeid + "_r";
@@ -197,7 +96,7 @@ function consColorReading(rid, color) {
 
 function consAddReading(gridid, rid, topic) {
 
-  debugmsg("add reading " + topic + " for " + rid + " to " + gridid);
+  //debugmsg("add reading " + topic + " for " + rid + " to " + gridid);
   var content = "<div class='ui-block-a'><div class='ui-bar ui-bar-a' id='" + rid + "_t'>?</div></div>" +
     "<div class='ui-block-b'><div class='ui-bar ui-bar-a' id='" + rid + "'>" + topic + "</div></div>" +
     "<div class='ui-block-c'><div class='ui-bar ui-bar-a' id='" + rid + "_v'>?</div></div>";
@@ -212,7 +111,7 @@ function consAddReading(gridid, rid, topic) {
 }
 
 function consSetReading(rid, time, value) {
-  debugmsg("set time " + time + " and value " + value + " for " + rid);
+  //debugmsg("set time " + time + " and value " + value + " for " + rid);
   $("#" + rid + "_t").text(time);
   value ? $("#" + rid + "_v").text(value) : $("#" + rid + "_v").html("&nbsp;");
   clearTimeout(timers[rid]);
@@ -223,7 +122,7 @@ function consSetReading(rid, time, value) {
 }
 
 function consAddNode(nodeid, rid, topic) {
-  debugmsg("add node for " + rid + " to " + nodeid + " for topic /" + topic + "/");
+  //debugmsg("add node for " + rid + " to " + nodeid + " for topic /" + topic + "/");
   var content = "<div data-role='collapsible' data-collapsed='false' id='" +
     rid + "'><h3>" + topic + "</h3></div>";
   var child = $("#" + nodeid + " div.ui-collapsible-content").filter(":first").append(content);
@@ -235,22 +134,18 @@ function consAddNode(nodeid, rid, topic) {
   return child;
 }
 
-function consEvalEvent(time, content) {
-  var topicsArgs = content.split(" ");
-  var topics = topicsArgs[0].split("/");
-  topics.shift();
-  topics.shift(); // remove device name and "event"
-  topicsArgs.shift();
-  var args = topicsArgs.length > 0 ? topicsArgs.join(" ") : "";
+function consEvalEvent(time, topics, args) {
   var i;
   var rid = "readings";
-  for (i = 0; i < topics.length; i++) {
+  // do not modify time, topics, args here
+  // skip device name and "event"
+  for (i = 2; i < topics.length; i++) {
     var topic = topics[i];
     var parentid = rid;
     rid += "_" + topic;
     var element = document.getElementById(rid);
     if (element == null) {
-      debugmsg(rid + " not found");
+      //debugmsg(rid + " not found");
       if (i < topics.length - 1) {
         // node
         consAddNode(parentid, rid, topic);
@@ -267,16 +162,5 @@ function consEvalEvent(time, content) {
     if (i == topics.length - 1) {
       consSetReading(rid, time, args);
     }
-  }
-}
-
-function consEvalContent(content) {
-  var fields = JSON.parse(content);
-  if (fields.type == "event") {
-    consoleWriteln(0, fields.value);
-    var d = new Date();
-    consEvalEvent(d.toLocaleString(), fields.value);
-  } else if (fields.type == "log") {
-    consoleWriteln(1, fields.subtype + " " + fields.value)
   }
 }

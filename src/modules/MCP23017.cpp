@@ -23,8 +23,8 @@ void MCP23017::start() {
   pinMode(irqPin, INPUT_PULLUP);
   irqSetMode(FALLING);
 
-  Wire.begin(sda, scl);
-  mcp.begin(0);    //0 = 0x20, 1 = 0x21, ...
+  //Wire.begin(sda, scl);
+  //mcp.begin(0);    //0 = 0x20, 1 = 0x21, ...
   configMCP();
 }
 
@@ -68,15 +68,26 @@ void MCP23017::irqHandle() {
   if (irqDetected){
     irqSetMode(irqOFF);
     irqDetected = false;
-    logging.debug("MCP23017 IRQ");
-/*
-    uint8_t pin = mcp.getLastInterruptPin();
-    uint8_t val = mcp.getLastInterruptPinValue();
-    uint8_t state = mcp.digitalRead(pin);
+    lastIrqTime = now;
 
-    logging.debug("mcpGPIO " + String(pin) + " | " + String(val) + " | " + String(state));
 
-    while (mcp.readRegister(MCP23017_INTFA) > 0){
+    Serial.print("  INTFA -   ");Serial.println(mcp.readRegister(MCP23017_INTFA), BIN);
+    Serial.print("  INTCAPA - ");Serial.println(mcp.readRegister(MCP23017_INTCAPA), BIN);
+    Serial.print("  GPIOA -   ");Serial.println(mcp.readRegister(MCP23017_GPIOA), BIN);
+    Serial.print("  INTFA -   ");Serial.println(mcp.readRegister(MCP23017_INTFA), BIN);
+    Serial.print("  INTCAPA - ");Serial.println(mcp.readRegister(MCP23017_INTCAPA), BIN);
+
+
+    //logging.debug("MCP23017 IRQ");
+
+    //uint8_t pin = mcp.getLastInterruptPin();
+    //uint8_t val = mcp.getLastInterruptPinValue();
+    //uint8_t state = mcp.digitalRead(pin);
+
+    //logging.debug("mcpGPIO " + String(pin) + " | " + String(val) + " | " + String(state));
+    //topicQueue.put(eventPrefix + "/" + String(pin) + " " + String(val));
+
+/*    while (mcp.readRegister(MCP23017_INTFA) > 0){
       Serial.println("  hanging.....");
       //Serial.print("INTFA - ");Serial.println(MCP23017.readRegister(MCP23017_INTFA), BIN);
       //Serial.print("INTFB - ");Serial.println(MCP23017.readRegister(MCP23017_INTFB), BIN);
@@ -84,24 +95,49 @@ void MCP23017::irqHandle() {
       Serial.print("  GPIOB - ");Serial.println(mcp.readRegister(MCP23017_GPIOB), BIN);
     }
 */
+    clearIRQ();
     irqSetMode(FALLING);
   }
+
+//debouncing
+  if (now - lastIrqTime > MCPDEBOUNCETIME && lastIrqTime > 0){
+    //logging.debug("debounce enable IRQ");
+    irqDetected = false;  //clear accrued IRQs during debouncing
+    lastIrqTime = 0;
+    irqSetMode(FALLING);
+  }
+
 }
 //-------------------------------------------------------------------------------
 //  MCP23017 private
 //-------------------------------------------------------------------------------
 
 //...............................................................................
+// clear MCP23017 IRQ
+//...............................................................................
+void MCP23017::clearIRQ() {
+
+  while (mcp.readRegister(MCP23017_INTFA) > 0 || mcp.readRegister(MCP23017_INTFB) > 0){
+    Serial.println("---------------------------------------------");
+    Serial.println("  hanging.....");
+    //Serial.print("  INTFA - ");Serial.println(mcp.readRegister(MCP23017_INTFA), BIN);
+    //Serial.print("  INTFB - ");Serial.println(mcp.readRegister(MCP23017_INTFB), BIN);
+    Serial.print("  GPIOA - ");Serial.println(mcp.readRegister(MCP23017_GPIOA), BIN);
+    Serial.print("  GPIOB - ");Serial.println(mcp.readRegister(MCP23017_GPIOB), BIN);
+    configMCP();
+    Serial.println("---------------------------------------------");
+  }
+
+  //logging.debug("INTCAPA " + String(mcp.readRegister(MCP23017_INTCAPA)));
+  //logging.debug("INTCAPB " + String(mcp.readRegister(MCP23017_INTCAPB)));
+
+}
+
+//...............................................................................
 // config MCP23017
 //...............................................................................
 void MCP23017::configMCP() {
   logging.debug("MCP23017::configMCP");
-
-  pinMode(15, OUTPUT);
-  digitalWrite(15, LOW);
-  delay(100);
-  digitalWrite(15, HIGH);
-
 
   Wire.begin(sda, scl);
   mcp.begin(0);    //0 = 0x20, 1 = 0x21, ...
@@ -111,40 +147,40 @@ void MCP23017::configMCP() {
   logging.debug("write");
   //mcp.writeRegister(MCP23017_IODIRA, B10101010);
   mcp.writeRegister(MCP23017_IODIRA, B11111111);
-  //mcp.writeRegister(MCP23017_IODIRB, B11111111);
+  mcp.writeRegister(MCP23017_IODIRB, B11111111);
 
   // IPOLx [RW] Polarität
   // 1 = invertiert; 0 = nicht invertiert
   mcp.writeRegister(MCP23017_IPOLA, B11111111);
-  //mcp.writeRegister(MCP23017_IPOLB, B11111111);
+  mcp.writeRegister(MCP23017_IPOLB, B11111111);
 
   // GPINTENx [RW] Interrupt-On-Change-Funktion
   // 1 = IRQ enabled; 0 = IRQ disabled
   // Es müssen zusätzlich die DEFVAL- und INTCON-Register konfiguriert werden.
   mcp.writeRegister(MCP23017_GPINTENA, B11111111);
-  //mcp.writeRegister(MCP23017_GPINTENB, B11111111);
+  mcp.writeRegister(MCP23017_GPINTENB, B11111111);
 
   // DEFVALx [RW] IRQ-Vergleichsregister
   // Vergleich GPIO mit DEFVALx bei Opposition und aktivem IRQ über GPINTEN und INTCON wird ein Interrupt ausgelöst.
   mcp.writeRegister(MCP23017_DEFVALA, B00000000);
-  //mcp.writeRegister(MCP23017_DEFVALB, B00000000);
+  mcp.writeRegister(MCP23017_DEFVALB, B00000000);
 
   // INTCONx [RW] Interruptmode
   // 1 = vergleich mit DEFVALx; 0 = Interrupt-On-Change
   mcp.writeRegister(MCP23017_INTCONA, B00000000);
-  //mcp.writeRegister(MCP23017_INTCONB, B00000000);
+  mcp.writeRegister(MCP23017_INTCONB, B00000000);
 
   // GPPUx [RW] INPUT Pull-Up 100k
   // 1 = enabled, 0 = disabled
   mcp.writeRegister(MCP23017_GPPUA, B11111111);
-  //mcp.writeRegister(MCP23017_GPPUB, B11111111);
+  mcp.writeRegister(MCP23017_GPPUB, B11111111);
 
   // INTFx [R] Interrupt detected
   // 1 = IRQ detected; 0 = no IRQ detected
 
   // INTCAPx [R] GPIO-Interrupt-State
   // Das Register kann nur gelesen werden und es wird nur beim Auftreten eines Interrupts aktualisiert.
-  // Die Registerwerte bleiben unverändert, bis der Interrupt über das Lesen von INTCAP oder GPIO gelöscht.
+  // Die Registerwerte bleiben unverändert, bis der Interrupt über das Lesen von INTCAP oder GPIO gelöscht wird.
 
   // GPIOx [RW] GPIO-Portregister
   // Ein Lesen der Register entspricht dem Lesen der Portleitungen.
@@ -188,14 +224,5 @@ void MCP23017::configMCP() {
 
   // IOCON.0 allways 0
 
-
-
-
-
-
-  //mirror INTA/INTB, floating, flank
-  //mcpGPIO.mcp.setupInterrupts(true,false,LOW);
-  //mcpGPIO.mcp.pinMode(2, INPUT);
-  //mcpGPIO.mcp.pullUp(2, HIGH);
-  //mcpGPIO.mcp.setupInterruptPin(2,FALLING);
+  clearIRQ();
 }

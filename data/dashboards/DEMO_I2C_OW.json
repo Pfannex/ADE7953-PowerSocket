@@ -1,0 +1,54 @@
+[
+  {
+    "type": "text",
+    "name": "clock",
+    "legend": "Time",
+    "readonly": 1,
+    "event": "~/event/clock/time",
+    "inputtype": "datetime"
+  },
+
+  {
+    "type": "controlgroup",
+    "name": "power",
+    "legend": "Power",
+    "action": "~/set/device/power",
+    "event": "~/event/device/power",
+    "data": [{
+        "label": "Off",
+        "value": 0
+      },
+      {
+        "label": "On",
+        "value": 1
+      }
+    ]
+  },
+
+  {
+    "type": "text",
+    "name": "brightness",
+    "legend": "brightness",
+    "action": "~/set/device/brightness",
+    "event": "~/event/device/brightness",
+    "inputtype": "number"
+  },
+
+  {
+    "type": "text",
+    "name": "brightness",
+    "legend": "brightness",
+    "action": "~/set/device/brightness",
+    "event": "~/event/device/brightness",
+    "inputtype": "number"
+  },
+
+  {
+    "type": "text",
+    "name": "led",
+    "legend": "LED",
+    "event": "~/event/device/led",
+    "inputtype": "number"
+  }
+
+]
