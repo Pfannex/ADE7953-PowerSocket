@@ -30,9 +30,9 @@ public:
   void on_events(Topic &topic);
 
 private:
-  I2C i2c;
-  LCD lcd;
-  OW ow;
-  MCP23017 mcpGPIO;
+  //I2C i2c;
+  //LCD lcd;
+  //OW ow;
+  //MCP23017 mcpGPIO;
   void configMCP();
 };

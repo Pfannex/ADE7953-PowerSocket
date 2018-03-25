@@ -9,11 +9,11 @@
 //  DeviceDEMO_I2C_OW
 //-------------------------------------------------------------------------------
 DEMO_I2C_OW::DEMO_I2C_OW(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
-           :Device(logging, topicQueue, ffs),
-            i2c("i2c", logging, topicQueue, SDA, SCL),
-            lcd("SSD1306", logging, topicQueue, SDA, SCL),
-            ow("oneWire", logging, topicQueue, OWPIN),
-            mcpGPIO("MCP23017", logging, topicQueue, MCPIRQ, SDA, SCL)
+           :Device(logging, topicQueue, ffs)
+            //i2c("i2c", logging, topicQueue, SDA, SCL),
+            //lcd("SSD1306", logging, topicQueue, SDA, SCL),
+            //ow("oneWire", logging, topicQueue, OWPIN),
+            //mcpGPIO("MCP23017", logging, topicQueue, MCPIRQ, SDA, SCL)
             {}
 
 //...............................................................................
@@ -21,6 +21,7 @@ DEMO_I2C_OW::DEMO_I2C_OW(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
 //...............................................................................
 void DEMO_I2C_OW::start() {
   Device::start();
+/*
   logging.info("starting device " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
 
   logging.info("starting " + i2c.getVersion()); //only first time a class is started
@@ -32,18 +33,28 @@ void DEMO_I2C_OW::start() {
   //logging.info("starting " + mcpGPIO.getVersion()); //only first time a class is started
   //mcpGPIO.start();
   //configMCP();
-
+*/
   logging.info("device running");
   logging.info(ffs.deviceCFG.readItem("NEW"));
+
+//######################################################
+  #include "Wire.h"
+  #include <Adafruit_BMP085.h>
+
+  Adafruit_BMP085 bmp;
+
+  bmp.begin();
+  Serial.println(bmp.readTemperature());
+  Serial.println(bmp.readPressure()/100);
 }
 
 //...............................................................................
 // handle - periodically called by the controller
 //...............................................................................
 void DEMO_I2C_OW::handle() {
-  i2c.handle();
-  lcd.handle();
-  ow.handle();
+  //i2c.handle();
+  //lcd.handle();
+  //ow.handle();
   //mcpGPIO.handle();
 }
 
@@ -100,7 +111,7 @@ void DEMO_I2C_OW::on_events(Topic &topic) {
   // central business logic
 
   if (topic.modifyTopic(0) == "event/wifi/connected"){
-    lcd.println(ffs.cfg.readItem("wifi_ip"), ArialMT_Plain_16, 0);
+    //lcd.println(ffs.cfg.readItem("wifi_ip"), ArialMT_Plain_16, 0);
   }
 
 /*
