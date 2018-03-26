@@ -1,6 +1,7 @@
 {
 "WS2812_01_COLOR" : "55555",
 "I2CPOLL"         : "2500",
+"NEW"             : "Hello World!",
 
 "SAGCYC"        : "",
 "DISNOLOAD"     : "",

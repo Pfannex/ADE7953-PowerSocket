@@ -16,6 +16,8 @@
 //###############################################################################
 //  GPIO
 //###############################################################################
+// time in ms pin must be stable before reporting change
+#define MCPDEBOUNCETIME 500
 
 class MCP23017 : public Module {
 
@@ -34,9 +36,11 @@ public:
 
 private:
   void configMCP();
+  void clearIRQ();
   void irq();                         // irq jumpTo funktion
   void irqHandle();                   // handle irq function
   #define irqOFF 4                    // irq detachInterrupt mode
   void irqSetMode(int mode);          // irq mode setter
   volatile bool irqDetected = false;
+  unsigned long lastIrqTime = 0;
 };
