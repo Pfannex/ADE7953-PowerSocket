@@ -9,8 +9,8 @@
 //  DeviceDEMO_I2C_OW
 //-------------------------------------------------------------------------------
 DEMO_I2C_OW::DEMO_I2C_OW(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
-           :Device(logging, topicQueue, ffs)
-            //i2c("i2c", logging, topicQueue, SDA, SCL),
+           :Device(logging, topicQueue, ffs),
+            i2c("i2c", logging, topicQueue, SDA, SCL)
             //lcd("SSD1306", logging, topicQueue, SDA, SCL),
             //ow("oneWire", logging, topicQueue, OWPIN),
             //mcpGPIO("MCP23017", logging, topicQueue, MCPIRQ, SDA, SCL)
@@ -21,12 +21,12 @@ DEMO_I2C_OW::DEMO_I2C_OW(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
 //...............................................................................
 void DEMO_I2C_OW::start() {
   Device::start();
-/*
+
   logging.info("starting device " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
 
   logging.info("starting " + i2c.getVersion()); //only first time a class is started
   i2c.start();
-  logging.info("starting " + lcd.getVersion()); //only first time a class is started
+/*  logging.info("starting " + lcd.getVersion()); //only first time a class is started
   lcd.start();
   logging.info("starting " + ow.getVersion()); //only first time a class is started
   ow.start();
@@ -37,15 +37,6 @@ void DEMO_I2C_OW::start() {
   logging.info("device running");
   logging.info(ffs.deviceCFG.readItem("NEW"));
 
-//######################################################
-  #include "Wire.h"
-  #include <Adafruit_BMP085.h>
-
-  Adafruit_BMP085 bmp;
-
-  bmp.begin();
-  Serial.println(bmp.readTemperature());
-  Serial.println(bmp.readPressure()/100);
 }
 
 //...............................................................................

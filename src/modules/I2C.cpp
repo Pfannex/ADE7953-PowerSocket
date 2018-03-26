@@ -19,6 +19,7 @@ void I2C::start() {
   Module::start();
   logging.info("starting I2C");
   scanBus();
+  testI2C();
 }
 
 //...............................................................................
@@ -41,6 +42,29 @@ void I2C::handle() {
 //...............................................................................
 String I2C::getVersion() {
   return  String(I2C_Name) + " v" + String(I2C_Version);
+}
+
+//...............................................................................
+//  I2C-Bus begin
+//...............................................................................
+void I2C::begin(){
+  brzo_i2c_setup(sda, scl, 2000);
+  brzo_i2c_start_transaction(_i2cAddr, _clockSpeed);
+}
+void I2C::begin(uint8_t i2cAddr){
+  brzo_i2c_setup(sda, scl, 2000);
+  brzo_i2c_start_transaction(i2cAddr, I2C_CLOCK);
+}
+void I2C::begin(uint8_t i2cAddr, int clockSpeed){
+  brzo_i2c_setup(sda, scl, 2000);
+  brzo_i2c_start_transaction(i2cAddr, clockSpeed);
+}
+
+//...............................................................................
+//  I2C-Bus end
+//...............................................................................
+uint8_t I2C::end(){
+  return brzo_i2c_end_transaction();
 }
 
 //...............................................................................
@@ -122,6 +146,17 @@ void I2C::scanBus() {
 //...............................................................................
 //  I2C write
 //...............................................................................
+//write byte
+uint8_t I2C::write(uint8_t val){
+  uint8_t buffer[1];
+  buffer[0] = val;
+  brzo_i2c_write(buffer, 1, false);
+}
+uint8_t I2C::write(uint8_t val, bool repeated_start){
+  uint8_t buffer[1];
+  buffer[0] = val;
+  brzo_i2c_write(buffer, 1, repeated_start);
+}
 //buffer[]
 uint8_t I2C::write(uint8_t i2cAddr, int clockSpeed, uint8_t buf[], int bufCount){
   brzo_i2c_setup(sda, scl, 2000);
@@ -148,7 +183,7 @@ uint8_t I2C::write(uint8_t i2cAddr, int clockSpeed,
 }
 
 //register 8 Bit / val 8Bit
-uint8_t I2C::write(uint8_t reg, uint8_t val){
+uint8_t I2C::write8_8(uint8_t reg, uint8_t val){
   uint8_t buffer[2];
   buffer[0] = reg;
   buffer[1] = val;
@@ -194,6 +229,15 @@ uint8_t I2C::write16_32(uint16_t reg, uint32_t val){
 //...............................................................................
 //  I2C read/write
 //...............................................................................
+//read byte
+uint8_t* I2C::read(uint8_t val[]){
+  brzo_i2c_read(val, 1, false);
+  return val;
+}
+uint8_t* I2C::read(uint8_t val[], bool repeated_start){
+  brzo_i2c_read(val, 1, repeated_start);
+  return val;
+}
 //buffer[]
 uint8_t* I2C::read(uint8_t i2cAddr, int clockSpeed,
                    uint32_t reg, uint8_t regSize,
@@ -204,14 +248,14 @@ uint8_t* I2C::read(uint8_t i2cAddr, int clockSpeed,
   for (uint8_t i = 0; i < regSize; i++) {
     buffer[i] = (reg >> (regSize-1-i)*8);     //write MSB first
   }
-  uint8_t x[bufSize];
+  //uint8_t x[bufSize];
   brzo_i2c_write(buffer, regSize, true);
   brzo_i2c_read(buf, bufSize, false);
   brzo_i2c_end_transaction();
   return buf;
 }
 //register 8-Bit / val 8-Bit
-uint8_t I2C::read(uint8_t reg){
+uint8_t I2C::read8_8(uint8_t reg){
   uint8_t buf[1];
   uint8_t* buffer = read(_i2cAddr, _clockSpeed, reg, 1, buf, 1);
   return buffer[0];
@@ -280,17 +324,50 @@ void I2C::readSi7021() {
 
 
 //...............................................................................
-// test BRZO-Library
+// test I2C-Library
 //...............................................................................
-/*
-void I2C::testBRZO(){
+
+void I2C::testI2C(){
   pinMode(15, OUTPUT);
-  digitalWrite(15, LOW);
   digitalWrite(15, HIGH);
   delay(200);
   digitalWrite(15, LOW);
 
 
+// RAW write / read---------------------------------------
+  begin(0x20, 400);
+    write(0x01, true);
+    write(0x33);
+  end();
+
+  begin(0x20, 400);
+    write(0x01, true);
+    uint8_t buf[1];
+    uint8_t* buffer = read(buf);
+    Serial.println(buf[0], HEX);
+  end();
+
+// write / read bytes by size-------------------------------
+  setBus(0x20, 400);
+  write8_8(0x00, 0xAB);
+  Serial.println(read8_8(0x00), HEX);
+  write8_16(0x00, 0xCDEF);
+  Serial.println(read8_16(0x00), HEX);
+
+  setBus(0x38, 400);
+  write16_8(0x0000, 0xFA);
+  Serial.println(read16_8(0x00), HEX);
+  write16_16(0x100, 0xABCD);
+  Serial.println(read16_16(0x100), HEX);
+  write16_32(0x300, 0x00ABCDEF);
+  Serial.println(read16_32(0x300), HEX);
+
+// write / read by buffer[]----------------------------------
+
+
+
+
+/*
   write(0x20, 400, 0xABCD, 2, 0x1A2B3C4D, 4);
   write(0x20, 400, 0xAB, 1, 0x1A2B, 2);
   delay(5);
@@ -330,7 +407,5 @@ void I2C::testBRZO(){
   write16_32(0x300, 0x00AABBCC);
   Serial.println(read16_32(0x300), HEX);
 
-
-}
-
 */
+}

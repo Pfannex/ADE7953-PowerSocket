@@ -6,7 +6,6 @@
 #include <Arduino.h>
 
 //I²C
-#include <Wire.h>
 #include <brzo_i2c.h>
 #include <Adafruit_BMP085.h>
 #include <Adafruit_Si7021.h>
@@ -37,25 +36,34 @@ public:
   void handle();
   String getVersion();
 
-  void setBus(uint8_t i2cAddr, int clockSpeed);
   uint8_t _i2cAddr = 0x00;
-  int _clockSpeed = 400;
+  int _clockSpeed = I2C_CLOCK;
+  void setBus(uint8_t i2cAddr, int clockSpeed);
+  void begin();
+  void begin(uint8_t i2cAddr);
+  void begin(uint8_t i2cAddr, int clockSpeed);
+  uint8_t end();
   void scanBus();
 
+  uint8_t write(uint8_t val);
+  uint8_t write(uint8_t val, bool repeated_start);
   uint8_t write(uint8_t i2cAddr, int clockSpeed, uint8_t buf[], int bufCount);
   uint8_t write(uint8_t i2cAddr, int clockSpeed,
                 uint16_t reg, uint8_t regSize,
                 uint32_t val, uint8_t valSize);
-  uint8_t write(uint8_t reg, uint8_t val);
+  uint8_t write8_8(uint8_t reg, uint8_t val);
   uint8_t write8_16(uint8_t reg, uint16_t val);
+
   uint8_t write16_8(uint16_t reg, uint8_t val);
   uint8_t write16_16(uint16_t reg, uint16_t val);
   uint8_t write16_32(uint16_t reg, uint32_t val);
 
+  uint8_t* read(uint8_t val[]);
+  uint8_t* read(uint8_t val[], bool repeated_start);
   uint8_t* read(uint8_t i2cAddr, int clockSpeed,
                 uint32_t reg, uint8_t regSize,
                 uint8_t val[], uint8_t valSize);
-  uint8_t  read(uint8_t reg);
+  uint8_t  read8_8(uint8_t reg);
   uint16_t read8_16(uint8_t reg);
   uint8_t  read16_8(uint16_t reg);
   uint16_t read16_16(uint16_t reg);
@@ -65,6 +73,7 @@ public:
   //void readBMP180();    //BMP180 Luftdruck/Temperatur
   //void readSi7021();    //SI7021 Luftfeuchtigkeit/Temperatur
 private:
+  void testI2C();
   //int tPoll = 0;
 
 };
