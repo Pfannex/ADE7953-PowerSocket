@@ -24,10 +24,16 @@ function dashboardAddControlgroup(w) {
   var legend = w.legend;
   var name = w.name;
   var data = w.data;
+  var direction = w.direction
+  if (typeof w.direction === "undefined") {
+    direction= "horizontal";
+  } else {
+    direction= w.direction;
+  }
 
   var content = "<!-- widget: controlgroup " + name + " -->\n" +
     "<div class=\"ui-field-contain\">\n" +
-    "<fieldset data-role=\"controlgroup\" data-type=\"horizontal\" data-mini=\"true\" " +
+    "<fieldset data-role=\"controlgroup\" data-type=\""+direction+"\" data-mini=\"true\" " +
     "onChange=\"dashboardAction('" + name + "')\">\n" +
     "<legend>" + legend + "</legend>\n";
   var i;

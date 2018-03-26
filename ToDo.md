@@ -30,8 +30,8 @@
       - grid  
         - event
         - präfix / sufix
-      - textinput
-        - action / event   
+      - ~~textinput
+        - action / event~~   
 
 - **API**
   - erstellen der Funktionsübersicht (PF) -> doxygen

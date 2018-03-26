@@ -49,6 +49,10 @@
     </div>
     <!-- content -->
     <div data-role="content">
+      <div data-role="fieldcontain">
+        <label for="apicall">API Call</label>
+        <input type="text" id="apicall" name="apicall" onChange="call(this.value)"/>
+      </div>
       <div data-role="collapsible" data-inset="true" data-collapsed="false" id="dashboard">
         <h2>Dashboard</h2>
       </div>
@@ -197,8 +201,12 @@
             <h1>Local Update</h1>
             <form enctype="multipart/form-data" id="update_form">
               <div data-role="fieldcontain">
-                <label for="update_localpath">Path</label>
+                <label for="update_localpath">Firmware path</label>
                 <input type="file" id="update_localpath" name="update_localpath" class="ui-input-text ui-body-c" />
+              </div>
+              <div data-role="fieldcontain">
+                <label for="data_localpath">FFS path</label>
+                <input type="file" id="data_localpath" name="data_localpath" class="ui-input-text ui-body-c" />
               </div>
               <a data-role="button" class="ui-btn ui-btn-inline ui-icon-arrow-d ui-btn-icon-left" id="update" onClick="update()">Update</a>
             </form>

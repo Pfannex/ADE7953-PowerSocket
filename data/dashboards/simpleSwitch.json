@@ -26,6 +26,22 @@
   },
 
   {
+    "type": "controlgroup",
+    "name": "verti",
+    "legend": "Verti",
+    "direction": "vertical",
+    "data": [{
+        "label": "foo",
+        "value": 0
+      },
+      {
+        "label": "bar",
+        "value": 1
+      }
+    ]
+  },
+
+  {
     "type": "text",
     "name": "brightness",
     "legend": "brightness",
