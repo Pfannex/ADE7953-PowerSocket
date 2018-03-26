@@ -70,6 +70,38 @@ function dashboardAddText(w) {
   dashboardAddContent(w, content);
 }
 
+// http://api.jquerymobile.com/button/
+function dashboardAddButton(w) {
+
+  var legend = w.legend;
+  var name = w.name;
+  var id = name;
+
+  var content = "<!-- widget: button " + name + " -->\n" +
+    "<button class=\"ui-btn ui-btn-inline\" "+
+    "onClick=\"dashboardAction('" + name + "')\">"+legend+"</button> \n";
+  dashboardAddContent(w, content);
+}
+
+// http://api.jquerymobile.com/slider/
+function dashboardAddSlider(w) {
+
+  var legend = w.legend;
+  var name = w.name;
+  var id = name;
+  var min= w.min; if (typeof min === "undefined") min= 0;
+  var max= w.max; if (typeof max === "undefined") max= 99;
+
+  var content = "<!-- widget: slider " + name + " -->\n" +
+    "<div class=\"ui-field-contain\">\n" +
+    "<label for=\"" + id + "\">" + legend + "</label>\n" +
+    "<input type=\"range\" id=\"" + id + "\" " +
+    "min=\""+min+"\" max=\""+max+"\" value=\""+min+"\" "+
+    "onInput=\"dashboardAction('" + name + "')\" "+
+    "onChange=\"dashboardAction('" + name + "')\">\n" +
+    "</div>\n";
+  dashboardAddContent(w, content);
+}
 
 //
 // dashboard builder
@@ -99,6 +131,12 @@ function dashboardBuild(json) {
         break;
       case "text":
         dashboardAddText(w);
+        break;
+      case "button":
+        dashboardAddButton(w);
+        break;
+      case "slider":
+        dashboardAddSlider(w);
         break;
       default:
         logmsg("Unknown widget type " + w.type);
@@ -137,6 +175,18 @@ function dashboardAction(name) {
               call(w.action + " " + value);
             }
             break;
+          case "button":
+            logmsg("button "+ name + " clicked");
+            if(w.action) {
+              call(w.action);
+            }
+          case "slider":
+            var value = getText(w.name);
+            logmsg("slider " + name + " has changed to " + value);
+            if(w.action) {
+              call(w.action + " " + value);
+            }
+            break;
           default:
             logmsg("Unknown widget type " + w.type);
         }
@@ -165,6 +215,9 @@ function dashboardEvalEvent(topics, args) {
           setRadio(w.name, args);
           break;
         case "text":
+          setText(w.name, args);
+          break;
+        case "slider":
           setText(w.name, args);
           break;
         default:

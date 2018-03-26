@@ -51,6 +51,22 @@
   },
 
   {
+    "type": "button",
+    "name": "knopp",
+    "legend": "knopp",
+    "action": "~/set/device/toggle"
+  },
+
+  {
+    "type": "slider",
+    "name": "angle",
+    "min": -180,
+    "max": 180,
+    "action": "~/set/device/angle",
+    "event": "~/event/device/angle"
+  },
+
+  {
     "type": "text",
     "name": "led",
     "legend": "LED",

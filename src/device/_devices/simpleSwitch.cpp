@@ -54,11 +54,13 @@ String simpleSwitch::set(Topic &topic) {
   logging.debug("device set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
-  if (topic.getItemCount() != 4) // ~/set/device/power
+  if (topic.getItemCount() != 4) // ~/set/device/(power|toggle)
     return TOPIC_NO;
   if (topic.itemIs(3, "power")) {
     setPowerMode(topic.getArgAsLong(0));
     return TOPIC_OK;
+  } else if(topic.itemIs(3, "toggle")) {
+    setPowerMode(!power);
   } else {
     return TOPIC_NO;
   }

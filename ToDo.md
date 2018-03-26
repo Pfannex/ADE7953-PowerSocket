@@ -6,7 +6,8 @@
   - alle Variablen in die deviceCFG.json aufnehmen
   - start AP with configMode
 
-  - **API**
+- **API**
+  - I think that an API call without argument provokes a crash, debug it!
 
 - **UI**
   - OTA implementieren
@@ -17,9 +18,9 @@
     - Widgets
       - button
         - action
-      - controlgroup
+      - ~~controlgroup
         - data-type="horizontal" / "vertical"
-        - action / event
+        - action / event~~
       - checkbox
         - action / event
       - static text header
