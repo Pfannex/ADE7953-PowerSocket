@@ -180,6 +180,7 @@ function dashboardAction(name) {
             if(w.action) {
               call(w.action);
             }
+            break;
           case "slider":
             var value = getText(w.name);
             logmsg("slider " + name + " has changed to " + value);

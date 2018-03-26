@@ -60,7 +60,8 @@ String simpleSwitch::set(Topic &topic) {
     setPowerMode(topic.getArgAsLong(0));
     return TOPIC_OK;
   } else if(topic.itemIs(3, "toggle")) {
-    setPowerMode(!power);
+    setPowerMode(power ? 0 : 1);
+    return TOPIC_OK;
   } else {
     return TOPIC_NO;
   }

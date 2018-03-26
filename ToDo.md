@@ -7,7 +7,7 @@
   - start AP with configMode
 
 - **API**
-  - I think that an API call without argument provokes a crash, debug it!
+  - nothing to do
 
 - **UI**
   - OTA implementieren
