@@ -326,7 +326,7 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
     request->send(200, "text/plain", result);
   } else {
     api.debug("client is not authenticated.");
-    request->send(404, "text/plain", "");
+    request->send(401, "text/plain", ""); // 401 Unauthorized
   }
 }
 

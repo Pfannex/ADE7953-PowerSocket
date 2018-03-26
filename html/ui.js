@@ -45,7 +45,7 @@ function ping() {
   $.ajax({
     url: "/",
     success: function(result) {
-      window.location.href = "/";
+      startOver();
     }
   })
 }
@@ -122,7 +122,7 @@ function call(topicsArgs, callback) {
             }
       },
       "text"
-  );
+  ).fail(function() { startOver(); });
   //$("#popupProcessing").popup("close");
 }
 

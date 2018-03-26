@@ -5,12 +5,13 @@
 // ---------------------------
 
 $(document).ready(function() {
-  consStart();
-  startListener();
 });
 
 // initialize the dashboard
 $(document).on("pagecreate", "#page1", function(event, ui) {
+  // moved here, otherwise executed for any page that uses omniesp.js
+  consStart();
+  startListener();
   logmsg('Initializing dashboard...');
   var json = retrieveDashboard(dashboardBuild);
 })
@@ -22,6 +23,15 @@ $(document).on("pagecreate", "#page2", function(event, ui) {
   //set_select_handlers();
   var json = retrieveConfig(setConfig);
 })
+
+// ---------------------------
+// go back to the login page
+// ---------------------------
+
+function startOver() {
+  closeConnection();
+  window.location.href = "/";
+}
 
 // ---------------------------
 // status bar
