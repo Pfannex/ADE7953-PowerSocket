@@ -26,6 +26,13 @@
   },
 
   {
+    "type": "button",
+    "name": "toggle",
+    "legend": "Toggle",
+    "action": "~/set/device/toggle"
+  },
+
+  {
     "type": "controlgroup",
     "name": "verti",
     "legend": "Verti",
@@ -48,13 +55,6 @@
     "action": "~/set/device/brightness",
     "event": "~/event/device/brightness",
     "inputtype": "number"
-  },
-
-  {
-    "type": "button",
-    "name": "knopp",
-    "legend": "knopp",
-    "action": "~/set/device/toggle"
   },
 
   {

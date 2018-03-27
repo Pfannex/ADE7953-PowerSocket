@@ -50,8 +50,16 @@
     <!-- content -->
     <div data-role="content">
       <div data-role="fieldcontain">
+        <script type="text/javascript">
+          function callOnEnter(event,value) {
+            if(event.keyCode==13) call(value);
+          }
+        </script>
         <label for="apicall">API Call</label>
-        <input type="text" id="apicall" name="apicall" onChange="call(this.value)"/>
+        <input type="text" id="apicall" name="apicall"
+            onChange="call(this.value)"
+            onKeyPress="javascript:callOnEnter(event,this.value)"
+        />
       </div>
       <div data-role="collapsible" data-inset="true" data-collapsed="false" id="dashboard">
         <h2>Dashboard</h2>

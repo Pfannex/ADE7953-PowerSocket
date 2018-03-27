@@ -16,8 +16,8 @@
   - API-Call-Line
   - Dashboard
     - Widgets
-      - button
-        - action
+      - ~~button
+        - action~~
       - ~~controlgroup
         - data-type="horizontal" / "vertical"
         - action / event~~
@@ -25,12 +25,12 @@
         - action / event
       - static text header
         - in .json
-      - slider
+      - ~~slider
         - action / event
-        - min/max
+        - min/max~~
       - grid  
         - event
-        - präfix / sufix
+        - prefix / suffix
       - ~~textinput
         - action / event~~   
 

@@ -149,6 +149,34 @@ function dashboardBuild(json) {
 //
 // dashboard action
 //
+var MIN_MSECS_BETWEEN_CALLS= 200;
+var lastCallTime= 0;
+var lastTopicsArgs= "";
+var delayActive= 0;
+
+function doCall() {
+  call(lastTopicsArgs);
+  lastCallTime= (new Date()).getTime();
+  delayActive= 0;
+}
+
+function limitCall(topicsArgs) {
+    // ensure that the API is not called more often the every 300 ms
+    lastTopicsArgs= topicsArgs;
+    if(delayActive) return;
+    var t= (new Date()).getTime();
+    var dt= t-lastCallTime;
+    if(dt< MIN_MSECS_BETWEEN_CALLS) {
+      // try again later
+      delayActive= 1;
+      setTimeout(doCall, MIN_MSECS_BETWEEN_CALLS-dt);
+      debugmsg("API call delayed by "+dt+" ms.");
+    } else {
+      debugmsg("Immediate API call.");
+      doCall();
+    }
+}
+
 function dashboardAction(name) {
 
   // no action should occur if an event changes the dashboard
@@ -178,14 +206,14 @@ function dashboardAction(name) {
           case "button":
             logmsg("button "+ name + " clicked");
             if(w.action) {
-              call(w.action);
+              limitCall(w.action);
             }
             break;
           case "slider":
             var value = getText(w.name);
             logmsg("slider " + name + " has changed to " + value);
             if(w.action) {
-              call(w.action + " " + value);
+              limitCall(w.action + " " + value);
             }
             break;
           default:
