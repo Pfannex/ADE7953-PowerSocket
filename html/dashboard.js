@@ -5,21 +5,39 @@
 // ---------------------------
 
 var muteDashboardActions = 0;
-var widgets;
-
+var widgets; // flat list of all widgets
 
 //
 // widgets
 //
 
-function dashboardAddContent(w, content) {
+function dashboardAddContent(element, w, content) {
   debugmsg(content);
-  var child = $("#dashboard div.ui-collapsible-content").append(content);
+  widgets.push(w);
+  var child = element.append(content);
   child.trigger('create');
+  return child;
+}
+
+function dashboardAddGroup(element, w) {
+
+  var name = w.name;
+  var id = name;
+  var legend = w.legend;
+  var data = w.data; // array of elements
+
+  var content = "<!-- widget: group " + name +"-->\n"+
+    "<div data-role='collapsible' data-inset='true' data-collapsed='false' id='"+id+"'>"+
+    '<h2>'+legend+'</h2>\n'+
+    '</div>\n';
+  //var child= dashboardAddContent(element, w, content).find("div.ui-collapsible-content");
+  dashboardAddContent(element, w, content);
+  var child= $("#"+id+" div.ui-collapsible-content");
+  dashboardBuildArray(child, data);
 }
 
 // http://api.jquerymobile.com/controlgroup/
-function dashboardAddControlgroup(w) {
+function dashboardAddControlgroup(element, w) {
 
   var legend = w.legend;
   var name = w.name;
@@ -41,16 +59,16 @@ function dashboardAddControlgroup(w) {
     var label = data[i].label;
     var value = data[i].value;
     var id = name + "-" + value;
-    logmsg(" with label " + label + ", value " + value);
+    //debugmsg(" with label " + label + ", value " + value);
     content += "<input name=\"" + name + "\" id=\"" + id + "\" value=\"" + value + "\" type=\"radio\"/>\n";
     content += "<label for=\"" + id + "\">" + label + "</label>\n";
   }
   content += "</fieldset>\n</div>\n";
-  dashboardAddContent(w, content);
+  dashboardAddContent(element, w, content);
 }
 
 // http://api.jquerymobile.com/textinput/
-function dashboardAddText(w) {
+function dashboardAddText(element, w) {
 
   var legend = w.legend;
   var name = w.name;
@@ -67,11 +85,11 @@ function dashboardAddText(w) {
     (readonly ? "readonly " : "") +
     "onChange=\"dashboardAction('" + name + "')\">\n" +
     "</div>\n";
-  dashboardAddContent(w, content);
+  dashboardAddContent(element, w, content);
 }
 
 // http://api.jquerymobile.com/button/
-function dashboardAddButton(w) {
+function dashboardAddButton(element, w) {
 
   var legend = w.legend;
   var name = w.name;
@@ -80,11 +98,11 @@ function dashboardAddButton(w) {
   var content = "<!-- widget: button " + name + " -->\n" +
     "<button class=\"ui-btn ui-btn-inline\" "+
     "onClick=\"dashboardAction('" + name + "')\">"+legend+"</button> \n";
-  dashboardAddContent(w, content);
+  dashboardAddContent(element, w, content);
 }
 
 // http://api.jquerymobile.com/slider/
-function dashboardAddSlider(w) {
+function dashboardAddSlider(element, w) {
 
   var legend = w.legend;
   var name = w.name;
@@ -100,7 +118,7 @@ function dashboardAddSlider(w) {
     "onInput=\"dashboardAction('" + name + "')\" "+
     "onChange=\"dashboardAction('" + name + "')\">\n" +
     "</div>\n";
-  dashboardAddContent(w, content);
+  dashboardAddContent(element, w, content);
 }
 
 //
@@ -115,33 +133,39 @@ function retrieveDashboard(callback) {
   return call("~/get/ffs/webCFG/root", callback);
 }
 
-
-function dashboardBuild(json) {
-
-  logmsg("Building dashboard...");
-  debugmsg(json);
-  widgets= JSON.parse(json);
-
+function dashboardBuildArray(element, widgets) {
   var i;
   for (i = 0; i < widgets.length; i++) {
     var w = widgets[i];
     switch (w.type) {
+      case "group":
+        dashboardAddGroup(element, w);
+        break;
       case "controlgroup":
-        dashboardAddControlgroup(w);
+        dashboardAddControlgroup(element, w);
         break;
       case "text":
-        dashboardAddText(w);
+        dashboardAddText(element, w);
         break;
       case "button":
-        dashboardAddButton(w);
+        dashboardAddButton(element, w);
         break;
       case "slider":
-        dashboardAddSlider(w);
+        dashboardAddSlider(element, w);
         break;
       default:
         logmsg("Unknown widget type " + w.type);
     }
   }
+}
+
+function dashboardBuild(json) {
+
+  logmsg("Building dashboard...");
+  debugmsg(json);
+  widgets= []; // clear widget list
+  var element= $("#dashboard");
+  dashboardBuildArray(element, JSON.parse(json));
   logmsg("Dashboard ready.");
 }
 

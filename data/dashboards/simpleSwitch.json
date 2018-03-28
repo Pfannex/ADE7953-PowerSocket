@@ -1,77 +1,64 @@
-[
-  {
-    "type": "text",
-    "name": "clock",
-    "legend": "Time",
-    "readonly": 1,
-    "event": "~/event/clock/time",
-    "inputtype": "datetime"
-  },
-
-  {
-    "type": "controlgroup",
-    "name": "power",
-    "legend": "Power",
-    "action": "~/set/device/power",
-    "event": "~/event/device/power",
+[{
+    "type": "group",
+    "name": "group1",
+    "legend": "Simple Switch Leitstand",
     "data": [{
-        "label": "Off",
-        "value": 0
+        "type": "text",
+        "name": "clock",
+        "legend": "Time",
+        "readonly": 1,
+        "event": "~/event/clock/time",
+        "inputtype": "datetime"
       },
       {
-        "label": "On",
-        "value": 1
+        "type": "group",
+        "name": "subgroup",
+        "legend": "Power Control",
+        "data": [{
+            "type": "controlgroup",
+            "name": "power",
+            "legend": "Power",
+            "action": "~/set/device/power",
+            "event": "~/event/device/power",
+            "data": [{
+                "label": "Off",
+                "value": 0
+              },
+              {
+                "label": "On",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "name": "toggle",
+            "legend": "Toggle",
+            "action": "~/set/device/toggle"
+          }
+        ]
       }
     ]
   },
-
   {
-    "type": "button",
-    "name": "toggle",
-    "legend": "Toggle",
-    "action": "~/set/device/toggle"
-  },
-
-  {
-    "type": "controlgroup",
-    "name": "verti",
-    "legend": "Verti",
-    "direction": "vertical",
+    "type": "group",
+    "name": "group2",
+    "legend": "Non-functional demos",
     "data": [{
-        "label": "foo",
-        "value": 0
-      },
-      {
-        "label": "bar",
-        "value": 1
-      }
-    ]
-  },
-
-  {
-    "type": "text",
-    "name": "brightness",
-    "legend": "brightness",
-    "action": "~/set/device/brightness",
-    "event": "~/event/device/brightness",
-    "inputtype": "number"
-  },
-
-  {
-    "type": "slider",
-    "name": "angle",
-    "min": -180,
-    "max": 180,
-    "action": "~/set/device/angle",
-    "event": "~/event/device/angle"
-  },
-
-  {
-    "type": "text",
-    "name": "led",
-    "legend": "LED",
-    "event": "~/event/device/led",
-    "inputtype": "number"
+      "type": "controlgroup",
+      "name": "verti",
+      "legend": "Verti",
+      "direction": "vertical",
+      "data": [{
+          "label": "foo",
+          "value": 0
+        },
+        {
+          "label": "bar",
+          "value": 1
+        }
+      ]
+    }]
   }
 
 ]

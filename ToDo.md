@@ -23,8 +23,8 @@
         - action / event~~
       - checkbox
         - action / event
-      - static text header
-        - in .json
+      - ~~static text header
+        - in .json~~
       - ~~slider
         - action / event
         - min/max~~
