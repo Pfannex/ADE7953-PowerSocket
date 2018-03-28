@@ -322,7 +322,7 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
 
     String result = api.call(tmpTopic);
     // contains sensitive information, log only in debug mode
-    api.debug("returning " + result);
+    // api.debug("returning " + result); // this crashes the CPU for large results
     request->send(200, "text/plain", result);
   } else {
     api.debug("client is not authenticated.");

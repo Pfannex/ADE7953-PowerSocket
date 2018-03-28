@@ -7,7 +7,8 @@
   - start AP with configMode
 
 - **API**
-  - nothing to do
+  - erstellen der Funktionsübersicht (PF) -> doxygen
+  - find out why api.debug() crashes CPU on long String arguments in webserver
 
 - **UI**
   - OTA implementieren
@@ -35,7 +36,6 @@
         - action / event~~   
 
 - **API**
-  - erstellen der Funktionsübersicht (PF) -> doxygen
 
 - **Devices**
   - SimpleSwitch

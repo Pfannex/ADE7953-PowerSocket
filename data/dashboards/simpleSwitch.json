@@ -1,8 +1,11 @@
-[{
+[
+
+  {
     "type": "group",
     "name": "group1",
     "legend": "Simple Switch Leitstand",
-    "data": [{
+    "data": [
+      {
         "type": "text",
         "name": "clock",
         "legend": "Time",
@@ -14,7 +17,8 @@
         "type": "group",
         "name": "subgroup",
         "legend": "Power Control",
-        "data": [{
+        "data": [
+          {
             "type": "controlgroup",
             "name": "power",
             "legend": "Power",
@@ -40,11 +44,12 @@
       }
     ]
   },
-  {
-    "type": "group",
-    "name": "group2",
-    "legend": "Non-functional demos",
-    "data": [{
+{
+  "type": "group",
+  "name": "group2",
+  "legend": "Non-functional demos",
+  "data": [
+    {
       "type": "controlgroup",
       "name": "verti",
       "legend": "Verti",
@@ -58,7 +63,31 @@
           "value": 1
         }
       ]
-    }]
-  }
+    },
+    {
+      "type": "text",
+      "name": "brightness",
+      "legend": "brightness",
+      "action": "~/set/device/brightness",
+      "event": "~/event/device/brightness",
+      "inputtype": "number"
+    },
+    {
+      "type": "slider",
+      "name": "angle",
+      "min": -180,
+      "max": 180,
+      "action": "~/set/device/angle",
+      "event": "~/event/device/angle"
+    },
+    {
+      "type": "text",
+      "name": "led",
+      "legend": "LED",
+      "event": "~/event/device/led",
+      "inputtype": "number"
+    }
+  ]
+}
 
 ]
