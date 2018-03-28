@@ -9,9 +9,9 @@
 //  DeviceDEMO_I2C_OW
 //-------------------------------------------------------------------------------
 DEMO_I2C_OW::DEMO_I2C_OW(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
-           :Device(logging, topicQueue, ffs),
-            i2c("i2c", logging, topicQueue, SDA, SCL)
-            //lcd("SSD1306", logging, topicQueue, SDA, SCL),
+           :Device(logging, topicQueue, ffs)
+
+            //lcd("SSD1306", logging, topicQueue, SDA, SCL)
             //ow("oneWire", logging, topicQueue, OWPIN),
             //mcpGPIO("MCP23017", logging, topicQueue, MCPIRQ, SDA, SCL)
             {}
@@ -24,10 +24,12 @@ void DEMO_I2C_OW::start() {
 
   logging.info("starting device " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
 
-  logging.info("starting " + i2c.getVersion()); //only first time a class is started
-  i2c.start();
-/*  logging.info("starting " + lcd.getVersion()); //only first time a class is started
-  lcd.start();
+  //logging.info("starting " + i2c.getVersion()); //only first time a class is started
+  //i2c.start();
+  //logging.info("starting " + lcd.getVersion()); //only first time a class is started
+  //lcd.start();
+
+/*
   logging.info("starting " + ow.getVersion()); //only first time a class is started
   ow.start();
   //logging.info("starting " + mcpGPIO.getVersion()); //only first time a class is started
@@ -37,6 +39,8 @@ void DEMO_I2C_OW::start() {
   logging.info("device running");
   logging.info(ffs.deviceCFG.readItem("NEW"));
 
+  logging.info("scanning I2C-Bus for devices");
+  logging.info(i2c.scanBus());
 }
 
 //...............................................................................

@@ -21,14 +21,15 @@ void LCD::start() {
   Module::start();
 
   logging.info("starting LCD SSD1306");
+  Wire.begin(sda, scl);
   ssd1306.init();
   //ssd1306.flipScreenVertically();
   ssd1306.setContrast(255);
   ssd1306.clear();
 
-  //println("Hello World!", ArialMT_Plain_24, 0);
-  //println("Hello World!", ArialMT_Plain_16, 24);
-  //println("Hello World!", ArialMT_Plain_10, 49);
+  println("Hello World!", ArialMT_Plain_24, 0);
+  println("Hello World!", ArialMT_Plain_16, 24);
+  println("Hello World!", ArialMT_Plain_10, 49);
 }
 
 //...............................................................................

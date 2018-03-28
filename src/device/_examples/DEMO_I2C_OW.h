@@ -4,11 +4,11 @@
 #include "framework/Topic.h"
 #include "device/Device.h"
 #include "device/DeviceSetup.h"
+#include <I2C.h>
 
 //setup
 #include "DEMO_I2C_OW_Setup.h"
 //modules
-#include "modules/I2C.h"
 #include "modules/LCD.h"
 #include "modules/oneWire.h"
 #include "modules/MCP23017.h"

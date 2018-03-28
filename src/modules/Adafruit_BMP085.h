@@ -24,7 +24,7 @@
  #include "WProgram.h"
 #endif
 #include "Wire.h"
-#include "I2C.h"
+#include <I2C.h>
 
 
 #define BMP085_DEBUG 0
@@ -66,6 +66,7 @@ class Adafruit_BMP085 {
   uint32_t readRawPressure(void);
 
  private:
+  I2C i2c;
   int32_t computeB5(int32_t UT);
   uint8_t read8(uint8_t addr);
   uint16_t read16(uint8_t addr);

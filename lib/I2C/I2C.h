@@ -1,49 +1,33 @@
 #pragma once
-#include "modules/Module.h"
-#include "framework/Utils/Logger.h"
-#include "Setup.h"
-#include "framework/Topic.h"
 #include <Arduino.h>
-
 //I²C
 #include <brzo_i2c.h>
-#include <Adafruit_BMP085.h>
-#include <Adafruit_Si7021.h>
-#include "Adafruit_MCP23017.h"
 
-//###############################################################################
-//  I2C Tools
-//###############################################################################
-
-#define I2C_Name    "module::I2C"
-#define I2C_Version "0.1.0"
 //###############################################################################
 //  I2C
 //###############################################################################
-#define I2CPOLL 5000
-#define I2CDIFF 1
-#define I2CINT 1
+#define DEBUG_I2C 0
+#define SDA 4
+#define SCL 5
 #define I2C_CLOCK 400
 
-class I2C : public Module {
+class I2C{
 
 public:
-  I2C(string name, LOGGING &logging, TopicQueue &topicQueue, int sda, int scl);
-  int sda;
-  int scl;
+  I2C();
 
-  void start();
-  void handle();
-  String getVersion();
+  int sda = SDA;
+  int scl = SCL;
+  uint8_t i2cAddr = 0x00;
+  int clockSpeed = I2C_CLOCK;
 
-  uint8_t _i2cAddr = 0x00;
-  int _clockSpeed = I2C_CLOCK;
-  void setBus(uint8_t i2cAddr, int clockSpeed);
+  void setWire(int sda, int scl);
+  void setDevice(uint8_t i2cAddr, int clockSpeed);
   void begin();
   void begin(uint8_t i2cAddr);
   void begin(uint8_t i2cAddr, int clockSpeed);
   uint8_t end();
-  void scanBus();
+  String scanBus();   //returns a json
 
   uint8_t write(uint8_t val);
   uint8_t write(uint8_t val, bool repeated_start);
@@ -69,11 +53,6 @@ public:
   uint16_t read16_16(uint16_t reg);
   uint32_t read16_32(uint16_t reg);
 
-
-  //void readBMP180();    //BMP180 Luftdruck/Temperatur
-  //void readSi7021();    //SI7021 Luftfeuchtigkeit/Temperatur
 private:
   void testI2C();
-  //int tPoll = 0;
-
 };
