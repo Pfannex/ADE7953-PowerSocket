@@ -5,11 +5,13 @@
 // ---------------------------
 
 $(document).ready(function() {
+  logmsg("Document loaded.");
 });
 
 // initialize the dashboard
 $(document).on("pagecreate", "#page1", function(event, ui) {
   // moved here, otherwise executed for any page that uses omniesp.js
+  logmsg("Page 1 created.");
   consStart();
   startListener();
   logmsg('Initializing dashboard...');
@@ -18,6 +20,7 @@ $(document).on("pagecreate", "#page1", function(event, ui) {
 
 // initialize the config page
 $(document).on("pagecreate", "#page2", function(event, ui) {
+  logmsg("Page 2 created.");
   logmsg('Initializing configuration page...');
   setRadioHandlers();
   //set_select_handlers();

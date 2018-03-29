@@ -22,16 +22,16 @@
       - ~~controlgroup
         - data-type="horizontal" / "vertical"
         - action / event~~
-      - checkbox
-        - action / event
+      - ~~checkbox
+        - action / event~~
       - ~~static text header
         - in .json~~
       - ~~slider
         - action / event
         - min/max~~
-      - grid  
+      - ~~grid  
         - event
-        - prefix / suffix
+        - prefix / suffix~~
       - ~~textinput
         - action / event~~   
 
