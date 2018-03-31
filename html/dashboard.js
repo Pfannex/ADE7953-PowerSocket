@@ -4,6 +4,19 @@
 // dashboard
 // ---------------------------
 
+//
+// apiCall
+//
+
+function apiCall(value) {
+  $('textarea#apiresult').val("");
+  call(value, showApiCallResult);
+}
+
+function showApiCallResult(data) {
+  $('textarea#apiresult').val(data);
+}
+
 var muteDashboardActions = 0;
 var widgets; // flat list of all widgets
 
@@ -328,6 +341,7 @@ function dashboardEvalEvent(topics, args) {
   for (i = 0; i < widgets.length; i++) {
     if (widgets[i].event == topicStr) {
       var w = widgets[i];
+      //debugmsg("event matches widget "+w.name);
       switch (w.type) {
         case "controlgroup":
           setRadio(w.name, args);
@@ -352,7 +366,7 @@ function dashboardEvalEvent(topics, args) {
         default:
           logmsg("Unknown widget type " + w.type);
       }
-      break;
+      //break; // do not stop here, event could match more than one widget
     }
   }
 

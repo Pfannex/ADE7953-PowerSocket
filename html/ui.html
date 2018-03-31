@@ -49,17 +49,21 @@
     </div>
     <!-- content -->
     <div data-role="content">
-      <div data-role="fieldcontain">
-        <script type="text/javascript">
-          function callOnEnter(event,value) {
-            if(event.keyCode==13) call(value);
-          }
-        </script>
-        <label for="apicall">API Call</label>
-        <input type="text" id="apicall" name="apicall"
-            onChange="call(this.value)"
-            onKeyPress="javascript:callOnEnter(event,this.value)"
-        />
+      <div data-role="collapsible">
+        <h1>API</h1>
+        <div data-role="fieldcontain">
+          <script type="text/javascript">
+            function apiCallOnEnter(event,value) {
+              if(event.keyCode==13) apiCall(value);
+            }
+          </script>
+          <label for="apicall">API Call</label>
+          <input type="text" id="apicall" name="apicall"
+              onChange="apiCall(this.value)"
+              onKeyPress="javascript:apiCallOnEnter(event,this.value)"
+          />
+        </div>
+        <textarea name="apiresult" id="apiresult" style="font-size: smaller; height: 200px; overflow: scroll" readonly="true" data-autogrow="false"></textarea>
       </div>
       <!-- dashboard -->
       <div id="dashboard"></div>
