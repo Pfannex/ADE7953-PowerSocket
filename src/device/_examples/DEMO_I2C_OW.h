@@ -4,7 +4,8 @@
 #include "framework/Topic.h"
 #include "device/Device.h"
 #include "device/DeviceSetup.h"
-#include <I2C.h>
+//#include <I2C.h>
+#include <Wire.h>
 
 //setup
 #include "DEMO_I2C_OW_Setup.h"
@@ -14,10 +15,14 @@
 #include "modules/MCP23017.h"
 //#include "modules/QRE1113.h"
 //#include "modules/WS2812.h"
+#include "Adafruit_BMP085.h"
+#include "Adafruit_Si7021.h"
 
 //###############################################################################
 //  Device
 //###############################################################################
+
+#define POLLTIME 2000
 
 class DEMO_I2C_OW : public Device{
 
@@ -35,4 +40,9 @@ private:
   //OW ow;
   //MCP23017 mcpGPIO;
   void configMCP();
+
+  unsigned long lastPoll = 0;
+  void readBMP180();
+  void readSi7021();
+
 };

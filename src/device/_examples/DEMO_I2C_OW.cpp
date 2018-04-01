@@ -40,17 +40,27 @@ void DEMO_I2C_OW::start() {
   logging.info(ffs.deviceCFG.readItem("NEW"));
 
   logging.info("scanning I2C-Bus for devices");
-  logging.info(i2c.scanBus());
+  logging.info(Wire.i2c.scanBus());
+
+  //Wire.i2c.testI2C();
 }
 
 //...............................................................................
 // handle - periodically called by the controller
 //...............................................................................
 void DEMO_I2C_OW::handle() {
+  unsigned long now = millis();
+
   //i2c.handle();
   //lcd.handle();
   //ow.handle();
   //mcpGPIO.handle();
+
+  if (now - lastPoll > POLLTIME){
+    lastPoll = now;
+    readBMP180();
+    readSi7021();
+  }
 }
 
 //...............................................................................
@@ -239,4 +249,37 @@ void DEMO_I2C_OW::configMCP() {
   //mcpGPIO.mcp.pinMode(2, INPUT);
   //mcpGPIO.mcp.pullUp(2, HIGH);
   //mcpGPIO.mcp.setupInterruptPin(2,FALLING);*/
+}
+
+
+//...............................................................................
+// read BMP180
+//...............................................................................
+void DEMO_I2C_OW::readBMP180() {
+   Adafruit_BMP085 bmp;
+   String eventPrefix= "~/event/device/BMP180/";
+
+   Serial.println(bmp.begin());
+   String value = "temperature " + String(bmp.readTemperature());
+   logging.debug(value);
+   topicQueue.put(eventPrefix + "/" + value);
+   value = "pressure " + String(bmp.readPressure()/100);
+   logging.debug(value);
+   topicQueue.put(eventPrefix + "/" + value);
+}
+
+//...............................................................................
+// read SI7021
+//...............................................................................
+void DEMO_I2C_OW::readSi7021() {
+   Adafruit_Si7021 si;
+   String eventPrefix= "~/event/device/SI7021/";
+
+   si.begin();
+   String value = "temperature " + String(si.readTemperature());
+   logging.debug(value);
+   topicQueue.put(eventPrefix + "/" + value);
+   value = "humidity " + String(si.readHumidity());
+   logging.debug(value);
+   topicQueue.put(eventPrefix + "/" + value);
 }
