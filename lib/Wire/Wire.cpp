@@ -63,8 +63,8 @@ TwoWire::TwoWire(){}
 
 void TwoWire::begin(int sda, int scl){
   Serial.println("MyWire.begin");
-  Serial.println(sda);
-  Serial.println(scl);
+  //Serial.println(sda);
+  //Serial.println(scl);
 
   default_sda_pin = sda;
   default_scl_pin = scl;
@@ -116,30 +116,8 @@ size_t TwoWire::requestFrom(uint8_t address, size_t size, bool sendStop){
   //rxBufferLength = read;
   //return read;
 
-  //size_t read = (twi_readFrom(address, rxBuffer, size, sendStop) == 0)?size:0;
+  brzo_i2c_read(rxBuffer, size, !sendStop);
   rxBufferIndex = 0;
-
-  pinMode(15, OUTPUT);
-  digitalWrite(15, HIGH);
-
-  //brzo_i2c_setup(sda, scl, 2000);
-  //brzo_i2c_start_transaction(address, 100);
-    //brzo_i2c_write(buf, 1, true);
-    brzo_i2c_read(rxBuffer, size, !sendStop);
-  //brzo_i2c_end_transaction();
-
-  //i2c.start(address);
-  //i2c.setDevice(address, 100);
-  //i2c.readRAW(rxBuffer, !sendStop);
-  //i2c.read8(address, rxBuffer, size);
-
-  delay(5);
-  digitalWrite(15, LOW);
-
-  for (size_t i = 0; i < size; i++) {
-    Serial.print("rxBuffer[" + String(i) + "] = ");Serial.println(rxBuffer[i], HEX);
-  }
-
   rxBufferLength = size;
   return size;
 }
@@ -165,8 +143,8 @@ void TwoWire::beginTransmission(uint8_t address){
   txAddress = address;
   txBufferIndex = 0;
   txBufferLength = 0;
-  i2c.setDevice(address, 100);
-  brzo_i2c_start_transaction(address, 100);
+  //i2c.setDevice(address, clockSpeed);
+  brzo_i2c_start_transaction(address, clockSpeed);
 }
 
 void TwoWire::beginTransmission(int address){
@@ -174,39 +152,16 @@ void TwoWire::beginTransmission(int address){
 }
 
 uint8_t TwoWire::endTransmission(uint8_t sendStop){
-  //int8_t ret = twi_writeTo(txAddress, txBuffer, txBufferLength, sendStop);
+  //uint8_t ret = twi_writeTo(txAddress, txBuffer, txBufferLength, sendStop);
 
-/*
-  Serial.println("TwoWire::endTransmission");
-  Serial.print("txAddress: "); Serial.println(txAddress, HEX);
-  Serial.print("txBuffer: "); Serial.println(txBuffer[0], HEX);
-  Serial.print("txBufferLength: "); Serial.println(txBufferLength);
-  Serial.println("-------------------------------------");
-*/
-  pinMode(15, OUTPUT);
-  digitalWrite(15, HIGH);
-
-  //i2c.setDevice(0x77, 100);
-  //i2c.start(0x77);
-    //brzo_i2c_write(txBuffer, txBufferLength, true);
-  //i2c.stop();
-
-  //i2c.setDevice(txAddress, 100);
-  //i2c.start(txAddress);
-    brzo_i2c_write(txBuffer, txBufferLength, !sendStop);
-    //i2c.readRAW(buf, false);
-  //i2c.stop();
-  brzo_i2c_end_transaction();
-
-
-  delay(5);
-  digitalWrite(15, LOW);
+  brzo_i2c_write(txBuffer, txBufferLength, !sendStop);
+  uint8_t ret = brzo_i2c_end_transaction();
 
   txBufferIndex = 0;
   txBufferLength = 0;
   transmitting = 0;
   //return ret;
-  return 0;
+  return ret;
 }
 
 uint8_t TwoWire::endTransmission(void){

@@ -22,7 +22,7 @@
 //  Device
 //###############################################################################
 
-#define POLLTIME 2000
+#define POLLTIME 5000
 
 class DEMO_I2C_OW : public Device{
 
@@ -35,7 +35,7 @@ public:
   void on_events(Topic &topic);
 
 private:
-  I2C i2c;
+  //I2C i2c;
   //LCD lcd;
   //OW ow;
   //MCP23017 mcpGPIO;
