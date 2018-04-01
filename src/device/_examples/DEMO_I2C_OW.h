@@ -1,3 +1,4 @@
+#include <ESP8266WiFi.h>
 #include "framework/Utils/Logger.h"
 #include "framework/Core/FFS.h"
 #include "Setup.h"
@@ -22,8 +23,6 @@
 //  Device
 //###############################################################################
 
-#define POLLTIME 5000
-
 class DEMO_I2C_OW : public Device{
 
 public:
@@ -36,11 +35,12 @@ public:
 
 private:
   //I2C i2c;
-  //LCD lcd;
+  LCD lcd;
   //OW ow;
   //MCP23017 mcpGPIO;
   void configMCP();
 
+  int sensorPollTime;
   unsigned long lastPoll = 0;
   void readBMP180();
   void readSi7021();

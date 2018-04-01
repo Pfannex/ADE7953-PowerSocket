@@ -27,9 +27,9 @@ void LCD::start() {
   ssd1306.setContrast(255);
   ssd1306.clear();
 
-  println("Hello World!", ArialMT_Plain_24, 0);
-  println("Hello World!", ArialMT_Plain_16, 24);
-  println("Hello World!", ArialMT_Plain_10, 49);
+  //println("Hello World!", ArialMT_Plain_24, 0);
+  //println("Hello World!", ArialMT_Plain_16, 24);
+  //println("Hello World!", ArialMT_Plain_10, 49);
 }
 
 //...............................................................................

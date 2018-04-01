@@ -9,9 +9,9 @@
 //  DeviceDEMO_I2C_OW
 //-------------------------------------------------------------------------------
 DEMO_I2C_OW::DEMO_I2C_OW(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
-           :Device(logging, topicQueue, ffs)
+           :Device(logging, topicQueue, ffs),
 
-            //lcd("SSD1306", logging, topicQueue, SDA, SCL)
+            lcd("SSD1306", logging, topicQueue, SDA, SCL)
             //ow("oneWire", logging, topicQueue, OWPIN),
             //mcpGPIO("MCP23017", logging, topicQueue, MCPIRQ, SDA, SCL)
             {}
@@ -21,13 +21,13 @@ DEMO_I2C_OW::DEMO_I2C_OW(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
 //...............................................................................
 void DEMO_I2C_OW::start() {
   Device::start();
+  sensorPollTime = ffs.deviceCFG.readItem("I2CPOLL").toInt();
+  logging.info("I2C sensors polling time: " + String(sensorPollTime));
 
   logging.info("starting device " + String(DEVICETYPE) + " v" + String(DEVICEVERSION));
 
-  //logging.info("starting " + i2c.getVersion()); //only first time a class is started
-  //i2c.start();
-  //logging.info("starting " + lcd.getVersion()); //only first time a class is started
-  //lcd.start();
+  logging.info("starting " + lcd.getVersion()); //only first time a class is started
+  lcd.start();
 
 /*
   logging.info("starting " + ow.getVersion()); //only first time a class is started
@@ -52,11 +52,11 @@ void DEMO_I2C_OW::handle() {
   unsigned long now = millis();
 
   //i2c.handle();
-  //lcd.handle();
+  lcd.handle();
   //ow.handle();
   //mcpGPIO.handle();
 
-  if (now - lastPoll > POLLTIME){
+  if (now - lastPoll > sensorPollTime){
     lastPoll = now;
     readBMP180();
     readSi7021();
@@ -116,7 +116,8 @@ void DEMO_I2C_OW::on_events(Topic &topic) {
   // central business logic
 
   if (topic.modifyTopic(0) == "event/wifi/connected"){
-    //lcd.println(ffs.cfg.readItem("wifi_ip"), ArialMT_Plain_16, 0);
+    lcd.println(WiFi.localIP().toString(), ArialMT_Plain_16, 0);
+
   }
 
 /*
@@ -259,7 +260,7 @@ void DEMO_I2C_OW::readBMP180() {
    Adafruit_BMP085 bmp;
    String eventPrefix= "~/event/device/BMP180/";
 
-   Serial.println(bmp.begin());
+   bmp.begin();
    String value = "temperature " + String(bmp.readTemperature());
    logging.debug(value);
    topicQueue.put(eventPrefix + "/" + value);

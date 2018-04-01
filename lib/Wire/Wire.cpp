@@ -62,9 +62,7 @@ TwoWire::TwoWire(){}
 // Public Methods //////////////////////////////////////////////////////////////
 
 void TwoWire::begin(int sda, int scl){
-  Serial.println("MyWire.begin");
-  //Serial.println(sda);
-  //Serial.println(scl);
+  //Serial.println("MyWire.begin");
 
   default_sda_pin = sda;
   default_scl_pin = scl;
