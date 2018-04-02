@@ -34,15 +34,14 @@ public:
   void on_events(Topic &topic);
 
 private:
-  //I2C i2c;
   LCD lcd;
   //OW ow;
-  //MCP23017 mcpGPIO;
+  MCP23017 mcpGPIO;
   void configMCP();
 
   int sensorPollTime;
   unsigned long lastPoll = 0;
-  void readBMP180();
-  void readSi7021();
+  void readBMP180(String name);
+  void readSi7021(String name);
 
 };
