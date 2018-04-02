@@ -5,23 +5,36 @@
 // ---------------------------
 
 $(document).ready(function() {
-  consStart();
-  startListener();
+  logmsg("Document loaded.");
 });
 
 // initialize the dashboard
 $(document).on("pagecreate", "#page1", function(event, ui) {
+  // moved here, otherwise executed for any page that uses omniesp.js
+  logmsg("Page 1 created.");
+  consStart();
+  startListener();
   logmsg('Initializing dashboard...');
   var json = retrieveDashboard(dashboardBuild);
 })
 
 // initialize the config page
 $(document).on("pagecreate", "#page2", function(event, ui) {
+  logmsg("Page 2 created.");
   logmsg('Initializing configuration page...');
   setRadioHandlers();
   //set_select_handlers();
   var json = retrieveConfig(setConfig);
 })
+
+// ---------------------------
+// go back to the login page
+// ---------------------------
+
+function startOver() {
+  closeConnection();
+  window.location.href = "/";
+}
 
 // ---------------------------
 // status bar

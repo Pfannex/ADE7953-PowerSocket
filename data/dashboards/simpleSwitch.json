@@ -1,45 +1,125 @@
 [
-  {
-    "type": "text",
-    "name": "clock",
-    "legend": "Time",
-    "readonly": 1,
-    "event": "~/event/clock/time",
-    "inputtype": "datetime"
-  },
 
   {
-    "type": "controlgroup",
-    "name": "power",
-    "legend": "Power",
-    "action": "~/set/device/power",
-    "event": "~/event/device/power",
-    "data": [{
-        "label": "Off",
-        "value": 0
+    "type": "group",
+    "name": "group1",
+    "caption": "Simple Switch Leitstand",
+    "data": [
+      {
+        "type": "text",
+        "name": "clock",
+        "caption": "Time",
+        "readonly": 1,
+        "event": "~/event/clock/time",
+        "inputtype": "datetime"
       },
       {
-        "label": "On",
-        "value": 1
+        "type": "checkbox",
+        "name": "led",
+        "caption": "LED",
+        "event": "~/event/device/led"
+      },
+      {
+        "type": "group",
+        "name": "subgroup",
+        "caption": "Power Control",
+        "data": [
+          {
+            "type": "controlgroup",
+            "name": "power",
+            "caption": "Power",
+            "action": "~/set/device/power",
+            "event": "~/event/device/power",
+            "data": [{
+                "label": "Off",
+                "value": 0
+              },
+              {
+                "label": "On",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "name": "toggle",
+            "caption": "Toggle",
+            "action": "~/set/device/toggle"
+          }
+        ]
+      },
+      {
+        "type": "group",
+        "name": "group3",
+        "caption": "Group in a Group",
+        "data": [
+              {
+                "type": "grid",
+                "name": "grid1",
+                "data": [
+                  [
+                    { "type": "text", "name":"g11", "readonly": 1, "event": "~/event/device/power" },
+                    { "type": "text", "name":"g12", "readonly": 1, "event": "~/event/device/led" },
+                    { "type": "text", "name":"g13", "readonly": 1, "event": "~/event/device/relay" }
+                  ],
+                  [
+                    { "type": "text", "name":"g21", "readonly": 1, "event": "~/event/device/button/idle", "prefix":"idle is " },
+                    { "type": "text", "name":"g22", "caption": "voltage A", "readonly": 1, "suffix":" V"  },
+                    { "type": "text", "name":"g23", "readonly": 1, "event": "~/event/device/button/state", "suffix":" is the state" }
+                  ]
+                ]
+              }
+        ]
       }
     ]
   },
-
-  {
-    "type": "text",
-    "name": "brightness",
-    "legend": "brightness",
-    "action": "~/set/device/brightness",
-    "event": "~/event/device/brightness",
-    "inputtype": "number"
-  },
-
-  {
-    "type": "text",
-    "name": "led",
-    "legend": "LED",
-    "event": "~/event/device/led",
-    "inputtype": "number"
-  }
+{
+  "type": "group",
+  "name": "group2",
+  "caption": "Non-functional demos",
+  "data": [
+    {
+      "type": "controlgroup",
+      "name": "controlgroup1",
+      "caption": "vertical controlgroup",
+      "direction": "vertical",
+      "action": "~/set/device/radio",
+      "event": "~/event/device/radio",
+      "data": [{
+          "label": "element 1",
+          "value": 1
+        },
+        {
+          "label": "element 2",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "text1",
+      "caption": "number input/output",
+      "action": "~/set/device/number1",
+      "event": "~/event/device/number1",
+      "inputtype": "number"
+    },
+    {
+      "type": "slider",
+      "name": "slider1",
+      "caption": "slider",
+      "min": 0,
+      "max": 99,
+      "action": "~/set/device/brightness",
+      "event": "~/event/device/brightness"
+    },
+    {
+      "type": "checkbox",
+      "name": "cb1",
+      "caption": "checkbox",
+      "action": "~/set/device/checker",
+      "event": "~/event/device/checker"
+    }
+  ]
+}
 
 ]

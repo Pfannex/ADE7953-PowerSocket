@@ -9,6 +9,8 @@
 //  API
 //#############################################################################
 
+#define MIN_MSECS_BETWEEN_CALLS 200
+
 class API {
 
 public:
@@ -33,6 +35,9 @@ public:
 private:
   // the controller
   Controller &controller;
+
+  // last called
+  int lastCallTime= 0;
 
   // device name
   String deviceName;

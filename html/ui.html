@@ -24,6 +24,10 @@
       font-weight: normal;
       font-size: smaller;
     }
+    .no-margin-grid
+      .ui-field-contain {
+      margin: 0px;
+    }
   </style>
 </head>
 
@@ -49,9 +53,24 @@
     </div>
     <!-- content -->
     <div data-role="content">
-      <div data-role="collapsible" data-inset="true" data-collapsed="false" id="dashboard">
-        <h2>Dashboard</h2>
+      <div data-role="collapsible">
+        <h1>API</h1>
+        <div data-role="fieldcontain">
+          <script type="text/javascript">
+            function apiCallOnEnter(event,value) {
+              if(event.keyCode==13) apiCall(value);
+            }
+          </script>
+          <label for="apicall">API Call</label>
+          <input type="text" id="apicall" name="apicall"
+              onChange="apiCall(this.value)"
+              onKeyPress="javascript:apiCallOnEnter(event,this.value)"
+          />
+        </div>
+        <textarea name="apiresult" id="apiresult" style="font-size: smaller; height: 200px; overflow: scroll" readonly="true" data-autogrow="false"></textarea>
       </div>
+      <!-- dashboard -->
+      <div id="dashboard"></div>
     </div>
     <!-- footer -->
     <div data-role="footer">
@@ -101,6 +120,37 @@
             <input type="password" id="device_password" name="device_password" placeholder="password for user"/>
           </div>
           <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" id="reboot" onClick="reboot()">Reboot</a>
+        </div>
+        <div data-role="collapsible">
+          <h1>OTA Update</h1>
+          <div data-role="collapsible">
+            <h1>Local Update</h1>
+            <form enctype="multipart/form-data" id="update_form">
+              <div data-role="fieldcontain">
+                <label for="update_localpath">Firmware path</label>
+                <input type="file" id="update_localpath" name="update_localpath" class="ui-input-text ui-body-c" />
+              </div>
+              <div data-role="fieldcontain">
+                <label for="data_localpath">FFS path</label>
+                <input type="file" id="data_localpath" name="data_localpath" class="ui-input-text ui-body-c" />
+              </div>
+              <a data-role="button" class="ui-btn ui-btn-inline ui-icon-arrow-d ui-btn-icon-left" id="update" onClick="update()">Update</a>
+            </form>
+          </div>
+          <div data-role="collapsible">
+            <h1>Remote Update</h1>
+            <fieldset data-role="controlgroup" data-type="horizontal">
+              <input name="update" id="update-manual" value="manual" type="radio" />
+              <label for="update-manual">Manual</label>
+              <input name="update" id="update-auto" value="auto" type="radio" />
+              <label for="update-auto">Auto</label>
+            </fieldset>
+            <div data-role="fieldcontain">
+              <label for="update_remoteurl">URL</label>
+              <input type="text" id="update_remoteurl" name="update_remoteurl" placeholder="URL of remote update information" />
+            </div>
+            <a data-role="button">Update</a>
+          </div>
         </div>
         <div data-role="collapsible">
           <h1>WiFi</h1>
@@ -189,33 +239,6 @@
               <input type="text" id="ntp_serverip" name="ntp_serverip" />
             </div>
             <a data-role="button" class="ui-btn ui-btn-inline ui-icon-clock ui-btn-icon-left" id="settime" onClick="setTime()">Set time</a>
-          </div>
-        </div>
-        <div data-role="collapsible">
-          <h1>OTA Update</h1>
-          <div data-role="collapsible">
-            <h1>Local Update</h1>
-            <form enctype="multipart/form-data" id="update_form">
-              <div data-role="fieldcontain">
-                <label for="update_localpath">Path</label>
-                <input type="file" id="update_localpath" name="update_localpath" class="ui-input-text ui-body-c" />
-              </div>
-              <a data-role="button" class="ui-btn ui-btn-inline ui-icon-arrow-d ui-btn-icon-left" id="update" onClick="update()">Update</a>
-            </form>
-          </div>
-          <div data-role="collapsible">
-            <h1>Remote Update</h1>
-            <fieldset data-role="controlgroup" data-type="horizontal">
-              <input name="update" id="update-manual" value="manual" type="radio" />
-              <label for="update-manual">Manual</label>
-              <input name="update" id="update-auto" value="auto" type="radio" />
-              <label for="update-auto">Auto</label>
-            </fieldset>
-            <div data-role="fieldcontain">
-              <label for="update_remoteurl">URL</label>
-              <input type="text" id="update_remoteurl" name="update_remoteurl" placeholder="URL of remote update information" />
-            </div>
-            <a data-role="button">Update</a>
           </div>
         </div>
         <div data-role="collapsible">

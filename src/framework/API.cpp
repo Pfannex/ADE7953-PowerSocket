@@ -44,6 +44,13 @@ void API::start() {
 
 String API::call(Topic &topic) {
 
+  // a too high API call rate crashes the firmware; this is a rate limit
+  /*
+  int callTime= millis();
+  if(callTime-lastCallTime< MIN_MSECS_BETWEEN_CALLS) return String("<rate limit exceeded>");
+  lastCallTime= callTime;
+  */
+
   // set and get commands are passed through the controller to
   // the device for handling (device's onEvent handler).
   // In particular, any command coming in from MQTT is mirrored to MQTT
