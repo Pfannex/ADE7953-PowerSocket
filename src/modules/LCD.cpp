@@ -21,6 +21,7 @@ void LCD::start() {
   Module::start();
 
   logging.info("starting LCD SSD1306");
+  Wire.begin(sda, scl);
   ssd1306.init();
   //ssd1306.flipScreenVertically();
   ssd1306.setContrast(255);

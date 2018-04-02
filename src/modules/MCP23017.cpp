@@ -10,7 +10,6 @@ MCP23017::MCP23017(string name, LOGGING &logging, TopicQueue &topicQueue,
           irqPin(GPIOIrqPin), sda(sda), scl(scl)
          {}
 
-
 //-------------------------------------------------------------------------------
 //  MCP23017 public
 //-------------------------------------------------------------------------------
@@ -22,10 +21,6 @@ void MCP23017::start() {
   logging.info("setting GPIO pin " + String(irqPin) + " to IRQ-Pin");
   pinMode(irqPin, INPUT_PULLUP);
   irqSetMode(FALLING);
-
-  //Wire.begin(sda, scl);
-  //mcp.begin(0);    //0 = 0x20, 1 = 0x21, ...
-  configMCP();
 }
 
 //...............................................................................
@@ -69,33 +64,29 @@ void MCP23017::irqHandle() {
     irqSetMode(irqOFF);
     irqDetected = false;
     lastIrqTime = now;
-
-
-    Serial.print("  INTFA -   ");Serial.println(mcp.readRegister(MCP23017_INTFA), BIN);
-    Serial.print("  INTCAPA - ");Serial.println(mcp.readRegister(MCP23017_INTCAPA), BIN);
-    Serial.print("  GPIOA -   ");Serial.println(mcp.readRegister(MCP23017_GPIOA), BIN);
-    Serial.print("  INTFA -   ");Serial.println(mcp.readRegister(MCP23017_INTFA), BIN);
-    Serial.print("  INTCAPA - ");Serial.println(mcp.readRegister(MCP23017_INTCAPA), BIN);
-
-
+    //Serial.print("  INTFA -   ");Serial.println(mcp.readRegister(MCP23017_INTFA), BIN);
+    //Serial.print("  INTCAPA - ");Serial.println(mcp.readRegister(MCP23017_INTCAPA), BIN);
+    //Serial.print("  GPIOA -   ");Serial.println(mcp.readRegister(MCP23017_GPIOA), BIN);
+    //Serial.print("  INTFA -   ");Serial.println(mcp.readRegister(MCP23017_INTFA), BIN);
+    //Serial.print("  INTCAPA - ");Serial.println(mcp.readRegister(MCP23017_INTCAPA), BIN);
     //logging.debug("MCP23017 IRQ");
 
-    //uint8_t pin = mcp.getLastInterruptPin();
-    //uint8_t val = mcp.getLastInterruptPinValue();
-    //uint8_t state = mcp.digitalRead(pin);
+    uint8_t pin = mcp.getLastInterruptPin();
+    uint8_t val = mcp.getLastInterruptPinValue();
+    uint8_t state = mcp.digitalRead(pin);
 
-    //logging.debug("mcpGPIO " + String(pin) + " | " + String(val) + " | " + String(state));
-    //topicQueue.put(eventPrefix + "/" + String(pin) + " " + String(val));
+    logging.debug("mcpGPIO " + String(pin) + " | " + String(val));
+    topicQueue.put(eventPrefix + "/" + String(pin) + " " + String(val));
 
-/*    while (mcp.readRegister(MCP23017_INTFA) > 0){
+    clearIRQ();
+
+    while (mcp.readRegister(MCP23017_INTFA) > 0 || mcp.readRegister(MCP23017_INTFB) > 0){
       Serial.println("  hanging.....");
       //Serial.print("INTFA - ");Serial.println(MCP23017.readRegister(MCP23017_INTFA), BIN);
       //Serial.print("INTFB - ");Serial.println(MCP23017.readRegister(MCP23017_INTFB), BIN);
       Serial.print("  GPIOA - ");Serial.println(mcp.readRegister(MCP23017_GPIOA), BIN);
       Serial.print("  GPIOB - ");Serial.println(mcp.readRegister(MCP23017_GPIOB), BIN);
     }
-*/
-    clearIRQ();
     irqSetMode(FALLING);
   }
 
@@ -118,14 +109,16 @@ void MCP23017::irqHandle() {
 void MCP23017::clearIRQ() {
 
   while (mcp.readRegister(MCP23017_INTFA) > 0 || mcp.readRegister(MCP23017_INTFB) > 0){
-    Serial.println("---------------------------------------------");
-    Serial.println("  hanging.....");
+    mcp.readRegister(MCP23017_GPIOA);
+    mcp.readRegister(MCP23017_GPIOB);
+    //Serial.println("---------------------------------------------");
+    //Serial.println("  hanging.....");
     //Serial.print("  INTFA - ");Serial.println(mcp.readRegister(MCP23017_INTFA), BIN);
     //Serial.print("  INTFB - ");Serial.println(mcp.readRegister(MCP23017_INTFB), BIN);
-    Serial.print("  GPIOA - ");Serial.println(mcp.readRegister(MCP23017_GPIOA), BIN);
-    Serial.print("  GPIOB - ");Serial.println(mcp.readRegister(MCP23017_GPIOB), BIN);
-    configMCP();
-    Serial.println("---------------------------------------------");
+    //Serial.print("  GPIOA - ");Serial.println(mcp.readRegister(MCP23017_GPIOA), BIN);
+    //Serial.print("  GPIOB - ");Serial.println(mcp.readRegister(MCP23017_GPIOB), BIN);
+    //configMCP();
+    //Serial.println("---------------------------------------------");
   }
 
   //logging.debug("INTCAPA " + String(mcp.readRegister(MCP23017_INTCAPA)));
@@ -134,95 +127,85 @@ void MCP23017::clearIRQ() {
 }
 
 //...............................................................................
-// config MCP23017
+// REGISTER
 //...............................................................................
-void MCP23017::configMCP() {
-  logging.debug("MCP23017::configMCP");
+/*
+IODIRx [RW] Datenrichtungsregister der GPIO-Ports:
+  1 = INPUT; 0 = OUTPUT
+  mcpGPIO.mcp.writeRegister(MCP23017_IODIRA, B11111111);
+  mcpGPIO.mcp.writeRegister(MCP23017_IODIRB, B11111111);
 
-  Wire.begin(sda, scl);
-  mcp.begin(0);    //0 = 0x20, 1 = 0x21, ...
+IPOLx [RW] Polarität
+  1 = invertiert; 0 = nicht invertiert
+  mcpGPIO.mcp.writeRegister(MCP23017_IPOLA, B11111111);
+  mcpGPIO.mcp.writeRegister(MCP23017_IPOLB, B11111111);
 
-  // IODIRx [RW] Datenrichtungsregister der GPIO-Ports:
-  // 1 = INPUT; 0 = OUTPUT
-  logging.debug("write");
-  //mcp.writeRegister(MCP23017_IODIRA, B10101010);
-  mcp.writeRegister(MCP23017_IODIRA, B11111111);
-  mcp.writeRegister(MCP23017_IODIRB, B11111111);
+GPINTENx [RW] Interrupt-On-Change-Funktion
+  1 = IRQ enabled; 0 = IRQ disabled
+  Es müssen zusätzlich die DEFVAL- und INTCON-Register konfiguriert werden.
+  mcpGPIO.mcp.writeRegister(MCP23017_GPINTENA, B11111111);
+  mcpGPIO.mcp.writeRegister(MCP23017_GPINTENB, B11111111);
 
-  // IPOLx [RW] Polarität
-  // 1 = invertiert; 0 = nicht invertiert
-  mcp.writeRegister(MCP23017_IPOLA, B11111111);
-  mcp.writeRegister(MCP23017_IPOLB, B11111111);
+DEFVALx [RW] IRQ-Vergleichsregister
+  Vergleich GPIO mit DEFVALx bei Opposition und aktivem IRQ über GPINTEN und INTCON wird ein Interrupt ausgelöst.
+  mcpGPIO.mcp.writeRegister(MCP23017_DEFVALA, B00000000);
+  mcpGPIO.mcp.writeRegister(MCP23017_DEFVALB, B00000000);
 
-  // GPINTENx [RW] Interrupt-On-Change-Funktion
-  // 1 = IRQ enabled; 0 = IRQ disabled
-  // Es müssen zusätzlich die DEFVAL- und INTCON-Register konfiguriert werden.
-  mcp.writeRegister(MCP23017_GPINTENA, B11111111);
-  mcp.writeRegister(MCP23017_GPINTENB, B11111111);
+INTCONx [RW] Interruptmode
+  1 = vergleich mit DEFVALx; 0 = Interrupt-On-Change
+  mcpGPIO.mcp.writeRegister(MCP23017_INTCONA, B00000000);
+  mcpGPIO.mcp.writeRegister(MCP23017_INTCONB, B00000000);
 
-  // DEFVALx [RW] IRQ-Vergleichsregister
-  // Vergleich GPIO mit DEFVALx bei Opposition und aktivem IRQ über GPINTEN und INTCON wird ein Interrupt ausgelöst.
-  mcp.writeRegister(MCP23017_DEFVALA, B00000000);
-  mcp.writeRegister(MCP23017_DEFVALB, B00000000);
+GPPUx [RW] INPUT Pull-Up 100k
+  1 = enabled, 0 = disabled
+  mcpGPIO.mcp.writeRegister(MCP23017_GPPUA, B11111111);
+  mcpGPIO.mcp.writeRegister(MCP23017_GPPUB, B11111111);
 
-  // INTCONx [RW] Interruptmode
-  // 1 = vergleich mit DEFVALx; 0 = Interrupt-On-Change
-  mcp.writeRegister(MCP23017_INTCONA, B00000000);
-  mcp.writeRegister(MCP23017_INTCONB, B00000000);
+INTFx [R] Interrupt detected
+  1 = IRQ detected; 0 = no IRQ detected
 
-  // GPPUx [RW] INPUT Pull-Up 100k
-  // 1 = enabled, 0 = disabled
-  mcp.writeRegister(MCP23017_GPPUA, B11111111);
-  mcp.writeRegister(MCP23017_GPPUB, B11111111);
+ INTCAPx [R] GPIO-Interrupt-State
+ Das Register kann nur gelesen werden und es wird nur beim Auftreten eines Interrupts aktualisiert.
+ Die Registerwerte bleiben unverändert, bis der Interrupt über das Lesen von INTCAP oder GPIO gelöscht.
 
-  // INTFx [R] Interrupt detected
-  // 1 = IRQ detected; 0 = no IRQ detected
+GPIOx [RW] GPIO-Portregister
+  Ein Lesen der Register entspricht dem Lesen der Portleitungen.
+  Ein Schreiben in diese Register entspricht dem Schreiben in die Ausgangs-Latches (OLAT).
 
-  // INTCAPx [R] GPIO-Interrupt-State
-  // Das Register kann nur gelesen werden und es wird nur beim Auftreten eines Interrupts aktualisiert.
-  // Die Registerwerte bleiben unverändert, bis der Interrupt über das Lesen von INTCAP oder GPIO gelöscht wird.
+OLATx [RW] Outputregister
+  Ein Lesen von diesen Registern liefert den zuletzt hinein geschriebenen Wert, nicht die an den Pins aliegenden Daten.
+  Ein Schreiben auf diese Register ändert die Ausgangs-Latches, die ihrerseits diejenigen Pins beeinflussen,
+  die als Ausgänge konfiguriert sind.
 
-  // GPIOx [RW] GPIO-Portregister
-  // Ein Lesen der Register entspricht dem Lesen der Portleitungen.
-  // Ein Schreiben in diese Register entspricht dem Schreiben in die Ausgangs-Latches (OLAT).
+IOCON [RW] IO-Konfigurationsregister
+  mcpGPIO.mcp.writeRegister(MCP23017_IOCONA, B01000000);
 
-  // OLATx [RW] Outputregister
-  // Ein Lesen von diesen Registern liefert den zuletzt hinein geschriebenen Wert, nicht die an den Pins aliegenden Daten.
-  // Ein Schreiben auf diese Register ändert die Ausgangs-Latches, die ihrerseits diejenigen Pins beeinflussen,
-  // die als Ausgänge konfiguriert sind.
+  IOCON.7 Bank-Konfiguration
+   Ist BANK = 1, werden die Register nach Ports getrennt.
+   Die Register von PORT A belegen die Adressen 0x00 bis 0x0A und die Register von PORT B die Adressen
+   von 0x10 bis 0x1A (linke Spalte der Tabelle).
+   Ist BANK = 0, werden die A- und B-Register gepaart.
+   Zum Beispiel hat IODIRA die Adresse 0x00 und IODIRB die darauf folgende Adresse 0x01 (rechte Spalte der Tabelle).
 
-  // IOCON [RW] IO-Konfigurationsregister
-  mcp.writeRegister(MCP23017_IOCONA, B01000000);
+   BANK = 0
+   Schreiben von 0x80 in die Adresse 0x0A (ICON), um das BANK-Bit auf "1" zu setzen.
+   Nach Abschluß des Schreibvorgangs zeigt der interne Adressepointer nun auf die folgende Adresse 0x0B, die ungültig ist.
 
-  // IOCON.7 Bank-Konfiguration
-  //   Ist BANK = 1, werden die Register nach Ports getrennt.
-  //   Die Register von PORT A belegen die Adressen 0x00 bis 0x0A und die Register von PORT B die Adressen
-  //   von 0x10 bis 0x1A (linke Spalte der Tabelle).
-  //   Ist BANK = 0, werden die A- und B-Register gepaart.
-  //   Zum Beispiel hat IODIRA die Adresse 0x00 und IODIRB die darauf folgende Adresse 0x01 (rechte Spalte der Tabelle).
+  IOCON.6 MIRROR-Bit
+   1 = MIRROR INTA & INTB; 0 = INTA und INTB separat
+  IOCON.5 SEQOP AUTO increment Address-Pointer
+   1 = disabled; 0 = enabled
 
-  //   BANK = 0
-  //   Schreiben von 0x80 in die Adresse 0x0A (ICON), um das BANK-Bit auf "1" zu setzen.
-  //   Nach Abschluß des Schreibvorgangs zeigt der interne Adressepointer nun auf die folgende Adresse 0x0B, die ungültig ist.
+  IOCON.4 DISSLW-Bit (Slew-Rate) auf der SDA-Leitung
+   1 = nicht beeinflusst; 0 = beeinflusst
 
-  // IOCON.6 MIRROR-Bit
-  //   1 = MIRROR INTA & INTB; 0 = INTA und INTB separat
+  IOCON.3 HAEN-Bit Hardware-Adressierung bei SPI (MCP23S17 only)
 
-  // IOCON.5 SEQOP AUTO increment Address-Pointer
-  //   1 = disabled; 0 = enabled
+ IOCON.2 ODR-Bit INT-Pin-Open-Drain-Konfiguration
+   1 = enabled; 0 = disabled Polarität wird von INTPOL-Bit festgelegt
 
-  // IOCON.4 DISSLW-Bit (Slew-Rate) auf der SDA-Leitung
-  //   1 = nicht beeinflusst; 0 = beeinflusst
+  IOCON.1 INTPOL-Bit INT-Pin-Polarität (wenn ODR-Bit = 0)
+   1 = high-active; 0 = low-active
 
-  // IOCON.3 HAEN-Bit Hardware-Adressierung bei SPI (MCP23S17 only)
-
-  // IOCON.2 ODR-Bit INT-Pin-Open-Drain-Konfiguration
-  //   1 = enabled; 0 = disabled Polarität wird von INTPOL-Bit festgelegt
-
-  // IOCON.1 INTPOL-Bit INT-Pin-Polarität (wenn ODR-Bit = 0)
-  //   1 = high-active; 0 = low-active
-
-  // IOCON.0 allways 0
-
-  clearIRQ();
-}
+  IOCON.0 allways 0
+*/
