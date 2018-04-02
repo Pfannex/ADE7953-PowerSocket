@@ -93,6 +93,7 @@ function dashboardGetGrid(w) {
 
   // build the grid
   var content = '<!-- widget: grid ' + name + '-->\n' +
+    '<div class="no-margin-grid">'+
     '<fieldset class="ui-grid-' + String.fromCharCode(95 + columns) + '">\n';
   for (row = 0; row < rows; row++) {
     for (column = 0; column < data[row].length; column++) {
@@ -104,7 +105,7 @@ function dashboardGetGrid(w) {
     }
     content += '\n';
   }
-  content += '</fieldset>\n';
+  content += '</fieldset></div>\n';
   return content;
 }
 
@@ -142,10 +143,10 @@ function dashboardGetControlgroup(w) {
 // http://api.jquerymobile.com/textinput/
 function dashboardGetText(w) {
 
-  var caption;
+  var caption = w.caption;
   // create a hidden caption to align texts in a grid
   // the additional blank ensures grid spacing
-  if(!w.caption) { caption= " "; } else { caption= " "+w.caption;}
+  //if(!w.caption) { caption= " "; } else { caption= " "+w.caption;}
   var name = w.name;
   var data = w.data;
   var inputtype = w.inputtype;
