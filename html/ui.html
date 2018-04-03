@@ -28,6 +28,11 @@
       .ui-field-contain {
       margin: 0px;
     }
+    .sidebyside {
+      float: left;
+      position: relative;
+      display: inline-block;
+    }
   </style>
 </head>
 
@@ -74,12 +79,15 @@
     </div>
     <!-- footer -->
     <div data-role="footer">
-      <div class="ui-grid-a">
+      <div class="ui-grid-b">
         <div class="ui-block-a">
           MAC Address<br>%MACADDRESS%
         </div>
         <div class="ui-block-b">
           Device Name<br>%DEVICENAME%
+        </div>
+        <div class="ui-block-c">
+          Firmware<br>%FIRMWARE%
         </div>
       </div>
     </div>
@@ -126,20 +134,19 @@
           <div data-role="collapsible">
             <h1>Local Update</h1>
             <form enctype="multipart/form-data" id="update_form">
-              <div data-role="fieldcontain">
-                <label for="update_localpath">Firmware path</label>
-                <input type="file" id="update_localpath" name="update_localpath" class="ui-input-text ui-body-c" />
+              <div data-role="fieldcontain" class="sidebyside">
+                <input type="file" id="update_localpath" name="update_localpath" class="ui-input-text ui-body-c sidebyside"/>
+                <a data-role="button" class="ui-btn ui-btn-inline ui-icon-arrow-d ui-btn-icon-left sidebyside" id="updateFirmware" onClick="updateFirmware()">Update Firmware</a>
               </div>
               <div data-role="fieldcontain">
-                <label for="data_localpath">FFS path</label>
-                <input type="file" id="data_localpath" name="data_localpath" class="ui-input-text ui-body-c" />
+                <input type="file" id="data_localpath" name="data_localpath" class="ui-input-text ui-body-c sidebyside"/>
+                <a data-role="button" class="ui-btn ui-btn-inline ui-icon-arrow-d ui-btn-icon-left sidebyside" id="updateFFS" onClick="updateFFS()">Update FFS</a>
               </div>
-              <a data-role="button" class="ui-btn ui-btn-inline ui-icon-arrow-d ui-btn-icon-left" id="update" onClick="update()">Update</a>
             </form>
           </div>
           <div data-role="collapsible">
             <h1>Remote Update</h1>
-            <fieldset data-role="controlgroup" data-type="horizontal">
+            <fieldset data-role="fieldcontain">
               <input name="update" id="update-manual" value="manual" type="radio" />
               <label for="update-manual">Manual</label>
               <input name="update" id="update-auto" value="auto" type="radio" />
@@ -272,14 +279,17 @@
       </div>
       <!-- configForm -->
     </div>
+    <!-- footer -->
     <div data-role="footer">
-      <div id="message"></div>
-      <div class="ui-grid-a">
+      <div class="ui-grid-b">
         <div class="ui-block-a">
           MAC Address<br>%MACADDRESS%
         </div>
         <div class="ui-block-b">
           Device Name<br>%DEVICENAME%
+        </div>
+        <div class="ui-block-c">
+          Firmware<br>%FIRMWARE%
         </div>
       </div>
     </div>
@@ -333,13 +343,17 @@
         <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" onClick="consoleClear(1)">Clear</a>
       </div>
     </div>
+    <!-- footer -->
     <div data-role="footer">
-      <div class="ui-grid-a">
+      <div class="ui-grid-b">
         <div class="ui-block-a">
           MAC Address<br>%MACADDRESS%
         </div>
         <div class="ui-block-b">
           Device Name<br>%DEVICENAME%
+        </div>
+        <div class="ui-block-c">
+          Firmware<br>%FIRMWARE%
         </div>
       </div>
     </div>

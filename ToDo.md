@@ -5,10 +5,10 @@
 - **Firmware**
   - alle Variablen in die deviceCFG.json aufnehmen
   - start AP with configMode
+  - Versionierung (OmniESP, Device // Firmware, FFS)
 
 - **API**
   - erstellen der Funktionsübersicht (PF) -> doxygen
-  - find out why api.debug() crashes CPU on long String arguments in webserver
 
 - **UI**
   - OTA implementieren

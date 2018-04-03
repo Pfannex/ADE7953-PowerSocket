@@ -308,7 +308,7 @@ void TopicQueue::put(const char *topicsArgs) {
 
 void TopicQueue::put(const char *topics, int arg) {
   char topicsArgs[128];
-  sprintf(topicsArgs, "%s %d", topics, arg);
+  sprintf(topicsArgs, "%.110s %d", topics, arg);
   put(topicsArgs);
 }
 

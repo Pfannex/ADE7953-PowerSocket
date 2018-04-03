@@ -69,13 +69,13 @@ char *SysUtils::string2char(String command) {
 //###############################################################################
 
 String SysUtils::strDate(time_t t) {
-  char txt[128];
+  char txt[11];
   sprintf(txt, "%02d.%02d.%04d", day(t), month(t), year(t));
   return String(txt);
 }
 
 String SysUtils::strTime(time_t t) {
-  char txt[128];
+  char txt[11];
   sprintf(txt, "%02d:%02d:%02d", hour(t), minute(t), second(t));
   return String(txt);
 }
@@ -100,7 +100,7 @@ String SysUtils::uptimeStr(time_t t) {
   t-= hours*3600;
   int minutes= t/60;
   t-= minutes*60;
-  char txt[128];
+  char txt[15];
   sprintf(txt, "%dd %02d:%02d:%02d", days, hours, minutes, t);
   return String(txt);
 }

@@ -173,7 +173,7 @@ void Controller::on_netConnected() {
     // start the clock with NTP updater
     String ntpServer = ffs.cfg.readItem("ntp_serverip");
     char txt[128];
-    sprintf(txt, "starting NTP client for %s", ntpServer.c_str());
+    sprintf(txt, "starting NTP client for %.127s", ntpServer.c_str());
     logging.info(txt);
     clock.start(ntpServer.c_str(), NO_TIME_OFFSET, NTP_UPDATE_INTERVAL);
   } else {
