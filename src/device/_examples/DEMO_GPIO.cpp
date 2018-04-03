@@ -35,6 +35,7 @@ void DEMO_GPIO::start() {
 
   logging.info("starting " + Drawer_01.getVersion()); //only first time a class is started
   Drawer_01.start();
+  d01Color = ffs.deviceCFG.readItem("WS2812_01_COLOR").toInt();
 
   logging.info("device running");
 }
@@ -65,8 +66,12 @@ String DEMO_GPIO::set(Topic &topic) {
 
   if (topic.getItemCount() != 4) // ~/set/device/power
     return TOPIC_NO;
-  if (topic.itemIs(3, "power")) {
+  if (topic.itemIs(3, "color")) {
     //setPowerMode(topic.getArgAsLong(0));
+    d01Color = topic.getArgAsLong(0);
+    Drawer_01.WS2812_on(1, d01Color);
+    d01Color = ffs.deviceCFG.writeItem("WS2812_01_COLOR", String(d01Color));
+    logging.debug(ffs.deviceCFG.readItem("WS2812_01_COLOR"));
     return TOPIC_OK;
   } else {
     return TOPIC_NO;
@@ -127,7 +132,8 @@ void DEMO_GPIO::on_events(Topic &topic) {
   if (qre.isForModule(topic)) {
     if (qre.isItem(topic, "state")) {
       if (topic.argIs(0, "1")) {
-        Drawer_01.WS2812_on(1, 55555);
+        Drawer_01.WS2812_on(1, d01Color);
+        logging.debug(String(d01Color));
       }else if (topic.argIs(0, "0")){
         Drawer_01.WS2812_on(0, 0);
       }
