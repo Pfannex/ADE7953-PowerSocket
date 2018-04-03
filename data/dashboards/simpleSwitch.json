@@ -58,13 +58,13 @@
                 "name": "grid1",
                 "data": [
                   [
-                    { "type": "text", "name":"g11", "readonly": 1, "event": "~/event/device/power" },
+                    { "type": "text", "name":"g11", "readonly": 1, "event": "~/event/device/power", "prefix":"Voltage A: ", "suffix":" V" },
                     { "type": "text", "name":"g12", "readonly": 1, "event": "~/event/device/led" },
                     { "type": "text", "name":"g13", "readonly": 1, "event": "~/event/device/relay" }
                   ],
                   [
                     { "type": "text", "name":"g21", "readonly": 1, "event": "~/event/device/button/idle", "prefix":"idle is " },
-                    { "type": "text", "name":"g22", "caption": "voltage A", "readonly": 1, "suffix":" V"  },
+                    { "type": "text", "name":"g22", "readonly": 1, "suffix":" V"  },
                     { "type": "text", "name":"g23", "readonly": 1, "event": "~/event/device/button/state", "suffix":" is the state" }
                   ]
                 ]

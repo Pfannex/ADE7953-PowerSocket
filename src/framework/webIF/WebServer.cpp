@@ -210,6 +210,8 @@ String WebServer::subst(const String &var) {
     return api.call("~/get/wifi/macAddress");
   else if (var == "DEVICENAME")
     return api.call("~/get/ffs/cfg/item/device_name");
+  else if (var == "FIRMWARE")
+      return DEVICETYPE " " DEVICEVERSION;
   else
     return F("?");
 }
@@ -323,7 +325,7 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
 
     String result = api.call(tmpTopic);
     // contains sensitive information, log only in debug mode
-    api.debug("returning " + result); 
+    api.debug("returning " + result);
     request->send(200, "text/plain", result);
   } else {
     api.debug("client is not authenticated.");
