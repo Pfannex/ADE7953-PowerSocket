@@ -35,7 +35,6 @@ public:
   Adafruit_MCP23017 mcp;
 
 private:
-  void configMCP();
   void clearIRQ();
   void irq();                         // irq jumpTo funktion
   void irqHandle();                   // handle irq function
