@@ -115,7 +115,7 @@ void DEMO_I2C_OW::on_events(Topic &topic) {
   // central business logic
 
   if (topic.modifyTopic(0) == "event/wifi/connected"){
-    lcd.println(WiFi.localIP().toString(), ArialMT_Plain_16, 0);
+    lcd.println(WiFi.localIP().toString(), 0);
     mcpGPIO.mcp.digitalWrite(8, true);
   }
 

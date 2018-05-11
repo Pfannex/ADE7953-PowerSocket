@@ -17,6 +17,7 @@
   - Dashboard
     - Widgets
       - tight grid  
+  - API Call Abfrage rootString sporadisch Absturz ggf. json zu lang
 
 - **API**
 
