@@ -14,8 +14,8 @@ WebServer::WebServer(API &api)
     : api(api), webServer(WEBSERVERPORT), webSocket("/ws"), auth(api) {
 
   // static pages
-  //webServer.serveStatic("/lib/jquery.js", SPIFFS, "/web/lib/jquery.js",
-  //                      "max-age=86400");
+  webServer.serveStatic("/lib/jquery.js", SPIFFS, "/web/lib/jquery.js",
+                        "max-age=86400");
   webServer.serveStatic("/lib/jquery.mobile.js", SPIFFS,
                         "/web/lib/jquery.mobile.js", "max-age=86400");
   webServer.serveStatic("/css/jquery.mobile.css", SPIFFS,
