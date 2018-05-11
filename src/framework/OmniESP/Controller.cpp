@@ -74,6 +74,15 @@ void Controller::start() {
     ffs.cfg.saveFile();
   }
 
+  // set sane defaults
+  String userName = ffs.cfg.readItem("device_username");
+  if(userName == "") {
+    logging.info("setting user name and password to defaults (" USERNAME "/" PASSWORD ")");
+    ffs.cfg.writeItem("device_username", USERNAME);
+    ffs.cfg.writeItem("device_password", PASSWORD);
+    ffs.cfg.saveFile();
+  }
+
   // start WiFi for the first time
   wifi.start();
 
