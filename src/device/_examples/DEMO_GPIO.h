@@ -33,7 +33,7 @@ private:
 
   QRE1113 qre;
   WS2812 Drawer_01;
-  long d01Color;
+  long d01Color = 0;
 
   // the central modes
   int power = 0;

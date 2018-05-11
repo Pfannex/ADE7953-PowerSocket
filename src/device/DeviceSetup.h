@@ -19,7 +19,7 @@
 //...............................................................................
 // DEVICE
 //...............................................................................
-/*
+
 #define DEVICETYPE      "SimpleSwitch"
 #define DEVICEVERSION   "1.1.0"
 
@@ -27,8 +27,6 @@
 #define INCLUDE_FILE(M)  QUOTEME(device/_devices/simpleSwitch.h)
 #define DASHBOARD_PATH   "/dashboards/simpleSwitch.json"
 #define DEVICECFG_PATH   "/cfg/device/simpleSwitch.json"
-*/
-
 
 //###############################################################################
 // DEMO GPIO
@@ -47,8 +45,7 @@
 //...............................................................................
 // DEVICE
 //...............................................................................
-
-
+/*
 #define DEVICETYPE      "DEMO_GPIO"
 #define DEVICEVERSION   "1.0.0"
 
@@ -56,7 +53,7 @@
 #define INCLUDE_FILE(M)  QUOTEME(device/_examples/DEMO_GPIO.h)
 #define DASHBOARD_PATH   "/dashboards/DEMO_GPIO.json"
 #define DEVICECFG_PATH   "/cfg/examples/DEMO_GPIO.json"
-
+*/
 //###############################################################################
 // DEMO I2C
 //###############################################################################
