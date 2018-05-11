@@ -184,6 +184,10 @@ void Controller::on_netConnected() {
     char txt[128];
     sprintf(txt, "starting NTP client for %.127s", ntpServer.c_str());
     logging.info(txt);
+    // TODO: to have a configurable time zone, a set of timezones needs to
+    // be defined in Clock.h. The right pair of TimeChangeRules need to
+    // be determined based on what's in the configuration and set in
+    // Clock's tz variable.
     clock.start(ntpServer.c_str(), NO_TIME_OFFSET, NTP_UPDATE_INTERVAL);
   } else {
     logging.info("NTP client is off");
