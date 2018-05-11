@@ -11,7 +11,7 @@
   {
     "type": "controlgroup",
     "name": "power",
-    "legend": "Power",
+    "caption": "Power",
     "action": "~/set/device/power",
     "event": "~/event/device/power",
     "data": [{
@@ -26,12 +26,13 @@
   },
 
   {
-    "type": "text",
-    "name": "brightness",
-    "legend": "brightness",
-    "action": "~/set/device/brightness",
-    "event": "~/event/device/brightness",
-    "inputtype": "number"
+    "type": "slider",
+    "name": "slider1",
+    "caption": "slider",
+    "min": 0,
+    "max": 16777214,
+    "action": "~/set/device/color",
+    "event": "~/event/device/brightness"
   },
 
   {

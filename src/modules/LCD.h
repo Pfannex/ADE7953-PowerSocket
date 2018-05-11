@@ -28,7 +28,7 @@ public:
   void handle();
   String getVersion();
 
-  void println(String txt, const char *fontData, int yPos);
+  void println(String txt, int yPos);
 
 private:
   SSD1306Brzo ssd1306;
