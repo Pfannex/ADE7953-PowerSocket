@@ -4,10 +4,10 @@
   #include <ArduinoJson.h>
   #include <Arduino.h>
   #include "framework/Utils/Logger.h"
-  #include "framework/Topic.h"
+  #include "framework/OmniESP/Topic.h"
   #include "Setup.h"
   #include "framework/Utils/Debug.h"
-  #include "device/DeviceSetup.h"
+  //#include "device/DeviceSetup.h"
 
 //###############################################################################
 //  stringFile

@@ -8,19 +8,23 @@
 #include "customDeviceSetup.h"
 
 // modules required by device
-#include "modules/GPIO.h"
+#include <Wire.h>
+#include "modules/LCD.h"
+#include "modules/oneWire.h"
+#include "modules/MCP23017.h"
+//#include "modules/QRE1113.h"
+//#include "modules/WS2812.h"
+#include "Adafruit_BMP085.h"
+#include "Adafruit_Si7021.h"
 
 //###############################################################################
 //  Device
 //###############################################################################
 
-#define DEVICETYPE      "SimpleSwitch"
-#define DEVICEVERSION   "1.2.0"
-
-class customDevice : public Device {
+class DEMO_I2C_OW : public Device{
 
 public:
-  customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
+  DEMO_I2C_OW(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
   void start();
   void handle();
   String set(Topic &topic);
@@ -28,14 +32,14 @@ public:
   void on_events(Topic &topic);
 
 private:
-  GPIOinput button;
-  GPIOoutput led;
-  GPIOoutput relay;
+  LCD lcd;
+  //OW ow;
+  MCP23017 mcpGPIO;
+  void configMCP();
 
-  // the central modes
-  int power = 0;
-  int configMode = 0;
-  void setConfigMode(int value);
-  void setPowerMode(int value);
-  void setLedMode();
+  int sensorPollTime;
+  unsigned long lastPoll = 0;
+  void readBMP180(String name);
+  void readSi7021(String name);
+
 };

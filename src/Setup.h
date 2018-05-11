@@ -22,7 +22,7 @@
 //  NTP
 //###############################################################################
 
-// default server if no other is set in the config
+// default configuration if no other is set in the config
 #define NTP_SERVER "europe.pool.ntp.org"
 #define NTP_UPDATE_INTERVAL 3600000
 #define NO_TIME_OFFSET 0
@@ -31,7 +31,10 @@
 //###############################################################################
 //  FlashFileSystem
 //###############################################################################
-#define CFG_PATH        "/cfg.json"           //global configuration
+
+#define CFG_PATH        "/OmniESP.json"              // global configuration
+#define DEVICECFG_PATH  "/customDevice/config.json"  // device configuration
+#define DASHBOARD_PATH  "/customDevice/dashboard.json"
 
 #define TYPE_OBJECT 1
 #define TYPE_ARRAY 0

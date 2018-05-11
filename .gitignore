@@ -53,8 +53,5 @@ Temporary Items
 .clang_complete
 .gcc-flags.json
 
-#--> Project files <-------------------------
-data/cfg.json
-
 # files needed for gulp
 node_modules

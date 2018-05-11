@@ -1,8 +1,8 @@
 #pragma once
-#include "modules/Module.h"
+#include "framework/OmniESP/Module.h"
 #include "framework/Utils/Logger.h"
 #include "Setup.h"
-#include "framework/Topic.h"
+#include "framework/OmniESP/Topic.h"
 #include <FunctionalInterrupt.h>
 
 //###############################################################################

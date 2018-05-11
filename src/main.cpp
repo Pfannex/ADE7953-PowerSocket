@@ -1,24 +1,9 @@
-/******************************************************************************
-
-  ProjectName: OmniESP                            ***** *****
-  SubTitle   : WLAN/LAN/MQTT/WebIf,LCD           *     *     ************
-                                                *   **   **   *           *
-                                               *   *   *   *   *   ****    *
-                                               *   *       *   *   *   *   *
-  Last modification by:                        *   *       *   *   ****    *
-  - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
-                                                 *   *        *   *******
-  Date    : 13.11.2016                            *****      *   *
-  Version : alpha 0.312                                     *   *
-  Revison :                                                *****
-
-********************************************************************************/
 #include <SoftTimer.h> //https://github.com/prampec/arduino-softtimer
                        // need https://github.com/prampec/arduino-pcimanager
 
-#include "framework/API.h"
-#include "framework/Controller.h"
-#include "framework/webIF/WebServer.h"
+#include "framework/OmniESP/API.h"
+#include "framework/OmniESP/Controller.h"
+#include "framework/Web/WebServer.h"
 #include "framework/MQTT/MQTT.h"
 #include "framework/Utils/Debug.h"
 

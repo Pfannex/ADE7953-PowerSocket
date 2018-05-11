@@ -1,8 +1,8 @@
 #pragma once
-#include "modules/Module.h"
+#include "framework/OmniESP/Module.h"
 #include "framework/Utils/Logger.h"
 #include "Setup.h"
-#include "framework/Topic.h"
+#include "framework/OmniESP/Topic.h"
 #include <Adafruit_NeoPixel.h>
 
 //###############################################################################
@@ -29,7 +29,7 @@ public:
   void start();
   void handle();
   String getVersion();
-  
+
   void WS2812_on(int on, int color);
 
 private:

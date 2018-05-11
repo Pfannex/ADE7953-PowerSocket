@@ -9,15 +9,14 @@
 
 // modules required by device
 #include "modules/GPIO.h"
+#include "modules/QRE1113.h"
+#include "modules/WS2812.h"
 
 //###############################################################################
 //  Device
 //###############################################################################
 
-#define DEVICETYPE      "SimpleSwitch"
-#define DEVICEVERSION   "1.2.0"
-
-class customDevice : public Device {
+class customDevice : public Device{
 
 public:
   customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
@@ -31,6 +30,10 @@ private:
   GPIOinput button;
   GPIOoutput led;
   GPIOoutput relay;
+
+  QRE1113 qre;
+  WS2812 Drawer_01;
+  long d01Color = 0;
 
   // the central modes
   int power = 0;
