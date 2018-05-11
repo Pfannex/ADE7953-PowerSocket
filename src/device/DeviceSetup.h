@@ -20,9 +20,11 @@
 // DEVICE
 //...............................................................................
 
-#define DEVICETYPE      "SimpleSwitch"
-#define DEVICEVERSION   "1.1.0"
+#define DEVICETYPE      "SimpleSwitch"  //device.h
+#define DEVICEVERSION   "1.1.0"         //device.h
 
+
+//entfällt
 #define DEVICE           simpleSwitch
 #define INCLUDE_FILE(M)  QUOTEME(device/_devices/simpleSwitch.h)
 #define DASHBOARD_PATH   "/dashboards/simpleSwitch.json"

@@ -1,0 +1,21 @@
+{
+"WS2812_01_COLOR" : "55555",
+"I2CPOLL"         : "2500",
+
+"SAGCYC"        : "",
+"DISNOLOAD"     : "",
+"LCYCMODE"      : "",
+"PGA_V"         : "",
+"PGA_IA"        : "",
+"PGA_IB"        : "",
+"WRITE_PROTECT" : "",
+"EX_REF"        : "",
+"unlock"        : "173",
+"ZXTOUT"        : "",
+"LINECYC"       : "",
+"CONFIG"        : "",
+"CF1DEN"        : "69",
+"CF2DEN"        : "69",
+"CFMODE"        : "115",
+"k_IB"          : "1"
+}
