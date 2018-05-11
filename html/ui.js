@@ -32,6 +32,9 @@ function setRadioHandlers() {
   $(document).on("change", "input[name=mqtt]", function() {
     showDetails("mqtt_details", $(this), "on");
   });
+  $(document).on("change", "input[name=ap]", function() {
+    showDetails("ap_details", $(this), "on|auto");
+  });
 }
 
 // ---------------------------
@@ -205,6 +208,7 @@ function setConfig(json) {
   setRadio("ntp", config["ntp"]);
   setRadio("update", config["update"]);
   setRadio("mqtt", config["mqtt"]);
+  setRadio("ap", config["ap"]);
 }
 
 //

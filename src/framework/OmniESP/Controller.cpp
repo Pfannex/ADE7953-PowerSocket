@@ -43,6 +43,38 @@ void Controller::setTopicFunction(TopicFunction topicFn) {
 //-------------------------------------------------------------------------------
 //  start
 //-------------------------------------------------------------------------------
+bool Controller::setConfigDefault(String item, String defaultValue) {
+    String value= ffs.cfg.readItem(item);
+    if(value == "") {
+          ffs.cfg.writeItem(item, defaultValue);
+          logging.info("setting "+item+" to "+defaultValue);
+          return true;
+    } else {
+      return false;
+    }
+}
+
+void Controller::setConfigDefaults() {
+
+  // set ESP name
+  bool f= setConfigDefault("device_name", "ESP8266_" + espTools.genericName());
+  deviceName= ffs.cfg.readItem("device_name");
+  // set other defaults
+  f= f ||
+    setConfigDefault("device_username", USERNAME) ||
+    setConfigDefault("device_password", PASSWORD) ||
+    setConfigDefault("update", "manual") ||
+    setConfigDefault("ap", "auto") ||
+    setConfigDefault("ap_ssid", deviceName) ||
+    setConfigDefault("ap_password", PASSWORD) ||
+    setConfigDefault("wifi", "off") ||
+    setConfigDefault("lan", "off") ||
+    setConfigDefault("ntp", "off") ||
+    setConfigDefault("mqtt", "off");
+  if(f) { ffs.cfg.saveFile(); }
+
+}
+
 void Controller::start() {
 
   //
@@ -62,26 +94,8 @@ void Controller::start() {
   // fire up the FFS
   ffs.mount();
 
-  // set ESP name
-  deviceName= ffs.cfg.readItem("device_name");
-  if (deviceName == "") {
-    deviceName = "ESP8266_" + espTools.genericName();
-    logging.info("setting device name " + deviceName + " for the first time");
-    ffs.cfg.writeItem("device_name", deviceName);
-    logging.info("setting access point SSID " + deviceName +
-                 " for the first time");
-    ffs.cfg.writeItem("ap_ssid", deviceName);
-    ffs.cfg.saveFile();
-  }
-
-  // set sane defaults
-  String userName = ffs.cfg.readItem("device_username");
-  if(userName == "") {
-    logging.info("setting user name and password to defaults (" USERNAME "/" PASSWORD ")");
-    ffs.cfg.writeItem("device_username", USERNAME);
-    ffs.cfg.writeItem("device_password", PASSWORD);
-    ffs.cfg.saveFile();
-  }
+  // set config defaults
+  setConfigDefaults();
 
   // start WiFi for the first time
   wifi.start();
