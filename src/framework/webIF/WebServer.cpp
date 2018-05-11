@@ -14,8 +14,8 @@ WebServer::WebServer(API &api)
     : api(api), webServer(WEBSERVERPORT), webSocket("/ws"), auth(api) {
 
   // static pages
-  webServer.serveStatic("/lib/jquery.js", SPIFFS, "/web/lib/jquery.js",
-                        "max-age=86400");
+  //webServer.serveStatic("/lib/jquery.js", SPIFFS, "/web/lib/jquery.js",
+  //                      "max-age=86400");
   webServer.serveStatic("/lib/jquery.mobile.js", SPIFFS,
                         "/web/lib/jquery.mobile.js", "max-age=86400");
   webServer.serveStatic("/css/jquery.mobile.css", SPIFFS,
@@ -35,10 +35,22 @@ WebServer::WebServer(API &api)
 
   // firmware update; the first function handles the request, the second
   // function is executed for every chunk of the uploaded file
+  /*
   webServer.on(
       "/update.html", HTTP_POST,
       std::bind(&WebServer::updatePageHandler1, this, std::placeholders::_1),
       std::bind(&WebServer::updatePageHandler2, this, std::placeholders::_1,
+                std::placeholders::_2, std::placeholders::_3,
+                std::placeholders::_4, std::placeholders::_5,
+                std::placeholders::_6));
+  */
+
+  // firmware upload; the first function handles the request, the second
+  // function is executed for every chunk of the uploaded file
+  webServer.on(
+      "/update.html", HTTP_POST,
+      std::bind(&WebServer::uploadPageHandler1, this, std::placeholders::_1),
+      std::bind(&WebServer::uploadPageHandler2, this, std::placeholders::_1,
                 std::placeholders::_2, std::placeholders::_3,
                 std::placeholders::_4, std::placeholders::_5,
                 std::placeholders::_6));
@@ -333,6 +345,7 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
   }
 }
 
+/*
 //...............................................................................
 //  updatePageHandler
 //...............................................................................
@@ -416,6 +429,25 @@ void WebServer::updatePageHandler2(AsyncWebServerRequest *request,
   }
 }
 
+*/
+
+//...............................................................................
+//  uploadPageHandler
+//...............................................................................
+
+// this is the handler for the actual request
+// it is executed when the POST operation has terminated
+// the POST operation is handled by uploadPageHandler2
+void WebServer::uploadPageHandler1(AsyncWebServerRequest *request) {
+}
+
+// this function is called for every chunk of the file which is uploaded
+// in the POST operation
+void WebServer::uploadPageHandler2(AsyncWebServerRequest *request,
+                                   String filename, size_t index, uint8_t *data,
+                                   size_t len, bool final) {
+
+}
 //...............................................................................
 //  all other requests
 //...............................................................................

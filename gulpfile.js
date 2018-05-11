@@ -37,6 +37,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 const htmldir = "html";
 const webdir = "data/web";
+const bindir = ".pioenvs/d1_mini"
+const firmwaredir = "firmware"
 
 const gulp = require('gulp');
 const plumber = require('gulp-plumber');
@@ -48,6 +50,7 @@ const del = require('del');
 const useref = require('gulp-useref');
 const gulpif = require('gulp-if');
 const inline = require('gulp-inline');
+const tar = require('gulp-tar');
 //const preprocess = require('gulp-preprocess');
 
 //        .pipe(preprocess({context: { NODE_PATH: '$NODE_PATH:node_modules'}}))
@@ -105,13 +108,23 @@ gulp.task('html', function() {
         .pipe(gulp.dest(webdir));
 });
 
+/* firmware update tarball */
+// requires:
+// npm install --save-dev gulp-tar
+// see https://www.npmjs.com/package/gulp-tar
+gulp.task('tar', function() {
+    return gulp.src(bindir+'/firmware.bin')
+      .pipe(tar('omniesp.tar'))
+      .pipe(gulp.dest(firmwaredir))
+});
+
 /* Build file system */
 // https://fettblog.eu/gulp-4-parallel-and-series/
 gulp.task('cleanfs', gulp.series('clean'));
 gulp.task('buildfs', gulp.series('clean',  gulp.parallel('files', 'lib', 'html')));
 gulp.task('buildfs2', gulp.series('clean',  gulp.parallel('files', 'lib', 'inline')));
 gulp.task('default', gulp.series('buildfs'));
-
+gulp.task('tarball', gulp.series('tar'));
 
 // -----------------------------------------------------------------------------
 // PlatformIO support

@@ -4,12 +4,12 @@
   "device_password":        "admin",
 
   "wifi":                   "manual",
-  "wifi_ssid":              "",
-  "wifi_password":          "",
-  "wifi_ip":                "192.168.1.100",
+  "wifi_ssid":              "Neubert-Volmar",
+  "wifi_password":          "0309196917041970",
+  "wifi_ip":                "192.168.31.52",
   "wifi_netmask":           "255.255.255.0",
-  "wifi_gateway":           "192.168.1.1",
-  "wifi_dns":               "192.168.1.1",
+  "wifi_gateway":           "192.168.31.1",
+  "wifi_dns":               "192.168.31.1",
 
   "ap":                     "auto",
   "ap_ssid":                "",
@@ -21,8 +21,8 @@
   "lan_gateway":            "",
   "lan_dns":                "",
 
-  "ntp":                    "off",
-  "ntp_serverip":           "",
+  "ntp":                    "on",
+  "ntp_serverip":           "ntp.home.neubert-volmar.de",
 
   "update_localpath":       "",
   "update":                 "manual",

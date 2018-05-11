@@ -26,13 +26,20 @@ private:
   void rootPageHandler(AsyncWebServerRequest *request);
   void authPageHandler(AsyncWebServerRequest *request);
   void apiPageHandler(AsyncWebServerRequest *request);
+  /*
   void updatePageHandler1(AsyncWebServerRequest *request);
   void updatePageHandler2(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
+  */
+  void uploadPageHandler1(AsyncWebServerRequest *request);
+  void uploadPageHandler2(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final);
   void notFoundPageHandler(AsyncWebServerRequest *request);
 
+
+  /*
   // log error when updating firmware
   void logUpdateError();
   String getUpdateErrorString();
+  */
 
   // variable substitution in templates
   String subst(const String &var);
