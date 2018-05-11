@@ -1,24 +1,9 @@
-/******************************************************************************
-
-  ProjectName: OmniESP                            ***** *****
-  SubTitle   : WLAN/LAN/MQTT/WebIf,LCD           *     *     ************
-                                                *   **   **   *           *
-                                               *   *   *   *   *   ****    *
-                                               *   *       *   *   *   *   *
-  Last modification by:                        *   *       *   *   ****    *
-  - Pf@nne (pf@nne-mail.de)                     *   *     *****           *
-                                                 *   *        *   *******
-  Date    : 13.11.2016                            *****      *   *
-  Version : alpha 0.312                                     *   *
-  Revison :                                                *****
-
-********************************************************************************/
 #include <SoftTimer.h> //https://github.com/prampec/arduino-softtimer
                        // need https://github.com/prampec/arduino-pcimanager
 
-#include "framework/API.h"
-#include "framework/Controller.h"
-#include "framework/webIF/WebServer.h"
+#include "framework/OmniESP/API.h"
+#include "framework/OmniESP/Controller.h"
+#include "framework/Web/WebServer.h"
 #include "framework/MQTT/MQTT.h"
 #include "framework/Utils/Debug.h"
 
@@ -52,14 +37,6 @@ void setup() {
   // we have the API as a level of abstraction
   api.start();
 
-  // the viewers communicate with the susbsystems via the API
-  //D("starting web interface");
-  // TODO start only if we have WiFi or LAN!
-  //webServer.start();
-  //D("starting MQTT");
-  // TODO start only if we have WiFi or LAN!
-  //mqtt.start();
-
   // done
   api.info("startup finished");
 
@@ -69,8 +46,6 @@ void setup() {
   SoftTimer.add(&t3);
   SoftTimer.add(&t4);
 
-  // controller.api.set("/Hello/World/foo/bar", "arg1,arg2,3,4,5");
-  // controller.api.set("/Hello/World/foo/bar arg1,arg2,3,4,5");
 }
 
 //-------------------------------------------------------------------------------

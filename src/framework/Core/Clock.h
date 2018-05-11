@@ -1,6 +1,6 @@
 #pragma once
 #include "Setup.h"
-#include "framework/Topic.h"
+#include "framework/OmniESP/Topic.h"
 #include <NTPClient.h>
 #include <Timezone.h>
 #include <WiFiUdp.h>

@@ -1,5 +1,8 @@
 #include "framework/Core/FFS.h"
 
+// the documentation for Arduino JSON is here
+// https://arduinojson.org/api/
+
 //###############################################################################
 //  FFS
 //###############################################################################
@@ -9,8 +12,7 @@ FFS::FFS(LOGGING &logging)
       // jsonFiles
       cfg(logging, CFG_PATH, TYPE_OBJECT),
       deviceCFG(logging, DEVICECFG_PATH, TYPE_OBJECT),
-      webCFG(logging, DASHBOARD_PATH, TYPE_OBJECT),
-      subGlobal(logging, SUBGLOBAL_PATH, TYPE_OBJECT) {}
+      webCFG(logging, DASHBOARD_PATH, TYPE_OBJECT){}
 
 //-------------------------------------------------------------------------------
 //  FFS public
@@ -35,7 +37,6 @@ void FFS::mount() {
     cfg.loadFile();
     deviceCFG.loadFile();
     webCFG.loadFile();
-    subGlobal.loadFile();
     logging.debug("configuration loaded");
   }
 }
@@ -85,8 +86,6 @@ String FFS::set(Topic &topic) {
     tmpFile = &deviceCFG;
   } else if (topic.itemIs(3, "webCFG")) {
     tmpFile = &webCFG;
-  } else if (topic.itemIs(3, "subGlobal")) {
-    tmpFile = &subGlobal;
   }
 
   if (tmpFile != NULL) {
@@ -157,8 +156,6 @@ String FFS::get(Topic &topic) {
     tmpFile = &deviceCFG;
   } else if (topic.itemIs(3, "webCFG")) {
     tmpFile = &webCFG;
-  } else if (topic.itemIs(3, "subGlobal")) {
-    tmpFile = &subGlobal;
   }
 
   if (tmpFile != NULL) {
@@ -275,13 +272,25 @@ bool FFSjsonFile::saveFile() {
 //  read Item from jsonObjectString
 //...............................................................................
 String FFSjsonFile::readItem(String itemName) {
-  if(!itemName) return "NIL";
+  if(!itemName) {
+    logging.error("software error: calling FFSjsonFile::readItem() without argument");
+    return "";
+  }
+  //D(itemName.c_str());
   DynamicJsonBuffer JsonBuffer;
   JsonObject &rootObject = JsonBuffer.parseObject(root);
   if (rootObject.success()) {
-    return rootObject[itemName].as<char*>();
+    //Dl;
+    JsonVariant value= rootObject[itemName];
+    if(value.success()) {
+      return value.as<char*>();
+    } else {
+      logging.error("no item "+itemName+" in file "+filePath);
+      return "";
+    }
   } else {
-    return "NIL";
+    logging.error("FFSjsonFile::readItem(String): could not access root object for item "+itemName+" in file "+filePath);
+    return "";
   }
 }
 
@@ -292,10 +301,14 @@ String FFSjsonFile::readItem(int item) {
   DynamicJsonBuffer JsonBuffer;
   JsonArray &rootArray = JsonBuffer.parseArray(root);
   if (rootArray.success()) {
-    if(item>= rootArray.size()) return "NIL";
+    if((item>= rootArray.size()) || (item< 0)) {
+      logging.error("software error: argument of FFSjsonFile::readItem() out of bounds");
+      return "";
+    }
     return rootArray[item].as<char*>();
   } else {
-    return "NIL";
+    logging.error("FFSjsonFile::readItem(int): could not access root object in file "+filePath);
+    return "";
   }
 }
 
@@ -328,35 +341,38 @@ bool FFSjsonFile::writeItem(String itemName, String value) {
 String FFSjsonFile::readJsonString() {
 
   File jsonFile;
+  DynamicJsonBuffer jsonBuffer;
+  JsonVariant json;
   String jsonData;
 
   logging.info("reading " + filePath);
+  size= 0;
   if (SPIFFS.exists(filePath)) {
     jsonFile = SPIFFS.open(filePath, "r");
     if (jsonFile) {
-      logging.debug("file opened");
+      logging.debug("file "+filePath+" opened");
       size = jsonFile.size();
-
-      DynamicJsonBuffer jsonBuffer;
-      JsonVariant json = jsonBuffer.parse(jsonFile);
-      if (json.is<JsonArray>()) {
-        JsonArray &arr = json.as<JsonArray>();
-        json.printTo(jsonData);
-      }
-      if (json.is<JsonObject>()) {
-        JsonObject &obj = json.as<JsonObject>();
-        json.printTo(jsonData);
-        itemsCount = parseJsonObject(obj);
-      }
+      json = jsonBuffer.parse(jsonFile);
+      jsonFile.close();
     } else {
-      logging.error("could not open file");
-      return "NIL";
+      logging.error("could not open file "+filePath+", returning empty list");
+      json = jsonBuffer.parse("{}");
     }
-    jsonFile.close();
-  }else{
-    logging.error("file does not exists!");
-    return "NIL";
+  } else {
+    logging.error("file "+filePath+" does not exist, returning empty list");
+    json = jsonBuffer.parse("{}");
   }
+  // parse file content or empty list
+  if (json.is<JsonArray>()) {
+    JsonArray &arr = json.as<JsonArray>();
+    json.printTo(jsonData);
+  }
+  if (json.is<JsonObject>()) {
+    JsonObject &obj = json.as<JsonObject>();
+    json.printTo(jsonData);
+    itemsCount = parseJsonObject(obj);
+  }
+  //D(jsonData.c_str());
   return jsonData;
 }
 

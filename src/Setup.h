@@ -13,6 +13,14 @@
 #endif
 
 //###############################################################################
+//  User
+//###############################################################################
+
+// defaults for username and password
+#define USERNAME "admin"
+#define PASSWORD "admin"
+
+//###############################################################################
 //  Web
 //###############################################################################
 #define TITLE "OmniESP"
@@ -22,7 +30,7 @@
 //  NTP
 //###############################################################################
 
-// default server if no other is set in the config
+// default configuration if no other is set in the config
 #define NTP_SERVER "europe.pool.ntp.org"
 #define NTP_UPDATE_INTERVAL 3600000
 #define NO_TIME_OFFSET 0
@@ -31,9 +39,10 @@
 //###############################################################################
 //  FlashFileSystem
 //###############################################################################
-#define CFG_PATH        "/cfg.json"           //global configuration
-//#define DEVICECFG_PATH  DEVICECFG_PATH        //device specific configuration
-#define SUBGLOBAL_PATH  "/subGlobal.json"     //global MQTT subscribe
+
+#define CFG_PATH        "/OmniESP.json"              // global configuration
+#define DEVICECFG_PATH  "/customDevice/config.json"  // device configuration
+#define DASHBOARD_PATH  "/customDevice/dashboard.json"
 
 #define TYPE_OBJECT 1
 #define TYPE_ARRAY 0

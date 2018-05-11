@@ -57,21 +57,24 @@ bool MQTT::start() {
       String root;
 
       // global subscribe
-      DynamicJsonBuffer global_JsonBuffer;
-      root = api.call("~/get/ffs/subGlobal/root");
-      JsonObject &global_rootObject = global_JsonBuffer.parseObject(root);
-      if (global_rootObject.success()) {
-        for (auto &element : global_rootObject) {
-          // String strKey = element.key;
-          String strValue = element.value;
-          strValue += "/#";
-          // Serial.println(strValue);
+      String aliases = api.call("~/get/ffs/cfg/item/mqtt_aliases");
+
+      char *alias;
+      char *s = strdup(aliases.c_str());
+      alias = strtok(s, ",; ");
+      while (alias != NULL) {
+        if (*alias) {
+
+          String strValue = String(alias);  //ggf. strdup wg. free(s)
+          strValue += "/#";                 //ggf. NUR set/get!?
+          //Serial.println(strValue);
           client.subscribe(strValue.c_str());
           client.loop();
         }
-      } else {
-        api.error("reading ffs.subGlobal.root failed");
+        alias = strtok(NULL, ",; ");
       }
+      free(s);
+
       // device subscribe
       String subStr = deviceName + "/set/#";
       client.subscribe(subStr.c_str());
@@ -80,24 +83,6 @@ bool MQTT::start() {
       client.subscribe(subStr.c_str());
       client.loop();
 
-      /*
-      DynamicJsonBuffer device_JsonBuffer;
-      root = api.call("~/get/ffs/sub/root");
-      JsonObject &device_rootObject = device_JsonBuffer.parseObject(root);
-      if (device_rootObject.success()) {
-        for (auto &element : device_rootObject) {
-          // String strKey = element.key;
-          String value = element.value;
-          String strValue = deviceName;
-          strValue += "/";
-          strValue += value;
-          // Serial.println(strValue);
-          client.subscribe(strValue.c_str());
-          client.loop();
-        }
-      } else {
-        api.error("reading ffs.sub.root failed");
-      }*/
     }
   } else {
     api.info("MQTT is switched off");
