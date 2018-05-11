@@ -37,14 +37,6 @@ void setup() {
   // we have the API as a level of abstraction
   api.start();
 
-  // the viewers communicate with the susbsystems via the API
-  //D("starting web interface");
-  // TODO start only if we have WiFi or LAN!
-  //webServer.start();
-  //D("starting MQTT");
-  // TODO start only if we have WiFi or LAN!
-  //mqtt.start();
-
   // done
   api.info("startup finished");
 
@@ -54,8 +46,6 @@ void setup() {
   SoftTimer.add(&t3);
   SoftTimer.add(&t4);
 
-  // controller.api.set("/Hello/World/foo/bar", "arg1,arg2,3,4,5");
-  // controller.api.set("/Hello/World/foo/bar arg1,arg2,3,4,5");
 }
 
 //-------------------------------------------------------------------------------
