@@ -63,6 +63,8 @@ public:
 private:
   String deviceName;
 
+  void setConfigDefaults();
+  bool setConfigDefault(String item, String defaultValue);
   bool startConnections();
   void viewsUpdate(time_t t, Topic& topic);
   void handleEvent(String& topicsArgs);

@@ -160,6 +160,29 @@
           </div>
         </div>
         <div data-role="collapsible">
+          <h1>Access Point</h1>
+          <div>
+            <fieldset data-role="controlgroup" data-type="horizontal">
+              <input name="ap" id="ap-off" value="off" type="radio" />
+              <label for="ap-off">Off</label>
+              <input name="ap" id="ap-auto" value="auto" type="radio" />
+              <label for="ap-auto">Auto</label>
+              <input name="ap" id="ap-on" value="on" type="radio" />
+              <label for="ap-on">On</label>
+            </fieldset>
+          </div>
+          <div id="ap_details">
+            <div data-role="fieldcontain">
+              <label for="ap_ssid">SSID</label>
+              <input type="text" id="ap_ssid" name="ap_ssid" placeholder="SSID of the access point" />
+            </div>
+            <div data-role="fieldcontain">
+              <label for="ap_password">Password</label>
+              <input type="password" id="ap_password" name="ap_password" placeholder="password for the access point" />
+            </div>
+          </div>
+        </div>
+        <div data-role="collapsible">
           <h1>WiFi</h1>
           <div>
             <fieldset data-role="controlgroup" data-type="horizontal">
