@@ -32,8 +32,6 @@
 //  FlashFileSystem
 //###############################################################################
 #define CFG_PATH        "/cfg.json"           //global configuration
-//#define DEVICECFG_PATH  DEVICECFG_PATH        //device specific configuration
-#define SUBGLOBAL_PATH  "/subGlobal.json"     //global MQTT subscribe
 
 #define TYPE_OBJECT 1
 #define TYPE_ARRAY 0

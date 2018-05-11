@@ -62,7 +62,6 @@ public:
   FFSjsonFile cfg;
   FFSjsonFile deviceCFG;
   FFSjsonFile webCFG;
-  FFSjsonFile subGlobal;
 
 //Functions
   void mount();

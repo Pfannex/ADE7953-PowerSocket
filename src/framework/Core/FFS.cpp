@@ -9,8 +9,7 @@ FFS::FFS(LOGGING &logging)
       // jsonFiles
       cfg(logging, CFG_PATH, TYPE_OBJECT),
       deviceCFG(logging, DEVICECFG_PATH, TYPE_OBJECT),
-      webCFG(logging, DASHBOARD_PATH, TYPE_OBJECT),
-      subGlobal(logging, SUBGLOBAL_PATH, TYPE_OBJECT) {}
+      webCFG(logging, DASHBOARD_PATH, TYPE_OBJECT){}
 
 //-------------------------------------------------------------------------------
 //  FFS public
@@ -35,7 +34,6 @@ void FFS::mount() {
     cfg.loadFile();
     deviceCFG.loadFile();
     webCFG.loadFile();
-    subGlobal.loadFile();
     logging.debug("configuration loaded");
   }
 }
@@ -85,8 +83,6 @@ String FFS::set(Topic &topic) {
     tmpFile = &deviceCFG;
   } else if (topic.itemIs(3, "webCFG")) {
     tmpFile = &webCFG;
-  } else if (topic.itemIs(3, "subGlobal")) {
-    tmpFile = &subGlobal;
   }
 
   if (tmpFile != NULL) {
@@ -157,8 +153,6 @@ String FFS::get(Topic &topic) {
     tmpFile = &deviceCFG;
   } else if (topic.itemIs(3, "webCFG")) {
     tmpFile = &webCFG;
-  } else if (topic.itemIs(3, "subGlobal")) {
-    tmpFile = &subGlobal;
   }
 
   if (tmpFile != NULL) {
