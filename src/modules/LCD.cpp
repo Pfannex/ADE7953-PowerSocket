@@ -51,9 +51,9 @@ String LCD::getVersion() {
 //...............................................................................
 //  printline
 //...............................................................................
-void LCD::println(String txt, const char *fontData, int yPos) {
+void LCD::println(String txt, int yPos) {
   ssd1306.setTextAlignment(TEXT_ALIGN_LEFT);
-  ssd1306.setFont(fontData);
+  ssd1306.setFont(ArialMT_Plain_16);
   ssd1306.drawString(0, yPos, txt);
   ssd1306.display();
 

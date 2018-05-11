@@ -34,6 +34,7 @@ function consoleWriteln(n, msg) {
 
 function consoleClear(n) {
   consoleSet(n, "");
+  lines[n]= 0;
 }
 
 // ------------------------------------------------------------------------

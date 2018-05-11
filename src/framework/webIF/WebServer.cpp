@@ -4,7 +4,7 @@
 //  WebServer
 //###############################################################################
 
-// https://github.com/me-no-dev/ESPAsyncWebServer#espasyncwebserver-
+// https://github.com/me-no-dev/ESPAsyncWebServer#espasyncwebserver
 
 //-------------------------------------------------------------------------------
 //  WebServer public
@@ -33,7 +33,8 @@ WebServer::WebServer(API &api)
   webServer.on("/api.html", HTTP_ANY, std::bind(&WebServer::apiPageHandler,
                                                 this, std::placeholders::_1));
 
-  // Simple Firmware Update Form
+  // firmware update; the first function handles the request, the second
+  // function is executed for every chunk of the uploaded file
   webServer.on(
       "/update.html", HTTP_POST,
       std::bind(&WebServer::updatePageHandler1, this, std::placeholders::_1),
@@ -209,6 +210,8 @@ String WebServer::subst(const String &var) {
     return api.call("~/get/wifi/macAddress");
   else if (var == "DEVICENAME")
     return api.call("~/get/ffs/cfg/item/device_name");
+  else if (var == "FIRMWARE")
+      return DEVICETYPE " " DEVICEVERSION;
   else
     return F("?");
 }
@@ -326,7 +329,7 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
     request->send(200, "text/plain", result);
   } else {
     api.debug("client is not authenticated.");
-    request->send(404, "text/plain", "");
+    request->send(401, "text/plain", ""); // 401 Unauthorized
   }
 }
 
@@ -367,6 +370,9 @@ String WebServer::getUpdateErrorString() {
 
 void WebServer::logUpdateError() { api.error(getUpdateErrorString()); }
 
+// this is the handler for the actual request
+// it is executed when the POST operation has terminated
+// the POST operation is handled by updatePageHandler2
 void WebServer::updatePageHandler1(AsyncWebServerRequest *request) {
   shouldReboot = !Update.hasError();
   AsyncWebServerResponse *response = request->beginResponse(
@@ -375,10 +381,14 @@ void WebServer::updatePageHandler1(AsyncWebServerRequest *request) {
   request->send(response);
 }
 
+// this function is called for every chunk of the file which is uploaded
+// in the POST operation
 void WebServer::updatePageHandler2(AsyncWebServerRequest *request,
                                    String filename, size_t index, uint8_t *data,
                                    size_t len, bool final) {
 
+  // index is 0: we receive the first chunk of the file during uploading,
+  // begin the update
   if (!index) {
     api.info("updating firmware from file " + filename);
     Update.runAsync(true);
@@ -388,11 +398,14 @@ void WebServer::updatePageHandler2(AsyncWebServerRequest *request,
       Update.printError(Serial);
     }
   }
+  // for every chunk (including the first one at index 0): write it to the
+  // updater as long as no error occured
   if (!Update.hasError()) {
     if (Update.write(data, len) != len) {
       logUpdateError();
     }
   }
+  // when the POST operation is completed, end the update
   if (final) {
     if (Update.end(true)) {
       api.info("firmware update successful (" + String(index + len) +

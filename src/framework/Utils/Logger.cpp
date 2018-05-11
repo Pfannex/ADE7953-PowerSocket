@@ -36,7 +36,8 @@ void LOGGING::log(const String &channel, const String &msg) {
   if ((channel != "DEBUG") || DEBUG) {
     char txt[1024];
     String T = SysUtils::strDateTime(clock.now());
-    sprintf(txt, "%s %5s %s", T.c_str(), channel.c_str(), msg.c_str());
+    // this limits the length to 19+1+5+997+1= 1023 bytes
+    sprintf(txt, "%.19s %.5s %.997s", T.c_str(), channel.c_str(), msg.c_str());
     Serial.println(txt);
     //Dl;
     if (logFunction != nullptr) {

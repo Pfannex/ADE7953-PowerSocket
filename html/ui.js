@@ -45,7 +45,7 @@ function ping() {
   $.ajax({
     url: "/",
     success: function(result) {
-      window.location.href = "/";
+      startOver();
     }
   })
 }
@@ -122,7 +122,7 @@ function call(topicsArgs, callback) {
             }
       },
       "text"
-  );
+  ).fail(function() { startOver(); });
   //$("#popupProcessing").popup("close");
 }
 
@@ -175,6 +175,15 @@ function setRadio(name, value) {
   button.trigger('change');
 }
 
+// set checkbox
+function setCheckbox(name, value) {
+
+  //debugmsg("Setting checkbox " + name + " to " + value);
+  var checkbox = $('input:checkbox[name="' + name + '"]');
+  checkbox.prop('checked', value==1).checkboxradio('refresh');
+}
+
+
 // set inputs from config
 function setConfig(json) {
   logmsg("Setting inputs from configuration...")
@@ -207,6 +216,12 @@ function getRadio(name) {
   //debugmsg("Getting radio "+name);
   var button = $('input:radio[name="' + name + '"]:checked');
   return button.val();
+}
+
+// get checkbox
+function getCheckbox(name) {
+  //debugmsg("Getting checkbox "+name);
+  return $('input:checkbox[name="' + name + '"]').is(':checked');
 }
 
 // get text input

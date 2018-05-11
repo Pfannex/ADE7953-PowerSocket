@@ -24,6 +24,15 @@
       font-weight: normal;
       font-size: smaller;
     }
+    .no-margin-grid
+      .ui-field-contain {
+      margin: 0px;
+    }
+    .sidebyside {
+      float: left;
+      position: relative;
+      display: inline-block;
+    }
   </style>
 </head>
 
@@ -49,18 +58,36 @@
     </div>
     <!-- content -->
     <div data-role="content">
-      <div data-role="collapsible" data-inset="true" data-collapsed="false" id="dashboard">
-        <h2>Dashboard</h2>
+      <div data-role="collapsible">
+        <h1>API</h1>
+        <div data-role="fieldcontain">
+          <script type="text/javascript">
+            function apiCallOnEnter(event,value) {
+              if(event.keyCode==13) apiCall(value);
+            }
+          </script>
+          <label for="apicall">API Call</label>
+          <input type="text" id="apicall" name="apicall"
+              onChange="apiCall(this.value)"
+              onKeyPress="javascript:apiCallOnEnter(event,this.value)"
+          />
+        </div>
+        <textarea name="apiresult" id="apiresult" style="font-size: smaller; height: 200px; overflow: scroll" readonly="true" data-autogrow="false"></textarea>
       </div>
+      <!-- dashboard -->
+      <div id="dashboard"></div>
     </div>
     <!-- footer -->
     <div data-role="footer">
-      <div class="ui-grid-a">
+      <div class="ui-grid-b">
         <div class="ui-block-a">
           MAC Address<br>%MACADDRESS%
         </div>
         <div class="ui-block-b">
           Device Name<br>%DEVICENAME%
+        </div>
+        <div class="ui-block-c">
+          Firmware<br>%FIRMWARE%
         </div>
       </div>
     </div>
@@ -101,6 +128,36 @@
             <input type="password" id="device_password" name="device_password" placeholder="password for user"/>
           </div>
           <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" id="reboot" onClick="reboot()">Reboot</a>
+        </div>
+        <div data-role="collapsible">
+          <h1>OTA Update</h1>
+          <div data-role="collapsible">
+            <h1>Local Update</h1>
+            <form enctype="multipart/form-data" id="update_form">
+              <div data-role="fieldcontain" class="sidebyside">
+                <input type="file" id="update_localpath" name="update_localpath" class="ui-input-text ui-body-c sidebyside"/>
+                <a data-role="button" class="ui-btn ui-btn-inline ui-icon-arrow-d ui-btn-icon-left sidebyside" id="updateFirmware" onClick="updateFirmware()">Update Firmware</a>
+              </div>
+              <div data-role="fieldcontain">
+                <input type="file" id="data_localpath" name="data_localpath" class="ui-input-text ui-body-c sidebyside"/>
+                <a data-role="button" class="ui-btn ui-btn-inline ui-icon-arrow-d ui-btn-icon-left sidebyside" id="updateFFS" onClick="updateFFS()">Update FFS</a>
+              </div>
+            </form>
+          </div>
+          <div data-role="collapsible">
+            <h1>Remote Update</h1>
+            <fieldset data-role="fieldcontain">
+              <input name="update" id="update-manual" value="manual" type="radio" />
+              <label for="update-manual">Manual</label>
+              <input name="update" id="update-auto" value="auto" type="radio" />
+              <label for="update-auto">Auto</label>
+            </fieldset>
+            <div data-role="fieldcontain">
+              <label for="update_remoteurl">URL</label>
+              <input type="text" id="update_remoteurl" name="update_remoteurl" placeholder="URL of remote update information" />
+            </div>
+            <a data-role="button">Update</a>
+          </div>
         </div>
         <div data-role="collapsible">
           <h1>WiFi</h1>
@@ -192,33 +249,6 @@
           </div>
         </div>
         <div data-role="collapsible">
-          <h1>OTA Update</h1>
-          <div data-role="collapsible">
-            <h1>Local Update</h1>
-            <form enctype="multipart/form-data" id="update_form">
-              <div data-role="fieldcontain">
-                <label for="update_localpath">Path</label>
-                <input type="file" id="update_localpath" name="update_localpath" class="ui-input-text ui-body-c" />
-              </div>
-              <a data-role="button" class="ui-btn ui-btn-inline ui-icon-arrow-d ui-btn-icon-left" id="update" onClick="update()">Update</a>
-            </form>
-          </div>
-          <div data-role="collapsible">
-            <h1>Remote Update</h1>
-            <fieldset data-role="controlgroup" data-type="horizontal">
-              <input name="update" id="update-manual" value="manual" type="radio" />
-              <label for="update-manual">Manual</label>
-              <input name="update" id="update-auto" value="auto" type="radio" />
-              <label for="update-auto">Auto</label>
-            </fieldset>
-            <div data-role="fieldcontain">
-              <label for="update_remoteurl">URL</label>
-              <input type="text" id="update_remoteurl" name="update_remoteurl" placeholder="URL of remote update information" />
-            </div>
-            <a data-role="button">Update</a>
-          </div>
-        </div>
-        <div data-role="collapsible">
           <h1>MQTT</h1>
           <fieldset data-role="controlgroup" data-type="horizontal">
             <input name="mqtt" id="mqtt-off" value="off" type="radio" />
@@ -249,14 +279,17 @@
       </div>
       <!-- configForm -->
     </div>
+    <!-- footer -->
     <div data-role="footer">
-      <div id="message"></div>
-      <div class="ui-grid-a">
+      <div class="ui-grid-b">
         <div class="ui-block-a">
           MAC Address<br>%MACADDRESS%
         </div>
         <div class="ui-block-b">
           Device Name<br>%DEVICENAME%
+        </div>
+        <div class="ui-block-c">
+          Firmware<br>%FIRMWARE%
         </div>
       </div>
     </div>
@@ -310,13 +343,17 @@
         <a data-role="button" class="ui-btn ui-btn-inline ui-icon-recycle ui-btn-icon-left" onClick="consoleClear(1)">Clear</a>
       </div>
     </div>
+    <!-- footer -->
     <div data-role="footer">
-      <div class="ui-grid-a">
+      <div class="ui-grid-b">
         <div class="ui-block-a">
           MAC Address<br>%MACADDRESS%
         </div>
         <div class="ui-block-b">
           Device Name<br>%DEVICENAME%
+        </div>
+        <div class="ui-block-c">
+          Firmware<br>%FIRMWARE%
         </div>
       </div>
     </div>

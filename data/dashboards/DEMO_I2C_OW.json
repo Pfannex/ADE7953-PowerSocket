@@ -10,17 +10,17 @@
 
   {
     "type": "controlgroup",
-    "name": "power",
-    "legend": "Power",
-    "action": "~/set/device/power",
+    "name": "MCP23017",
+    "caption": "GPIO 8",
+    "action": "~/set/device/gpio",
     "event": "~/event/device/power",
     "data": [{
         "label": "Off",
-        "value": 0
+        "value": "8,0"
       },
       {
         "label": "On",
-        "value": 1
+        "value": "8,1"
       }
     ]
   },

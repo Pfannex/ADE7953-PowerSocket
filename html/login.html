@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>ESP8266 P&amp;N Authentification</title>
+<title>%TITLE% Authentification</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta charset="utf-8">
 <script src="lib/jquery.js"></script>
@@ -40,17 +40,19 @@
 			ui-btn-right">Close</a>
 		<p>Login failed.</p>
 	</div>
+	<!-- footer -->
 	<div data-role="footer">
-          <div id="message"></div>
-          <div class="ui-grid-a">
-                <div class="ui-block-a">
-												MAC Address<br>%MACADDRESS%
-                </div>
-                <div class="ui-block-b">
-                        Device Name<br>%DEVICENAME%
-                </div>
-          </div>
-	</div>
+		<div class="ui-grid-b">
+			<div class="ui-block-a">
+				MAC Address<br>%MACADDRESS%
+			</div>
+			<div class="ui-block-b">
+				Device Name<br>%DEVICENAME%
+			</div>
+			<div class="ui-block-c">
+				Firmware<br>%FIRMWARE%
+			</div>
+		</div>
 
 </div>
 </body>
