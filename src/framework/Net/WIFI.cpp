@@ -34,6 +34,8 @@ wl_status_t WIFI::start() {
     logging.info("WiFi is off");
   } else {               // dhcp or manual
     WiFi.mode(WIFI_STA); // only STA without AP!
+    //WiFi.mode(WIFI_AP_STA);
+    WiFi.softAPdisconnect(true);
     if (mode == "dhcp") {
       logging.info("WiFi DHCP configuration");
     } else { // switch to static mode
@@ -56,6 +58,20 @@ wl_status_t WIFI::start() {
       }
     }
     updateStatus(WiFi.begin(ssid.c_str(), psk.c_str()));
+
+    //accesspoint configuration
+/*
+    IPAddress apIP(192,168,4,1);
+    IPAddress gateway(192,168,4,1);
+    IPAddress subnet(255,255,255,0);
+    String apSSID = ffs.cfg.readItem("ap_ssid");
+    String apPSK = ffs.cfg.readItem("ap_password");
+    WiFi.softAPConfig(apIP, gateway, subnet);
+    WiFi.softAP(apSSID.c_str(), apPSK.c_str());
+
+    Serial.println(apSSID);
+    Serial.println(apPSK);
+*/
   }
 
   return wl_status;
@@ -125,6 +141,48 @@ String WIFI::macAddress() {
 //...............................................................................
 //  API
 //...............................................................................
+String WIFI::set(Topic &topic) {
+  logging.info(topic.arg_asString());
+
+/*  IPAddress local_IP(192,168,4,1);
+  IPAddress gateway(192,168,4,1);
+  IPAddress subnet(255,255,255,0);
+  String apSSID = ffs.cfg.readItem("ap_ssid");
+  String apPSK = ffs.cfg.readItem("ap_password");
+*/
+
+
+  if (topic.itemIs(3, "ap")) {
+    if (topic.argIs(0, "1")){
+
+      WiFi.mode(WIFI_AP_STA);
+
+      IPAddress apIP(192,168,4,1);
+      IPAddress gateway(192,168,4,1);
+      IPAddress subnet(255,255,255,0);
+      String apSSID = ffs.cfg.readItem("ap_ssid");
+      String apPSK = ffs.cfg.readItem("ap_password");
+      WiFi.softAPConfig(apIP, gateway, subnet);
+      WiFi.softAP(apSSID.c_str(), apPSK.c_str());
+
+      //Serial.println(apSSID);
+      //Serial.println(apPSK);
+
+
+      return "AP on";
+    } else if (topic.argIs(0, "0")){
+        WiFi.mode(WIFI_STA);
+        WiFi.softAPdisconnect(true);
+
+      return "AP off";
+    } else {
+      return "missing argument! try 0 or 1";
+    }
+  } else {
+    return TOPIC_NO;
+  }
+}
+
 String WIFI::get(Topic &topic) {
   if (topic.itemIs(3, "macAddress")) {
     return macAddress();

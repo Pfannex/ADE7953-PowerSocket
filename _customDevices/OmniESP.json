@@ -1,0 +1,37 @@
+{
+  "device_name":            "",
+  "device_username":        "admin",
+  "device_password":        "admin",
+
+  "wifi":                   "dhcp",
+  "wifi_ssid":              "",
+  "wifi_password":          "",
+  "wifi_ip":                "",
+  "wifi_netmask":           "",
+  "wifi_gateway":           "",
+  "wifi_dns":               "",
+
+  "ap":                     "off",
+  "ap_ssid":                "",
+  "ap_password":            "admin",
+
+  "lan":                    "off",
+  "lan_ip":                 "",
+  "lan_netmask":            "",
+  "lan_gateway":            "",
+  "lan_dns":                "",
+
+  "ntp":                    "on",
+  "ntp_serverip":           "europe.pool.ntp.org",
+
+  "update_localpath":       "",
+  "update":                 "manual",
+  "update_remoteurl":       "",
+
+  "mqtt":                   "off",
+  "mqtt_ip":                "",
+  "mqtt_port":              "",
+  "mqtt_username":          "",
+  "mqtt_password":          "",
+  "mqtt_aliases":           ""
+}
