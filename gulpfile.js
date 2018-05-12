@@ -37,8 +37,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 const htmldir = "html";
 const datadir = "data";
-const bindir = ".pioenvs/d1_mini"
-const updatedir = "update"
+const bindir = ".pioenvs/d1_mini";
+const updatedir = "../update";  // relative to datadir!
 
 const gulp = require('gulp');
 const plumber = require('gulp-plumber');
@@ -126,11 +126,14 @@ gulp.task('delfirmware', function() {
 // npm install --save-dev gulp-tar-path
 // see https://www.npmjs.com/package/gulp-tar-path
 gulp.task('tar', function() {
-    return gulp.src([datadir+'/firmware/*.bin',
-                     datadir+'/web',
-                     datadir+'/customDevice/*.json'])
+    process.chdir(datadir);
+    result= gulp.src(['firmware/*.bin',
+                     'web',
+                     'customDevice/*.json'])
       .pipe(tar('omniesp.tar'))
       .pipe(gulp.dest(updatedir));
+    process.chdir(__dirname);
+    return result;
 });
 
 /* Build file system */
