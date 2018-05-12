@@ -16,5 +16,10 @@
 #define Di(msg, value)                                                         \
   Serial.printf("  >>> %s %d (%d %s)\r\n", msg, (value), __LINE__, __FILE__);
 
+// print a message and string value
+#define Ds(msg, value)                                                         \
+  Serial.printf("  >>> %s %s (%d %s)\r\n", msg, (value), __LINE__, __FILE__);
+
 // print the free heap
-#define DF(msg) Serial.printf("  >>> %s free heap= %d\r\n", msg, ESP.getFreeHeap());
+#define DF(msg)                                                                \
+  Serial.printf("  >>> %s free heap= %d\r\n", msg, ESP.getFreeHeap());
