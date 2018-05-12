@@ -179,6 +179,7 @@ void WebServer::topicFunction(const time_t, Topic &topic) {
 //...............................................................................
 bool WebServer::checkAuthentification(AsyncWebServerRequest *request) {
 
+  if(NO_AUTH) return true;
   // check for cookie
   if (request->hasHeader("Cookie")) {
     String cookie = request->header("Cookie");
@@ -246,7 +247,7 @@ void WebServer::rootPageHandler(AsyncWebServerRequest *request) {
     api.info("User-Agent: " + request->header("User-Agent"));
   }
 
-  bool authenticated = checkAuthentification(request);
+  bool authenticated = NO_AUTH || checkAuthentification(request);
 
   if (authenticated) {
 
