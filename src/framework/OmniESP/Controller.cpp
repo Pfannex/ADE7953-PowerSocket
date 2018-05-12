@@ -209,9 +209,10 @@ void Controller::on_netConnected() {
 
   // add FTP to web-config!
   //if (ffs.cfg.readItem("ftp") == "on") {
-
+    String username= ffs.cfg.readItem("device_username");
+    String password= ffs.cfg.readItem("device_password");
     logging.info("starting FTP-Server");
-    ftpSrv.begin("esp8266","esp8266");
+    ftpSrv.begin(username, password);
 
     //ftpSrv.begin(ffs.cfg.readItem("ftp_username"),
     //             ffs.cfg.readItem("ftp_password"));
