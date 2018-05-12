@@ -30,15 +30,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // before anything else is written to the webdir
 
 // install
-// del gulp gulp-clean-css gulp-gzip gulp-htmlmin gulp-if gulp-inline gulp-plumber gulp-uglify gulp-useref gulp-util yargs
+// del gulp@4 gulp-clean-css gulp-gzip gulp-htmlmin gulp-if gulp-inline gulp-plumber gulp-uglify gulp-useref gulp-util yargs
 // with npm install here or install them globally with npm install -q and
-// linkt them with npm link
+// link them with npm link
 
 
 const htmldir = "html";
-const webdir = "data/web";
+const datadir = "data";
 const bindir = ".pioenvs/d1_mini"
-const firmwaredir = "firmware"
+const updatedir = "update"
 
 const gulp = require('gulp');
 const plumber = require('gulp-plumber');
@@ -50,7 +50,8 @@ const del = require('del');
 const useref = require('gulp-useref');
 const gulpif = require('gulp-if');
 const inline = require('gulp-inline');
-const tar = require('gulp-tar');
+const tar = require('gulp-tar-path');
+const rename = require('gulp-rename');
 //const preprocess = require('gulp-preprocess');
 
 //        .pipe(preprocess({context: { NODE_PATH: '$NODE_PATH:node_modules'}}))
@@ -108,14 +109,28 @@ gulp.task('html', function() {
         .pipe(gulp.dest(webdir));
 });
 
-/* firmware update tarball */
+/* copy firmware to folder structure */
+gulp.task('copyfirmware', function() {
+  return gulp.src(bindir+'/firmware.bin')
+    .pipe(gulp.dest(datadir+'/firmware'));
+});
+
+/* delete firmware from folder structure */
+// npm install --save-dev gulp del
+gulp.task('delfirmware', function() {
+  return del(datadir+'/firmware/firmware.bin');
+});
+
+/* create firmware update tarball */
 // requires:
-// npm install --save-dev gulp-tar
-// see https://www.npmjs.com/package/gulp-tar
+// npm install --save-dev gulp-tar-path
+// see https://www.npmjs.com/package/gulp-tar-path
 gulp.task('tar', function() {
-    return gulp.src(bindir+'/firmware.bin')
+    return gulp.src([datadir+'/firmware/*.bin',
+                     datadir+'/web',
+                     datadir+'/customDevice/*.json'])
       .pipe(tar('omniesp.tar'))
-      .pipe(gulp.dest(firmwaredir))
+      .pipe(gulp.dest(updatedir));
 });
 
 /* Build file system */
@@ -124,7 +139,7 @@ gulp.task('cleanfs', gulp.series('clean'));
 gulp.task('buildfs', gulp.series('clean',  gulp.parallel('files', 'lib', 'html')));
 gulp.task('buildfs2', gulp.series('clean',  gulp.parallel('files', 'lib', 'inline')));
 gulp.task('default', gulp.series('buildfs'));
-gulp.task('tarball', gulp.series('tar'));
+gulp.task('tarball', gulp.series('copyfirmware', 'tar', 'delfirmware'));
 
 // -----------------------------------------------------------------------------
 // PlatformIO support
