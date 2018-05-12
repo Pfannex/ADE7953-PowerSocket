@@ -39,6 +39,7 @@ const htmldir = "html";
 const datadir = "data";
 const bindir = ".pioenvs/d1_mini";
 const updatedir = "../update";  // relative to datadir!
+const webdir = datadir+"/web";
 
 const gulp = require('gulp');
 const plumber = require('gulp-plumber');
