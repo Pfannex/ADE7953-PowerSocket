@@ -24,6 +24,7 @@ public:
   void reboot();
   long chipId();
   String genericName();
+  String update();
 
   void debugMem();
   void debugMem_start();

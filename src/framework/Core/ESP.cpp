@@ -1,5 +1,6 @@
 #include "framework/Core/ESP.h"
 #include "framework/Utils/SysUtils.h"
+#include "framework/Core/OmniESPUpdater.h"
 
 //###############################################################################
 //  ESP
@@ -85,6 +86,22 @@ long ESP_Tools::chipId() { return ESP.getChipId(); }
 String ESP_Tools::genericName() { return String(deviceName); }
 
 //...............................................................................
+//  update
+//...............................................................................
+
+String ESP_Tools::update() {
+
+  OmniESPUpdater U(logging);
+
+  if(U.doUpdate("omniesp")) {
+    return "//simulation ok//";
+  } else {
+    return U.getLastError();
+  }
+
+}
+
+//...............................................................................
 //  DEBUG MEM
 //...............................................................................
 void ESP_Tools::debugMem() {
@@ -122,6 +139,8 @@ String ESP_Tools::set(Topic &topic) {
   if (topic.itemIs(3, "restart")) {
     reboot();
     return TOPIC_OK;
+  } else if (topic.itemIs(3, "update")) {
+    return update();
   } else {
     return TOPIC_NO;
   }
