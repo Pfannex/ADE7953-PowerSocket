@@ -43,38 +43,6 @@ void Controller::setTopicFunction(TopicFunction topicFn) {
 //-------------------------------------------------------------------------------
 //  start
 //-------------------------------------------------------------------------------
-bool Controller::setConfigDefault(String item, String defaultValue) {
-    String value= ffs.cfg.readItem(item);
-    if(value == "") {
-          ffs.cfg.writeItem(item, defaultValue);
-          logging.info("setting "+item+" to "+defaultValue);
-          return true;
-    } else {
-      return false;
-    }
-}
-
-void Controller::setConfigDefaults() {
-
-  // set ESP name
-  bool f= setConfigDefault("device_name", "ESP8266_" + espTools.genericName());
-  deviceName= ffs.cfg.readItem("device_name");
-  // set other defaults
-  f= f ||
-    setConfigDefault("device_username", USERNAME) ||
-    setConfigDefault("device_password", PASSWORD) ||
-    setConfigDefault("update", "manual") ||
-    setConfigDefault("ap", "auto") ||
-    setConfigDefault("ap_ssid", deviceName) ||
-    setConfigDefault("ap_password", PASSWORD) ||
-    setConfigDefault("wifi", "off") ||
-    setConfigDefault("lan", "off") ||
-    setConfigDefault("ntp", "off") ||
-    setConfigDefault("mqtt", "off");
-  if(f) { ffs.cfg.saveFile(); }
-
-}
-
 void Controller::start() {
 
   //
@@ -96,6 +64,34 @@ void Controller::start() {
 
   // set config defaults
   setConfigDefaults();
+
+/*
+  // set ESP name
+  deviceName = ffs.cfg.readItem("device_name");
+  if (deviceName == "") {
+    deviceName = "ESP8266_" + espTools.genericName();
+    logging.info("setting device name " + deviceName + " for the first time");
+    ffs.cfg.writeItem("device_name", deviceName);
+    ffs.cfg.saveFile();
+  }
+  // set accesspoint name
+  if (ffs.cfg.readItem("ap_ssid") == "") {
+    String apName = "ESP8266_" + espTools.genericName();
+    logging.info("setting access point SSID " + apName +
+                 " for the first time");
+    ffs.cfg.writeItem("ap_ssid", apName);
+    ffs.cfg.saveFile();
+  }
+
+  // set sane defaults
+  String userName = ffs.cfg.readItem("device_username");
+  if(userName == "") {
+    logging.info("setting user name and password to defaults (" USERNAME "/" PASSWORD ")");
+    ffs.cfg.writeItem("device_username", USERNAME);
+    ffs.cfg.writeItem("device_password", PASSWORD);
+    ffs.cfg.saveFile();
+  }
+*/
 
   // start WiFi for the first time
   wifi.start();
@@ -239,7 +235,6 @@ void Controller::on_netDisconnected() {
 //...............................................................................
 
 String Controller::call(Topic &topic) {
-
   // D("Controller: begin call");
   // set
   if (topic.itemIs(1, "set")) {
@@ -249,6 +244,8 @@ String Controller::call(Topic &topic) {
       return clock.set(topic);
     } else if (topic.itemIs(2, "esp")) {
       return espTools.set(topic);
+    } else if (topic.itemIs(2, "wifi")) {
+      return wifi.set(topic);
     } else if (topic.itemIs(2, "device")) {
       return device.set(topic);
     } else {
@@ -290,6 +287,47 @@ void Controller::t_long_Update() {}
 //-------------------------------------------------------------------------------
 //  Controller private
 //-------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------
+//  set config defaults
+//-------------------------------------------------------------------------------
+bool Controller::setConfigDefault(String item, String defaultValue) {
+    String value= ffs.cfg.readItem(item);
+    if(value == "") {
+          ffs.cfg.writeItem(item, defaultValue);
+          logging.info("setting "+item+" to "+defaultValue);
+          return true;
+    } else {
+      return false;
+    }
+}
+
+void Controller::setConfigDefaults() {
+
+  // set ESP name
+  bool f= setConfigDefault("device_name", "ESP8266_" + espTools.genericName());
+  deviceName= ffs.cfg.readItem("device_name");
+  // set other defaults
+  f= f ||
+    setConfigDefault("device_username", USERNAME) ||
+    setConfigDefault("device_password", PASSWORD) ||
+    setConfigDefault("update", "manual") ||
+    setConfigDefault("ap", "auto") ||
+    setConfigDefault("ap_ssid", deviceName) ||
+    setConfigDefault("ap_password", APPASSWORD) ||
+    setConfigDefault("wifi", "off") ||
+    setConfigDefault("lan", "off") ||
+    setConfigDefault("ntp", "off") ||
+    setConfigDefault("mqtt", "off");
+  // ensure minimum length of AP password
+  String appassword= ffs.cfg.readItem("ap_password");
+  if(appassword.length()< 8) {
+    ffs.cfg.writeItem("ap_password", APPASSWORD);
+    f= true;
+  }
+  if(f) { ffs.cfg.saveFile(); }
+
+}
 
 //...............................................................................
 //  Start WiFi Connection

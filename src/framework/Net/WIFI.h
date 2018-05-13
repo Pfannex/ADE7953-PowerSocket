@@ -34,12 +34,14 @@ public:
   String macAddress();
 
   // API
+  String set(Topic &topic);
   String get(Topic &topic);
 
 
 private:
   // true if status has changed since last update
   bool updateStatus(wl_status_t status);
+  String startAP(bool state);
 
   CallbackFunction on_wifiConnected;
   CallbackFunction on_wifiDisconnected;

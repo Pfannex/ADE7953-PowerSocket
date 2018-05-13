@@ -22,6 +22,7 @@
 // defaults for username and password
 #define USERNAME "admin"
 #define PASSWORD "admin"
+#define APPASSWORD "password"
 
 //###############################################################################
 //  Web

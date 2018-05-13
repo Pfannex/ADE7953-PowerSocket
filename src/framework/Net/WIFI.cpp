@@ -33,7 +33,7 @@ wl_status_t WIFI::start() {
   if (mode == "off") {
     logging.info("WiFi is off");
   } else {               // dhcp or manual
-    WiFi.mode(WIFI_STA); // only STA without AP!
+    WiFi.softAPdisconnect(true);
     if (mode == "dhcp") {
       logging.info("WiFi DHCP configuration");
     } else { // switch to static mode
@@ -56,6 +56,9 @@ wl_status_t WIFI::start() {
       }
     }
     updateStatus(WiFi.begin(ssid.c_str(), psk.c_str()));
+    if (ffs.cfg.readItem("ap") == "on") {
+      startAP(true);
+    }
   }
 
   return wl_status;
@@ -70,13 +73,25 @@ void WIFI::handle() {
     if (wl_status == WL_CONNECTED) {
       if (!WiFiStatus) {
         WiFiStatus = true;
+        if (ffs.cfg.readItem("ap") != "on") {
+          startAP(false);
+        }
         on_connected();
       }
-    } else {
-      if (WiFiStatus) {
+    } else if (wl_status == WL_DISCONNECTED) {
+      //if (WiFiStatus) {
         WiFiStatus = false;
+        if (ffs.cfg.readItem("ap") == "auto") {
+          startAP(true);
+        }
         on_disconnected();
-      }
+      //}
+    } else if (wl_status == WL_NO_SSID_AVAIL) {
+        WiFiStatus = false;
+        if (ffs.cfg.readItem("ap") == "auto") {
+          startAP(true);
+        }
+        on_disconnected();
     }
   }
   //Di("wifi status", wl_status);
@@ -125,6 +140,21 @@ String WIFI::macAddress() {
 //...............................................................................
 //  API
 //...............................................................................
+String WIFI::set(Topic &topic) {
+
+  if (topic.itemIs(3, "ap")) {
+    if (topic.argIs(0, "1")){
+      return startAP(true);
+    } else if (topic.argIs(0, "0")){
+      return startAP(false);
+    } else {
+      return "missing argument! try 0 or 1";
+    }
+  } else {
+    return TOPIC_NO;
+  }
+}
+
 String WIFI::get(Topic &topic) {
   if (topic.itemIs(3, "macAddress")) {
     return macAddress();
@@ -178,5 +208,31 @@ bool WIFI::updateStatus(wl_status_t status) {
     return true;
   } else {
     return false;
+  }
+}
+
+//...............................................................................
+//  update status
+//...............................................................................
+String WIFI::startAP(bool state) {
+  if (state) {
+    IPAddress apIP(192,168,4,1);
+    IPAddress gateway(192,168,4,1);
+    IPAddress subnet(255,255,255,0);
+    String apSSID = ffs.cfg.readItem("ap_ssid");
+    String apPSK = ffs.cfg.readItem("ap_password");
+
+    WiFi.mode(WIFI_AP_STA);
+    WiFi.softAPConfig(apIP, gateway, subnet);
+    WiFi.softAP(apSSID.c_str(), apPSK.c_str());
+
+    logging.info("Accesspoint is now ON");
+    return "AP is on";
+  } else {
+    WiFi.mode(WIFI_STA);
+    WiFi.softAPdisconnect(true);
+
+    logging.info("Accesspoint is now OFF");
+    return "AP is off";
   }
 }
