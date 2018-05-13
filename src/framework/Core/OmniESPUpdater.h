@@ -4,7 +4,7 @@
 #include "framework/Utils/Logger.h"
 
 
-
+#define DEFAULTTARBALL "omniesp"
 #define UPDATEFOLDER "/update/"
 
 enum Header {
@@ -18,21 +18,42 @@ enum Type {
 	REG = '0', DIRECTORY = '5'
 };
 
+class Tarball {
+
+public:
+	Tarball(const char* deviceName);
+	String getFilename();
+	bool exists();
+	bool remove();
+	bool beginWrite();
+	size_t position();
+	bool write(uint8_t *data, size_t len) ;
+	bool endWrite();
+	bool beginRead();
+	size_t read(uint8_t *data, size_t len) ;
+	bool endRead();
+	String getLastError();
+private:
+	String filename;
+	File file;
+	bool reading= false;
+	bool writing= false;
+	void setErrorMsg(String msg);
+	String errorMsg= "";
+};
 
 class OmniESPUpdater {
 
 public:
   OmniESPUpdater(LOGGING& logging);
-  bool hasUpdate(String deviceName);
 	String getLastError();
-	bool doUpdate(String deviceName);
+	bool doUpdate(const char* deviceName);
 
 private:
   LOGGING& logging;
-  String getFilename(String deviceName);
-  bool untar(File& tarBall);
+  bool untar(Tarball& tarball);
   void chksum(const char b[END], char *chk);
-  bool extract(File& tarBall, char *fname, int l, char b[END]);
+  bool extract(Tarball& tarball, char *fname, int l, char b[END]);
 	void setErrorMsg(String msg);
 	String errorMsg= "";
 };

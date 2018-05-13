@@ -78,26 +78,30 @@ function setTime() {
 // update
 //
 function update() {
+  call("~/set/esp/update");
+}
+
+function upload() {
   // show popup
   var file = $("#update_localpath").prop("files")[0];
   if (file) {
     logmsg("Uploading " + file.name + " (" + file.size + " bytes)");
     $.ajax({
       type: "POST",
-      url: "/update.html",
+      url: "/upload.html",
       cache: false,
       contentType: false,
       processData: false,
-      data: new FormData($("#update_form")[0]),
+      data: new FormData($("#upload_form")[0]),
       success: function(data) {
         //$("#popupUpdating").popup("open");
         //reloadIfAlive;
-        logmsg("firmware update: "+data);
+        logmsg("upload result: "+data);
         if(data == "ok") {
-          $("#popupUpdateOk").popup("open");
+          $("#popupUploadOk").popup("open");
         } else {
-          $("#update_error").html(data);
-          $("#popupUpdateFail").popup("open");
+          $("#upload_error").html(data);
+          $("#popupUploadFail").popup("open");
         }
       }
     });

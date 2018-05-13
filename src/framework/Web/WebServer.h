@@ -3,6 +3,7 @@
 #include "ESPAsyncTCP.h"
 #include "ESPAsyncWebServer.h"
 #include "Setup.h"
+#include "framework/Core/OmniESPUpdater.h"
 #include "Updater.h"
 
 class WebServer {
@@ -15,8 +16,9 @@ private:
   AsyncWebServer webServer;
   AsyncWebSocket webSocket;
   API &api;
+  Tarball tarball;
 
-  bool shouldReboot = false;
+  bool uploadOk = true; // flag for upload running fine
 
   // authenticator
   Auth auth;
