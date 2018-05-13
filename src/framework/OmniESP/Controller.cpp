@@ -66,11 +66,17 @@ void Controller::setConfigDefaults() {
     setConfigDefault("update", "manual") ||
     setConfigDefault("ap", "auto") ||
     setConfigDefault("ap_ssid", deviceName) ||
-    setConfigDefault("ap_password", PASSWORD) ||
+    setConfigDefault("ap_password", APPASSWORD) ||
     setConfigDefault("wifi", "off") ||
     setConfigDefault("lan", "off") ||
     setConfigDefault("ntp", "off") ||
     setConfigDefault("mqtt", "off");
+  // ensure minimum length of AP password
+  String appassword= ffs.cfg.readItem("ap_password");
+  if(appassword.length()< 8) {
+    ffs.cfg.writeItem("ap_password", APPASSWORD);
+    f= true;
+  }
   if(f) { ffs.cfg.saveFile(); }
 
 }

@@ -257,6 +257,7 @@ function getConfig() {
   config["ntp"]= getRadio("ntp");
   config["update"]= getRadio("update");
   config["mqtt"]= getRadio("mqtt");
+  config["ap"]= getRadio("ap");
   // convert to json
   return JSON.stringify(config);
 }
