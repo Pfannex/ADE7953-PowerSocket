@@ -24,7 +24,7 @@
 // time in ms pin must be stable before reporting change
 #define DEBOUNCETIME 30  //50
 // time in ms to detect idling
-#define IDLETIME 3000
+#define IDLETIME 60000
 
 class GPIOinput : public Module {
 

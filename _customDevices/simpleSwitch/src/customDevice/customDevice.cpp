@@ -139,9 +139,15 @@ void customDevice::setConfigMode(int value) {
     return;
   configMode = value;
   topicQueue.put("~/event/device/configMode", configMode);
+
+  if (value == 1){
+    topicQueue.put("~/set/wifi/ap 1");
+  } else {
+    topicQueue.put("~/set/wifi/ap 0");
+  }
+
   setLedMode();
 }
-
 void customDevice::setLedMode() {
   if (!configMode) {
     if (power)
