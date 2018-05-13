@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const htmldir = "html";
 const datadir = "data";
 const bindir = ".pioenvs/d1_mini";
-const updatedir = "../update";  // relative to datadir!
+const updatedir = "update";
 const webdir = datadir+"/web";
 
 const gulp = require('gulp');
