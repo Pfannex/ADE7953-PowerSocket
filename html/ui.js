@@ -80,6 +80,23 @@ function setTime() {
 function update() {
   call("~/set/esp/update");
 }
+function update() {
+  logmsg("update call");
+  $.post(
+      "/api.html",
+      "call=~/set/esp/update",
+      function(data, status) {
+        logmsg("update result: "+data);
+        if(data == "ok") {
+          $("#popupUpdateOk").popup("open");
+        } else {
+          $("#update_error").html(data);
+          $("#popupUpdateFail").popup("open");
+        }
+      }
+    );
+
+}
 
 function upload() {
   // show popup

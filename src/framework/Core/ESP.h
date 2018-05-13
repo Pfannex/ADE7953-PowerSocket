@@ -24,7 +24,7 @@ public:
   void reboot();
   long chipId();
   String genericName();
-  String update();
+  String update(bool setDeviceDefaults);
 
   void debugMem();
   void debugMem_start();

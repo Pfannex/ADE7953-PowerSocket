@@ -6,6 +6,7 @@
 
 #define DEFAULTTARBALL "omniesp"
 #define UPDATEFOLDER "/update/"
+#define DEVICECONFIG "customDevice/config.json"
 
 enum Header {
 	NAME = 0, MODE = 100, UID = 108, GID = 116, SIZE = 124,
@@ -13,6 +14,8 @@ enum Header {
 };
 
 #define TARBLOCKSIZE 512
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
 
 enum Type {
 	REG = '0', DIRECTORY = '5'
@@ -47,13 +50,15 @@ class OmniESPUpdater {
 public:
   OmniESPUpdater(LOGGING& logging);
 	String getLastError();
-	bool doUpdate(const char* deviceName);
+	bool doUpdate(const char* deviceName, bool setDeviceDefaults);
 
 private:
   LOGGING& logging;
-  bool untar(Tarball& tarball);
+	String getUpdateErrorString(uint8_t error);
+	bool untar(Tarball& tarball);
   void chksum(const char b[END], char *chk);
   bool extract(Tarball& tarball, char *fname, int l, char b[END]);
 	void setErrorMsg(String msg);
 	String errorMsg= "";
+	bool skipConfigFiles;
 };

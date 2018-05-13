@@ -136,7 +136,7 @@
               <div data-role="fieldcontain">
                 <input type="file" id="update_localpath" name="update_localpath" class="ui-input-text ui-body-c"/>
                 <a data-role="button" class="ui-btn ui-btn-inline ui-icon-arrow-u ui-btn-icon-left" id="upload" onClick="upload()">Upload</a>
-                <a data-role="button" class="ui-btn ui-btn-inline ui-icon-play ui-btn-icon-left" id="update" onClick="update()">Update</a>
+                <a data-role="button" class="ui-btn ui-btn-inline ui-icon-action ui-btn-icon-left" id="update" onClick="update()">Update</a>
               </div>
             </form>
           </div>
@@ -330,6 +330,14 @@
     <div data-role="popup" id="popupUploadFail" class="ui-content" data-dismissible="true" data-position-to="#config">
       <p>Upload failed.
         <div id="upload_error">?</div>
+      </p>
+    </div>
+    <div data-role="popup" id="popupUpdateOk" class="ui-content" data-dismissible="true" data-position-to="#config">
+      <p>Update succeeded. Reboot to activate.</p>
+    </div>
+    <div data-role="popup" id="popupUpdateFail" class="ui-content" data-dismissible="true" data-position-to="#config">
+      <p>Update failed.
+        <div id="update_error">?</div>
       </p>
     </div>
   </div>

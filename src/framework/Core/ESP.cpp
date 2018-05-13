@@ -89,12 +89,13 @@ String ESP_Tools::genericName() { return String(deviceName); }
 //  update
 //...............................................................................
 
-String ESP_Tools::update() {
+String ESP_Tools::update(bool setDeviceDefaults) {
 
   OmniESPUpdater U(logging);
 
-  if(U.doUpdate("omniesp")) {
-    return "//simulation ok//";
+  if(U.doUpdate(DEFAULTTARBALL, setDeviceDefaults)) {
+    return TOPIC_OK;
+    // reboot();
   } else {
     return U.getLastError();
   }
@@ -140,7 +141,8 @@ String ESP_Tools::set(Topic &topic) {
     reboot();
     return TOPIC_OK;
   } else if (topic.itemIs(3, "update")) {
-    return update();
+    bool setDeviceDefaults= topic.argIs(0, "defaults");
+    return update(setDeviceDefaults);
   } else {
     return TOPIC_NO;
   }

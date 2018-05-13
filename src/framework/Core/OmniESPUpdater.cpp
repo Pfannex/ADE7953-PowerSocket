@@ -48,14 +48,14 @@ String Tarball::getFilename() { return filename; }
 bool Tarball::exists() { return SPIFFS.exists(getFilename()); }
 
 bool Tarball::remove() {
-  Ds("tarball removing...", filename.c_str());
+  //Ds("tarball removing...", filename.c_str());
   if (!SPIFFS.exists(filename))
     return true;
-  D("tarball do actual remove on SPIFFS");
+  //D("tarball do actual remove on SPIFFS");
   if (SPIFFS.remove(filename)) {
     return true;
   } else {
-    D("error removing tarball");
+    //D("error removing tarball");
     setErrorMsg("could not delete tarball " + filename);
     return false;
   }
@@ -66,7 +66,7 @@ bool Tarball::beginWrite() {
     endWrite();
   if (reading)
     endRead();
-  D("tarball begin write");
+  //D("tarball begin write");
   file = SPIFFS.open(filename, "w");
   if (!file) {
     setErrorMsg("could not create tarball " + filename);
@@ -81,13 +81,14 @@ bool Tarball::write(uint8_t *data, size_t len) {
   if (file.write(data, len) == len)
     return true;
   else {
+    D("short write");
     setErrorMsg("short write");
     return false;
   }
 }
 
 bool Tarball::endWrite() {
-  D("tarball end write");
+  //D("tarball end write");
   file.flush();
   file.close();
   writing = false;
@@ -158,47 +159,51 @@ bool OmniESPUpdater::extract(Tarball &tarball, char *fname, int l,
                              char b[END]) {
   static char chk[9] = {0};
   int r = 0;
-  FILE *f = NULL;
   String filename = fname;
-  logging.info("extracting " + filename);
+  File file;
 
-  // unlink(fname);
+  chksum(b, chk);
+  //Ds(b + CHK, chk);
+  if (strncmp(b + CHK, chk, 6)) {
+    setErrorMsg("wrong checksum for " + filename);
+    return false;
+  }
+
+  bool extract = skipConfigFiles ? strcmp(fname, DEVICECONFIG) : true;
+
   switch (b[TYPE]) {
   case REG:
-    /*r = !(f = fopen(fname, "w")) ||
-            chmod(fname,strtoul(b + MODE, 0, 8));*/
-    D("regular file");
+    // regular file
+    if (extract) {
+      logging.info("extracting file " + filename);
+      // open file for writing
+      file = SPIFFS.open(filename, "w");
+      if (!file) {
+        setErrorMsg("could not create file " + filename);
+        return false;
+      }
+    } else
+      logging.info("skipping file " + filename);
+    // write file
+    for (; l > 0; l -= TARBLOCKSIZE) { // block is always TARBLOCKSIZE
+      tarball.read((uint8_t *)b, TARBLOCKSIZE);
+      if (extract)
+        file.write((uint8_t *)b, MIN(l, TARBLOCKSIZE));
+    }
+    if (extract) {
+      // close file
+      file.flush();
+      file.close();
+    }
     break;
   case DIRECTORY:
-    D("directory");
     // nothing to do, FFS does not support directories
+    logging.info("ignoring directory " + filename);
     break;
   default:
-    setErrorMsg(filename + ": unsupported filetype");
+    setErrorMsg("unsupported filetype for " + filename);
     return false;
   }
-  chksum(b, chk);
-  Ds(b + CHK, chk);
-  if (strncmp(b + CHK, chk, 6)) {
-    setErrorMsg(filename + ": wrong checksum");
-    return false;
-  }
-  char x[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  int br = 0, bw = 0;
-  for (; l > 0; l -= TARBLOCKSIZE) { // block is always TARBLOCKSIZE
-    Di("reading from position:", tarball.position());
-    int k = tarball.read((uint8_t *)b, TARBLOCKSIZE);
-    br += k;
-    Di("bytes read from tarBall:", k);
-    strncpy(x, b, 10);
-    Ds("begin of block:", x);
-#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
-    bw += MIN(l, TARBLOCKSIZE);
-    // if() fwrite(b, MIN(l, TARBLOCKSIZE), 1, f);
-  }
-  Di("bytes read:", br);
-  Di("bytes written:", bw);
-  // if(f) fclose(f);
   return true;
 };
 
@@ -206,23 +211,16 @@ bool OmniESPUpdater::untar(Tarball &tarball) {
   int l;
   char b[END], fname[101] = {0};
 
-  char x[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
   logging.info("extracting files from tarball");
-  int k;
-  while (k = tarball.read((uint8_t *)b, END)) {
-    Di("main loop, bytes read from tarBall:", k);
-    Di("now at position:", tarball.position());
-    strncpy(x, b, 10);
-    Ds("begin of block:", x);
+  while (tarball.read((uint8_t *)b, END)) {
     if (*b == '\0')
       break;
     memcpy(fname, b, 100);
-    Ds("filename is:", fname);
     l = strtol(b + SIZE, 0, 8);
-    Di("size is:", l) if (!extract(tarball, fname, l, b)) return false;
-    Di("now at position:", tarball.position());
+    if (!extract(tarball, fname, l, b))
+      return false;
   }
+  logging.info("extraction finished");
   return true;
 }
 
@@ -230,20 +228,88 @@ bool OmniESPUpdater::untar(Tarball &tarball) {
 //  actual update procedure
 //...............................................................................
 
-bool OmniESPUpdater::doUpdate(const char *deviceName) {
+String OmniESPUpdater::getUpdateErrorString(uint8_t error) {
+  if (error == UPDATE_ERROR_OK) {
+    return ("No Error");
+  } else if (error == UPDATE_ERROR_WRITE) {
+    return ("Flash Write Failed");
+  } else if (error == UPDATE_ERROR_ERASE) {
+    return ("Flash Erase Failed");
+  } else if (error == UPDATE_ERROR_READ) {
+    return ("Flash Read Failed");
+  } else if (error == UPDATE_ERROR_SPACE) {
+    return ("Not Enough Space");
+  } else if (error == UPDATE_ERROR_SIZE) {
+    return ("Bad Size Given");
+  } else if (error == UPDATE_ERROR_STREAM) {
+    return ("Stream Read Timeout");
+  } else if (error == UPDATE_ERROR_MD5) {
+    return ("MD5 Check Failed");
+  } else if (error == UPDATE_ERROR_FLASH_CONFIG) {
+    return ("Flash config wrong");
+  } else if (error == UPDATE_ERROR_NEW_FLASH_CONFIG) {
+    return ("new Flash config wrong");
+  } else if (error == UPDATE_ERROR_MAGIC_BYTE) {
+    return ("Magic byte is wrong, not 0xE9");
+    //  } else if (error == UPDATE_ERROR_BOOTSTRAP) {
+    //    return("Invalid bootstrapping state, reset ESP8266 before updating");
+  } else {
+    return ("Unknown error");
+  }
+}
 
+bool OmniESPUpdater::doUpdate(const char *deviceName, bool setDeviceDefaults) {
+
+  bool result;
+
+  // untarring files
   Tarball tarball(deviceName);
   if (!tarball.exists()) {
     setErrorMsg("tarball " + tarball.getFilename() + " not found");
     return false;
   }
   logging.info("starting update");
+  if(setDeviceDefaults) {
+    logging.info("will set device config to defaults");
+  }
   if (!tarball.beginRead()) {
     setErrorMsg(tarball.getLastError());
     return false;
   }
   logging.info("using tarball " + tarball.getFilename());
-  untar(tarball);
+  skipConfigFiles = !setDeviceDefaults;
+  result = untar(tarball);
   tarball.endRead();
-  logging.info("update finished");
+  if (!result)
+    return false;
+
+  // firmware update
+  File firmware = SPIFFS.open("firmware/firmware.bin", "r");
+  if (!firmware) {
+    setErrorMsg("firmware is missing");
+    return false;
+  }
+  size_t l = firmware.size();
+  result = Update.begin(l, U_FLASH);
+  if (!result) {
+    setErrorMsg(getUpdateErrorString(Update.getError()));
+  } else {
+    logging.info("writing firmware"); /*
+     int r;
+     uint8_t data[4096];
+     while(l> 0) {
+       r= tarball.read(data, 4096);
+       l-= r;
+       Update.write(data, r);
+     } */
+    Update.writeStream(firmware);
+    Update.end();
+    result = (Update.getError() == UPDATE_ERROR_OK);
+    if (!result)
+      setErrorMsg(getUpdateErrorString(Update.getError()));
+  }
+  firmware.close();
+  if(result)
+    logging.info("update prepared");
+  return result;
 }
