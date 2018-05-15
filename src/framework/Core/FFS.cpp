@@ -28,9 +28,18 @@ void FFS::mount() {
     logging.error("failed to mount flash file system");
   } else {
     logging.info("flash file system mounted");
-    // logging.info("formating FS...");
-    // SPIFFS.format();
-    // logging.info("OK");
+     //logging.info("formatting FS...");
+     //SPIFFS.format();
+     //logging.info("OK");
+
+    FSInfo fs_info;
+    SPIFFS.info(fs_info);
+    char txt[128];
+    sprintf(txt, "%luKiB/%luKiB used, block size: %luB, page size: %luB",
+      fs_info.usedBytes/1024, fs_info.totalBytes/1024,
+      fs_info.blockSize, fs_info.pageSize);
+    logging.debug(String(txt));
+
 
     // load rootStrings
     logging.info("loading configuration");

@@ -187,12 +187,14 @@ bool OmniESPUpdater::extract(Tarball &tarball, char *fname, int l,
     // write file
     for (; l > 0; l -= TARBLOCKSIZE) { // block is always TARBLOCKSIZE
       tarball.read((uint8_t *)b, TARBLOCKSIZE);
-      if (extract)
+      if (extract) {
+        //Di("extracting", MIN(l, TARBLOCKSIZE));
         file.write((uint8_t *)b, MIN(l, TARBLOCKSIZE));
+      }
     }
     if (extract) {
       // close file
-      file.flush();
+      //file.flush();
       file.close();
     }
     break;
@@ -221,6 +223,13 @@ bool OmniESPUpdater::untar(Tarball &tarball) {
       return false;
   }
   logging.info("extraction finished");
+
+  logging.debug("FFS listing:");
+  Dir dir= SPIFFS.openDir("/");
+  while(dir.next()) {
+    logging.debug("  "+dir.fileName()+", "+String(dir.fileSize(), DEC));
+  }
+
   return true;
 }
 
@@ -290,24 +299,29 @@ bool OmniESPUpdater::doUpdate(const char *deviceName, bool setDeviceDefaults) {
     return false;
   }
   size_t l = firmware.size();
+  logging.debug("firmware size is "+String(l, DEC)+" bytes");
+
+  logging.error("NOT FLASHING");
+  /*
   result = Update.begin(l, U_FLASH);
   if (!result) {
     setErrorMsg(getUpdateErrorString(Update.getError()));
   } else {
-    logging.info("writing firmware"); /*
+    logging.info("writing firmware");
      int r;
      uint8_t data[4096];
      while(l> 0) {
        r= tarball.read(data, 4096);
        l-= r;
        Update.write(data, r);
-     } */
-    Update.writeStream(firmware);
+     }
+    //Update.writeStream(firmware);
     Update.end();
     result = (Update.getError() == UPDATE_ERROR_OK);
     if (!result)
       setErrorMsg(getUpdateErrorString(Update.getError()));
   }
+  */
   firmware.close();
   if(result)
     logging.info("update prepared");
