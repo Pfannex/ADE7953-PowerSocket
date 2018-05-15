@@ -12,8 +12,24 @@ ESP_Tools::ESP_Tools(LOGGING &logging) : logging(logging) {}
 //-------------------------------------------------------------------------------
 
 void ESP_Tools::start() {
+
+  char txt[128];
+  sprintf(txt, "chip id:         %08X", ESP.getChipId());
+  logging.debug(String(txt));
+  sprintf(txt, "core version:    %s", ESP.getCoreVersion().c_str());
+  logging.debug(String(txt));
+  sprintf(txt, "boot version:    %d", ESP.getBootVersion());
+  logging.debug(String(txt));
+  sprintf(txt, "sdk version:     %s", ESP.getSdkVersion());
+  logging.debug(String(txt));
+  sprintf(txt, "cpu frequency:   %d MHz", ESP.getCpuFreqMHz());
+  logging.debug(String(txt));
+  sprintf(txt, "boot mode:       %d", ESP.getBootMode());
+  logging.debug(String(txt));
+
   checkFlash();
-  sprintf(deviceName, "%06x", chipId());
+  //sprintf(deviceName, "%06x", chipId());
+
 }
 
 //...............................................................................
@@ -25,9 +41,10 @@ void ESP_Tools::checkFlash() {
   FlashMode_t ideMode = ESP.getFlashChipMode();
 
   logging.info("checking flash memory");
-return;
+
   char txt[128];
-  sprintf(txt, "flash real id:   %08X", ESP.getFlashChipId());
+  // Device= HHLL, Manufacturer= MM
+  sprintf(txt, "flash chip id:   %08X", ESP.getFlashChipId()); // 00LLHHMM
   logging.debug(String(txt));
   sprintf(txt, "flash real size: %u", realSize);
   logging.debug(String(txt));
