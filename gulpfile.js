@@ -98,7 +98,7 @@ gulp.task('html', function() {
     return gulp.src(htmldir+'/*.html')
         .pipe(useref())
         .pipe(plumber())
-        .pipe(gulpif('*.css', cleancss()))
+        .pipe(gulpif('*.css', cleancss().pipe(gzip())))
         .pipe(gulpif('*.js', uglify()))
         .pipe(gulpif('*.html', htmlmin({
             collapseWhitespace: true,
