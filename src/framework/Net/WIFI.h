@@ -42,6 +42,8 @@ private:
   // true if status has changed since last update
   bool updateStatus(wl_status_t status);
   String startAP(bool state);
+  String scanWifi();
+  int scanStatus = -2; //in progress: -1; not been triggered: -2; >0 = found
 
   CallbackFunction on_wifiConnected;
   CallbackFunction on_wifiDisconnected;

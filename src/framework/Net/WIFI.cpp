@@ -27,12 +27,14 @@ wl_status_t WIFI::start() {
   // is connected
   WiFi.disconnect(true);
   WiFi.persistent(false);
+ESP.eraseConfig();
   WiFi.mode(WIFI_OFF);
 
   WiFiStatus = false;
   if (mode == "off") {
     logging.info("WiFi is off");
   } else {               // dhcp or manual
+    WiFi.mode(WIFI_AP_STA);
     WiFi.softAPdisconnect(true);
     if (mode == "dhcp") {
       logging.info("WiFi DHCP configuration");
@@ -78,6 +80,11 @@ void WIFI::handle() {
         }
         on_connected();
       }
+      //Check for Networkscan
+      //if (WiFi.scanComplete() != scanStatus){
+        //logging.info("WiFi-Scan: " + String(WiFi.scanComplete()));
+        //scanStatus = WiFi.scanComplete();
+      //}
     } else if (wl_status == WL_DISCONNECTED) {
       //if (WiFiStatus) {
         WiFiStatus = false;
@@ -150,6 +157,8 @@ String WIFI::set(Topic &topic) {
     } else {
       return "missing argument! try 0 or 1";
     }
+  } else if (topic.itemIs(3, "scan")) {
+    return scanWifi();
   } else {
     return TOPIC_NO;
   }
@@ -216,23 +225,67 @@ bool WIFI::updateStatus(wl_status_t status) {
 //...............................................................................
 String WIFI::startAP(bool state) {
   if (state) {
+    //WiFi.mode(WIFI_AP_STA);
+    delay(1000);
     IPAddress apIP(192,168,4,1);
     IPAddress gateway(192,168,4,1);
     IPAddress subnet(255,255,255,0);
     String apSSID = ffs.cfg.readItem("ap_ssid");
     String apPSK = ffs.cfg.readItem("ap_password");
 
-    WiFi.mode(WIFI_AP_STA);
-    WiFi.softAPConfig(apIP, gateway, subnet);
-    WiFi.softAP(apSSID.c_str(), apPSK.c_str());
+    Serial.println(WiFi.softAPConfig(apIP, gateway, subnet));
+    Serial.println(WiFi.softAP(apSSID.c_str(), apPSK.c_str()));
+    Serial.println(apSSID);
+    Serial.println(apPSK);
+    Serial.println(WiFi.softAPIP());
 
     logging.info("Accesspoint is now ON");
     return "AP is on";
   } else {
-    WiFi.mode(WIFI_STA);
+    //WiFi.mode(WIFI_STA);
     WiFi.softAPdisconnect(true);
 
     logging.info("Accesspoint is now OFF");
     return "AP is off";
   }
+}
+
+//...............................................................................
+//  scan WiFi for SSIDs
+//...............................................................................
+String WIFI::scanWifi() {
+
+  Serial.println("scan start");
+
+  // WiFi.scanNetworks will return the number of networks found
+  int n = WiFi.scanNetworks();
+  Serial.println("scan done");
+  if (n == 0)
+    Serial.println("no networks found");
+  else
+  {
+    Serial.print(n);
+    Serial.println(" networks found");
+    for (int i = 0; i < n; ++i)
+    {
+      // Print SSID and RSSI for each network found
+      Serial.print(i + 1);
+      Serial.print(": ");
+      Serial.print(WiFi.SSID(i));
+      Serial.print(" (");
+      Serial.print(WiFi.RSSI(i));
+      Serial.print(")");
+      Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
+      delay(10);
+    }
+  }
+  Serial.println("");
+
+
+
+
+
+
+  return "done";
+
 }
