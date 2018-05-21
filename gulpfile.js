@@ -30,10 +30,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // before anything else is written to the webdir
 
 // install
-// del gulp@4 gulp-clean-css gulp-gzip gulp-htmlmin gulp-if gulp-inline gulp-plumber gulp-uglify gulp-useref gulp-util yargs git-describe
+// del gulp@4 gulp-clean-css gulp-gzip gulp-htmlmin gulp-if gulp-inline gulp-plumber gulp-uglify gulp-useref gulp-util yargs git-tools
 // with npm install here or install them globally with npm install -q and
-// link them with npm link
+// link them with npm lin
 
+"use strict";
 
 const htmldir = "html";
 const datadir = "data";
@@ -54,31 +55,75 @@ const inline = require('gulp-inline');
 const tar = require('gulp-tar-path');
 const rename = require('gulp-rename');
 const fs = require('fs');
-const {gitDescribe, gitDescribeSync} = require('git-describe');
+//const {gitDescribe, gitDescribeSync} = require('git-describe');
+const Repo = require('git-tools');
 //const preprocess = require('gulp-preprocess');
 
 //        .pipe(preprocess({context: { NODE_PATH: '$NODE_PATH:node_modules'}}))
 
+var branch, description, version;
+
+
+/*
+function makeversion() {
+  var b;
+  var d;
+  var repo= new Repo(".");
+  repo.currentBranch(function(err, value) {
+    branch= value;
+  });
+  repo.describe({
+    long: true,
+    tags: true
+  }, function(err, description) {
+    description= value;
+    console.log(d);
+  });
+  console.log(b+"-"+d);
+  //fs.writeFileSync(datadir+'/version.txt', new Date());
+}*/
+
+/* versioning */
+gulp.task('getBranch', function() {
+  return new Promise(function(resolve, reject) {
+    var repo= new Repo(".");
+    repo.currentBranch(function(err, value) {
+      branch= value;
+      resolve();
+    });
+  });
+});
+
+gulp.task('getDescription', function() {
+  return new Promise(function(resolve, reject) {
+    var repo= new Repo(".");
+    repo.describe({long: true, tags: true}, function(err, value) {
+      description= value;
+      resolve();
+    });
+  });
+});
+
+gulp.task('showVersion', function() {
+  return new Promise(function(resolve, reject) {
+      version= branch+"-"+description;
+      console.log(version);
+      fs.writeFileSync(datadir+'/version.txt', new Date()+"\n"+version);
+      resolve();
+    });
+});
+
+
+gulp.task('versioninfo',
+  gulp.series(
+    gulp.parallel('getBranch', 'getDescription'),
+    'showVersion'
+  )
+);
+
 /* Clean destination folder */
 gulp.task('clean', function() {
     return del([webdir+'/*']);
-});
-
-function makeversion() {
-  const gitInfo = gitDescribeSync({
-    longSemver: true/*,
-    customArguments: ['--long','--all']*/
-  });
-  console.log(gitInfo);
-  console.log(gitInfo.toString());
-  //fs.writeFileSync(datadir+'/version.txt', new Date());
-}
-
-gulp.task('versioninfo', function() {
-  return new Promise(function(resolve, reject) {
-    makeversion();
-    resolve();
-  });
 });
 
 
