@@ -106,7 +106,13 @@ String ESP_Tools::genericName() { return String(deviceName); }
 //  update
 //...............................................................................
 
-String ESP_Tools::update(bool setDeviceDefaults) {
+bool ESP_Tools::updateRequested() {
+  return updateRequest;
+}
+
+String ESP_Tools::update() {
+
+  updateRequest= false; // avoid infinite loops right from the beginning
 
   OmniESPUpdater U(logging);
 
@@ -158,8 +164,12 @@ String ESP_Tools::set(Topic &topic) {
     reboot();
     return TOPIC_OK;
   } else if (topic.itemIs(3, "update")) {
-    bool setDeviceDefaults= topic.argIs(0, "defaults");
-    return update(setDeviceDefaults);
+    // we need to set the updateRequest flag here only because we cannot
+    // run the update from an asynchronous call like from the webserver,
+    // the core would panic when calling yield()
+    setDeviceDefaults= topic.argIs(0, "defaults");
+    updateRequest= true;
+    return TOPIC_OK;
   } else {
     return TOPIC_NO;
   }

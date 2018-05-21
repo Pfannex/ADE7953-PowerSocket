@@ -112,3 +112,11 @@ String SysUtils::uptimeStr(time_t t) {
 String SysUtils::fullVersion() {
   return String(VERSION) + " " + String(__DATE__) + " " + String(__TIME__);
 }
+
+String SysUtils::tarballVersion() {
+  File file= SPIFFS.open(TARBALLVERSIONFILE, "r");
+  if(!file) return "not available";
+  String result= file.readString();
+  file.close();
+  return result;
+}

@@ -103,6 +103,7 @@ function upload() {
   var file = $("#update_localpath").prop("files")[0];
   if (file) {
     logmsg("Uploading " + file.name + " (" + file.size + " bytes)");
+    $("#popupUploading").popup("open");
     $.ajax({
       type: "POST",
       url: "/upload.html",
@@ -111,7 +112,7 @@ function upload() {
       processData: false,
       data: new FormData($("#upload_form")[0]),
       success: function(data) {
-        //$("#popupUpdating").popup("open");
+        $("#popupUploading").popup("close");
         //reloadIfAlive;
         logmsg("upload result: "+data);
         if(data == "ok") {

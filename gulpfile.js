@@ -53,6 +53,7 @@ const gulpif = require('gulp-if');
 const inline = require('gulp-inline');
 const tar = require('gulp-tar-path');
 const rename = require('gulp-rename');
+const fs = require('fs');
 //const preprocess = require('gulp-preprocess');
 
 //        .pipe(preprocess({context: { NODE_PATH: '$NODE_PATH:node_modules'}}))
@@ -61,6 +62,18 @@ const rename = require('gulp-rename');
 gulp.task('clean', function() {
     return del([webdir+'/*']);
 });
+
+function makeversion() {
+  fs.writeFileSync(datadir+'/version.txt', new Date());
+}
+
+gulp.task('versioninfo', function() {
+  return new Promise(function(resolve, reject) {
+    makeversion();
+    resolve();
+  });
+});
+
 
 /* Copy static files */
 gulp.task('files', function() {
@@ -128,7 +141,8 @@ gulp.task('delfirmware', function() {
 // see https://www.npmjs.com/package/gulp-tar-path
 gulp.task('tar', function() {
     process.chdir(datadir);
-    result= gulp.src(['firmware/*.bin',
+    result= gulp.src(['version.txt',
+                     'firmware/*.bin',
                      'web',
                      'customDevice/*.json'])
       .pipe(tar('omniesp.tar'))
@@ -140,10 +154,12 @@ gulp.task('tar', function() {
 /* Build file system */
 // https://fettblog.eu/gulp-4-parallel-and-series/
 gulp.task('cleanfs', gulp.series('clean'));
-gulp.task('buildfs', gulp.series('clean',  gulp.parallel('files', 'lib', 'html')));
-gulp.task('buildfs2', gulp.series('clean',  gulp.parallel('files', 'lib', 'inline')));
+gulp.task('buildfs', gulp.series('clean',  'versioninfo',
+    gulp.parallel('files', 'lib', 'html')));
+gulp.task('buildfs2', gulp.series('clean', 'versioninfo',
+    gulp.parallel('files', 'lib', 'inline')));
 gulp.task('default', gulp.series('buildfs'));
-gulp.task('tarball', gulp.series('copyfirmware', 'tar', 'delfirmware'));
+gulp.task('tarball', gulp.series('copyfirmware', 'versioninfo', 'tar', 'delfirmware'));
 
 // -----------------------------------------------------------------------------
 // PlatformIO support

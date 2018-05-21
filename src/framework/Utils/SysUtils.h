@@ -2,10 +2,13 @@
 #include "TimeLib.h"
 #include <Arduino.h>
 #include <IPAddress.h>
+#include <FS.h>
 
 //###############################################################################
 //  SysUtils
 //###############################################################################
+
+#define TARBALLVERSIONFILE "/version.txt"
 class SysUtils {
 public:
 
@@ -28,4 +31,5 @@ public:
 
   // version utils
   static String fullVersion();
+  static String tarballVersion();
 };

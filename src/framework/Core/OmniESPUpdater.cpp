@@ -92,6 +92,7 @@ bool Tarball::endWrite() {
   file.flush();
   file.close();
   writing = false;
+  return true;
 }
 
 bool Tarball::beginRead() {
@@ -113,6 +114,7 @@ size_t Tarball::read(uint8_t *data, size_t len) { return file.read(data, len); }
 bool Tarball::endRead() {
   file.close();
   reading = false;
+  return true;
 }
 
 size_t Tarball::position() {
@@ -157,11 +159,11 @@ void OmniESPUpdater::chksum(const char b[END], char *chk) {
 
 bool OmniESPUpdater::extract(Tarball &tarball, char *fname, int l,
                              char b[END]) {
-  static char chk[9] = {0};
-  int r = 0;
   String filename = fname;
-  File file;
+  // prepending / is absolutely necessary, else the files go to nirvana
+  if(!filename.startsWith("/")) filename= "/"+filename;
 
+  static char chk[9] = {0};
   chksum(b, chk);
   //Ds(b + CHK, chk);
   if (strncmp(b + CHK, chk, 6)) {
@@ -171,6 +173,7 @@ bool OmniESPUpdater::extract(Tarball &tarball, char *fname, int l,
 
   bool extract = skipConfigFiles ? strcmp(fname, DEVICECONFIG) : true;
 
+  File file;
   switch (b[TYPE]) {
   case REG:
     // regular file
@@ -224,13 +227,16 @@ bool OmniESPUpdater::untar(Tarball &tarball) {
   }
   logging.info("extraction finished");
 
+  return true;
+}
+
+void OmniESPUpdater::listSpiffs() {
+
   logging.debug("FFS listing:");
   Dir dir= SPIFFS.openDir("/");
   while(dir.next()) {
     logging.debug("  "+dir.fileName()+", "+String(dir.fileSize(), DEC));
   }
-
-  return true;
 }
 
 //...............................................................................
@@ -269,10 +275,17 @@ String OmniESPUpdater::getUpdateErrorString(uint8_t error) {
 
 bool OmniESPUpdater::doUpdate(const char *deviceName, bool setDeviceDefaults) {
 
-  bool result;
+  Tarball tarball(deviceName);
+  if(extractFiles(tarball, setDeviceDefaults)) {
+    listSpiffs();
+    return flash(FIRMWAREBIN);
+  } else
+    return false;
+}
+
+bool OmniESPUpdater::extractFiles(Tarball tarball, bool setDeviceDefaults) {
 
   // untarring files
-  Tarball tarball(deviceName);
   if (!tarball.exists()) {
     setErrorMsg("tarball " + tarball.getFilename() + " not found");
     return false;
@@ -287,43 +300,46 @@ bool OmniESPUpdater::doUpdate(const char *deviceName, bool setDeviceDefaults) {
   }
   logging.info("using tarball " + tarball.getFilename());
   skipConfigFiles = !setDeviceDefaults;
-  result = untar(tarball);
+  bool result = untar(tarball);
   tarball.endRead();
   if (!result)
     return false;
 
+}
+
+
+bool OmniESPUpdater::flash(String filename) {
+
   // firmware update
-  File firmware = SPIFFS.open("firmware/firmware.bin", "r");
+  File firmware = SPIFFS.open(filename, "r");
   if (!firmware) {
     setErrorMsg("firmware is missing");
     return false;
   }
   size_t l = firmware.size();
-  logging.debug("firmware size is "+String(l, DEC)+" bytes");
+  logging.info("firmware size is "+String(l, DEC)+" bytes");
 
-  logging.error("NOT FLASHING");
-  /*
-  result = Update.begin(l, U_FLASH);
+  bool result = Update.begin(l, U_FLASH);
   if (!result) {
     setErrorMsg(getUpdateErrorString(Update.getError()));
   } else {
     logging.info("writing firmware");
+    /*
      int r;
-     uint8_t data[4096];
-     while(l> 0) {
-       r= tarball.read(data, 4096);
-       l-= r;
+     uint8_t data[512];
+     while(firmware.available()) {
+       r= firmware.read(data, 512);
        Update.write(data, r);
-     }
-    //Update.writeStream(firmware);
+       Di("firmware bytes written:", r);
+     }*/
+    Update.writeStream(firmware);
     Update.end();
     result = (Update.getError() == UPDATE_ERROR_OK);
     if (!result)
       setErrorMsg(getUpdateErrorString(Update.getError()));
   }
-  */
   firmware.close();
   if(result)
-    logging.info("update prepared");
-  return result;
+    logging.info("firmware written");
+
 }

@@ -61,6 +61,7 @@ void Controller::start() {
 
   // fire up the FFS
   ffs.mount();
+  logging.info("tarball creation date "+SysUtils::tarballVersion());
 
   // set config defaults
   setConfigDefaults();
@@ -120,6 +121,11 @@ void Controller::handle() {
   ftpSrv.handleFTP();
   clock.handle();
   device.handle();
+
+  // flash?
+  if(espTools.updateRequested()) {
+    espTools.update();
+  }
 
   //handle events
   while (topicQueue.count) {
