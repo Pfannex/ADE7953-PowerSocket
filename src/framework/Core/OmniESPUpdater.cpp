@@ -151,10 +151,18 @@ String OmniESPUpdater::getLastError() { return errorMsg; }
 //...............................................................................
 
 void OmniESPUpdater::chksum(const char b[END], char *chk) {
+  /*
+  The checksum is calculated by taking the sum of the unsigned byte values
+  of the header record with the eight checksum bytes taken to be ascii
+  spaces (decimal value 32). It is stored as a six digit octal number with
+  leading zeroes followed by a NUL and then a space. Various implementations
+  do not adhere to this format. For better compatibility, ignore leading and
+  trailing whitespace, and take the first six digits.
+  */
   unsigned sum = 0, i;
   for (i = 0; i < END; i++)
     sum += (i >= CHK && i < CHK + 8) ? ' ' : b[i];
-  snprintf(chk, 9, "0%5o", sum);
+  snprintf(chk, 9, "%06o  ", sum);
 }
 
 bool OmniESPUpdater::extract(Tarball &tarball, char *fname, int l,
@@ -165,9 +173,10 @@ bool OmniESPUpdater::extract(Tarball &tarball, char *fname, int l,
 
   static char chk[9] = {0};
   chksum(b, chk);
-  //Ds(b + CHK, chk);
   if (strncmp(b + CHK, chk, 6)) {
     setErrorMsg("wrong checksum for " + filename);
+    Ds("actual: ", chk);
+    Ds("tar   : ", b+CHK);
     return false;
   }
 
