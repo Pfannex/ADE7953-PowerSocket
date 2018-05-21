@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // before anything else is written to the webdir
 
 // install
-// del gulp@4 gulp-clean-css gulp-gzip gulp-htmlmin gulp-if gulp-inline gulp-plumber gulp-uglify gulp-useref gulp-util yargs
+// del gulp@4 gulp-clean-css gulp-gzip gulp-htmlmin gulp-if gulp-inline gulp-plumber gulp-uglify gulp-useref gulp-util yargs git-describe
 // with npm install here or install them globally with npm install -q and
 // link them with npm link
 
@@ -54,6 +54,7 @@ const inline = require('gulp-inline');
 const tar = require('gulp-tar-path');
 const rename = require('gulp-rename');
 const fs = require('fs');
+const {gitDescribe, gitDescribeSync} = require('git-describe');
 //const preprocess = require('gulp-preprocess');
 
 //        .pipe(preprocess({context: { NODE_PATH: '$NODE_PATH:node_modules'}}))
@@ -64,7 +65,13 @@ gulp.task('clean', function() {
 });
 
 function makeversion() {
-  fs.writeFileSync(datadir+'/version.txt', new Date());
+  const gitInfo = gitDescribeSync({
+    longSemver: true/*,
+    customArguments: ['--long','--all']*/
+  });
+  console.log(gitInfo);
+  console.log(gitInfo.toString());
+  //fs.writeFileSync(datadir+'/version.txt', new Date());
 }
 
 gulp.task('versioninfo', function() {
@@ -159,7 +166,7 @@ gulp.task('buildfs', gulp.series('clean',  'versioninfo',
 gulp.task('buildfs2', gulp.series('clean', 'versioninfo',
     gulp.parallel('files', 'lib', 'inline')));
 gulp.task('default', gulp.series('buildfs'));
-gulp.task('tarball', gulp.series('copyfirmware', 'versioninfo', 'tar', 'delfirmware'));
+gulp.task('tarball', gulp.series('buildfs','copyfirmware', 'versioninfo', 'tar', 'delfirmware'));
 
 // -----------------------------------------------------------------------------
 // PlatformIO support
