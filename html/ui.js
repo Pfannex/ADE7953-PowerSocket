@@ -103,16 +103,28 @@ function upload() {
   var file = $("#update_localpath").prop("files")[0];
   if (file) {
     logmsg("Uploading " + file.name + " (" + file.size + " bytes)");
-    $("#popupUploading").popup("open");
+    //$("#popupUploading").popup("open");
+    $.mobile.loading('show', {
+      text: "uploading tarball...",
+      textVisible: true,
+      textonly: false
+    });
     $.ajax({
       type: "POST",
       url: "/upload.html",
       cache: false,
       contentType: false,
       processData: false,
+      timeout: 60000,
       data: new FormData($("#upload_form")[0]),
+      error: function() {
+        $.mobile.loading('hide');
+        $("#upload_error").html("upload timed out");
+        $("#popupUploadFail").popup("open");
+      },
       success: function(data) {
-        $("#popupUploading").popup("close");
+        //$("#popupUploading").popup("close");
+        $.mobile.loading('hide');
         //reloadIfAlive;
         logmsg("upload result: "+data);
         if(data == "ok") {
