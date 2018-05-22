@@ -8,7 +8,6 @@
 //  SysUtils
 //###############################################################################
 
-#define TARBALLVERSIONFILE "/version.txt"
 class SysUtils {
 public:
 
@@ -31,5 +30,5 @@ public:
 
   // version utils
   static String fullVersion();
-  static String tarballVersion();
+  
 };

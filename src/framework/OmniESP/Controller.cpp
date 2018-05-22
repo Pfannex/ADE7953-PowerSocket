@@ -61,7 +61,10 @@ void Controller::start() {
 
   // fire up the FFS
   ffs.mount();
-  logging.info("tarball creation date "+SysUtils::tarballVersion());
+
+  // show the versioning
+  logging.info("version: "+ffs.vers.readItem("version"));
+  logging.info("date   : "+ffs.vers.readItem("date"));
 
   // set config defaults
   setConfigDefaults();

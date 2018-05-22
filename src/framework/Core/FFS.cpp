@@ -10,6 +10,7 @@
 FFS::FFS(LOGGING &logging)
     : logging(logging),
       // jsonFiles
+      vers(logging, VERS_PATH, TYPE_OBJECT),
       cfg(logging, CFG_PATH, TYPE_OBJECT),
       deviceCFG(logging, DEVICECFG_PATH, TYPE_OBJECT),
       webCFG(logging, DASHBOARD_PATH, TYPE_OBJECT){}
@@ -42,6 +43,9 @@ void FFS::mount() {
 
 
     // load rootStrings
+    logging.info("loading version");
+    vers.loadFile();
+    logging.debug("version loaded");
     logging.info("loading configuration");
     cfg.loadFile();
     deviceCFG.loadFile();

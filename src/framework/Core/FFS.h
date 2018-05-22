@@ -59,6 +59,7 @@ public:
   LOGGING& logging;
 
 //Files
+  FFSjsonFile vers;
   FFSjsonFile cfg;
   FFSjsonFile deviceCFG;
   FFSjsonFile webCFG;
