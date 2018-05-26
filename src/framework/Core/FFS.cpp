@@ -99,6 +99,8 @@ String FFS::set(Topic &topic) {
     tmpFile = &deviceCFG;
   } else if (topic.itemIs(3, "webCFG")) {
     tmpFile = &webCFG;
+  } else if (topic.itemIs(3, "version")) {
+    tmpFile = &vers;
   }
 
   if (tmpFile != NULL) {
@@ -169,8 +171,10 @@ String FFS::get(Topic &topic) {
     tmpFile = &deviceCFG;
   } else if (topic.itemIs(3, "webCFG")) {
     tmpFile = &webCFG;
+  } else if (topic.itemIs(3, "version")) {
+    tmpFile = &vers;
   }
-
+  
   if (tmpFile != NULL) {
     // filePath
     if (topic.itemIs(4, "filePath")) {

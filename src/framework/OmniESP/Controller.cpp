@@ -127,7 +127,18 @@ void Controller::handle() {
 
   // flash?
   if(espTools.updateRequested()) {
-    espTools.update();
+    String event;
+    event= "~/event/esp/update begin";
+    handleEvent(event);
+    if(espTools.update() == TOPIC_OK) {
+      event= "~/event/esp/update end";
+      handleEvent(event);
+      delay(1000);
+      espTools.reboot();
+    } else {
+      event= "~/event/esp/update fail";
+      handleEvent(event);
+    }
   }
 
   //handle events

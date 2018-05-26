@@ -118,7 +118,7 @@ String ESP_Tools::update() {
 
   if(U.doUpdate(DEFAULTTARBALL, setDeviceDefaults)) {
     return TOPIC_OK;
-    // reboot();
+    // reboot(); this is done in the Controller
   } else {
     return U.getLastError();
   }

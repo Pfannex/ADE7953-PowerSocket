@@ -77,11 +77,11 @@ bool Tarball::beginWrite() {
 }
 
 bool Tarball::write(uint8_t *data, size_t len) {
-  Di("tarball write bytes:", len);
+  //Di("tarball write bytes:", len);
   if (file.write(data, len) == len)
     return true;
   else {
-    D("short write");
+    //D("short write");
     setErrorMsg("short write");
     return false;
   }
@@ -351,4 +351,5 @@ bool OmniESPUpdater::flash(String filename) {
   if(result)
     logging.info("firmware written");
 
+  return result;
 }

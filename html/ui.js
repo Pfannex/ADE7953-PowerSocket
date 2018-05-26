@@ -38,6 +38,37 @@ function setRadioHandlers() {
 }
 
 // ---------------------------
+// events
+// ---------------------------
+
+
+function uiEvalEvent(topics, args) {
+  // react on NAME/event/esp/update STATE
+  if(topics.length==4) {
+    if((topics[2]=="esp") && (topics[3]="update")) {
+      if(args=="begin") {
+        logmsg("Update begins.");
+        $("#overlay").show();
+        $("#popupUpdating").popup("open");
+      } else {
+        $("#overlay").hide();
+        $("#popupUpdating").popup("close");
+        if(args=="fail") {
+          logmsg("Update failed.");
+          $("#update_error").html("Update failed. See log for details.");
+          $("#popupUpdateFail").popup("open");
+        } else {
+          logmsg("Update successful.");
+          $("#popupUpdateOk").popup("open");
+          reloadIfAlive();
+        }
+
+      }
+    }
+  }
+}
+
+// ---------------------------
 // actions
 // ---------------------------
 
@@ -80,6 +111,8 @@ function setTime() {
 function update() {
   call("~/set/esp/update");
 }
+
+/*
 function update() {
   logmsg("update call");
   $.post(
@@ -95,15 +128,18 @@ function update() {
         }
       }
     );
-
 }
+*/
 
 function upload() {
+  // upload uploads the file, on success triggers update
+  // remaining part is asynchronous
+
   // show popup
   var file = $("#update_localpath").prop("files")[0];
   if (file) {
     logmsg("Uploading " + file.name + " (" + file.size + " bytes)");
-    //$("#popupUploading").popup("open");
+    $("#overlay").show();
     $.mobile.loading('show', {
       text: "uploading tarball...",
       textVisible: true,
@@ -117,18 +153,20 @@ function upload() {
       processData: false,
       timeout: 60000,
       data: new FormData($("#upload_form")[0]),
-      error: function() {
+      error: function(request, text) {
         $.mobile.loading('hide');
-        $("#upload_error").html("upload timed out");
+        $("#overlay").hide();
+        $("#upload_error").html(text);
         $("#popupUploadFail").popup("open");
       },
       success: function(data) {
         //$("#popupUploading").popup("close");
         $.mobile.loading('hide');
-        //reloadIfAlive;
+        $("#overlay").hide();
         logmsg("upload result: "+data);
         if(data == "ok") {
-          $("#popupUploadOk").popup("open");
+          //$("#popupUploadOk").popup("open");
+          update();
         } else {
           $("#upload_error").html(data);
           $("#popupUploadFail").popup("open");
@@ -176,6 +214,11 @@ function retrieveConfig(callback) {
   return call("~/get/ffs/cfg/root", callback);
 }
 
+function retrieveVersion(callback) {
+  logmsg("Retrieving version information from device...");
+  return call("~/get/ffs/version/root", callback);
+}
+
 //
 // sent configuration to device
 //
@@ -192,6 +235,13 @@ function sendConfig(json) {
 //
 // set inputs from config
 //
+
+// set static text
+function setStaticText(name, value) {
+
+  var text= $("#"+name);
+  text.html(value);
+}
 
 // set text input
 function setText(name, value) {
@@ -220,6 +270,12 @@ function setCheckbox(name, value) {
   checkbox.prop('checked', value==1).checkboxradio('refresh');
 }
 
+// set version
+function setVersion(json) {
+  logmsg("Setting version information...")
+  var version= JSON.parse(json);
+  setStaticText("current_version", version.version);
+}
 
 // set inputs from config
 function setConfig(json) {

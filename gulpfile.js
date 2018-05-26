@@ -223,7 +223,7 @@ gulp.task('buildfs', gulp.series('clean', 'versioninfo',
 gulp.task('buildfs2', gulp.series('clean', 'versioninfo',
   gulp.parallel('files', 'lib', 'inline')));
 gulp.task('default', gulp.series('buildfs', 'versioninfo'));
-gulp.task('tarball', gulp.series('buildfs', 'copyfirmware', 'versioninfo', 'tar', 'delfirmware'));
+gulp.task('tarball', gulp.series('buildfs', 'copyfirmware', 'tar', 'delfirmware'));
 
 // -----------------------------------------------------------------------------
 // PlatformIO support

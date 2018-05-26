@@ -202,7 +202,7 @@ String WebServer::subst(const String &var) {
   else if (var == "DEVICENAME")
     return api.call("~/get/ffs/cfg/item/device_name");
   else if (var == "FIRMWARE")
-    return DEVICETYPE " " DEVICEVERSION;
+    return api.call("~/get/ffs/version/item/version");
   else
     return F("?");
 }
