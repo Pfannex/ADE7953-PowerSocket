@@ -12,8 +12,9 @@
 
 #define DEBUG 1
 #ifdef DEBUG
-  #define DEBUG_UPDATER Serial
-  #define NO_AUTH 1
+//  #define DEBUG_UPDATER Serial
+//  #define NO_AUTH 1
+  #define NO_AUTH 0
 #else
   #define NO_AUTH 0
 #endif

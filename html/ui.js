@@ -112,25 +112,6 @@ function update() {
   call("~/set/esp/update");
 }
 
-/*
-function update() {
-  logmsg("update call");
-  $.post(
-      "/api.html",
-      "call=~/set/esp/update",
-      function(data, status) {
-        logmsg("update result: "+data);
-        if(data == "ok") {
-          $("#popupUpdateOk").popup("open");
-        } else {
-          $("#update_error").html(data);
-          $("#popupUpdateFail").popup("open");
-        }
-      }
-    );
-}
-*/
-
 function upload() {
   // upload uploads the file, on success triggers update
   // remaining part is asynchronous
