@@ -11,7 +11,8 @@
 //-------------------------------------------------------------------------------
 
 WebServer::WebServer(API &api)
-    : api(api), webServer(WEBSERVERPORT), webSocket("/ws"), auth(api) {
+    : api(api), webServer(WEBSERVERPORT), webSocket("/ws"), auth(api),
+      tarball(DEFAULTTARBALL) {
 
   // static pages
   webServer.serveStatic("/lib/jquery.js", SPIFFS, "/web/lib/jquery.js",
@@ -33,22 +34,11 @@ WebServer::WebServer(API &api)
   webServer.on("/api.html", HTTP_ANY, std::bind(&WebServer::apiPageHandler,
                                                 this, std::placeholders::_1));
 
-  // firmware update; the first function handles the request, the second
-  // function is executed for every chunk of the uploaded file
-  /*
-  webServer.on(
-      "/update.html", HTTP_POST,
-      std::bind(&WebServer::updatePageHandler1, this, std::placeholders::_1),
-      std::bind(&WebServer::updatePageHandler2, this, std::placeholders::_1,
-                std::placeholders::_2, std::placeholders::_3,
-                std::placeholders::_4, std::placeholders::_5,
-                std::placeholders::_6));
-  */
 
   // firmware upload; the first function handles the request, the second
   // function is executed for every chunk of the uploaded file
   webServer.on(
-      "/update.html", HTTP_POST,
+      "/upload.html", HTTP_POST,
       std::bind(&WebServer::uploadPageHandler1, this, std::placeholders::_1),
       std::bind(&WebServer::uploadPageHandler2, this, std::placeholders::_1,
                 std::placeholders::_2, std::placeholders::_3,
@@ -75,8 +65,6 @@ WebServer::WebServer(API &api)
   api.registerTopicFunction(std::bind(&WebServer::topicFunction, this,
                                       std::placeholders::_1,
                                       std::placeholders::_2));
-
-
 }
 
 //...............................................................................
@@ -93,17 +81,6 @@ void WebServer::start() {
   webServer.begin();
   api.info("webserver started.");
   isRunning = true;
-/*
-  // register log function
-  api.registerLogFunction(std::bind(&WebServer::logFunction, this,
-                                    std::placeholders::_1,
-                                    std::placeholders::_2));
-
-  // register Topic function
-  api.registerTopicFunction(std::bind(&WebServer::topicFunction, this,
-                                      std::placeholders::_1,
-                                      std::placeholders::_2));
-*/
 }
 
 //-------------------------------------------------------------------------------
@@ -157,16 +134,16 @@ void WebServer::topicFunction(const time_t, Topic &topic) {
 
   String topicStr = "~/";
   topicStr += topic.modifyTopic(0);
-  if (topicStr == "~/event/net/connected"){
-    if (topic.getArgAsLong(0)){   //true
+  if (topicStr == "~/event/net/connected") {
+    if (topic.getArgAsLong(0)) { // true
       start();
-    }else{  //false
+    } else { // false
       api.info("Webserver is offline");
       isRunning = false;
     }
   }
 
-  if (isRunning){
+  if (isRunning) {
     String type("event");
     String subtype("");
     String msg = topic.asString();
@@ -179,6 +156,8 @@ void WebServer::topicFunction(const time_t, Topic &topic) {
 //...............................................................................
 bool WebServer::checkAuthentification(AsyncWebServerRequest *request) {
 
+  if (NO_AUTH)
+    return true;
   // check for cookie
   if (request->hasHeader("Cookie")) {
     String cookie = request->header("Cookie");
@@ -223,7 +202,7 @@ String WebServer::subst(const String &var) {
   else if (var == "DEVICENAME")
     return api.call("~/get/ffs/cfg/item/device_name");
   else if (var == "FIRMWARE")
-      return DEVICETYPE " " DEVICEVERSION;
+    return api.call("~/get/ffs/version/item/version");
   else
     return F("?");
 }
@@ -246,7 +225,7 @@ void WebServer::rootPageHandler(AsyncWebServerRequest *request) {
     api.info("User-Agent: " + request->header("User-Agent"));
   }
 
-  bool authenticated = checkAuthentification(request);
+  bool authenticated = NO_AUTH || checkAuthentification(request);
 
   if (authenticated) {
 
@@ -322,7 +301,7 @@ void WebServer::authPageHandler(AsyncWebServerRequest *request) {
 //...............................................................................
 
 void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
-//http://192.168.1.99/api.html?call=Foo/bar%201,2,3
+  // http://192.168.1.99/api.html?call=Foo/bar%201,2,3
 
   String call = request->arg("call");
   if (call == "") {
@@ -330,7 +309,7 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
     return;
   }
   // log call only in DEBUG mode, it could contain sensitive information
-  api.debug("webserver handling API call "+call);
+  api.debug("webserver handling API call " + call);
   if (checkAuthentification(request)) {
 
     Topic tmpTopic(call);
@@ -345,92 +324,6 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
   }
 }
 
-/*
-//...............................................................................
-//  updatePageHandler
-//...............................................................................
-
-String WebServer::getUpdateErrorString() {
-  uint8_t error = Update.getError();
-  if (error == UPDATE_ERROR_OK) {
-    return ("No Error");
-  } else if (error == UPDATE_ERROR_WRITE) {
-    return ("Flash Write Failed");
-  } else if (error == UPDATE_ERROR_ERASE) {
-    return ("Flash Erase Failed");
-  } else if (error == UPDATE_ERROR_READ) {
-    return ("Flash Read Failed");
-  } else if (error == UPDATE_ERROR_SPACE) {
-    return ("Not Enough Space");
-  } else if (error == UPDATE_ERROR_SIZE) {
-    return ("Bad Size Given");
-  } else if (error == UPDATE_ERROR_STREAM) {
-    return ("Stream Read Timeout");
-  } else if (error == UPDATE_ERROR_MD5) {
-    return ("MD5 Check Failed");
-  } else if (error == UPDATE_ERROR_FLASH_CONFIG) {
-    return ("Flash config wrong");
-  } else if (error == UPDATE_ERROR_NEW_FLASH_CONFIG) {
-    return ("new Flash config wrong");
-  } else if (error == UPDATE_ERROR_MAGIC_BYTE) {
-    return ("Magic byte is wrong, not 0xE9");
-    //  } else if (error == UPDATE_ERROR_BOOTSTRAP) {
-    //    return("Invalid bootstrapping state, reset ESP8266 before updating");
-  } else {
-    return ("Unknown error");
-  }
-}
-
-void WebServer::logUpdateError() { api.error(getUpdateErrorString()); }
-
-// this is the handler for the actual request
-// it is executed when the POST operation has terminated
-// the POST operation is handled by updatePageHandler2
-void WebServer::updatePageHandler1(AsyncWebServerRequest *request) {
-  shouldReboot = !Update.hasError();
-  AsyncWebServerResponse *response = request->beginResponse(
-      200, "text/plain", shouldReboot ? "ok" : getUpdateErrorString());
-  response->addHeader("Connection", "close");
-  request->send(response);
-}
-
-// this function is called for every chunk of the file which is uploaded
-// in the POST operation
-void WebServer::updatePageHandler2(AsyncWebServerRequest *request,
-                                   String filename, size_t index, uint8_t *data,
-                                   size_t len, bool final) {
-
-  // index is 0: we receive the first chunk of the file during uploading,
-  // begin the update
-  if (!index) {
-    api.info("updating firmware from file " + filename);
-    Update.runAsync(true);
-    uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
-    if (!Update.begin(maxSketchSpace)) {
-      logUpdateError();
-      Update.printError(Serial);
-    }
-  }
-  // for every chunk (including the first one at index 0): write it to the
-  // updater as long as no error occured
-  if (!Update.hasError()) {
-    if (Update.write(data, len) != len) {
-      logUpdateError();
-    }
-  }
-  // when the POST operation is completed, end the update
-  if (final) {
-    if (Update.end(true)) {
-      api.info("firmware update successful (" + String(index + len) +
-               " bytes)");
-    } else {
-      logUpdateError();
-    }
-  }
-}
-
-*/
-
 //...............................................................................
 //  uploadPageHandler
 //...............................................................................
@@ -439,6 +332,11 @@ void WebServer::updatePageHandler2(AsyncWebServerRequest *request,
 // it is executed when the POST operation has terminated
 // the POST operation is handled by uploadPageHandler2
 void WebServer::uploadPageHandler1(AsyncWebServerRequest *request) {
+
+  AsyncWebServerResponse *response =
+      request->beginResponse(200, "text/plain", uploadOk ? "ok" : tarball.getLastError().c_str());
+  response->addHeader("Connection", "close");
+  request->send(response);
 }
 
 // this function is called for every chunk of the file which is uploaded
@@ -447,7 +345,36 @@ void WebServer::uploadPageHandler2(AsyncWebServerRequest *request,
                                    String filename, size_t index, uint8_t *data,
                                    size_t len, bool final) {
 
+  if (!index) {
+    // this is the first chunk
+    //D("starting upload");
+    //D("removing...");
+    uploadOk = tarball.remove();
+    if (uploadOk)
+      uploadOk = tarball.beginWrite();
+    else
+      api.error(tarball.getLastError());
+    //D("writing begun.");
+    if (!uploadOk)
+      api.error(tarball.getLastError());
+    else
+      api.info("uploading tarball from file " + filename);
+  };
+  //Di("writing...", len)
+  if (uploadOk) {
+    if (!tarball.write(data, len)) {
+      uploadOk = false;
+      api.error(tarball.getLastError());
+    }
+  }
+  if (final) {
+    //D("finished");
+    api.info("tarball successfully uploaded (" + String(index + len) +
+             " bytes)");
+    tarball.endWrite();
+  }
 }
+
 //...............................................................................
 //  all other requests
 //...............................................................................

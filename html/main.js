@@ -25,6 +25,7 @@ $(document).on("pagecreate", "#page2", function(event, ui) {
   setRadioHandlers();
   //set_select_handlers();
   var json = retrieveConfig(setConfig);
+  //json= retrieveVersion(setVersion);
 })
 
 // ---------------------------
@@ -158,6 +159,8 @@ function dispatchContent(content) {
     consEvalEvent(d.toLocaleString(), topics, args);
     // in the dashboard
     dashboardEvalEvent(topics, args);
+    // in the UI
+    uiEvalEvent(topics, args);
   } else if (fields.type == "log") {
     // log messages are written to console 1
     consoleWriteln(1, fields.subtype + " " + fields.value)

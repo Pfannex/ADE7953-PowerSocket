@@ -2,10 +2,12 @@
 #include "TimeLib.h"
 #include <Arduino.h>
 #include <IPAddress.h>
+#include <FS.h>
 
 //###############################################################################
 //  SysUtils
 //###############################################################################
+
 class SysUtils {
 public:
 
@@ -28,4 +30,5 @@ public:
 
   // version utils
   static String fullVersion();
+  
 };

@@ -1,5 +1,6 @@
 #include "framework/Core/ESP.h"
 #include "framework/Utils/SysUtils.h"
+#include "framework/Core/OmniESPUpdater.h"
 
 //###############################################################################
 //  ESP
@@ -11,8 +12,24 @@ ESP_Tools::ESP_Tools(LOGGING &logging) : logging(logging) {}
 //-------------------------------------------------------------------------------
 
 void ESP_Tools::start() {
+
+  char txt[128];
+  sprintf(txt, "chip id:         %08X", ESP.getChipId());
+  logging.debug(String(txt));
+  sprintf(txt, "core version:    %s", ESP.getCoreVersion().c_str());
+  logging.debug(String(txt));
+  sprintf(txt, "boot version:    %d", ESP.getBootVersion());
+  logging.debug(String(txt));
+  sprintf(txt, "sdk version:     %s", ESP.getSdkVersion());
+  logging.debug(String(txt));
+  sprintf(txt, "cpu frequency:   %d MHz", ESP.getCpuFreqMHz());
+  logging.debug(String(txt));
+  sprintf(txt, "boot mode:       %d", ESP.getBootMode());
+  logging.debug(String(txt));
+
   checkFlash();
-  sprintf(deviceName, "%06x", chipId());
+  //sprintf(deviceName, "%06x", chipId());
+
 }
 
 //...............................................................................
@@ -24,9 +41,10 @@ void ESP_Tools::checkFlash() {
   FlashMode_t ideMode = ESP.getFlashChipMode();
 
   logging.info("checking flash memory");
-return;
+
   char txt[128];
-  sprintf(txt, "flash real id:   %08X", ESP.getFlashChipId());
+  // Device= HHLL, Manufacturer= MM
+  sprintf(txt, "flash chip id:   %08X", ESP.getFlashChipId()); // 00LLHHMM
   logging.debug(String(txt));
   sprintf(txt, "flash real size: %u", realSize);
   logging.debug(String(txt));
@@ -85,6 +103,29 @@ long ESP_Tools::chipId() { return ESP.getChipId(); }
 String ESP_Tools::genericName() { return String(deviceName); }
 
 //...............................................................................
+//  update
+//...............................................................................
+
+bool ESP_Tools::updateRequested() {
+  return updateRequest;
+}
+
+String ESP_Tools::update() {
+
+  updateRequest= false; // avoid infinite loops right from the beginning
+
+  OmniESPUpdater U(logging);
+
+  if(U.doUpdate(DEFAULTTARBALL, setDeviceDefaults)) {
+    return TOPIC_OK;
+    // reboot(); this is done in the Controller
+  } else {
+    return U.getLastError();
+  }
+
+}
+
+//...............................................................................
 //  DEBUG MEM
 //...............................................................................
 void ESP_Tools::debugMem() {
@@ -121,6 +162,13 @@ void ESP_Tools::debugMem_stop() {
 String ESP_Tools::set(Topic &topic) {
   if (topic.itemIs(3, "restart")) {
     reboot();
+    return TOPIC_OK;
+  } else if (topic.itemIs(3, "update")) {
+    // we need to set the updateRequest flag here only because we cannot
+    // run the update from an asynchronous call like from the webserver,
+    // the core would panic when calling yield()
+    setDeviceDefaults= topic.argIs(0, "defaults");
+    updateRequest= true;
     return TOPIC_OK;
   } else {
     return TOPIC_NO;

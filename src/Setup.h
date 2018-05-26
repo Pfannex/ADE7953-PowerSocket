@@ -1,7 +1,10 @@
 //###############################################################################
 //  Version
 //###############################################################################
-#define VERSION "OmniESP 0.8.0"
+
+// we use no explicit versioning, it's all derived from the git versioning
+
+#define VERSION "OmniESP"
 
 //###############################################################################
 // Debugging
@@ -9,7 +12,11 @@
 
 #define DEBUG 1
 #ifdef DEBUG
-  #define DEBUG_UPDATER Serial
+//  #define DEBUG_UPDATER Serial
+//  #define NO_AUTH 1
+  #define NO_AUTH 0
+#else
+  #define NO_AUTH 0
 #endif
 
 //###############################################################################
@@ -41,6 +48,7 @@
 //  FlashFileSystem
 //###############################################################################
 
+#define VERS_PATH       "/version.json"              // version
 #define CFG_PATH        "/OmniESP.json"              // global configuration
 #define DEVICECFG_PATH  "/customDevice/config.json"  // device configuration
 #define DASHBOARD_PATH  "/customDevice/dashboard.json"

@@ -4,6 +4,7 @@
 #include "framework/Utils/Debug.h"
 #include "framework/Core/Clock.h"
 #include "framework/Core/ESP.h"
+#include "framework/Core/OmniESPUpdater.h"
 #include "framework/Core/FFS.h"
 #include "framework/Utils/Logger.h"
 #include "framework/OmniESP/Topic.h"

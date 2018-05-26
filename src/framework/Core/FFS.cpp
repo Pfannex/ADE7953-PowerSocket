@@ -10,6 +10,7 @@
 FFS::FFS(LOGGING &logging)
     : logging(logging),
       // jsonFiles
+      vers(logging, VERS_PATH, TYPE_OBJECT),
       cfg(logging, CFG_PATH, TYPE_OBJECT),
       deviceCFG(logging, DEVICECFG_PATH, TYPE_OBJECT),
       webCFG(logging, DASHBOARD_PATH, TYPE_OBJECT){}
@@ -28,11 +29,23 @@ void FFS::mount() {
     logging.error("failed to mount flash file system");
   } else {
     logging.info("flash file system mounted");
-    // logging.info("formating FS...");
-    // SPIFFS.format();
-    // logging.info("OK");
+     //logging.info("formatting FS...");
+     //SPIFFS.format();
+     //logging.info("OK");
+
+    FSInfo fs_info;
+    SPIFFS.info(fs_info);
+    char txt[128];
+    sprintf(txt, "%luKiB/%luKiB used, block size: %luB, page size: %luB",
+      fs_info.usedBytes/1024, fs_info.totalBytes/1024,
+      fs_info.blockSize, fs_info.pageSize);
+    logging.debug(String(txt));
+
 
     // load rootStrings
+    logging.info("loading version");
+    vers.loadFile();
+    logging.debug("version loaded");
     logging.info("loading configuration");
     cfg.loadFile();
     deviceCFG.loadFile();
@@ -86,6 +99,8 @@ String FFS::set(Topic &topic) {
     tmpFile = &deviceCFG;
   } else if (topic.itemIs(3, "webCFG")) {
     tmpFile = &webCFG;
+  } else if (topic.itemIs(3, "version")) {
+    tmpFile = &vers;
   }
 
   if (tmpFile != NULL) {
@@ -156,8 +171,10 @@ String FFS::get(Topic &topic) {
     tmpFile = &deviceCFG;
   } else if (topic.itemIs(3, "webCFG")) {
     tmpFile = &webCFG;
+  } else if (topic.itemIs(3, "version")) {
+    tmpFile = &vers;
   }
-
+  
   if (tmpFile != NULL) {
     // filePath
     if (topic.itemIs(4, "filePath")) {

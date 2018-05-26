@@ -25,6 +25,9 @@ public:
   long chipId();
   String genericName();
 
+  bool updateRequested();
+  String update();
+
   void debugMem();
   void debugMem_start();
   void debugMem_stop();
@@ -32,9 +35,10 @@ public:
   String set(Topic &topic);
   String get(Topic &topic);
 
-
 private:
   int stackStart = 0;
   char deviceName[10];
+  bool updateRequest= false;
+  bool setDeviceDefaults= false;
 
 };
