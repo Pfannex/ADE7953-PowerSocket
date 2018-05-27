@@ -1,0 +1,17 @@
+Windows
+-------
+
+1) Von https://nodejs.org die aktuelle Version von NodeJS herunterladen (10.2.1) und mit Vorgabewerten installieren.
+2) Powershell oder CMD-Fenster im Wurzelverzeichnis von OmniESP öffnen.
+3) Ausführen von
+
+npm install del gulp@4 gulp-clean-css gulp-gzip gulp-htmlmin gulp-if gulp-inline gulp-plumber gulp-uglify gulp-useref gulp-util yargs git-tools gulp-tar-path gulp-rename
+
+zum Installieren aller erforderlichen Module nach node_modules. Das Verzeichnis node_modules wird von git ignoriert.
+4) Ausführen von
+
+gulp tarball
+
+zum Testen der Funktion.
+
+(Ende)

@@ -2,21 +2,6 @@
 
 ESP8266 file system builder with PlatformIO support
 
-Copyright (C) 2016 by Xose Pérez <xose dot perez at gmail dot com>
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 */
 
 // -----------------------------------------------------------------------------
@@ -25,14 +10,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // this file is taken from
 // http://tinkerman.cat/optimizing-files-for-spiffs-with-gulp/
-// and adapted to OmniESP layout
+// and adapted and greatly enhanced to OmniESP layout
 // we adapted it also to use gulp 4 to make sure clean has terminated
 // before anything else is written to the webdir
 
-// install
-// del gulp@4 gulp-clean-css gulp-gzip gulp-htmlmin gulp-if gulp-inline gulp-plumber gulp-uglify gulp-useref gulp-util yargs git-tools
-// with npm install here or install them globally with npm install -q and
-// link them with npm lin
+// npm install del gulp@4 gulp-clean-css gulp-gzip gulp-htmlmin gulp-if gulp-inline gulp-plumber gulp-uglify gulp-useref gulp-util yargs git-tools gulp-tar-path gulp-rename
 
 "use strict";
 
@@ -56,11 +38,7 @@ const inline = require('gulp-inline');
 const tar = require('gulp-tar-path');
 const rename = require('gulp-rename');
 const fs = require('fs');
-//const {gitDescribe, gitDescribeSync} = require('git-describe');
 const Repo = require('git-tools');
-//const preprocess = require('gulp-preprocess');
-
-//        .pipe(preprocess({context: { NODE_PATH: '$NODE_PATH:node_modules'}}))
 
 var branch, description, devicetype, version;
 var vobj= {}; // version object
