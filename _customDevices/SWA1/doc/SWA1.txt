@@ -1,0 +1,58 @@
+======================
+SWA1 WiFi Smart Socket
+======================
+
+serial console speed: 74480 baud
+
+boot message (between lines):
+-------------------------------------------------------------------------------
+ ets Jan  8 2013,rst cause:1, boot mode:(3,0)
+
+
+load 0x40100000, len 1396, room 16
+tail 4
+chksum 0x89
+load 0x3ffe8000, len 776, room 4
+tail 4
+chksum 0xe8
+load 0x3ffe8308, len 540, room 4
+tail 8
+chksum 0xc0
+csum 0xc0
+
+2nd boot version : 1.4(b1)
+  SPI Speed      : 40MHz
+  SPI Mode       : DOUT
+  SPI Flash Size & Map: 8Mbit(512KB+512KB)
+jump to run user1 @ 1000
+
+OS SDK ver: 1.4.2(23fbe10) compiled @ Sep 22 2016 13:09:03
+phy ver�
+-------------------------------------------------------------------------------
+
+Flashing OmniESP:
+
+1. set build_flags in [env:d1_mini] section of platformio.ini as follows:
+
+build_flags = -Wl,-Teagle.flash.2m.ld
+
+Then build firmware.
+
+2. connect USB/Serial/Adapter:
+
+  SWA1  Adapter
+  -------------
+  RxD   TxD
+  TxD   RxD
+  GND   GND
+  GPIO0 GND
+  5V    5V (connect last)
+
+  Sometimes, powering up does not set the bootloader mode. Then just try
+  again.
+
+3. Flash OmniESP
+
+4. Flash SPIFFS
+
+5. Done.

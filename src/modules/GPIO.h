@@ -62,11 +62,12 @@ private:
 #define BLINKTIME 500
 
 enum outputMode_t { OFF, ON, BLINK, OFT};
+enum logic_t { NORMAL, INVERSE };
 
 class GPIOoutput : public Module {
 
 public:
-  GPIOoutput(string name, LOGGING &logging, TopicQueue &topicQueue, int GPIOoutputPin);
+  GPIOoutput(string name, LOGGING &logging, TopicQueue &topicQueue, int GPIOoutputPin, logic_t logic = INVERSE);
   int pin;
 
   void start();
@@ -76,6 +77,9 @@ public:
   void setOutputMode(outputMode_t mode, int t= 0); // mode setter
 
 private:
+  logic_t logic;
+  int myHIGH= 0x1;
+  int myLOW= 0x0;
   outputMode_t currentOutputMode;
   int currentOutputOFTtime;
   int currentOutputBlinkTime;

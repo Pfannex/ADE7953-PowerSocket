@@ -11,8 +11,8 @@
 customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
            :Device(logging, topicQueue, ffs),
             button("button", logging, topicQueue, PIN_BUTTON),
-            led("led", logging, topicQueue, PIN_LED),
-            relay("relay", logging, topicQueue, PIN_RELAY)
+            led("led", logging, topicQueue, PIN_LED, INVERSE),
+            relay("relay", logging, topicQueue, PIN_RELAY, NORMAL)
           {}
 
 //...............................................................................
@@ -26,7 +26,7 @@ void customDevice::start() {
   button.start();
   led.start();
   relay.start();
-  setLedMode();
+  setLedMode(0);
 
   logging.info("device running");
 }
@@ -49,14 +49,19 @@ String customDevice::set(Topic &topic) {
   ~/set
   └─device             (level 2)
     └─power            (level 3)
-  */
+    └─toggle           (level 3)
+    └─led              (level 3)
+*/
 
   logging.debug("device set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
   if (topic.getItemCount() != 4) // ~/set/device/(power|toggle)
     return TOPIC_NO;
-  if (topic.itemIs(3, "power")) {
+  if (topic.itemIs(3, "led")) {
+      setLedMode(topic.getArgAsLong(0));
+      return TOPIC_OK;
+  } else if (topic.itemIs(3, "power")) {
     setPowerMode(topic.getArgAsLong(0));
     return TOPIC_OK;
   } else if(topic.itemIs(3, "toggle")) {
@@ -131,7 +136,6 @@ void customDevice::setPowerMode(int value) {
   } else {
     relay.setOutputMode(OFF);
   }
-  setLedMode();
 }
 
 void customDevice::setConfigMode(int value) {
@@ -145,15 +149,15 @@ void customDevice::setConfigMode(int value) {
   } else {
   //  topicQueue.put("~/set/wifi/ap 0");
   }
-
-  setLedMode();
+  if(value) setLedMode(2); else setLedMode(0);
 }
-void customDevice::setLedMode() {
-  if (!configMode) {
-    if (power)
-      led.setOutputMode(ON);
-    else
-      led.setOutputMode(OFF);
-  } else
-    led.setOutputMode(BLINK, 250);
+
+void customDevice::setLedMode(int value) {
+  switch(value) {
+    case 0: led.setOutputMode(OFF); break;
+    case 1: led.setOutputMode(ON); break;
+    case 2: led.setOutputMode(BLINK, 100); break;
+    case 3: led.setOutputMode(BLINK, 250); break;
+  }
+
 }

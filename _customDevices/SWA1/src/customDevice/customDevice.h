@@ -14,7 +14,7 @@
 //  Device
 //###############################################################################
 
-#define DEVICETYPE      "SimpleSwitch"
+#define DEVICETYPE      "SWA1"
 
 class customDevice : public Device {
 
@@ -36,5 +36,5 @@ private:
   int configMode = 0;
   void setConfigMode(int value);
   void setPowerMode(int value);
-  void setLedMode();
+  void setLedMode(int value);
 };
