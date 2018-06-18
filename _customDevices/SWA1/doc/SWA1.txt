@@ -1,11 +1,14 @@
 ======================
 SWA1 WiFi Smart Socket
 ======================
+---------------
+Original device
+---------------
 
 serial console speed: 74480 baud
 
-boot message (between lines):
--------------------------------------------------------------------------------
+boot message (between dotted lines):
+...............................................................................
  ets Jan  8 2013,rst cause:1, boot mode:(3,0)
 
 
@@ -28,9 +31,18 @@ jump to run user1 @ 1000
 
 OS SDK ver: 1.4.2(23fbe10) compiled @ Sep 22 2016 13:09:03
 phy ver�
--------------------------------------------------------------------------------
+...............................................................................
 
-Flashing OmniESP:
+--------------
+Prepare device
+--------------
+
+Use sharp 3 mm flat head screw driver to open device. Unscrew the WiFi board
+and solder a 5-pin header to the back of the board.
+
+----------------
+Flashing OmniESP
+----------------
 
 1. set build_flags in [env:d1_mini] section of platformio.ini as follows:
 
@@ -42,11 +54,11 @@ Then build firmware.
 
   SWA1  Adapter
   -------------
-  RxD   TxD
-  TxD   RxD
-  GND   GND
+  RxD   TxD   green
+  TxD   RxD   white
+  GND   GND   black
   GPIO0 GND
-  5V    5V (connect last)
+  5V    5V    red  (connect last)
 
   Sometimes, powering up does not set the bootloader mode. Then just try
   again.
