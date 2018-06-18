@@ -48,14 +48,14 @@ String Tarball::getFilename() { return filename; }
 bool Tarball::exists() { return SPIFFS.exists(getFilename()); }
 
 bool Tarball::remove() {
-  //Ds("tarball removing...", filename.c_str());
+  // Ds("tarball removing...", filename.c_str());
   if (!SPIFFS.exists(filename))
     return true;
-  //D("tarball do actual remove on SPIFFS");
+  // D("tarball do actual remove on SPIFFS");
   if (SPIFFS.remove(filename)) {
     return true;
   } else {
-    //D("error removing tarball");
+    // D("error removing tarball");
     setErrorMsg("could not delete tarball " + filename);
     return false;
   }
@@ -66,7 +66,7 @@ bool Tarball::beginWrite() {
     endWrite();
   if (reading)
     endRead();
-  //D("tarball begin write");
+  // D("tarball begin write");
   file = SPIFFS.open(filename, "w");
   if (!file) {
     setErrorMsg("could not create tarball " + filename);
@@ -77,18 +77,18 @@ bool Tarball::beginWrite() {
 }
 
 bool Tarball::write(uint8_t *data, size_t len) {
-  //Di("tarball write bytes:", len);
+  // Di("tarball write bytes:", len);
   if (file.write(data, len) == len)
     return true;
   else {
-    //D("short write");
+    // D("short write");
     setErrorMsg("short write");
     return false;
   }
 }
 
 bool Tarball::endWrite() {
-  //D("tarball end write");
+  // D("tarball end write");
   file.flush();
   file.close();
   writing = false;
@@ -169,24 +169,39 @@ bool OmniESPUpdater::extract(Tarball &tarball, char *fname, int l,
                              char b[END]) {
   String filename = fname;
   // prepending / is absolutely necessary, else the files go to nirvana
-  if(!filename.startsWith("/")) filename= "/"+filename;
+  if (!filename.startsWith("/"))
+    filename = "/" + filename;
 
   static char chk[9] = {0};
   chksum(b, chk);
   if (strncmp(b + CHK, chk, 6)) {
     setErrorMsg("wrong checksum for " + filename);
     Ds("actual: ", chk);
-    Ds("tar   : ", b+CHK);
+    Ds("tar   : ", b + CHK);
     return false;
   }
 
   bool extract = skipConfigFiles ? strcmp(fname, DEVICECONFIG) : true;
+  bool flash = !strcmp(fname, FIRMWAREBIN);
 
   File file;
   switch (b[TYPE]) {
   case REG:
+    //
     // regular file
-    if (extract) {
+    //
+    // 1. initialization
+    if (flash) {
+      // prepare flashing
+      logging.info("flashing file " + filename);
+      logging.info("firmware size is " + String(l, DEC) + " bytes");
+      bool flash = Update.begin(l, U_FLASH);
+      if (!flash) {
+        setErrorMsg(getUpdateErrorString(Update.getError()));
+        return false;
+      };
+    } else if (extract) {
+      // prepare extraction
       logging.info("extracting file " + filename);
       // open file for writing
       file = SPIFFS.open(filename, "w");
@@ -194,27 +209,44 @@ bool OmniESPUpdater::extract(Tarball &tarball, char *fname, int l,
         setErrorMsg("could not create file " + filename);
         return false;
       }
-    } else
+    } else {
+      // ignore the file
       logging.info("skipping file " + filename);
-    // write file
+    }
+    // 2. processing
     for (; l > 0; l -= TARBLOCKSIZE) { // block is always TARBLOCKSIZE
       tarball.read((uint8_t *)b, TARBLOCKSIZE);
       if (extract) {
-        //Di("extracting", MIN(l, TARBLOCKSIZE));
+        // Di("extracting", MIN(l, TARBLOCKSIZE));
         file.write((uint8_t *)b, MIN(l, TARBLOCKSIZE));
+      } else if(flash) {
+        Update.write((uint8_t *)b, MIN(l, TARBLOCKSIZE));
       }
     }
+    // 3. finalization
     if (extract) {
       // close file
-      //file.flush();
       file.close();
+    } else if(flash) {
+      // end update
+      Update.end();
+      if(Update.getError() != UPDATE_ERROR_OK) {
+        setErrorMsg(getUpdateErrorString(Update.getError()));
+        return false;
+      }
     }
     break;
   case DIRECTORY:
+    //
+    // directory
+    //
     // nothing to do, FFS does not support directories
     logging.info("ignoring directory " + filename);
     break;
   default:
+    //
+    // other, unsupported, should not occur
+    //
     setErrorMsg("unsupported filetype for " + filename);
     return false;
   }
@@ -242,9 +274,9 @@ bool OmniESPUpdater::untar(Tarball &tarball) {
 void OmniESPUpdater::listSpiffs() {
 
   logging.debug("FFS listing:");
-  Dir dir= SPIFFS.openDir("/");
-  while(dir.next()) {
-    logging.debug("  "+dir.fileName()+", "+String(dir.fileSize(), DEC));
+  Dir dir = SPIFFS.openDir("/");
+  while (dir.next()) {
+    logging.debug("  " + dir.fileName() + ", " + String(dir.fileSize(), DEC));
   }
 }
 
@@ -285,9 +317,9 @@ String OmniESPUpdater::getUpdateErrorString(uint8_t error) {
 bool OmniESPUpdater::doUpdate(const char *deviceName, bool setDeviceDefaults) {
 
   Tarball tarball(deviceName);
-  if(extractFiles(tarball, setDeviceDefaults)) {
+  if (extractFiles(tarball, setDeviceDefaults)) {
     listSpiffs();
-    return flash(FIRMWAREBIN);
+    return true;
   } else
     return false;
 }
@@ -300,7 +332,7 @@ bool OmniESPUpdater::extractFiles(Tarball tarball, bool setDeviceDefaults) {
     return false;
   }
   logging.info("starting update");
-  if(setDeviceDefaults) {
+  if (setDeviceDefaults) {
     logging.info("will set device config to defaults");
   }
   if (!tarball.beginRead()) {
@@ -313,20 +345,19 @@ bool OmniESPUpdater::extractFiles(Tarball tarball, bool setDeviceDefaults) {
   tarball.endRead();
   if (!result)
     return false;
-
 }
-
 
 bool OmniESPUpdater::flash(String filename) {
 
   // firmware update
+  // note: ensure that filename has a leading slash, like in "/firmware/firmware.bin"
   File firmware = SPIFFS.open(filename, "r");
   if (!firmware) {
     setErrorMsg("firmware is missing");
     return false;
   }
   size_t l = firmware.size();
-  logging.info("firmware size is "+String(l, DEC)+" bytes");
+  logging.info("firmware size is " + String(l, DEC) + " bytes");
 
   bool result = Update.begin(l, U_FLASH);
   if (!result) {
@@ -348,7 +379,7 @@ bool OmniESPUpdater::flash(String filename) {
       setErrorMsg(getUpdateErrorString(Update.getError()));
   }
   firmware.close();
-  if(result)
+  if (result)
     logging.info("firmware written");
 
   return result;
