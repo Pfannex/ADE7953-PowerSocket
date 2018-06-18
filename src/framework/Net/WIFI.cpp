@@ -27,14 +27,16 @@ wl_status_t WIFI::start() {
   // is connected
   WiFi.disconnect(true);
   WiFi.persistent(false);
-ESP.eraseConfig();
+  //ESP.eraseConfig();
   WiFi.mode(WIFI_OFF);
 
   WiFiStatus = false;
   if (mode == "off") {
     logging.info("WiFi is off");
   } else {               // dhcp or manual
-    WiFi.mode(WIFI_AP_STA);
+    //WiFi.mode(WIFI_AP_STA);
+    WiFi.mode(WIFI_STA);
+    //WiFi.mode(WIFI_AP);
     WiFi.softAPdisconnect(true);
     if (mode == "dhcp") {
       logging.info("WiFi DHCP configuration");
@@ -225,6 +227,7 @@ bool WIFI::updateStatus(wl_status_t status) {
 //...............................................................................
 String WIFI::startAP(bool state) {
   if (state) {
+    WiFi.mode(WIFI_AP);
     //WiFi.mode(WIFI_AP_STA);
     delay(1000);
     IPAddress apIP(192,168,4,1);
@@ -240,9 +243,12 @@ String WIFI::startAP(bool state) {
     Serial.println(WiFi.softAPIP());
 
     logging.info("Accesspoint is now ON");
+    on_wifiConnected();
+
     return "AP is on";
   } else {
     //WiFi.mode(WIFI_STA);
+    WiFi.mode(WIFI_STA);
     WiFi.softAPdisconnect(true);
 
     logging.info("Accesspoint is now OFF");
@@ -280,11 +286,6 @@ String WIFI::scanWifi() {
     }
   }
   Serial.println("");
-
-
-
-
-
 
   return "done";
 
