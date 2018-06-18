@@ -16,6 +16,7 @@
       {
         "type": "checkbox",
         "name": "led",
+        "readonly": 1,
         "caption": "LED",
         "event": "~/event/device/led"
       },
