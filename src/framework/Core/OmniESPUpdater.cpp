@@ -183,6 +183,7 @@ bool OmniESPUpdater::extract(Tarball &tarball, char *fname, int l,
 
   bool extract = skipConfigFiles ? strcmp(fname, DEVICECONFIG) : true;
   bool flash = !strcmp(fname, FIRMWAREBIN);
+  // (note: ensure that checking for flash preceded checking for extract)
 
   File file;
   switch (b[TYPE]) {
@@ -216,24 +217,24 @@ bool OmniESPUpdater::extract(Tarball &tarball, char *fname, int l,
     // 2. processing
     for (; l > 0; l -= TARBLOCKSIZE) { // block is always TARBLOCKSIZE
       tarball.read((uint8_t *)b, TARBLOCKSIZE);
-      if (extract) {
+      if (flash) {
+        Update.write((uint8_t *)b, MIN(l, TARBLOCKSIZE));
+      } else if (extract) {
         // Di("extracting", MIN(l, TARBLOCKSIZE));
         file.write((uint8_t *)b, MIN(l, TARBLOCKSIZE));
-      } else if(flash) {
-        Update.write((uint8_t *)b, MIN(l, TARBLOCKSIZE));
       }
     }
     // 3. finalization
-    if (extract) {
-      // close file
-      file.close();
-    } else if(flash) {
+    if (flash) {
       // end update
       Update.end();
       if(Update.getError() != UPDATE_ERROR_OK) {
         setErrorMsg(getUpdateErrorString(Update.getError()));
         return false;
       }
+    } else if (extract) {
+      // close file
+      file.close();
     }
     break;
   case DIRECTORY:
@@ -319,6 +320,7 @@ bool OmniESPUpdater::doUpdate(const char *deviceName, bool setDeviceDefaults) {
   Tarball tarball(deviceName);
   if (extractFiles(tarball, setDeviceDefaults)) {
     listSpiffs();
+    tarball.remove(); // remove tarball, free space
     return true;
   } else
     return false;
