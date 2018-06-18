@@ -8,7 +8,7 @@
 
 #define DEFAULTTARBALL "omniesp"
 #define UPDATEFOLDER "/update/"
-#define FIRMWAREBIN "/firmware/firmware.bin"
+#define FIRMWAREBIN "firmware/firmware.bin"
 #define DEVICECONFIG "customDevice/config.json"
 
 enum Header {
