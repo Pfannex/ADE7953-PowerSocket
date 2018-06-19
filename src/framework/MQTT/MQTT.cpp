@@ -30,7 +30,7 @@ MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
 //-------------------------------------------------------------------------------
 
 //...............................................................................
-//  WiFi start connection
+//  MQTT start connection
 //...............................................................................
 bool MQTT::start() {
   bool MQTTOK = false;
@@ -88,6 +88,16 @@ bool MQTT::start() {
     api.info("MQTT is switched off");
   }
 
+  return MQTTOK;
+}
+
+//...............................................................................
+//  MQTT stop connection
+//...............................................................................
+bool MQTT::stop() {
+  bool MQTTOK = false;
+  client.disconnect();
+  api.info("MQTT client has disconnected");
   return MQTTOK;
 }
 
@@ -153,14 +163,14 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
   // be careful with API calls here to avoid infinite recursions
 
   String tail= topic.modifyTopic(0);
-
   // First react on events that affect us...
   String topicStr = "~/" + tail;
-  if (topicStr == "~/event/net/connected") {
-    if (topic.getArgAsLong(0)) { // true
-      start();
-    } else { // false
-      api.info("MQTT client has disconnected");
+
+  if (topicStr == "~/set/mqtt/state") {
+    if (topic.getArgAsLong(0)) {
+      start(); // start MQTT
+    } else {
+      stop();  // stop MQTT
     }
   }
 

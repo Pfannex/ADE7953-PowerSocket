@@ -120,7 +120,7 @@ void Controller::handle() {
   //if (!wifi.handle()) {
   //  wifi.start();
   //}
-  wifi.handle();  //check wifi-status continuous and start if offline
+  wifi.handle();
   ftpSrv.handleFTP();
   clock.handle();
   device.handle();
@@ -167,6 +167,18 @@ void Controller::handleEvent(String &topicsArgs) {
   viewsUpdate(t, topic);
   device.on_events(topic);
 
+  // configMode request from devices
+  if (topic.modifyTopic(0) == "event/device/configMode"){
+    if (topic.argIs(0, "1")) { // configMode ON
+      //clock.start();
+      startNtp();
+      //topicQueue.put("~/set/webserver/state", 1);
+    } else {                   // configMode OFF
+      //clock.stop();
+      //topicQueue.put("~/set/webserver/state", 0);
+    }
+  }
+
 }
 
 //...............................................................................
@@ -208,34 +220,6 @@ void Controller::on_lanDisconnected() {
 //  EVENT Network has connected
 //...............................................................................
 void Controller::on_netConnected() {
-  if (ffs.cfg.readItem("ntp") == "on") {
-    // start the clock with NTP updater
-    String ntpServer = ffs.cfg.readItem("ntp_serverip");
-    char txt[128];
-    sprintf(txt, "starting NTP client for %.127s", ntpServer.c_str());
-    logging.info(txt);
-    // TODO: to have a configurable time zone, a set of timezones needs to
-    // be defined in Clock.h. The right pair of TimeChangeRules need to
-    // be determined based on what's in the configuration and set in
-    // Clock's tz variable.
-    clock.start(ntpServer.c_str(), NO_TIME_OFFSET, NTP_UPDATE_INTERVAL);
-  } else {
-    logging.info("NTP client is off");
-  }
-
-  // add FTP to web-config!
-  //if (ffs.cfg.readItem("ftp") == "on") {
-    String username= ffs.cfg.readItem("device_username");
-    String password= ffs.cfg.readItem("device_password");
-    logging.info("starting FTP-Server");
-    ftpSrv.begin(username, password);
-
-    //ftpSrv.begin(ffs.cfg.readItem("ftp_username"),
-    //             ffs.cfg.readItem("ftp_password"));
-  //} else {
-    //logging.info("FTP-Server is off");
-  //}
-
   logging.info("Network connection established");
   topicQueue.put("~/event/net/connected", 1);
 }
@@ -372,4 +356,39 @@ void Controller::viewsUpdate(time_t t, Topic &topic) {
   if (topicFunction != nullptr)
     // this is done in the API topic.setItem(0, deviceName.c_str());
     topicFunction(t, topic);
+}
+
+//...............................................................................
+//  Start FTP-Server
+//...............................................................................
+bool Controller::startFtp() {
+  // add FTP to web-config!
+  //if (ffs.cfg.readItem("ftp") == "on") {
+    String username= ffs.cfg.readItem("device_username");
+    String password= ffs.cfg.readItem("device_password");
+    logging.info("starting FTP-Server");
+    ftpSrv.begin(username, password);
+  //} else {
+    //logging.info("FTP-Server is off");
+  //}
+}
+
+//...............................................................................
+//  Start NTP
+//...............................................................................
+bool Controller::startNtp() {
+  if (ffs.cfg.readItem("ntp") == "on") {
+    // start the clock with NTP updater
+    String ntpServer = ffs.cfg.readItem("ntp_serverip");
+    char txt[128];
+    sprintf(txt, "starting NTP client for %.127s", ntpServer.c_str());
+    logging.info(txt);
+    // TODO: to have a configurable time zone, a set of timezones needs to
+    // be defined in Clock.h. The right pair of TimeChangeRules need to
+    // be determined based on what's in the configuration and set in
+    // Clock's tz variable.
+    clock.start(ntpServer.c_str(), NO_TIME_OFFSET, NTP_UPDATE_INTERVAL);
+  } else {
+    logging.info("NTP client is off");
+  }
 }

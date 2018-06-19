@@ -16,6 +16,7 @@ public:
   void setCallback(MQTT_CALLBACK_SIGNATURE);
 
   bool start();
+  bool stop();
   bool handle();
   // Callback Events
   // pubSubClient

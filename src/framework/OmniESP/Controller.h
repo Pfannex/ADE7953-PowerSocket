@@ -70,6 +70,9 @@ private:
   void viewsUpdate(time_t t, Topic& topic);
   void handleEvent(String& topicsArgs);
 
+  bool startFtp();
+  bool startNtp();
+
   TopicQueue topicQueue;
   // if a new Topic is received this function is called
   TopicFunction topicFunction;
