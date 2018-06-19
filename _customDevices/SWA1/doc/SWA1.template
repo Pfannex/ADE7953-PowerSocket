@@ -1,0 +1,44 @@
+#####################################################
+#
+# FHEM Sample Configuration for OmniESP SWA1
+# 
+# mqtt device name %mqtt%
+# device names %name%, %name%_log
+# aliases based on %alias%
+# all devices are in room %room% or %room_hidden%
+# all devices are in group %group%
+#
+# example:
+#       template use /opt/fhem/conf/Templates/SWA1.template \
+#               mqtt=MQTT node=dose53 name=switch alias=Light1 \
+#               room=office group=lights
+#
+#####################################################
+
+# ---------------------------------------------------
+# ESP8266+Relay
+# MQTT name: %node%
+# FHEM name: %name%
+# ---------------------------------------------------
+
+# define
+define %name% MQTT_DEVICE
+attr %name% IODev %mqtt%
+attr %name% room %room%
+attr %name% group %group%
+attr %name% sortby 30
+attr %name% alias %alias%
+attr %name% devStateIcon off:taster_ch_aus_rot:on on:taster_ch_an_gruen:off set_.*:taster_ch:on
+attr %name% eventMap { dev=>{"1" => "on", "0" => "off"}, usr=>{"on"=>"1", "off"=>"0"} }
+attr %name% publishSet on off %node%/set/device/power
+attr %name% publishSet_getStatus %node%/get/device/power
+# the last device state will be remembered
+attr %name% retain 1     
+attr %name% room %room%
+attr %name% stateFormat state 
+attr %name% subscribeReading_state %node%/event/device/power
+attr %name% webCmd on:off
+
+# get initial state
+define %name%_onInitialized_notify notify global:INITIALIZED set %name% getStatus
+attr %name%_onInitialized_notify room %room_hidden%

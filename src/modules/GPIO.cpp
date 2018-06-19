@@ -148,8 +148,10 @@ void GPIOinput::irqHandle() {
 //  GPIO output
 //===============================================================================
 GPIOoutput::GPIOoutput(string name, LOGGING &logging, TopicQueue &topicQueue,
-                       int GPIOoutputPin)
-    : Module(name, logging, topicQueue), pin(GPIOoutputPin) {}
+                       int GPIOoutputPin, logic_t logic)
+    : Module(name, logging, topicQueue), pin(GPIOoutputPin), logic(logic) {
+
+    }
 
 //-------------------------------------------------------------------------------
 //  GPIOoutput public
@@ -161,8 +163,15 @@ void GPIOoutput::start() {
 
   Module::start();
   logging.info("setting GPIO pin " + String(pin) + " for output");
+  if(logic == NORMAL) {
+      logging.info("logic is normal (on = HIGH)");
+      myLOW= LOW; myHIGH= HIGH;
+  } else {
+      logging.info("logic is inverse (on = LOW)");
+      myLOW= HIGH; myHIGH= LOW;
+  }
   pinMode(pin, OUTPUT);
-  digitalWrite(pin, LOW);
+  digitalWrite(pin, myLOW);
 }
 
 //...............................................................................
@@ -176,13 +185,13 @@ void GPIOoutput::handle() {
 
   if (currentOutputMode == ON) {
     if (!currentOutputState) { // if is OFF
-      digitalWrite(pin, HIGH);
+      digitalWrite(pin, myHIGH);
       currentOutputState = HIGH;
       topicQueue.put(eventPrefix+"1");
     }
   } else if (currentOutputMode == OFF) {
     if (currentOutputState) { // if is ON
-      digitalWrite(pin, LOW);
+      digitalWrite(pin, myLOW);
       currentOutputState = LOW;
       topicQueue.put(eventPrefix+"0");
     }
@@ -201,12 +210,12 @@ void GPIOoutput::handle() {
   } else if (currentOutputMode == OFT) {
     if (!currentOutputState) { // if is OFF
       lastOftOnTime = now;
-      digitalWrite(pin, HIGH);
+      digitalWrite(pin, myHIGH);
       currentOutputState = HIGH;
       topicQueue.put(eventPrefix+"1");
     } else {
       if ((lastOftOnTime + currentOutputOFTtime) < now) {
-        digitalWrite(pin, LOW);
+        digitalWrite(pin, myLOW);
         currentOutputState = LOW;
         currentOutputMode = OFF;
         topicQueue.put(eventPrefix+"0");

@@ -1,0 +1,53 @@
+[
+  {
+    "type": "group",
+    "name": "group1",
+    "caption": "SWA1 Dashboard",
+    "data": [
+      {
+        "type": "text",
+        "name": "clock",
+        "caption": "Time",
+        "readonly": 1,
+        "event": "~/event/clock/time",
+        "inputtype": "datetime"
+      },
+      {
+        "type": "checkbox",
+        "name": "led",
+        "caption": "LED",
+        "readonly": 1,
+        "event": "~/event/device/led"
+      },
+      {
+        "type": "group",
+        "name": "subgroup",
+        "caption": "Power Control",
+        "data": [
+          {
+            "type": "controlgroup",
+            "name": "power",
+            "caption": "Power",
+            "action": "~/set/device/power",
+            "event": "~/event/device/power",
+            "data": [{
+                "label": "Off",
+                "value": 0
+              },
+              {
+                "label": "On",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "name": "toggle",
+            "caption": "Toggle",
+            "action": "~/set/device/toggle"
+          }
+        ]
+      }
+    ]
+  }
+]

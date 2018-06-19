@@ -191,11 +191,16 @@ function dashboardGetCheckbox(w) {
 
   var caption = w.caption;
   var name = w.name;
+  var readonly = w.readonly;
   var id = name;
 
   var content = '<!-- widget: checkbox ' + name + ' -->\n' +
     '<input type="checkbox" name="' + name + '" id="' + id + '" ' +
-    'onClick="dashboardAction(\'' + name + '\')">\n' +
+    (readonly ? 'readonly disabled ' : '');
+    if (!readonly) {
+      content += 'onChange="dashboardAction(\'' + name + '\')"';
+    }
+    content += '>\n' +
     '<label for="' + id + '">' + caption + '</label>\n';
   return content;
 }
