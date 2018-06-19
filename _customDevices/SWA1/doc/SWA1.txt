@@ -1,13 +1,35 @@
 ======================
 SWA1 WiFi Smart Socket
 ======================
----------------
-Original device
----------------
 
-serial console speed: 74480 baud
+--------------
+Prepare device
+--------------
 
-boot message (between dotted lines):
+Use sharp 3 mm flat head screw driver to open device. The plug falls apart.
+The 230V board is loose. The WiFi board with LEDs and momentary switch is
+screwed to the top of the case. Unscrew the WiFi board and solder a 5-pin
+header to the back of the board. The pin header fits nicely between the relay
+and the other components on the 230V board.
+
+-----------------
+Original firmware
+-----------------
+
+To monitor the boot messages of the original firmware, connect serial a
+USB/Serial adapter as follows (see SWA1-Pinning.pdf):
+
+SWA1    Adapter
+-------------------
+RxD     TxD   green
+TxD     RxD   white
+GND     GND   black
+GPIO0   nc
+5V      5V    red
+
+Set serial console speed to 74480 baud.
+
+Boot message from original firmware (between dotted lines):
 ...............................................................................
  ets Jan  8 2013,rst cause:1, boot mode:(3,0)
 
@@ -33,38 +55,42 @@ OS SDK ver: 1.4.2(23fbe10) compiled @ Sep 22 2016 13:09:03
 phy ver�
 ...............................................................................
 
---------------
-Prepare device
---------------
-
-Use sharp 3 mm flat head screw driver to open device. Unscrew the WiFi board
-and solder a 5-pin header to the back of the board.
-
 ----------------
 Flashing OmniESP
 ----------------
 
-1. set build_flags in [env:d1_mini] section of platformio.ini as follows:
+See general documentation how to choose the OmniESP firmware for the SWA1
+WiFi Smart Socket from the set of prepackaged firmwares.
+
+1. Set build_flags in [env:d1_mini] section of platformio.ini as follows:
 
 build_flags = -Wl,-Teagle.flash.2m.ld
 
 Then build firmware.
 
-2. connect USB/Serial/Adapter:
+2. Connect USB/Serial/Adapter:
 
-  SWA1  Adapter
-  -------------
-  RxD   TxD   green
-  TxD   RxD   white
-  GND   GND   black
-  GPIO0 GND
-  5V    5V    red  (connect last)
+SWA1    Adapter
+-------------------
+RxD     TxD   green
+TxD     RxD   white
+GND     GND   black
+GPIO0   GND
+5V      5V    red 
 
-  Sometimes, powering up does not set the bootloader mode. Then just try
-  again.
+GPIO0 must be held low on device startup to enter bootloader mode for flashing
+firmware and SPIFFS. Wire RxD, TxD, GND and GPIO0, the connect 5V last to
+power up the device and enter bootloader mode. Sometimes, powering up does not
+set the bootloader mode. Then just try again. I usually works after a few
+tries.
 
-3. Flash OmniESP
+3. Flash OmniESP firmware.
 
-4. Flash SPIFFS
+4. Disconnect and reconnect 5V to enter bootloader mode once again.
 
-5. Done.
+5. Flash SPIFFS
+
+6. Remove GND from GPIO, disconnect and reconnect 5V to boot the
+device and watch the OmniESP boot messages on your serial console.
+
+7. You are done.
