@@ -69,33 +69,9 @@ void Controller::start() {
   // set config defaults
   setConfigDefaults();
 
-/*
-  // set ESP name
-  deviceName = ffs.cfg.readItem("device_name");
-  if (deviceName == "") {
-    deviceName = "ESP8266_" + espTools.genericName();
-    logging.info("setting device name " + deviceName + " for the first time");
-    ffs.cfg.writeItem("device_name", deviceName);
-    ffs.cfg.saveFile();
-  }
-  // set accesspoint name
-  if (ffs.cfg.readItem("ap_ssid") == "") {
-    String apName = "ESP8266_" + espTools.genericName();
-    logging.info("setting access point SSID " + apName +
-                 " for the first time");
-    ffs.cfg.writeItem("ap_ssid", apName);
-    ffs.cfg.saveFile();
-  }
-
-  // set sane defaults
-  String userName = ffs.cfg.readItem("device_username");
-  if(userName == "") {
-    logging.info("setting user name and password to defaults (" USERNAME "/" PASSWORD ")");
-    ffs.cfg.writeItem("device_username", USERNAME);
-    ffs.cfg.writeItem("device_password", PASSWORD);
-    ffs.cfg.saveFile();
-  }
-*/
+  // start FTP-Server and Web-server
+  startFtp();
+  topicQueue.put("~/set/webserver/state", 1);
 
   // start WiFi for the first time
   wifi.start();
@@ -171,7 +147,7 @@ void Controller::handleEvent(String &topicsArgs) {
   if (topic.modifyTopic(0) == "event/device/configMode"){
     if (topic.argIs(0, "1")) { // configMode ON
       //clock.start();
-      startNtp();
+      //startNtp();
       //topicQueue.put("~/set/webserver/state", 1);
     } else {                   // configMode OFF
       //clock.stop();

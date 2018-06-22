@@ -10,7 +10,7 @@
 // Debugging
 //###############################################################################
 
-#define DEBUG 0
+#define DEBUG 1
 #ifdef DEBUG
 //  #define DEBUG_UPDATER Serial
 //  #define NO_AUTH 1
