@@ -83,6 +83,7 @@ void Controller::start() {
   // startup the device
   device.start();
   logging.info("controller started");
+  topicQueue.put("~/set/device/led", 2);
 }
 
 //-------------------------------------------------------------------------------
@@ -160,6 +161,7 @@ void Controller::handleEvent(String &topicsArgs) {
 void Controller::on_wl_connected() {
   logging.info("WiFi STA has connected");
   topicQueue.put("~/event/wifi/wl_connected");
+  logging.info("STA connected with IP " + WiFi.localIP().toString());
 
   startNtp();
   topicQueue.put("~/set/mqtt/state", 1);
@@ -297,6 +299,8 @@ void Controller::on_wifi_state_change() {
       staTimeout = wifi.validSSID ? STA_TIMEOUT : 0;
       //start the STA Timer
       staTimeout_t = millis();
+      staTimeoutActive = true;
+      logging.debug("start staTimeoutTimer");
     }
 
 //STA_CONNECTED
@@ -324,6 +328,7 @@ void Controller::on_wifi_state_change() {
       apTimeoutActive = wifi.validSSID ? true : false;
       //start the AP Timer
       apTimeout_t = millis();
+      logging.debug("start apTimeoutTimer");
     }
 
 //AP_OPEN_WITH_STATION

@@ -167,25 +167,33 @@ String WIFI::macAddress() {
 }
 
 //...............................................................................
-//  API
+//  WiFi Set
 //...............................................................................
+/*
+~/set
+└─wifi              (level 2)
+  └─scan            (level 3)
+*/
+
 String WIFI::set(Topic &topic) {
 
-/*
-  if (topic.itemIs(3, "ap")) {
-    if (topic.argIs(0, "1")){
-      return startAP(true);
-    } else if (topic.argIs(0, "0")){
-      return startAP(false);
-    } else {
-      return "missing argument! try 0 or 1";
-    }
-  } else if (topic.itemIs(3, "scan")) {
+  if (topic.itemIs(3, "scan")) {
     return scanWifi();
+  } else if (topic.itemIs(3, "scan_result")){
+    return scanResult();
   } else {
     return TOPIC_NO;
-  }*/
+  }
 }
+
+//...............................................................................
+//  WiFi Get
+//...............................................................................
+/*
+~/get
+└─wifi              (level 2)
+  └─macAddress      (level 3)
+*/
 
 String WIFI::get(Topic &topic) {
   if (topic.itemIs(3, "macAddress")) {
@@ -370,33 +378,32 @@ bool WIFI::updateApStatus() {
 //  scan WiFi for SSIDs
 //...............................................................................
 String WIFI::scanWifi() {
-
-  Serial.println("scan start");
-
+  logging.info("start Networkscan");
   // WiFi.scanNetworks will return the number of networks found
-  int n = WiFi.scanNetworks();
-  Serial.println("scan done");
-  if (n == 0)
-    Serial.println("no networks found");
-  else
-  {
-    Serial.print(n);
-    Serial.println(" networks found");
-    for (int i = 0; i < n; ++i)
-    {
-      // Print SSID and RSSI for each network found
-      Serial.print(i + 1);
-      Serial.print(": ");
-      Serial.print(WiFi.SSID(i));
-      Serial.print(" (");
-      Serial.print(WiFi.RSSI(i));
-      Serial.print(")");
-      Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
-      delay(10);
-    }
-  }
-  Serial.println("");
+  WiFi.scanDelete();
+  WiFi.scanNetworksAsync(std::bind(&WIFI::scanResult, this));
+  return "running";
+}
 
-  return "done";
+String WIFI::scanResult(){
+  int n = WiFi.scanComplete();
+  logging.info("found " + String(n) + " SSIDs");
+
+  String json = "[";
+  for (int i = 0; i < n; ++i){
+    if(i) json += ",";
+    json += "{";
+    json += "\"rssi\":"+String(WiFi.RSSI(i));
+    json += ",\"ssid\":\""+WiFi.SSID(i)+"\"";
+    json += ",\"bssid\":\""+WiFi.BSSIDstr(i)+"\"";
+    json += ",\"channel\":"+String(WiFi.channel(i));
+    json += ",\"secure\":"+String(WiFi.encryptionType(i));
+    json += ",\"hidden\":"+String(WiFi.isHidden(i)?"true":"false");
+    json += "}";
+  }
+  json += "]";
+
+  logging.info(json);
+  return json;
 
 }
