@@ -26,7 +26,7 @@ void customDevice::start() {
   button.start();
   led.start();
   relay.start();
-  setLedMode();
+  setLedMode(50);
 
   logging.info("device running");
 }
@@ -49,18 +49,26 @@ String customDevice::set(Topic &topic) {
   ~/set
   └─device             (level 2)
     └─power            (level 3)
+    └─led              (level 3)
+    └─toggle           (level 3)
   */
 
   logging.debug("device set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
-  if (topic.getItemCount() != 4) // ~/set/device/(power|toggle)
-    return TOPIC_NO;
+  //if (topic.getItemCount() != 4) // ~/set/device/(power|toggle)
+    //return TOPIC_NO;
   if (topic.itemIs(3, "power")) {
     setPowerMode(topic.getArgAsLong(0));
     return TOPIC_OK;
   } else if(topic.itemIs(3, "toggle")) {
     setPowerMode(power ? 0 : 1);
+    return TOPIC_OK;
+  } else if(topic.itemIs(3, "led")) {
+    if (topic.itemIs(4, "blink")) {
+      setLedMode(topic.getArgAsLong(0));
+      return TOPIC_OK;
+    }
     return TOPIC_OK;
   } else {
     return TOPIC_NO;
@@ -131,7 +139,7 @@ void customDevice::setPowerMode(int value) {
   } else {
     relay.setOutputMode(OFF);
   }
-  setLedMode();
+  setLedMode(50);
 }
 
 void customDevice::setConfigMode(int value) {
@@ -146,14 +154,14 @@ void customDevice::setConfigMode(int value) {
   //  topicQueue.put("~/set/wifi/ap 0");
   }
 
-  setLedMode();
+  setLedMode(50);
 }
-void customDevice::setLedMode() {
+void customDevice::setLedMode(int freq) {
   if (!configMode) {
     if (power)
       led.setOutputMode(ON);
     else
       led.setOutputMode(OFF);
   } else
-    led.setOutputMode(BLINK, 250);
+    led.setOutputMode(BLINK, freq);
 }

@@ -29,8 +29,12 @@ Controller::Controller()
 
   // callback Events
   // WiFi
-  wifi.set_callback(std::bind(&Controller::on_wifiConnected, this),
-                    std::bind(&Controller::on_wifiDisconnected, this));
+  wifi.set_callback(std::bind(&Controller::on_wl_connected, this),
+                    std::bind(&Controller::on_wl_connect_failed, this),
+                    std::bind(&Controller::on_wl_no_ssid_avail, this),
+                    std::bind(&Controller::on_ap_stations_connected, this),
+                    std::bind(&Controller::on_ap_no_stations_connected, this)
+                   );
 }
 
 //...............................................................................
@@ -93,10 +97,10 @@ String Controller::getDeviceName() {
 //...............................................................................
 void Controller::handle() {
 
-  //if (!wifi.handle()) {
-  //  wifi.start();
-  //}
   wifi.handle();
+  on_wifi_state_change();
+  handleWifiTimout();
+
   ftpSrv.handleFTP();
   clock.handle();
   device.handle();
@@ -143,37 +147,58 @@ void Controller::handleEvent(String &topicsArgs) {
   viewsUpdate(t, topic);
   device.on_events(topic);
 
-  // configMode request from devices
+  // configMode request from devices, only if supported by device
   if (topic.modifyTopic(0) == "event/device/configMode"){
-    if (topic.argIs(0, "1")) { // configMode ON
-      //clock.start();
-      //startNtp();
-      //topicQueue.put("~/set/webserver/state", 1);
-    } else {                   // configMode OFF
-      //clock.stop();
-      //topicQueue.put("~/set/webserver/state", 0);
-    }
+    if (topic.argIs(0, "1")) on_config_mode_on();
+      else on_config_mode_off();
   }
-
 }
 
 //...............................................................................
 //  EVENT Wifi has connected
 //...............................................................................
-void Controller::on_wifiConnected() {
-  logging.info("WiFi has connected");
-  topicQueue.put("~/event/wifi/connected", 1);
+void Controller::on_wl_connected() {
+  logging.info("WiFi STA has connected");
+  topicQueue.put("~/event/wifi/wl_connected");
+
+  startNtp();
+  topicQueue.put("~/set/mqtt/state", 1);
   on_netConnected();
 }
-
 //...............................................................................
 //  EVENT wifi has disconnected
 //...............................................................................
-void Controller::on_wifiDisconnected() {
-  logging.info("WiFi has disconnected");
-  topicQueue.put("~/event/wifi/connected", 0);
+void Controller::on_wl_connect_failed() {
+  logging.info("WiFi STA has failed to connect");
+  topicQueue.put("~/event/wifi/wl_connect_failed");
   on_netDisconnected();
 }
+//...............................................................................
+//  EVENT wifi no SSID avail
+//...............................................................................
+void Controller::on_wl_no_ssid_avail() {
+  logging.info("WiFi STA SSID is not avail");
+  topicQueue.put("~/event/wifi/no_ssid_avail");
+  on_netDisconnected();
+}
+
+//...............................................................................
+//  EVENT AP has connected with stations
+//...............................................................................
+void Controller::on_ap_stations_connected() {
+  logging.info("WiFi AP open with connected stations");
+  topicQueue.put("~/event/wifi/ap_stations_connected");
+  on_netConnected();
+}
+//...............................................................................
+//  EVENT AP has connected without stations
+//...............................................................................
+void Controller::on_ap_no_stations_connected() {
+  logging.info("WiFi AP open without connected stations");
+  topicQueue.put("~/event/wifi/on_ap_no_stations_connected");
+  on_netDisconnected();
+}
+
 
 //...............................................................................
 //  EVENT LAN has connected
@@ -208,6 +233,131 @@ void Controller::on_netDisconnected() {
   //check if LAN AND WiFi are disconnected!!
   logging.info("Network connection aborted");
   topicQueue.put("~/event/net/connected", 0);
+  topicQueue.put("~/set/mqtt/state", 0);
+}
+
+//...............................................................................
+//  EVENT config mode ON
+//...............................................................................
+void Controller::on_config_mode_on() {
+  logging.info("config mode ON");
+  if (wifi.apMode != "off"){
+    wifi.startAP(true);
+  }
+}
+//...............................................................................
+//  EVENT config mode OFF
+//...............................................................................
+void Controller::on_config_mode_off() {
+  logging.info("config mode OFF");
+  if (staState != STA_CONNECTED and apState == AP_OPEN_WITHOUT_STATION) {
+    wifi.startAP(false);
+    wifi.startSTA();
+  }
+}
+
+//...............................................................................
+//  EVENT STA timeout
+//...............................................................................
+void Controller::on_staTimeout() {
+  if (wifi.apMode != "off") {
+    logging.info("STA timeout starting access point");
+    wifi.startAP(true);
+  }
+}
+
+//...............................................................................
+//  EVENT AP timeout
+//...............................................................................
+void Controller::on_apTimeout() {
+  if (wifi.apMode == "auto") {
+    logging.info("AP timeout try STA reconnect");
+    wifi.startAP(false);
+    wifi.startSTA();
+  }
+}
+
+//...............................................................................
+//  EVENT wifi state change
+//...............................................................................
+void Controller::on_wifi_state_change() {
+  if (staState != wifi.staState or apState != wifi.apState) {
+    staState = wifi.staState;
+    apState  = wifi.apState;
+
+//STA_DISCONNECTED
+    if (staState == STA_DISCONNECTED and apState == AP_CLOSED){
+      logging.info("WiFi state changed to STA_DISCONNECTED");
+      logging.debug("  STA_DISCONNECTED");
+      logging.debug("  AP_CLOSED");
+
+      //turn off apTimeout
+      apTimeoutActive = false;
+      //set staTimeout to 0 if no valid SSID is available
+      staTimeout = wifi.validSSID ? STA_TIMEOUT : 0;
+      //start the STA Timer
+      staTimeout_t = millis();
+    }
+
+//STA_CONNECTED
+    if (staState == STA_CONNECTED and apState == AP_CLOSED){
+      logging.info("WiFi state changed to STA_CONNECTED");
+      logging.debug("  STA_CONNECTED");
+      logging.debug("  AP_CLOSED");
+
+      //turn off staTimeout
+      staTimeoutActive = false;
+    }
+
+//AP_OPEN_WITHOUT_STATION
+    if (staState == STA_DISCONNECTED and apState == AP_OPEN_WITHOUT_STATION){
+      //change blink frequency
+      topicQueue.put("~/set/device/led", 2);
+
+      logging.info("WiFi state changed to AP_OPEN_WITHOUT_STATION");
+      logging.debug("  STA_DISCONNECTED");
+      logging.debug("  AP_OPEN_WITHOUT_STATION");
+
+      //turn off staTimeout
+      staTimeoutActive = false;
+      //set apTimeoutActive to false if no valid SSID is available
+      apTimeoutActive = wifi.validSSID ? true : false;
+      //start the AP Timer
+      apTimeout_t = millis();
+    }
+
+//AP_OPEN_WITH_STATION
+    if (staState == STA_DISCONNECTED and apState == AP_OPEN_WITH_STATION){
+      //change blink frequency
+      topicQueue.put("~/set/device/led", 3);
+
+      logging.info("WiFi state changed to AP_OPEN_WITH_STATION");
+      logging.debug("  STA_DISCONNECTED");
+      logging.debug("  AP_OPEN_WITH_STATION");
+
+      //turn off apTimeout
+      apTimeoutActive = false;
+    }
+  }
+}
+
+//...............................................................................
+//  handle WiFi timeout
+//...............................................................................
+void Controller::handleWifiTimout() {
+  unsigned long now = millis();
+
+  if (staTimeoutActive)
+    if (now - staTimeout_t > staTimeout){
+      staTimeoutActive = false;
+      on_staTimeout();
+    }
+
+  if (apTimeoutActive)
+    if (now - apTimeout_t > apTimeout){
+      apTimeoutActive = false;
+      on_apTimeout();
+    }
 }
 
 //...............................................................................
@@ -315,13 +465,14 @@ void Controller::setConfigDefaults() {
 bool Controller::startConnections() {
 
   logging.info("starting network connections");
-  bool result = wifi.start();
-  if (result) {
+  wifi.start();
+  //bool result = wifi.start();
+  //if (result) {
 
     //start after wifi is connected
 
-  }
-  return result;
+  //}
+  return 1;
 }
 
 //...............................................................................

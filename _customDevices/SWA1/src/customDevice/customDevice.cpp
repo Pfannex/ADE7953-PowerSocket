@@ -59,8 +59,8 @@ String customDevice::set(Topic &topic) {
   if (topic.getItemCount() != 4) // ~/set/device/(power|toggle)
     return TOPIC_NO;
   if (topic.itemIs(3, "led")) {
-      setLedMode(topic.getArgAsLong(0));
-      return TOPIC_OK;
+    setLedMode(topic.getArgAsLong(0));
+    return TOPIC_OK;
   } else if (topic.itemIs(3, "power")) {
     setPowerMode(topic.getArgAsLong(0));
     return TOPIC_OK;
@@ -133,8 +133,10 @@ void customDevice::setPowerMode(int value) {
   topicQueue.put("~/event/device/power", power);
   if (power) {
     relay.setOutputMode(ON);
+    setLedMode(1);
   } else {
     relay.setOutputMode(OFF);
+    setLedMode(0);
   }
 }
 
@@ -144,12 +146,13 @@ void customDevice::setConfigMode(int value) {
   configMode = value;
   topicQueue.put("~/event/device/configMode", configMode);
 
-  if (value == 1){
-    topicQueue.put("~/set/wifi/ap 1");
+  if (configMode == 1){
+    setLedMode(2);
   } else {
-  //  topicQueue.put("~/set/wifi/ap 0");
+    //Serial.println("leave configMode");
+    //Serial.println("power " + String(power));
+    if (power) setLedMode(1); else setLedMode(0);
   }
-  if(value) setLedMode(2); else setLedMode(0);
 }
 
 void customDevice::setLedMode(int value) {
@@ -157,7 +160,7 @@ void customDevice::setLedMode(int value) {
     case 0: led.setOutputMode(OFF); break;
     case 1: led.setOutputMode(ON); break;
     case 2: led.setOutputMode(BLINK, 100); break;
-    case 3: led.setOutputMode(BLINK, 250); break;
+    case 3: led.setOutputMode(BLINK, 2000); break;
   }
 
 }

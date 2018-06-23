@@ -22,6 +22,6 @@ ADC  A0     2     Analog
 // GPIO
 //###############################################################################
 
-#define PIN_BUTTON 13
-#define PIN_LED 4
-#define PIN_RELAY 5
+#define PIN_BUTTON 12
+#define PIN_LED 15
+#define PIN_RELAY 14

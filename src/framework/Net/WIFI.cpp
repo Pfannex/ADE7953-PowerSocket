@@ -13,15 +13,9 @@ WIFI::WIFI(LOGGING &logging, FFS &ffs) : logging(logging), ffs(ffs) {}
 //...............................................................................
 //  WiFi start connection
 //...............................................................................
-wl_status_t WIFI::start() {
-  String ssid = ffs.cfg.readItem("wifi_ssid");
-  String psk = ffs.cfg.readItem("wifi_password");
-  String mode = ffs.cfg.readItem("wifi"); // off, dhcp, manual
-
-  IPAddress address(0, 0, 0, 0);
-  IPAddress gateway(0, 0, 0, 0);
-  IPAddress netmask(0, 0, 0, 0);
-  IPAddress dns(0, 0, 0, 0);
+void WIFI::start() {
+  staMode     = ffs.cfg.readItem("wifi"); // off, dhcp, manual
+  apMode      = ffs.cfg.readItem("ap");   // on, off, auto
 
   // some workaround for WiFi.status() showing disconnect although WiFi
   // is connected
@@ -29,16 +23,30 @@ wl_status_t WIFI::start() {
   WiFi.persistent(false);
   //ESP.eraseConfig();
   WiFi.mode(WIFI_OFF);
-
   WiFiStatus = false;
-  if (mode == "off") {
-    logging.info("WiFi is off");
+
+  if (staMode=="off" and apMode=="off"){
+    logging.info("WiFi staMode=off and apMode=off -> no WiFi functions available!");
+  } else if (apMode=="on") {
+    logging.info("WiFi apMode=on -> starting AP");
+    startAP(true);
+  } else if (staMode=="off" and apMode=="auto") {
+    logging.info("WiFi staMode=off and apMode=auto -> starting AP");
+    startAP(true);
+
+  } else {  //staMode dhcp or auto
+    startSTA();
+  }
+
+/*
+  if (staMode == "off") {
+    logging.info("WiFi STA-Mode is off");
   } else {               // dhcp or manual
     //WiFi.mode(WIFI_AP_STA);
     WiFi.mode(WIFI_STA);
     //WiFi.mode(WIFI_AP);
     WiFi.softAPdisconnect(true);
-    if (mode == "dhcp") {
+    if (staMode == "dhcp") {
       logging.info("WiFi DHCP configuration");
     } else { // switch to static mode
       address.fromString(ffs.cfg.readItem("wifi_ip"));
@@ -59,20 +67,24 @@ wl_status_t WIFI::start() {
         logging.error("could not apply WiFi configuration");
       }
     }
+
     updateStatus(WiFi.begin(ssid.c_str(), psk.c_str()));
     if (ffs.cfg.readItem("ap") == "on") {
       startAP(true);
     }
-  }
+  }*/
 
-  return wl_status;
+  //return wl_status;
 }
 
 //...............................................................................
 //  WiFi handle connection
 //...............................................................................
 void WIFI::handle() {
+  updateStaStatus();
+  updateApStatus();
 
+/*
   if (updateStatus(WiFi.status())) {
     if (wl_status == WL_CONNECTED) {
       if (!WiFiStatus) {
@@ -104,6 +116,7 @@ void WIFI::handle() {
     }
   }
   //Di("wifi status", wl_status);
+*/
 }
 
 //...............................................................................
@@ -112,8 +125,8 @@ void WIFI::handle() {
 void WIFI::on_connected() {
   logging.info("get local IP address: " + WiFi.localIP().toString());
 
-  if (on_wifiConnected != nullptr)
-    on_wifiConnected();
+  //if (on_wifiConnected != nullptr)
+    //on_wifiConnected();
 }
 
 //...............................................................................
@@ -121,17 +134,24 @@ void WIFI::on_connected() {
 //...............................................................................
 void WIFI::on_disconnected() {
 
-  if (on_wifiDisconnected != nullptr)
-    on_wifiDisconnected();
+  //if (on_wifiDisconnected != nullptr)
+    //on_wifiDisconnected();
 }
 
 //...............................................................................
 //  WiFi set callbacks
 //...............................................................................
-void WIFI::set_callback(CallbackFunction wifiConnected,
-                        CallbackFunction wifiDisconnected) {
-  on_wifiConnected = wifiConnected;
-  on_wifiDisconnected = wifiDisconnected;
+void WIFI::set_callback(CallbackFunction wl_connected,
+                        CallbackFunction wl_connect_failed,
+                        CallbackFunction wl_no_ssid_avail,
+                        CallbackFunction ap_stations_connected,
+                        CallbackFunction ap_no_stations_connected) {
+
+  on_wl_connected             = wl_connected;
+  on_wl_connect_failed        = wl_connect_failed;
+  on_wl_no_ssid_avail         = wl_no_ssid_avail;
+  on_ap_stations_connected    = ap_stations_connected;
+  on_ap_no_stations_connected = ap_no_stations_connected;
 }
 
 //...............................................................................
@@ -151,6 +171,7 @@ String WIFI::macAddress() {
 //...............................................................................
 String WIFI::set(Topic &topic) {
 
+/*
   if (topic.itemIs(3, "ap")) {
     if (topic.argIs(0, "1")){
       return startAP(true);
@@ -163,7 +184,7 @@ String WIFI::set(Topic &topic) {
     return scanWifi();
   } else {
     return TOPIC_NO;
-  }
+  }*/
 }
 
 String WIFI::get(Topic &topic) {
@@ -174,86 +195,175 @@ String WIFI::get(Topic &topic) {
   }
 }
 
-//-------------------------------------------------------------------------------
-//  WiFi private
-//-------------------------------------------------------------------------------
-
 //...............................................................................
-//  update status
+//  start STA
 //...............................................................................
+void WIFI::startSTA() {
+  String ssid = ffs.cfg.readItem("wifi_ssid");
+  String psk  = ffs.cfg.readItem("wifi_password");
+  staMode     = ffs.cfg.readItem("wifi"); // off, dhcp, manual
+  apMode      = ffs.cfg.readItem("ap");   // on, off, auto
+  IPAddress address(0, 0, 0, 0);
+  IPAddress gateway(0, 0, 0, 0);
+  IPAddress netmask(0, 0, 0, 0);
+  IPAddress dns(0, 0, 0, 0);
 
-bool WIFI::updateStatus(wl_status_t status) {
-  String s;
-  if (status != wl_status) {
-    switch (status) {
-    case WL_NO_SHIELD:
-      s = "WL_NO_SHIELD";
-      break;
-    case WL_IDLE_STATUS:
-      s = "WL_IDLE_STATUS";
-      break;
-    case WL_NO_SSID_AVAIL:
-      s = "WL_NO_SSID_AVAIL";
-      break;
-    case WL_SCAN_COMPLETED:
-      s = "WL_SCAN_COMPLETED";
-      break;
-    case WL_CONNECTED:
-      s = "WL_CONNECTED";
-      break;
-    case WL_CONNECT_FAILED:
-      s = "WL_CONNECT_FAILED";
-      break;
-    case WL_CONNECTION_LOST:
-      s = "WL_CONNECTION_LOST";
-      break;
-    case WL_DISCONNECTED:
-      s = "WL_DISCONNECTED";
-      break;
-    default:
-      s = "WL_UNKNOWN";
-      break;
+  //if (ssid != "") validSSID = true; else validSSID = false;
+  validSSID = ssid != "" ? true : false;
+
+  WiFi.softAPdisconnect(true);
+  WiFi.mode(WIFI_STA);
+
+  if (staMode == "dhcp") {
+    logging.info("WiFi staMode=dhcp");
+  } else { // switch to static mode
+    address.fromString(ffs.cfg.readItem("wifi_ip"));
+    gateway.fromString(ffs.cfg.readItem("wifi_gateway"));
+    netmask.fromString(ffs.cfg.readItem("wifi_netmask"));
+    dns.fromString(ffs.cfg.readItem("wifi_dns"));
+    logging.info("WiFi staMode=manual");
+    logging.debug("  IP address: " + address.toString());
+    logging.debug("  gateway:    " + gateway.toString());
+    logging.debug("  netmask:    " + netmask.toString());
+    logging.debug("  DNS server: " + dns.toString());
+
+    if (WiFi.config(address, gateway, netmask, dns)) {
+      logging.debug("WiFi configuration applied");
+      // logging.info("local IP address switched to: " +
+      // WiFi.localIP().toString());
+    } else {
+      logging.error("could not apply WiFi configuration");
     }
-    wl_status = status;
-    logging.info("wifi status changed to " + s);
-    return true;
-  } else {
-    return false;
   }
+
+  WiFi.begin(ssid.c_str(), psk.c_str());
 }
 
 //...............................................................................
-//  update status
+//  start accesspoint
 //...............................................................................
-String WIFI::startAP(bool state) {
+void WIFI::startAP(int state) {
   if (state) {
     WiFi.mode(WIFI_AP);
-    //WiFi.mode(WIFI_AP_STA);
-    delay(1000);
     IPAddress apIP(192,168,4,1);
     IPAddress gateway(192,168,4,1);
     IPAddress subnet(255,255,255,0);
     String apSSID = ffs.cfg.readItem("ap_ssid");
     String apPSK = ffs.cfg.readItem("ap_password");
 
-    Serial.println(WiFi.softAPConfig(apIP, gateway, subnet));
+    logging.info("set Accesspoint configuration");
+    if (WiFi.softAPConfig(apIP, gateway, subnet)){
+      logging.debug("  IP address: " + apIP.toString());
+      logging.debug("  gateway:    " + gateway.toString());
+      logging.debug("  subnet:     " + subnet.toString());
+
+      if (WiFi.softAP(apSSID.c_str(), apPSK.c_str())) {
+        logging.info("Accesspoint is now ON");
+      } else {
+        logging.error("starting Accesspoint FAILED");
+      }
+    } else {
+      logging.error("set Accesspoint configuration FAILED");
+    }
+    if (on_ap_no_stations_connected != nullptr) on_ap_no_stations_connected();
+
+    //on_ap_no_stations_connected();
+
+/*    Serial.println(WiFi.softAPConfig(apIP, gateway, subnet));
     Serial.println(WiFi.softAP(apSSID.c_str(), apPSK.c_str()));
     Serial.println(apSSID);
     Serial.println(apPSK);
     Serial.println(WiFi.softAPIP());
 
     logging.info("Accesspoint is now ON");
-    on_wifiConnected();
+    on_wifiConnected();*/
 
-    return "AP is on";
   } else {
-    //WiFi.mode(WIFI_STA);
     WiFi.mode(WIFI_STA);
     WiFi.softAPdisconnect(true);
-
     logging.info("Accesspoint is now OFF");
-    return "AP is off";
   }
+}
+
+//-------------------------------------------------------------------------------
+//  WiFi private
+//-------------------------------------------------------------------------------
+
+//...............................................................................
+//  update STA status and send callback event
+//...............................................................................
+bool WIFI::updateStaStatus() {
+  wl_status = WiFi.status();
+  if (wl_status != wl_status_old) {
+    switch (wl_status) {
+    case WL_NO_SHIELD:
+      break;
+    case WL_IDLE_STATUS:
+      break;
+    case WL_NO_SSID_AVAIL:
+      staState = STA_DISCONNECTED;
+      if (on_wl_no_ssid_avail != nullptr) on_wl_no_ssid_avail();
+      break;
+    case WL_SCAN_COMPLETED:
+      break;
+    case WL_CONNECTED:
+      staState = STA_CONNECTED;
+      apState  = AP_CLOSED;
+      if (on_wl_connected != nullptr) on_wl_connected();
+      break;
+    case WL_CONNECT_FAILED:
+      staState = STA_DISCONNECTED;
+      if (on_wl_connect_failed != nullptr) on_wl_connect_failed();
+      break;
+    case WL_CONNECTION_LOST:
+      break;
+    case WL_DISCONNECTED:
+      break;
+    default:
+      break;
+    }
+    wl_status_old = wl_status;
+    return true;
+  } else {
+    return false;
+  }
+}
+//...............................................................................
+//  update AP status and send callback event
+//...............................................................................
+bool WIFI::updateApStatus() {
+  if (WiFi.softAPIP().toString() != "0.0.0.0") {
+    apStationsCount = WiFi.softAPgetStationNum();
+    //set status
+    if (apStationsCount > 0) {
+       ap_status = AP_STATIONS_CONNECTED;
+       apState   = AP_OPEN_WITH_STATION;
+       staState  = STA_DISCONNECTED;
+   } else {
+       ap_status = AP_NO_STATIONS_CONNECTED;
+       apState   = AP_OPEN_WITHOUT_STATION;
+       staState  = STA_DISCONNECTED;
+     }
+     //report status
+     if (ap_status != ap_status_old) {
+       if (apStationsCount > 0){
+         apState = AP_OPEN_WITH_STATION;
+         if (on_ap_stations_connected != nullptr) on_ap_stations_connected();
+       } else {
+         apState = AP_OPEN_WITHOUT_STATION;
+         if (on_ap_no_stations_connected != nullptr) on_ap_no_stations_connected();
+       }
+       ap_status_old = ap_status;
+       return true;
+     } else { //do nothing
+       return false;
+     }
+
+  } else {
+    apState = AP_CLOSED;
+    return false;
+  }
+
 }
 
 //...............................................................................
