@@ -13,6 +13,7 @@
 
 - **UI**
   - API Call Abfrage rootString sporadisch Absturz ggf. json zu lang
+  - Abfrage ob AP UND STA auf OFF gesetzt werden!
 
 - **Devices**
   - SimpleSwitch
