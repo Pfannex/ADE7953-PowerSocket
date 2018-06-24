@@ -76,7 +76,7 @@ RxD     TxD   green
 TxD     RxD   white
 GND     GND   black
 GPIO0   GND
-5V      5V    red 
+5V      5V    red
 
 GPIO0 must be held low on device startup to enter bootloader mode for flashing
 firmware and SPIFFS. Wire RxD, TxD, GND and GPIO0, the connect 5V last to
@@ -94,3 +94,11 @@ tries.
 device and watch the OmniESP boot messages on your serial console.
 
 7. You are done.
+
+----------------
+Similar projects
+----------------
+
+https://nathan.chantrell.net/20170528/lingan-swa1-plug-in-wi-fi-socket-with-mqtt-esp8266/
+https://github.com/arendst/Sonoff-Tasmota/wiki/Lingan-SWA1
+
