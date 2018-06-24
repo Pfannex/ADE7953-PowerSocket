@@ -1,5 +1,5 @@
 # **OmniESP** 
-_Universelles Template für ESP-Devices mit MQTT-Anbindung_
+_Universelles Framework für ESP-Devices mit MQTT-Anbindung_
 ***
 
 
@@ -10,27 +10,42 @@ Unterstütz werden bislang folgende Funktionen:
   - Event getriggerte StateMachine zum Handling von STATION- und ACCESS-POINT-Mode
   - WiFi-Network-Scan
   - MQTT-Unterstützung
-  - 
-- ~_LAN-Anbindung über WizNet W5x00_~
-- SPIFFS Unterstüzung
-  - Vollständiges Handling der Configurations-Files
-  - Unterstützung des JSON-File-Formates
-- ESP-Tools für Logging-/ Debugging-Funktionalitäten
-- Clocksystem mit NTP-Synchronisierung
-
+  - FTP-Server für SPIFFS Zugriff
 - Webinterface (UI) 
   - Konfiguration
   - Authentifizierung
   - readings
   - logs
-  - ~IO~
+  - frei konfigurierbares Dashboard (auch zur Laufzeit!)
+    - Button, Textbox, Checkbox, Radiobutton, Grid, ...
+  - OTA Fileupload mit versioniertem Tarball
+    - *.bin kompilierte Firmware
+    - Webinterface
+    - Konfigurationsfiles
+  - ~OTA AUTO-Update über Web-Space~
 - ApplicationInterface (API)
--  
-- Timer über NTP-Synchronisierung 
-- OTA mit Fileupload
-- ~OTA über WebServer (automatisiert)~
-- MQTT Anbindung  
-- Modularer Aufbau 
+  - Topic gestützte set/get/event-Struktur
+  - Voller zugriff auf alle internen Funktionen über:
+    - MQTT-Topics
+    - HTML-Set/Get 
+- ~_LAN-Anbindung über WizNet W5x00_~
+- SPIFFS Unterstüzung
+  - vollständiges Handling der Configurations-Files
+  - Unterstützung des JSON-File-Formates
+- ESP-Tools für Logging-/ Debugging-Funktionalitäten
+- Clocksystem mit NTP-Synchronisierung
+- vollständig Modularer Aufbau des Core
+  - Model
+    - GPIO
+    - oneWire
+    - etc.
+  - View
+    - MQTT
+    - WebServer
+  - Controller
+    - API-handler
+    - Topic-Handler
+- Device-Plug-In-System zum einfachen handling unterschiedlicher Devices  
 
 [CodeStruktur](https://omniesp.4nv.eu/index.html)
 
