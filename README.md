@@ -3,12 +3,21 @@ _Universelles Template für ESP-Devices mit MQTT-Anbindung_
 ***
 
 
-In diesem Template stehen alle Grundfunktionen zum Erstellen eigenener Applikationen zur Verfügung.
+In diesem Framework stehen alle Grundfunktionen zum Erstellen eigenener Devices zur Verfügung.
 Unterstütz werden bislang folgende Funktionen:
 
-- ESP8266 WiFi-Verbindung
-- ~_LAN-Anbindung über WizNet W5200_~
+- ESP8266 WiFi-Funktionalitäten
+  - Event getriggerte StateMachine zum Handling von STATION- und ACCESS-POINT-Mode
+  - WiFi-Network-Scan
+  - MQTT-Unterstützung
+  - 
+- ~_LAN-Anbindung über WizNet W5x00_~
 - SPIFFS Unterstüzung
+  - Vollständiges Handling der Configurations-Files
+  - Unterstützung des JSON-File-Formates
+- ESP-Tools für Logging-/ Debugging-Funktionalitäten
+- Clocksystem mit NTP-Synchronisierung
+
 - Webinterface (UI) 
   - Konfiguration
   - Authentifizierung
@@ -16,14 +25,14 @@ Unterstütz werden bislang folgende Funktionen:
   - logs
   - ~IO~
 - ApplicationInterface (API)
-- Logging-/ Debugging-Funktionalitäten 
+-  
 - Timer über NTP-Synchronisierung 
 - OTA mit Fileupload
 - ~OTA über WebServer (automatisiert)~
 - MQTT Anbindung  
 - Modularer Aufbau 
 
-[CodeStruktur](https://pfannex.github.io/ESP8266_template/html/index.html)
+[CodeStruktur](https://omniesp.4nv.eu/index.html)
 
 
 ***
