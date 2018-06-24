@@ -3,16 +3,18 @@
 - **Hardware**
 
 - **Firmware**
-  - Passwort aendern geht nicht > Bug
   - alle Variablen in die customDevice/config.json aufnehmen
   - start AP with configMode
   - Clock: Zeitzone konfigurierbar machen
+  - FTP-Server: falscher User oder falsches Passwort crasht ESP
 
 - **API**
   - erstellen der Funktionsübersicht (PF) -> doxygen
 
 - **UI**
   - API Call Abfrage rootString sporadisch Absturz ggf. json zu lang
+  - Zugriff auf Websocket nur nach Authentisierung
+  - nur SHA1 Hash des Passworts übertragen
 
 - **Devices**
   - SimpleSwitch

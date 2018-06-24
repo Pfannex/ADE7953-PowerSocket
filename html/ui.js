@@ -29,6 +29,9 @@ function setRadioHandlers() {
   $(document).on("change", "input[name=ntp]", function() {
     showDetails("ntp_details", $(this), "on");
   });
+  $(document).on("change", "input[name=ftp]", function() {
+    // intentionally left blank
+  });
   $(document).on("change", "input[name=mqtt]", function() {
     showDetails("mqtt_details", $(this), "on");
   });
@@ -277,6 +280,7 @@ function setConfig(json) {
   setRadio("wifi", config["wifi"]);
   setRadio("lan", config["lan"]);
   setRadio("ntp", config["ntp"]);
+  setRadio("ftp", config["ftp"]);
   setRadio("update", config["update"]);
   setRadio("mqtt", config["mqtt"]);
   setRadio("ap", config["ap"]);
@@ -326,6 +330,7 @@ function getConfig() {
   config["wifi"]= getRadio("wifi");
   config["lan"]= getRadio("lan");
   config["ntp"]= getRadio("ntp");
+  config["ftp"]= getRadio("ftp");
   config["update"]= getRadio("update");
   config["mqtt"]= getRadio("mqtt");
   config["ap"]= getRadio("ap");

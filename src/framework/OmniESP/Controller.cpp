@@ -453,6 +453,7 @@ void Controller::setConfigDefaults() {
     setConfigDefault("wifi", "off") ||
     setConfigDefault("lan", "off") ||
     setConfigDefault("ntp", "off") ||
+    setConfigDefault("ftp", "off") ||
     setConfigDefault("mqtt", "off");
   // ensure minimum length of AP password
   String appassword= ffs.cfg.readItem("ap_password");
@@ -495,15 +496,15 @@ void Controller::viewsUpdate(time_t t, Topic &topic) {
 //  Start FTP-Server
 //...............................................................................
 bool Controller::startFtp() {
-  // add FTP to web-config!
-  //if (ffs.cfg.readItem("ftp") == "on") {
+  
+  if (ffs.cfg.readItem("ftp") == "on") {
     String username= ffs.cfg.readItem("device_username");
     String password= ffs.cfg.readItem("device_password");
-    logging.info("starting FTP-Server");
+    logging.info("starting FTP server");
     ftpSrv.begin(username, password);
-  //} else {
-    //logging.info("FTP-Server is off");
-  //}
+  } else {
+    logging.info("FTP server is off");
+  }
 }
 
 //...............................................................................
