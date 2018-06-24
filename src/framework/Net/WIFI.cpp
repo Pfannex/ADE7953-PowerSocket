@@ -17,6 +17,8 @@ void WIFI::start() {
   staMode     = ffs.cfg.readItem("wifi"); // off, dhcp, manual
   apMode      = ffs.cfg.readItem("ap");   // on, off, auto
 
+  logging.info("MAC address: "+macAddress());
+
   // some workaround for WiFi.status() showing disconnect although WiFi
   // is connected
   WiFi.disconnect(true);
