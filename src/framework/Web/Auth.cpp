@@ -75,11 +75,15 @@ void Auth::reset() {
 
 bool Auth::checkPassword(String username, String password) {
 
-  String sha1hash= sha1(password);
+  String sha1hash= sha1(password); // todo
   api.info("authentificating user "+username+" with SHA1 hash "+sha1hash+"... ");
 
-  // this is a stub!
-  return (username == "admin") && (password == "admin");
+  String device_username = api.call("~/get/ffs/cfg/item/device_username");
+  String device_password = api.call("~/get/ffs/cfg/item/device_password");
+
+  //D(username.c_str()); D(device_username.c_str());
+  //D(password.c_str()); D(device_password.c_str());
+  return (username == device_username) && (password == device_password);
 }
 
 //...............................................................................
