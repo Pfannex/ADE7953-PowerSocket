@@ -33,7 +33,9 @@ Controller::Controller()
                     std::bind(&Controller::on_wl_connect_failed, this),
                     std::bind(&Controller::on_wl_no_ssid_avail, this),
                     std::bind(&Controller::on_ap_stations_connected, this),
-                    std::bind(&Controller::on_ap_no_stations_connected, this)
+                    std::bind(&Controller::on_ap_no_stations_connected, this),
+                    std::bind(&Controller::on_wifi_scan_result, this,
+                                           std::placeholders::_1)
                    );
 }
 
@@ -201,6 +203,15 @@ void Controller::on_ap_no_stations_connected() {
   on_netDisconnected();
 }
 
+//...............................................................................
+//  EVENT WiFi-Scan result
+//...............................................................................
+void Controller::on_wifi_scan_result(String result) {
+  logging.info("Networkscan done");
+  logging.info(result);
+
+  topicQueue.put("~/event/wifi/on_wifi_scan_result " + result);
+}
 
 //...............................................................................
 //  EVENT LAN has connected

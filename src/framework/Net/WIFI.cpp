@@ -128,13 +128,15 @@ void WIFI::set_callback(CallbackFunction wl_connected,
                         CallbackFunction wl_connect_failed,
                         CallbackFunction wl_no_ssid_avail,
                         CallbackFunction ap_stations_connected,
-                        CallbackFunction ap_no_stations_connected) {
+                        CallbackFunction ap_no_stations_connected,
+                        String_CallbackFunction wifi_scan_result ){
 
   on_wl_connected             = wl_connected;
   on_wl_connect_failed        = wl_connect_failed;
   on_wl_no_ssid_avail         = wl_no_ssid_avail;
   on_ap_stations_connected    = ap_stations_connected;
   on_ap_no_stations_connected = ap_no_stations_connected;
+  on_wifi_scan_result         = wifi_scan_result;
 }
 
 //...............................................................................
@@ -386,7 +388,6 @@ String WIFI::scanResult(){
   }
   json += "]";
 
-  logging.info(json);
+  if (on_wifi_scan_result != nullptr) on_wifi_scan_result(json);
   return json;
-  //-> ~/event/wifi/scanresult json
 }
