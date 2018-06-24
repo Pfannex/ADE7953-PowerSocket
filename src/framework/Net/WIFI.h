@@ -31,6 +31,7 @@ typedef enum {
 
 #include <functional>
 typedef std::function<void(void)> CallbackFunction;
+typedef std::function<void(String&)> String_CallbackFunction;
 typedef std::function<void(Topic&)> Topic_CallbackFunction;
 
 //###############################################################################
@@ -50,7 +51,8 @@ public:
                     CallbackFunction wl_connect_failed,
                     CallbackFunction wl_no_ssid_avail,
                     CallbackFunction ap_stations_connected,
-                    CallbackFunction ap_no_stations_connected
+                    CallbackFunction ap_no_stations_connected,
+                    String_CallbackFunction wifi_scan_result
                    );
 
   void start();
@@ -85,6 +87,7 @@ private:
   CallbackFunction on_wl_no_ssid_avail;
   CallbackFunction on_ap_stations_connected;
   CallbackFunction on_ap_no_stations_connected;
+  String_CallbackFunction on_wifi_scan_result;
 
   // https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/include/wl_definitions.h
   wl_status_t wl_status     = WL_DISCONNECTED;

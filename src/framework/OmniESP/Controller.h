@@ -42,6 +42,7 @@ public:
     void on_wl_no_ssid_avail();
     void on_ap_stations_connected();
     void on_ap_no_stations_connected();
+    void on_wifi_scan_result(String result);
     //LAN
     void on_lanConnected();
     void on_lanDisconnected();
