@@ -14,6 +14,9 @@ WIFI::WIFI(LOGGING &logging, FFS &ffs) : logging(logging), ffs(ffs) {}
 //  WiFi start connection
 //...............................................................................
 wl_status_t WIFI::start() {
+
+  logging.info("MAC address: "+macAddress());
+  
   String ssid = ffs.cfg.readItem("wifi_ssid");
   String psk = ffs.cfg.readItem("wifi_password");
   String mode = ffs.cfg.readItem("wifi"); // off, dhcp, manual
