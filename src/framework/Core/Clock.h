@@ -32,6 +32,7 @@ private:
   WiFiUDP ntpUDP;
   NTPClient *ntpClient = nullptr;
   void updateUptime();
+  long timezone(time_t t);
   unsigned long lastTime = 0; // lastTime in seconds to detect clock tick
   unsigned long uptimeLo = 0; // in ms
   unsigned long uptimeHi = 0; // in 4294967296 ms

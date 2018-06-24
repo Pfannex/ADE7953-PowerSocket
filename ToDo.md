@@ -4,7 +4,6 @@
 
 - **Firmware**
   - Passwort aendern geht nicht > Bug
-  - neues ~/get/clock/uptime
   - alle Variablen in die customDevice/config.json aufnehmen
   - start AP with configMode
   - Clock: Zeitzone konfigurierbar machen
