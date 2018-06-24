@@ -103,17 +103,26 @@ void Clock::forceUpdate() {
 }
 
 //...............................................................................
+//  time differential in seconds between local time and UTC
+//...............................................................................
+
+long Clock::timezone(time_t t) {
+  return t-tz.toUTC(t);
+}
+
+//...............................................................................
 //  root() get root string as JSON
 //...............................................................................
 
 String Clock::root() {
 
   time_t t = now();
-  return "{\"date\":\"" + SysUtils::strDate(t) + "\"," + "\"time\":\"" +
-         SysUtils::strTime(t) + "\"," + "\"time_ms\":\"" +
-         // SysUtils::strTime_ms(t) + "\"," + "\"dateTime\":\"" +
-         // SysUtils::strDateTime(t) + "\"," + "\"dateTime_ms\":\"" +
-         SysUtils::strDateTime(t) + "\"}";
+  return "{\"date\":\"" + SysUtils::strDate(t) + "\"," +
+          "\"time\":\"" + SysUtils::strTime(t) + "\"," +
+          "\"dateTime\":\"" + SysUtils::strDateTime(t) + + "\"," +
+          "\"uptime\":\"" + SysUtils::uptimeStr(uptime()) + "\"," +
+          "\"timezone\":\"" + String(timezone(t), DEC) +
+          "\"}";
 }
 
 //...............................................................................
@@ -143,10 +152,11 @@ String Clock::set(Topic &topic) {
 ~/set
   └─clock
       ├─root
-      ├─Time
-      ├─Date
-      ├─DateTime
-      └─DateTime_ms
+      ├─time
+      ├─date
+      ├─dateTime
+      ├─uptime
+      └─timezone
 */
 String Clock::get(Topic &topic) {
   if (topic.itemIs(3, "root")) {
@@ -159,6 +169,10 @@ String Clock::get(Topic &topic) {
     return SysUtils::strDateTime(now());
     /*} else if (topic.itemIs(3, "dateTime_ms")) {
       return SysUtils::strDateTime_ms(now());*/
+  } else if (topic.itemIs(3, "uptime")) {
+    return SysUtils::uptimeStr(uptime());
+  } else if (topic.itemIs(3, "timezone")) {
+    return String(timezone(now()), DEC);
   } else {
     return TOPIC_NO;
   }
