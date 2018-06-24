@@ -122,25 +122,6 @@ void WIFI::handle() {
 }
 
 //...............................................................................
-//  WiFi on connection established
-//...............................................................................
-void WIFI::on_connected() {
-  logging.info("get local IP address: " + WiFi.localIP().toString());
-
-  //if (on_wifiConnected != nullptr)
-    //on_wifiConnected();
-}
-
-//...............................................................................
-//  WiFi on connection aborted
-//...............................................................................
-void WIFI::on_disconnected() {
-
-  //if (on_wifiDisconnected != nullptr)
-    //on_wifiDisconnected();
-}
-
-//...............................................................................
 //  WiFi set callbacks
 //...............................................................................
 void WIFI::set_callback(CallbackFunction wl_connected,
@@ -407,5 +388,5 @@ String WIFI::scanResult(){
 
   logging.info(json);
   return json;
-
+  //-> ~/event/wifi/scanresult json
 }

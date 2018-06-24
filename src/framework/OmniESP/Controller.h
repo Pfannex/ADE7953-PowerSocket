@@ -21,9 +21,9 @@
 //###############################################################################
 
 // time in ms to switch from STA_DISCONNECTED to start the access point
-#define STA_TIMEOUT 20000
+#define STA_TIMEOUT 300000
 // time in ms to switch from AP_OPEN_WITHOUT_STATION to try STA reconnect
-#define AP_TIMEOUT 20000
+#define AP_TIMEOUT 300000
 
 class Controller {
 public:
@@ -80,7 +80,7 @@ private:
 
   void setConfigDefaults();
   bool setConfigDefault(String item, String defaultValue);
-  bool startConnections();
+  //bool startConnections();
   void viewsUpdate(time_t t, Topic& topic);
   void handleEvent(String& topicsArgs);
 

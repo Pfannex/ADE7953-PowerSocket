@@ -55,8 +55,6 @@ public:
 
   void start();
   void handle();
-  void on_connected();
-  void on_disconnected();
   String macAddress();
 
   // API

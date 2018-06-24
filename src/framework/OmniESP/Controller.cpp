@@ -83,7 +83,7 @@ void Controller::start() {
   // startup the device
   device.start();
   logging.info("controller started");
-  topicQueue.put("~/set/device/led", 2);
+  //topicQueue.put("~/set/device/led", 2);
 }
 
 //-------------------------------------------------------------------------------
@@ -467,6 +467,7 @@ void Controller::setConfigDefaults() {
 //...............................................................................
 //  Start WiFi Connection
 //...............................................................................
+/*
 bool Controller::startConnections() {
 
   logging.info("starting network connections");
@@ -478,7 +479,7 @@ bool Controller::startConnections() {
 
   //}
   return 1;
-}
+}*/
 
 //...............................................................................
 //  update Views
