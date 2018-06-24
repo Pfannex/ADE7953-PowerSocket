@@ -133,10 +133,8 @@ void customDevice::setPowerMode(int value) {
   topicQueue.put("~/event/device/power", power);
   if (power) {
     relay.setOutputMode(ON);
-    setLedMode(1);
   } else {
     relay.setOutputMode(OFF);
-    setLedMode(0);
   }
 }
 
@@ -149,9 +147,7 @@ void customDevice::setConfigMode(int value) {
   if (configMode == 1){
     setLedMode(2);
   } else {
-    //Serial.println("leave configMode");
-    //Serial.println("power " + String(power));
-    if (power) setLedMode(1); else setLedMode(0);
+    setLedMode(0);
   }
 }
 
@@ -160,7 +156,7 @@ void customDevice::setLedMode(int value) {
     case 0: led.setOutputMode(OFF); break;
     case 1: led.setOutputMode(ON); break;
     case 2: led.setOutputMode(BLINK, 100); break;
-    case 3: led.setOutputMode(BLINK, 2000); break;
+    case 3: led.setOutputMode(BLINK, 1000); break;
   }
 
 }
