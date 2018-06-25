@@ -77,7 +77,7 @@ void Controller::start() {
 
   // start FTP-Server and Web-server
   startFtp();
-  topicQueue.put("~/set/webserver/state", 1);
+  //topicQueue.put("~/set/webserver/state", 1);
 
   // start WiFi for the first time
   wifi.start();
@@ -85,7 +85,8 @@ void Controller::start() {
   // startup the device
   device.start();
   logging.info("controller started");
-  //topicQueue.put("~/set/device/led", 2);
+  topicQueue.put("~/event/wifi/start"); //web server will start here
+
 }
 
 //-------------------------------------------------------------------------------
@@ -166,7 +167,7 @@ void Controller::on_wl_connected() {
   logging.info("STA connected with IP " + WiFi.localIP().toString());
 
   startNtp();
-  topicQueue.put("~/set/mqtt/state", 1);
+  //topicQueue.put("~/set/mqtt/state", 1);
   on_netConnected();
 }
 //...............................................................................
@@ -192,7 +193,7 @@ void Controller::on_wl_no_ssid_avail() {
 void Controller::on_ap_stations_connected() {
   logging.info("WiFi AP open with connected stations");
   topicQueue.put("~/event/wifi/ap_stations_connected");
-  on_netConnected();
+  //on_netConnected();
 }
 //...............................................................................
 //  EVENT AP has connected without stations
@@ -200,7 +201,7 @@ void Controller::on_ap_stations_connected() {
 void Controller::on_ap_no_stations_connected() {
   logging.info("WiFi AP open without connected stations");
   topicQueue.put("~/event/wifi/on_ap_no_stations_connected");
-  on_netDisconnected();
+  //on_netDisconnected();
 }
 
 //...............................................................................
@@ -246,7 +247,7 @@ void Controller::on_netDisconnected() {
   //check if LAN AND WiFi are disconnected!!
   logging.info("Network connection aborted");
   topicQueue.put("~/event/net/connected", 0);
-  topicQueue.put("~/set/mqtt/state", 0);
+  //topicQueue.put("~/set/mqtt/state", 0);
 }
 
 //...............................................................................
@@ -475,23 +476,6 @@ void Controller::setConfigDefaults() {
   if(f) { ffs.cfg.saveFile(); }
 
 }
-
-//...............................................................................
-//  Start WiFi Connection
-//...............................................................................
-/*
-bool Controller::startConnections() {
-
-  logging.info("starting network connections");
-  wifi.start();
-  //bool result = wifi.start();
-  //if (result) {
-
-    //start after wifi is connected
-
-  //}
-  return 1;
-}*/
 
 //...............................................................................
 //  update Views

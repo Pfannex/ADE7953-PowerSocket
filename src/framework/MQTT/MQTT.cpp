@@ -166,7 +166,7 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
   // First react on events that affect us...
   String topicStr = "~/" + tail;
 
-  if (topicStr == "~/set/mqtt/state") {
+  if (topicStr == "~/event/net/connected") {
     if (topic.getArgAsLong(0)) {
       start(); // start MQTT
     } else {
