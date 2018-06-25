@@ -327,7 +327,7 @@ void Controller::on_wifi_state_change() {
 //AP_OPEN_WITHOUT_STATION
     if (staState == STA_DISCONNECTED and apState == AP_OPEN_WITHOUT_STATION){
       //change blink frequency
-      topicQueue.put("~/set/device/led", 2);
+      topicQueue.put("~/event/device/led/setmode", 2);
 
       logging.info("WiFi state changed to AP_OPEN_WITHOUT_STATION");
       logging.debug("  STA_DISCONNECTED");
@@ -345,7 +345,7 @@ void Controller::on_wifi_state_change() {
 //AP_OPEN_WITH_STATION
     if (staState == STA_DISCONNECTED and apState == AP_OPEN_WITH_STATION){
       //change blink frequency
-      topicQueue.put("~/set/device/led", 3);
+      topicQueue.put("~/event/device/led/setmode", 3);
 
       logging.info("WiFi state changed to AP_OPEN_WITH_STATION");
       logging.debug("  STA_DISCONNECTED");
@@ -507,7 +507,7 @@ void Controller::viewsUpdate(time_t t, Topic &topic) {
 //  Start FTP-Server
 //...............................................................................
 bool Controller::startFtp() {
-  
+
   if (ffs.cfg.readItem("ftp") == "on") {
     String username= ffs.cfg.readItem("device_username");
     String password= ffs.cfg.readItem("device_password");
