@@ -41,23 +41,29 @@ Topic::~Topic() {
 //  Topic strings
 //...............................................................................
 String Topic::topic_asString() {
-  //Di("Topic: begin topic_asString", item.getCount());
-  String str = String(item.string[0]);
-  for (int i = 1; i < item.getCount(); i++) {
-    str += "/" + String(item.string[i]);
-  }
-  return str;
+  return String(topic_asCStr());
 }
+
+char* Topic::topic_asCStr() {
+  return item.join("/");
+}
+
 String Topic::arg_asString() {
-  String str = "";
-  if (arg.getCount() > 0)
-    str = String(arg.string[0]);
-  for (int i = 1; i < arg.getCount(); i++) {
-    str += "," + String(arg.string[i]);
-  }
-  return str;
+  return String(arg_asCStr());
 }
-String Topic::asString() { return topic_asString() + " " + arg_asString(); }
+
+char* Topic::arg_asCStr() {
+  return arg.join(",");
+}
+
+String Topic::asString() {
+  String tmp= String(topic_asCStr());
+  if(arg.getCount()) {
+    tmp.concat(" ");
+    tmp.concat(arg_asCStr());
+  }
+  return tmp;
+}
 
 //...............................................................................
 //  set item
@@ -71,10 +77,10 @@ void Topic::setItem(unsigned int index, const string topicName) {
 //...............................................................................
 //  delete TopicItem in return String
 //...............................................................................
-String Topic::modifyTopic(int index) {
+String Topic::modifyTopic(unsigned int index) {
   String str = "";
 
-  for (int i = 0; i < item.getCount(); i++) {
+  for (unsigned int i = 0; i < item.getCount(); i++) {
     if (i != index) {
       str += String(item.string[i]);
       if (i != item.getCount() - 1) {
@@ -88,7 +94,7 @@ String Topic::modifyTopic(int index) {
 //...............................................................................
 //  compare topic.item by index with string
 //...............................................................................
-bool Topic::itemIs(int index, string topicName) {
+bool Topic::itemIs(unsigned int index, string topicName) {
   // D("Topic: begin itemIs");
   // Di(topicName, index);
   if (index < item.getCount())
@@ -101,7 +107,7 @@ bool Topic::itemIs(int index, string topicName) {
 //...............................................................................
 //  compare topic.arg by index with string
 //...............................................................................
-bool Topic::argIs(int index, const string value) {
+bool Topic::argIs(unsigned int index, const string value) {
   if (index < arg.getCount())
     return !strcmp(arg.string[index], value);
   else
@@ -119,14 +125,14 @@ int Topic::getItemCount() {
 //  get argument referenced by index
 //...............................................................................
 
-string Topic::getItem(int index) {
+string Topic::getItem(unsigned int index) {
   if (index < item.getCount())
     return item.string[index];
   else
     return NULL;
 }
 
-long Topic::getItemAsLong(int index) {
+long Topic::getItemAsLong(unsigned int index) {
   if (index < item.getCount())
     // The  strtol() function converts the initial part of the string
     // to a long integer value according to the given base, which must
@@ -152,14 +158,14 @@ int Topic::getArgCount() {
 //  get argument referenced by index
 //...............................................................................
 
-string Topic::getArg(int index) {
+string Topic::getArg(unsigned int index) {
   if (index < arg.getCount())
     return arg.string[index];
   else
     return NULL;
 }
 
-long Topic::getArgAsLong(int index) {
+long Topic::getArgAsLong(unsigned int index) {
   if (index < arg.getCount())
     // The  strtol() function converts the initial part of the string
     // to a long integer value according to the given base, which must
@@ -185,15 +191,12 @@ long Topic::getArgAsLong(int index) {
 //...............................................................................
 void Topic::initTopic(string topicsArgs) {
 
-  // D("Topic: begin initTopic");
-  // D(topicsArgs);
   char *topics, *args;
   char *tmp = strdup(topicsArgs);
   topics = strtok(tmp, " ");
   args = strtok(NULL, "\0");
   dissectTopic(topics, args);
   free(tmp);
-  // D("Topic: end initTopic");
 }
 
 //...............................................................................
@@ -225,10 +228,19 @@ int Topic::tokenize(strings &tokens, string str, string delimiters) {
 //...............................................................................
 //  check for valid JSON-String
 //...............................................................................
-bool Topic::isValidJson(String root) {
+bool Topic::isValidJson(String& root) {
   DynamicJsonBuffer jsonBuffer;
   JsonObject &json = jsonBuffer.parseObject(root);
   return json.success();
+}
+
+bool Topic::looksLikeJson(string s) {
+  int l= strlen(s) - 1;
+  if(l> 0) {
+    return ((s[0]=='[') && (s[l]==']')) || ((s[0]=='{') && (s[l]=='}'));
+  } else {
+    return false;
+  }
 }
 
 //...............................................................................
@@ -246,7 +258,7 @@ void Topic::dissectTopic(string topics, string args) {
   // args
   arg.clear();
   if (args != NULL) {
-    if (isValidJson(String(args))) {
+    if (looksLikeJson(args)) {
       arg.append(strdup(args));
     } else {
       tokenize(arg, args, ",");

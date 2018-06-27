@@ -82,7 +82,22 @@ void WebServer::start() {
   api.info("webserver started.");
   isRunning = true;
 }
+//...............................................................................
+//   stop
+//...............................................................................
+void WebServer::stop() {
+  // how to stop that thing?
 
+  api.info("stoping webserver");
+
+   // Authentificator
+   auth.reset();
+
+   // start serving requests
+   //webServer.reset();
+   api.info("webserver stoped");
+   isRunning = false;
+}
 //-------------------------------------------------------------------------------
 //  WebServer private
 //-------------------------------------------------------------------------------
@@ -132,16 +147,13 @@ void WebServer::logFunction(const String &channel, const String &msg) {
 // send Topics to websocket
 void WebServer::topicFunction(const time_t, Topic &topic) {
 
-  String topicStr = "~/";
-  topicStr += topic.modifyTopic(0);
-  if (topicStr == "~/event/net/connected") {
-    if (topic.getArgAsLong(0)) { // true
-      start();
-    } else { // false
-      api.info("Webserver is offline");
-      isRunning = false;
-    }
-  }
+  String tail= topic.modifyTopic(0);
+  // First react on events that affect us...
+  String topicStr = "~/" + tail;
+
+  //listen to wifi start
+  if (topicStr == "~/event/wifi/start") start();
+
 
   if (isRunning) {
     String type("event");

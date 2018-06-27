@@ -59,8 +59,8 @@ String customDevice::set(Topic &topic) {
   if (topic.getItemCount() != 4) // ~/set/device/(power|toggle)
     return TOPIC_NO;
   if (topic.itemIs(3, "led")) {
-      setLedMode(topic.getArgAsLong(0));
-      return TOPIC_OK;
+    setLedMode(topic.getArgAsLong(0));
+    return TOPIC_OK;
   } else if (topic.itemIs(3, "power")) {
     setPowerMode(topic.getArgAsLong(0));
     return TOPIC_OK;
@@ -98,6 +98,12 @@ String customDevice::get(Topic &topic) {
 // Eventhandler - called by the controller after receiving a topic (event)
 //...............................................................................
 void customDevice::on_events(Topic &topic) {
+
+  //listen to ~/device/led/setmode
+  if (led.isForModule(topic)) {
+    if (led.isItem(topic, "setmode"))
+      setLedMode(topic.getArgAsLong(0));
+  }
 
   // central business logic
   if (button.isForModule(topic)) {
@@ -144,12 +150,11 @@ void customDevice::setConfigMode(int value) {
   configMode = value;
   topicQueue.put("~/event/device/configMode", configMode);
 
-  if (value == 1){
-    topicQueue.put("~/set/wifi/ap 1");
+  if (configMode == 1){
+    setLedMode(2);
   } else {
-  //  topicQueue.put("~/set/wifi/ap 0");
+    setLedMode(0);
   }
-  if(value) setLedMode(2); else setLedMode(0);
 }
 
 void customDevice::setLedMode(int value) {
@@ -157,7 +162,7 @@ void customDevice::setLedMode(int value) {
     case 0: led.setOutputMode(OFF); break;
     case 1: led.setOutputMode(ON); break;
     case 2: led.setOutputMode(BLINK, 100); break;
-    case 3: led.setOutputMode(BLINK, 250); break;
+    case 3: led.setOutputMode(BLINK, 1000); break;
   }
 
 }

@@ -17,8 +17,14 @@
 #include "customDevice/customDevice.h"
 
 //###############################################################################
-//  BasicTemplate
+//  controller class
 //###############################################################################
+
+// time in ms to switch from STA_DISCONNECTED to start the access point
+#define STA_TIMEOUT 300000
+// time in ms to switch from AP_OPEN_WITHOUT_STATION to try STA reconnect
+#define AP_TIMEOUT 300000
+
 class Controller {
 public:
   // constructor
@@ -31,14 +37,23 @@ public:
   void handle();
   // Callback Events
     // WiFi
-    void on_wifiConnected();
-    void on_wifiDisconnected();
+    void on_wl_connected();
+    void on_wl_connect_failed();
+    void on_wl_no_ssid_avail();
+    void on_ap_stations_connected();
+    void on_ap_no_stations_connected();
+    void on_wifi_scan_result(String result);
     //LAN
     void on_lanConnected();
     void on_lanDisconnected();
   //internal Events
   void on_netConnected();
   void on_netDisconnected();
+  void on_config_mode_on();
+  void on_config_mode_off();
+  void on_staTimeout();
+  void on_apTimeout();
+  void on_wifi_state_change();
 
 
   // the subsystems
@@ -66,9 +81,23 @@ private:
 
   void setConfigDefaults();
   bool setConfigDefault(String item, String defaultValue);
-  bool startConnections();
+  //bool startConnections();
   void viewsUpdate(time_t t, Topic& topic);
   void handleEvent(String& topicsArgs);
+
+  bool startFtp();
+  bool startNtp();
+
+  sta_state_t staState = STA_UNKNOWN;
+  ap_state_t  apState  = AP_UNKNOWN;
+  long staTimeout = STA_TIMEOUT;
+  long apTimeout  = AP_TIMEOUT;
+  unsigned long staTimeout_t = 0;
+  unsigned long apTimeout_t  = 0;
+  int  staTimeoutActive = false;
+  int  apTimeoutActive = false;
+  void handleWifiTimout();
+
 
   TopicQueue topicQueue;
   // if a new Topic is received this function is called

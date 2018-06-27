@@ -10,6 +10,7 @@ class WebServer {
 public:
   WebServer(API &api);
   void start();
+  void stop();
 
 private:
   int isRunning = false;

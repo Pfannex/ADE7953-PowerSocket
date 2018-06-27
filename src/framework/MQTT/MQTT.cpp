@@ -30,10 +30,12 @@ MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
 //-------------------------------------------------------------------------------
 
 //...............................................................................
-//  WiFi start connection
+//  MQTT start connection
 //...............................................................................
 bool MQTT::start() {
   bool MQTTOK = false;
+
+  api.info("MQTT maximum packet size: "+String(MQTT_MAX_PACKET_SIZE, DEC));
 
   if (api.call("~/get/ffs/cfg/item/mqtt") == "on") {
     String strIP = api.call("~/get/ffs/cfg/item/mqtt_ip");
@@ -92,6 +94,16 @@ bool MQTT::start() {
 }
 
 //...............................................................................
+//  MQTT stop connection
+//...............................................................................
+bool MQTT::stop() {
+  bool MQTTOK = false;
+  client.disconnect();
+  api.info("MQTT client has disconnected");
+  return MQTTOK;
+}
+
+//...............................................................................
 //  WiFi start connection
 //...............................................................................
 bool MQTT::handle() {
@@ -123,7 +135,7 @@ void MQTT::on_incomingSubscribe(char *topics, byte *payload,
   // This is the actual action. We throw away the result because the API
   // itself cares about informing the listeners/views about the executed
   // command and its result, see API::call().
-  api.call(String(topics2) + " " + String(args));
+  api.call(topics2, args);
 
   free(topics2);
   if (args != NULL)
@@ -153,19 +165,22 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
   // be careful with API calls here to avoid infinite recursions
 
   String tail= topic.modifyTopic(0);
-
   // First react on events that affect us...
   String topicStr = "~/" + tail;
+
   if (topicStr == "~/event/net/connected") {
-    if (topic.getArgAsLong(0)) { // true
-      start();
-    } else { // false
-      api.info("MQTT client has disconnected");
+    if (topic.getArgAsLong(0)) {
+      start(); // start MQTT
+    } else {
+      stop();  // stop MQTT
     }
   }
 
   // ..then publish the topic.
-  pub(topic.topic_asString(), topic.arg_asString());
+
+  //direkt c-string uebergeben!
+  pub(topic.topic_asCStr(), topic.arg_asCStr());
+
 }
 
 //-------------------------------------------------------------------------------
@@ -175,7 +190,17 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
 //...............................................................................
 //  MQTT publish
 //...............................................................................
-void MQTT::pub(String topic, String value) {
+void MQTT::pub(char* topic, char* value) {
+  if (client.connected()) {
+    //Ds("pub topic", topic);
+    //Ds("pub value", value);
+    client.publish(topic, value);
+    client.loop();
+    //D("published");
+  }
+}
+
+void MQTT::pub(String& topic, const String& value) {
   if (client.connected()) {
     client.publish(topic.c_str(), value.c_str());
     client.loop();

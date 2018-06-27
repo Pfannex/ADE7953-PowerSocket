@@ -36,5 +36,5 @@ private:
   int configMode = 0;
   void setConfigMode(int value);
   void setPowerMode(int value);
-  void setLedMode();
+  void setLedMode(int freq);
 };

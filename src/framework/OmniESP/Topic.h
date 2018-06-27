@@ -19,30 +19,33 @@ public:
   ~Topic();
 
   String topic_asString();
+  char* topic_asCStr(); // do not free!
   String arg_asString();
+  char* arg_asCStr(); // do not free!
   String asString();
 
   int getItemCount();
-  string getItem(int index);
-  long getItemAsLong(int index);
+  string getItem(unsigned int index);
+  long getItemAsLong(unsigned int index);
   int getArgCount();
-  string getArg(int index);
+  string getArg(unsigned int index);
   // Function declarations that differ only in the return type cannot be
   // overloaded. We thus choose another name.
   // detects and converts hex (0x) and octal (0..) values
-  long getArgAsLong(int index);
+  long getArgAsLong(unsigned int index);
 
-  String modifyTopic(int index);
+  String modifyTopic(unsigned int index);
   void setItem(unsigned int index, const string topicName);
-  bool itemIs(int index, const string topicName);
-  bool argIs(int index, const string value);
+  bool itemIs(unsigned int index, const string topicName);
+  bool argIs(unsigned int index, const string value);
 
 private:
   strings item;
   strings arg;
   void initTopic(string topicsArgs);
   void dissectTopic(string topics, string arg);
-  bool isValidJson(String root);
+  bool isValidJson(String& root);
+  bool looksLikeJson(string s);
   // splits str into tokens with memory allocations, returns number of tokens
   int tokenize(strings &tokens, string str, string delimiters);
 };

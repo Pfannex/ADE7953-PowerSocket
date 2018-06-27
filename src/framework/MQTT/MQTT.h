@@ -1,5 +1,6 @@
 #pragma once
 #include "framework/OmniESP/API.h"
+// setup before pubsubclient to have MQTT_MAX_PACKET_SIZE  already defined
 #include "Setup.h"
 #include <Arduino.h>
 #include <IPAddress.h>
@@ -16,6 +17,7 @@ public:
   void setCallback(MQTT_CALLBACK_SIGNATURE);
 
   bool start();
+  bool stop();
   bool handle();
   // Callback Events
   // pubSubClient
@@ -28,5 +30,6 @@ private:
   String deviceName;
   WiFiClient espClient;
   PubSubClient client;
-  void pub(String topic, String value);
+  void pub(char* topic, char* value);
+  void pub(String& topic, const String& value);
 };
