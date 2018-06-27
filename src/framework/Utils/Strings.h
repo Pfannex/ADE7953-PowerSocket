@@ -15,7 +15,11 @@ public:
   void clear();
   void append(char *s);
   void replace(unsigned int i, char *s);
+  // returns pointer to joined strings, do not free!
+  char* join(const char *joiner);
 private:
-  int count= 0;
+  unsigned int count= 0;
+  char *joined = 0;
+  void freeJoined();
 
 };

@@ -28,6 +28,7 @@ public:
   String call(Topic &topic);
   String call(String topicsArgs);
   String call(string topicsArgs);
+  String call(string topics, string args);
   void info(const String &msg);
   void error(const String &msg);
   void debug(const String &msg);

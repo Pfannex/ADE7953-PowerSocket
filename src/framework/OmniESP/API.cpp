@@ -60,6 +60,9 @@ String API::call(Topic &topic) {
   // ~/api/lastResult topic. The original command is returned in the
   // ~/api/lastCommand topic.
 
+  //D("******* API call *******");
+  //Ds("call topic:", topic.topic_asCStr());
+  //Ds("call value:", topic.arg_asCStr());
   String lastCommand= topic.asString();
   debug("API call " +lastCommand);
   String result = controller.call(topic);
@@ -86,6 +89,13 @@ String API::call(string topicsArgs) {
   // Dl;
   return call(topic);
 }
+
+// convenience function
+String API::call(string topics, string args) {
+  Topic topic(topics, args);
+  return call(topic);
+}
+
 
 // these are convenience functions
 // a more convoluted way would be via a topic ~/log/info

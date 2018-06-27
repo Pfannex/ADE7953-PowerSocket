@@ -4,7 +4,6 @@
 
 - **Firmware**
   - alle Variablen in die customDevice/config.json aufnehmen
-  - start AP with configMode
   - Clock: Zeitzone konfigurierbar machen
   - FTP-Server: falscher User oder falsches Passwort crasht ESP
 

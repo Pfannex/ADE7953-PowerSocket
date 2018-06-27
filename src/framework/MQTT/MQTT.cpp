@@ -35,6 +35,8 @@ MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
 bool MQTT::start() {
   bool MQTTOK = false;
 
+  api.info("MQTT maximum packet size: "+String(MQTT_MAX_PACKET_SIZE, DEC));
+
   if (api.call("~/get/ffs/cfg/item/mqtt") == "on") {
     String strIP = api.call("~/get/ffs/cfg/item/mqtt_ip");
     IPAddress IP = SysUtils::strToIP(strIP);
@@ -133,7 +135,7 @@ void MQTT::on_incomingSubscribe(char *topics, byte *payload,
   // This is the actual action. We throw away the result because the API
   // itself cares about informing the listeners/views about the executed
   // command and its result, see API::call().
-  api.call(String(topics2) + " " + String(args));
+  api.call(topics2, args);
 
   free(topics2);
   if (args != NULL)
@@ -175,7 +177,10 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
   }
 
   // ..then publish the topic.
-  pub(topic.topic_asString(), topic.arg_asString());
+
+  //direkt c-string uebergeben!
+  pub(topic.topic_asCStr(), topic.arg_asCStr());
+
 }
 
 //-------------------------------------------------------------------------------
@@ -185,7 +190,17 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
 //...............................................................................
 //  MQTT publish
 //...............................................................................
-void MQTT::pub(String topic, String value) {
+void MQTT::pub(char* topic, char* value) {
+  if (client.connected()) {
+    //Ds("pub topic", topic);
+    //Ds("pub value", value);
+    client.publish(topic, value);
+    client.loop();
+    //D("published");
+  }
+}
+
+void MQTT::pub(String& topic, const String& value) {
   if (client.connected()) {
     client.publish(topic.c_str(), value.c_str());
     client.loop();

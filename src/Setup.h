@@ -10,7 +10,7 @@
 // Debugging
 //###############################################################################
 
-#define DEBUG 1
+#define DEBUG 0
 #ifdef DEBUG
 //  #define DEBUG_UPDATER Serial
 //  #define NO_AUTH 1
@@ -55,3 +55,9 @@
 
 #define TYPE_OBJECT 1
 #define TYPE_ARRAY 0
+
+//###############################################################################
+//  MQTT
+//###############################################################################
+
+#define MQTT_MAX_PACKET_SIZE 2048

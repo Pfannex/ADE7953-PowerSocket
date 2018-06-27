@@ -1,4 +1,5 @@
 #pragma once
+#include <Arduino.h>
 
 // #include <ESP.h> no need to include this because here are only macros!
 
