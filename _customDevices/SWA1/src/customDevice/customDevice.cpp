@@ -99,6 +99,12 @@ String customDevice::get(Topic &topic) {
 //...............................................................................
 void customDevice::on_events(Topic &topic) {
 
+  //listen to ~/device/led/setmode
+  if (led.isForModule(topic)) {
+    if (led.isItem(topic, "setmode"))
+      setLedMode(topic.getArgAsLong(0));
+  }
+
   // central business logic
   if (button.isForModule(topic)) {
     // events from button

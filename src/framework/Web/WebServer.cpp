@@ -151,26 +151,9 @@ void WebServer::topicFunction(const time_t, Topic &topic) {
   // First react on events that affect us...
   String topicStr = "~/" + tail;
 
-  if (topicStr == "~/set/webserver/state") {
-    if (topic.getArgAsLong(0)) {
-      start(); // start WebServer
-    } else {
-      stop();  // stop WebServer
-    }
-  }
+  //listen to wifi start
+  if (topicStr == "~/event/wifi/start") start();
 
-/*
-  String topicStr = "~/";
-  topicStr += topic.modifyTopic(0);
-  if (topicStr == "~/event/net/connected") {
-    if (topic.getArgAsLong(0)) { // true
-      start();
-    } else { // false
-      api.info("Webserver is offline");
-      isRunning = false;
-    }
-  }
-*/
 
   if (isRunning) {
     String type("event");

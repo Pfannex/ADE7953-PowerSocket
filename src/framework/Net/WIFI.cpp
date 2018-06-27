@@ -39,44 +39,6 @@ void WIFI::start() {
   } else {  //staMode dhcp or auto
     startSTA();
   }
-
-/*
-  if (staMode == "off") {
-    logging.info("WiFi STA-Mode is off");
-  } else {               // dhcp or manual
-    //WiFi.mode(WIFI_AP_STA);
-    WiFi.mode(WIFI_STA);
-    //WiFi.mode(WIFI_AP);
-    WiFi.softAPdisconnect(true);
-    if (staMode == "dhcp") {
-      logging.info("WiFi DHCP configuration");
-    } else { // switch to static mode
-      address.fromString(ffs.cfg.readItem("wifi_ip"));
-      gateway.fromString(ffs.cfg.readItem("wifi_gateway"));
-      netmask.fromString(ffs.cfg.readItem("wifi_netmask"));
-      dns.fromString(ffs.cfg.readItem("wifi_dns"));
-      logging.info("WiFi static configuration");
-      logging.debug("IP address: " + address.toString());
-      logging.debug("gateway: " + gateway.toString());
-      logging.debug("netmask: " + netmask.toString());
-      logging.debug("DNS server: " + dns.toString());
-
-      if (WiFi.config(address, gateway, netmask, dns)) {
-        logging.debug("WiFi configuration applied");
-        // logging.info("local IP address switched to: " +
-        // WiFi.localIP().toString());
-      } else {
-        logging.error("could not apply WiFi configuration");
-      }
-    }
-
-    updateStatus(WiFi.begin(ssid.c_str(), psk.c_str()));
-    if (ffs.cfg.readItem("ap") == "on") {
-      startAP(true);
-    }
-  }*/
-
-  //return wl_status;
 }
 
 //...............................................................................
@@ -85,40 +47,6 @@ void WIFI::start() {
 void WIFI::handle() {
   updateStaStatus();
   updateApStatus();
-
-/*
-  if (updateStatus(WiFi.status())) {
-    if (wl_status == WL_CONNECTED) {
-      if (!WiFiStatus) {
-        WiFiStatus = true;
-        if (ffs.cfg.readItem("ap") != "on") {
-          startAP(false);
-        }
-        on_connected();
-      }
-      //Check for Networkscan
-      //if (WiFi.scanComplete() != scanStatus){
-        //logging.info("WiFi-Scan: " + String(WiFi.scanComplete()));
-        //scanStatus = WiFi.scanComplete();
-      //}
-    } else if (wl_status == WL_DISCONNECTED) {
-      //if (WiFiStatus) {
-        WiFiStatus = false;
-        if (ffs.cfg.readItem("ap") == "auto") {
-          startAP(true);
-        }
-        on_disconnected();
-      //}
-    } else if (wl_status == WL_NO_SSID_AVAIL) {
-        WiFiStatus = false;
-        if (ffs.cfg.readItem("ap") == "auto") {
-          startAP(true);
-        }
-        on_disconnected();
-    }
-  }
-  //Di("wifi status", wl_status);
-*/
 }
 
 //...............................................................................
@@ -259,17 +187,6 @@ void WIFI::startAP(int state) {
       logging.error("set Accesspoint configuration FAILED");
     }
     if (on_ap_no_stations_connected != nullptr) on_ap_no_stations_connected();
-
-    //on_ap_no_stations_connected();
-
-/*    Serial.println(WiFi.softAPConfig(apIP, gateway, subnet));
-    Serial.println(WiFi.softAP(apSSID.c_str(), apPSK.c_str()));
-    Serial.println(apSSID);
-    Serial.println(apPSK);
-    Serial.println(WiFi.softAPIP());
-
-    logging.info("Accesspoint is now ON");
-    on_wifiConnected();*/
 
   } else {
     WiFi.mode(WIFI_STA);
