@@ -14,6 +14,7 @@
   - API Call Abfrage rootString sporadisch Absturz ggf. json zu lang
   - Zugriff auf Websocket nur nach Authentisierung
   - nur SHA1 Hash des Passworts übertragen
+  - FTP konfigurierbar
 
 - **Devices**
   - SimpleSwitch
