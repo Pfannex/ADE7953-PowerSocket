@@ -6,11 +6,18 @@ SWA1 WiFi Smart Socket
 Prepare device
 --------------
 
-Use sharp 3 mm flat head screw driver to open device. The plug falls apart.
+Use sharp 3 mm flat head screw driver to open the case. There is a nose
+protruding from the upper part of the case in the middle of the bottom
+edge. Be careful not to break it. Fiddle around with the nose and the
+plug falls apart.
+
 The 230V board is loose. The WiFi board with LEDs and momentary switch is
 screwed to the top of the case. Unscrew the WiFi board and solder a 5-pin
 header to the back of the board. The pin header fits nicely between the relay
 and the other components on the 230V board.
+
+You might also just stick the pin header into the holes, tilt it and hold it
+in place.
 
 -----------------
 Original firmware
@@ -54,6 +61,8 @@ jump to run user1 @ 1000
 OS SDK ver: 1.4.2(23fbe10) compiled @ Sep 22 2016 13:09:03
 phy ver�
 ...............................................................................
+
+Other devices give SPI Mode QIO instead of DOUT.
 
 ----------------
 Flashing OmniESP
