@@ -15,6 +15,7 @@
   - Abfrage ob AP UND STA auf OFF gesetzt werden!
   - Zugriff auf Websocket nur nach Authentisierung
   - nur SHA1 Hash des Passworts übertragen
+  - FTP konfigurierbar
 
 - **Devices**
   - SimpleSwitch

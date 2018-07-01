@@ -11,8 +11,8 @@
 customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
            :Device(logging, topicQueue, ffs),
             button("button", logging, topicQueue, PIN_BUTTON),
-            led("led", logging, topicQueue, PIN_LED),
-            relay("relay", logging, topicQueue, PIN_RELAY)
+            led("led", logging, topicQueue, PIN_LED, NORMAL),
+            relay("relay", logging, topicQueue, PIN_RELAY, NORMAL)
           {}
 
 //...............................................................................
@@ -102,6 +102,12 @@ String customDevice::get(Topic &topic) {
 //...............................................................................
 void customDevice::on_events(Topic &topic) {
 
+  //listen to ~/device/led/setmode
+  if (led.isForModule(topic)) {
+    if (led.isItem(topic, "setmode"))
+      setLedMode(topic.getArgAsLong(0));
+  }
+
   // central business logic
   if (button.isForModule(topic)) {
     // events from button
@@ -136,10 +142,11 @@ void customDevice::setPowerMode(int value) {
   topicQueue.put("~/event/device/power", power);
   if (power) {
     relay.setOutputMode(ON);
+    setLedMode(1);
   } else {
     relay.setOutputMode(OFF);
+    setLedMode(0);
   }
-  setLedMode(50);
 }
 
 void customDevice::setConfigMode(int value) {
@@ -148,20 +155,18 @@ void customDevice::setConfigMode(int value) {
   configMode = value;
   topicQueue.put("~/event/device/configMode", configMode);
 
-  if (value == 1){
-    topicQueue.put("~/set/wifi/ap 1");
+  if (configMode == 1){
+    setLedMode(2);
   } else {
-  //  topicQueue.put("~/set/wifi/ap 0");
+    setLedMode(0);
   }
-
-  setLedMode(50);
 }
-void customDevice::setLedMode(int freq) {
-  if (!configMode) {
-    if (power)
-      led.setOutputMode(ON);
-    else
-      led.setOutputMode(OFF);
-  } else
-    led.setOutputMode(BLINK, freq);
+
+void customDevice::setLedMode(int value) {
+  switch(value) {
+    case 0: led.setOutputMode(OFF); break;
+    case 1: led.setOutputMode(ON); break;
+    case 2: led.setOutputMode(BLINK, 100); break;
+    case 3: led.setOutputMode(BLINK, 1000); break;
+  }
 }
