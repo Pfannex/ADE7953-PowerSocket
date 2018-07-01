@@ -70,11 +70,14 @@ String API::call(Topic &topic) {
     result = String("<no result>");
   }
   // here we inform all listeners view about the last api call and its result
+  /* no, we do not / it crashes the ESP if the web interface is logged in on
+     long strings *
   time_t t= controller.clock.now();
   Topic topicLastCommand("~/api/lastCommand "+lastCommand);
   onTopic(t, topicLastCommand);
   Topic topicLastResult("~/api/lastResult "+result);
   onTopic(t, topicLastResult);
+  */
   return result;
 }
 
