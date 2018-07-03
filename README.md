@@ -47,4 +47,4 @@ Unterstütz werden bislang folgende Funktionen:
     - Topic-Handler
 - Device-Plug-In-System zum einfachen handling unterschiedlicher Devices  
 
-[OmniESP WiKi](wiki)
+[OmniESP WiKi](https://github.com/Pfannex/OmniESP/wiki)
