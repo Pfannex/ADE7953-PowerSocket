@@ -1,4 +1,4 @@
-# **OmniESP**
+# **OmniESP**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/Pfannex/OmniESP/wiki/_pics/Wemos_D1_mini.jpg" width="20%"/>
 _Universelles Framework für ESP-Devices mit MQTT-Anbindung_
 ***
 
