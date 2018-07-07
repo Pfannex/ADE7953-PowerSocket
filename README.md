@@ -1,4 +1,4 @@
-# **OmniESP** 
+# **OmniESP**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/Pfannex/OmniESP/wiki/_pics/Wemos_D1_mini.jpg" width="20%"/>
 _Universelles Framework für ESP-Devices mit MQTT-Anbindung_
 ***
 
@@ -11,7 +11,7 @@ Unterstütz werden bislang folgende Funktionen:
   - WiFi-Network-Scan
   - MQTT-Unterstützung
   - FTP-Server für SPIFFS Zugriff
-- Webinterface (UI) 
+- Webinterface (UI)
   - Konfiguration
   - Authentifizierung
   - readings
@@ -27,7 +27,7 @@ Unterstütz werden bislang folgende Funktionen:
   - Topic gestützte set/get/event-Struktur
   - Voller zugriff auf alle internen Funktionen über:
     - MQTT-Topics
-    - HTML-Set/Get 
+    - HTML-Set/Get
 - ~_LAN-Anbindung über WizNet W5x00_~
 - SPIFFS Unterstüzung
   - vollständiges Handling der Configurations-Files
@@ -46,8 +46,7 @@ Unterstütz werden bislang folgende Funktionen:
     - API-handler
     - Topic-Handler
 - Device-Plug-In-System zum einfachen handling unterschiedlicher Devices  
+  
+***    
 
-[CodeStruktur](https://omniesp.4nv.eu/index.html)
-
-
-
+## **[OmniESP WiKi](https://github.com/Pfannex/OmniESP/wiki)**
