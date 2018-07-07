@@ -345,8 +345,13 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
 // the POST operation is handled by uploadPageHandler2
 void WebServer::uploadPageHandler1(AsyncWebServerRequest *request) {
 
+#ifdef NO_OTA
+AsyncWebServerResponse *response =
+    request->beginResponse(200, "text/plain", "Device does not support OTA.");
+#else
   AsyncWebServerResponse *response =
       request->beginResponse(200, "text/plain", uploadOk ? "ok" : tarball.getLastError().c_str());
+#endif      
   response->addHeader("Connection", "close");
   request->send(response);
 }
@@ -357,6 +362,7 @@ void WebServer::uploadPageHandler2(AsyncWebServerRequest *request,
                                    String filename, size_t index, uint8_t *data,
                                    size_t len, bool final) {
 
+#ifndef NO_OTA
   if (!index) {
     // this is the first chunk
     //D("starting upload");
@@ -385,6 +391,7 @@ void WebServer::uploadPageHandler2(AsyncWebServerRequest *request,
              " bytes)");
     tarball.endWrite();
   }
+#endif
 }
 
 //...............................................................................

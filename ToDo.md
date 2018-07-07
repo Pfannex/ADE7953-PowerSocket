@@ -7,6 +7,13 @@
   - Clock: Zeitzone konfigurierbar machen
   - FTP-Server: falscher User oder falsches Passwort crasht ESP
 
+- **OTA**
+  - mit JQuery Mobile 1.3.2 kann /data auf unter 192kB gebracht werden,
+    mit -Os kann auch die Firmware auf 407kB gebracht werden. Damit würde
+    OTA im Layout 1MB mit 192kB SPIFFS funktionieren. Jedoch müsste dazu das
+    Webinterface angepasst werden, da sich die ältere Version von JQuery Mobile
+    etwas anders verhält/anders aussieht.
+
 - **API**
   - erstellen der Funktionsübersicht (PF) -> doxygen
 
