@@ -33,5 +33,7 @@
   "mqtt_port":              "",
   "mqtt_username":          "",
   "mqtt_password":          "",
-  "mqtt_aliases":           ""
+  "mqtt_aliases":           "",
+
+  "ftp":                    "off"
 }
