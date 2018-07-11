@@ -79,6 +79,7 @@ String SysUtils::strTime(time_t t) {
   sprintf(txt, "%02d:%02d:%02d", hour(t), minute(t), second(t));
   return String(txt);
 }
+
 /*String SysUtils::strTime_ms(time_t t) {
   char txt[128];
   long ms = 1000 * (t - floor(t));

@@ -30,5 +30,5 @@ public:
 
   // version utils
   static String fullVersion();
-  
+
 };

@@ -10,7 +10,7 @@
 // Debugging
 //###############################################################################
 
-#define DEBUG 0
+#define DEBUG 2 //1 = time in [s]; 2 = time in [ms]
 #ifdef DEBUG
 //  #define DEBUG_UPDATER Serial
 //  #define NO_AUTH 1
