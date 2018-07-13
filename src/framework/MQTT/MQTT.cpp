@@ -135,7 +135,11 @@ void MQTT::on_incomingSubscribe(char *topics, byte *payload,
   // This is the actual action. We throw away the result because the API
   // itself cares about informing the listeners/views about the executed
   // command and its result, see API::call().
-  api.call(topics2, args);
+  Topic topic(topics2, args);
+  String result = api.call(topic);
+
+  topic.setItem(1, "result");
+  pub(topic.topic_asCStr(), result.c_str());
 
   free(topics2);
   if (args != NULL)
@@ -190,7 +194,7 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
 //...............................................................................
 //  MQTT publish
 //...............................................................................
-void MQTT::pub(char* topic, char* value) {
+void MQTT::pub(const char* topic, const char* value) {
   if (client.connected()) {
     //Ds("pub topic", topic);
     //Ds("pub value", value);

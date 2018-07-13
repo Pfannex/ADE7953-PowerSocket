@@ -30,6 +30,6 @@ private:
   String deviceName;
   WiFiClient espClient;
   PubSubClient client;
-  void pub(char* topic, char* value);
+  void pub(const char* topic, const char* value);
   void pub(String& topic, const String& value);
 };
