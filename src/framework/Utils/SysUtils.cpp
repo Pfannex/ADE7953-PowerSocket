@@ -1,5 +1,5 @@
-#include "framework/Utils/SysUtils.h"
 #include "Setup.h"
+#include "framework/Utils/SysUtils.h"
 
 // we do not need an instance of SysUtils
 // all methods are static (class functions)
@@ -74,34 +74,40 @@ String SysUtils::strDate(time_t t) {
   return String(txt);
 }
 
+String SysUtils::strDate_ms(unsigned long long t) { return strDate(t / 1000); }
+
 String SysUtils::strTime(time_t t) {
   char txt[11];
   sprintf(txt, "%02d:%02d:%02d", hour(t), minute(t), second(t));
   return String(txt);
 }
-/*String SysUtils::strTime_ms(time_t t) {
+
+String SysUtils::strTime_ms(unsigned long long t) {
   char txt[128];
-  long ms = 1000 * (t - floor(t));
-  sprintf(txt, "%02d:%02d:%02d.%03d", hour(t), minute(t), second(t), ms);
+  time_t td = t / 1000;
+  sprintf(txt, "%02d:%02d:%02d.%03ld", hour(td), minute(td), second(td),
+          (unsigned int)(t - 1000 * td));
   return String(txt);
-}*/
+}
 
 String SysUtils::strDateTime(time_t t) { return strDate(t) + " " + strTime(t); }
 
-/*String SysUtils::strDateTime_ms(time_t t) {
-  return strDate(t) + " " + strTime_ms(t);
-}*/
+String SysUtils::strDateTime_ms(unsigned long long t) {
+  return strDate_ms(t) + " " + strTime_ms(t);
+}
 
-String SysUtils::uptimeStr(time_t t) {
+String SysUtils::uptimeStr(unsigned long long t) {
 
-  long int days= t/86400;
-  t-= days*86400;
-  int hours= t/3600;
-  t-= hours*3600;
-  int minutes= t/60;
-  t-= minutes*60;
-  char txt[15];
-  sprintf(txt, "%dd %02d:%02d:%02d", days, hours, minutes, t);
+  unsigned long td= t/1000;
+  unsigned int ms= t-td*1000;
+  long int days = td / 86400;
+  td -= days * 86400;
+  int hours = td / 3600;
+  td -= hours * 3600;
+  int minutes = td / 60;
+  td -= minutes * 60;
+  char txt[32];
+  sprintf(txt, "%ldd %02d:%02d:%02d.%03ld", days, hours, minutes, td, ms);
   return String(txt);
 }
 

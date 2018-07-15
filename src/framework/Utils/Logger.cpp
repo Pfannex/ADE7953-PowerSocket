@@ -4,7 +4,7 @@
 //###############################################################################
 //  logging
 //###############################################################################
-LOGGING::LOGGING(Clock &clock) : clock(clock) { logFunction= nullptr; }
+LOGGING::LOGGING(Clock &clock) : clock(clock) { logFunction = nullptr; }
 
 //-------------------------------------------------------------------------------
 //  LOGGING public
@@ -31,37 +31,32 @@ void LOGGING::setLogFunction(const LogFunction lf) { logFunction = lf; }
 //...............................................................................
 //  log
 //...............................................................................
-/*
+
+#define LOGMAXMSGLEN (64)
+
 void LOGGING::log(const String &channel, const String &msg) {
-  //Dl;
-  if ((channel != "DEBUG") || DEBUG) {
-    char txt[1026];
-    String T = SysUtils::strDateTime(clock.now());
-    // this limits the length to 19+1+5+997+1= 1023 bytes
-    sprintf(txt, "%.19s %.5s %.997s", T.c_str(), channel.c_str(), msg.c_str());
-    Serial.println(txt);
-    //Dl;
-    if (logFunction != nullptr) {
-      //D("calling logFunction...");
-      logFunction(channel, msg);
-    }
-  }
-}
-*/
-void LOGGING::log(const String &channel, const String &msg) {
-  //Dl;
-  if ((channel != "DEBUG") || DEBUG) {
-    char *txt= (char*) malloc((27+msg.length())*sizeof(char));
-    String T = SysUtils::strDateTime(clock.now());
-    // this limits the length to 19+1+5+997+1= 1023 bytes
-    sprintf(txt, "%.19s %.5s %s", T.c_str(), channel.c_str(), msg.c_str());
-    Serial.println(txt);
-    free(txt);
-    //Dl;
-    if (logFunction != nullptr) {
-      //D("calling logFunction...");
-      logFunction(channel, msg);
-    }
+// Dl;
+#ifndef DEBUG
+  if (channel == "DEBUG")
+    return; // early exit
+#endif
+#ifdef TIMESTAMP_MS
+  char *txt = (char *)malloc((31 + msg.length()) * sizeof(char));
+  String T = SysUtils::strDateTime_ms(clock.nowMillis());
+  sprintf(txt, "%.23s %.5s %s", T.c_str(), channel.c_str(),
+          msg.substring(0, LOGMAXMSGLEN-1).c_str());
+#else
+  char *txt = (char *)malloc((27 + msg.length()) * sizeof(char));
+  String T = SysUtils::strDateTime(clock.now());
+  sprintf(txt, "%.19s %.5s %s", T.c_str(), channel.c_str(),
+          msg.substring(0, LOGMAXMSGLEN-1).c_str());
+#endif
+  Serial.println(txt);
+  free(txt);
+  // Dl;
+  if (logFunction != nullptr) {
+    // D("calling logFunction...");
+    logFunction(channel, msg);
   }
 }
 

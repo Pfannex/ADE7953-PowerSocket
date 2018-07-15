@@ -63,8 +63,10 @@ String API::call(Topic &topic) {
   //D("******* API call *******");
   //Ds("call topic:", topic.topic_asCStr());
   //Ds("call value:", topic.arg_asCStr());
+  /*
   String lastCommand= topic.asString();
   debug("API call " +lastCommand);
+  */
   String result = controller.call(topic);
   if (result == nullptr) {
     result = String("<no result>");
@@ -107,7 +109,11 @@ void API::info(const String &msg) { controller.logging.info(msg); }
 
 void API::error(const String &msg) { controller.logging.error(msg); }
 
-void API::debug(const String &msg) { controller.logging.debug(msg); }
+void API::debug(const String &msg) {
+  #ifdef DEBUG
+  controller.logging.debug(msg);
+  #endif
+}
 
 //-------------------------------------------------------------------------------
 //  API private

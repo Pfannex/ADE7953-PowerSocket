@@ -7,19 +7,6 @@
 #define VERSION "OmniESP"
 
 //###############################################################################
-// Debugging
-//###############################################################################
-
-#define DEBUG 0
-#ifdef DEBUG
-//  #define DEBUG_UPDATER Serial
-//  #define NO_AUTH 1
-  #define NO_AUTH 0
-#else
-  #define NO_AUTH 0
-#endif
-
-//###############################################################################
 //  User
 //###############################################################################
 
@@ -35,7 +22,7 @@
 #define WEBSERVERPORT 80
 
 //###############################################################################
-//  NTP
+//  NTP and Time
 //###############################################################################
 
 // default configuration if no other is set in the config
@@ -43,6 +30,8 @@
 #define NTP_UPDATE_INTERVAL 3600000
 #define NO_TIME_OFFSET 0
 #define TZ_CET
+// all timestamps from device in ms if defined
+#define TIMESTAMP_MS
 
 //###############################################################################
 //  FlashFileSystem

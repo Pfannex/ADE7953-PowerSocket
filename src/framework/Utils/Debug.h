@@ -15,7 +15,7 @@
 
 // print a message and an integer value
 #define Di(msg, value)                                                         \
-  Serial.printf("  >>> %s %d (%d %s)\r\n", msg, (value), __LINE__, __FILE__);
+  Serial.printf("  >>> %s %ld (%d %s)\r\n", msg, (value), __LINE__, __FILE__);
 
 // print a message and string value
 #define Ds(msg, value)                                                         \
