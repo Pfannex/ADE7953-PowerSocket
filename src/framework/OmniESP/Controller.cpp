@@ -426,7 +426,7 @@ void Controller::t_1s_Update() {}
 
 void Controller::t_short_Update() {
   espTools.debugMem();
-  logging.debug("uptime: "+SysUtils::uptimeStr(clock.uptime()));
+  logging.debug("uptime: "+SysUtils::uptimeStr(clock.uptimeMillis()));
 };
 
 void Controller::t_long_Update() {}

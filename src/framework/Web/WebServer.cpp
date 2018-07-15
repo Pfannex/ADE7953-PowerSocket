@@ -27,13 +27,15 @@ WebServer::WebServer(API &api)
                         "/web/css/images/ajax-loader.gif", "max-age=86400");
 
   // dynamic pages
-  webServer.on("/", HTTP_ANY, std::bind(&WebServer::rootPageHandler, this,
-                                        std::placeholders::_1));
-  webServer.on("/auth.html", HTTP_ANY, std::bind(&WebServer::authPageHandler,
-                                                 this, std::placeholders::_1));
-  webServer.on("/api.html", HTTP_ANY, std::bind(&WebServer::apiPageHandler,
-                                                this, std::placeholders::_1));
-
+  webServer.on(
+      "/", HTTP_ANY,
+      std::bind(&WebServer::rootPageHandler, this, std::placeholders::_1));
+  webServer.on(
+      "/auth.html", HTTP_ANY,
+      std::bind(&WebServer::authPageHandler, this, std::placeholders::_1));
+  webServer.on(
+      "/api.html", HTTP_ANY,
+      std::bind(&WebServer::apiPageHandler, this, std::placeholders::_1));
 
   // firmware upload; the first function handles the request, the second
   // function is executed for every chunk of the uploaded file
@@ -90,13 +92,13 @@ void WebServer::stop() {
 
   api.info("stoping webserver");
 
-   // Authentificator
-   auth.reset();
+  // Authentificator
+  auth.reset();
 
-   // start serving requests
-   //webServer.reset();
-   api.info("webserver stoped");
-   isRunning = false;
+  // start serving requests
+  // webServer.reset();
+  api.info("webserver stoped");
+  isRunning = false;
 }
 //-------------------------------------------------------------------------------
 //  WebServer private
@@ -147,13 +149,13 @@ void WebServer::logFunction(const String &channel, const String &msg) {
 // send Topics to websocket
 void WebServer::topicFunction(const time_t, Topic &topic) {
 
-  String tail= topic.modifyTopic(0);
+  String tail = topic.modifyTopic(0);
   // First react on events that affect us...
   String topicStr = "~/" + tail;
 
-  //listen to wifi start
-  if (topicStr == "~/event/wifi/start") start();
-
+  // listen to wifi start
+  if (topicStr == "~/event/wifi/start")
+    start();
 
   if (isRunning) {
     String type("event");
@@ -168,12 +170,13 @@ void WebServer::topicFunction(const time_t, Topic &topic) {
 //...............................................................................
 bool WebServer::checkAuthentification(AsyncWebServerRequest *request) {
 
-  if (NO_AUTH)
-    return true;
+#ifdef NO_AUTH
+  return true;
+#else
   // check for cookie
   if (request->hasHeader("Cookie")) {
     String cookie = request->header("Cookie");
-    api.debug("client provided cookie: " + cookie);
+    //api.debug("client provided cookie: " + cookie);
     int p = cookie.indexOf("sessionId=");
     if (p < 0) {
       api.debug("no sessionId provided.");
@@ -181,7 +184,7 @@ bool WebServer::checkAuthentification(AsyncWebServerRequest *request) {
     }
     // check if cookie corresponds to active session
     String sessionId = cookie.substring(p + 10, p + 74);
-    api.debug("sessionId " + sessionId + " provided.");
+    //api.debug("sessionId " + sessionId + " provided.");
     SessionPtr session = auth.getSession(sessionId);
     if (!session) {
       // api.debug("no session found.");
@@ -199,6 +202,7 @@ bool WebServer::checkAuthentification(AsyncWebServerRequest *request) {
   } else {
     return false;
   }
+#endif
 }
 
 //...............................................................................
@@ -237,7 +241,11 @@ void WebServer::rootPageHandler(AsyncWebServerRequest *request) {
     api.info("User-Agent: " + request->header("User-Agent"));
   }
 
-  bool authenticated = NO_AUTH || checkAuthentification(request);
+#ifdef NO_AUTH
+  bool authenticated = true;
+#else
+  bool authenticated = checkAuthentification(request);
+#endif
 
   if (authenticated) {
 
@@ -321,14 +329,14 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
     return;
   }
   // log call only in DEBUG mode, it could contain sensitive information
-  api.debug("webserver handling API call " + call);
+  //api.debug("webserver handling API call " + call);
   if (checkAuthentification(request)) {
 
     Topic tmpTopic(call);
 
     String result = api.call(tmpTopic);
     // contains sensitive information, log only in debug mode
-    api.debug("returning " + result);
+    //api.debug("returning " + result);
     request->send(200, "text/plain", result);
   } else {
     api.debug("client is not authenticated.");
@@ -346,12 +354,12 @@ void WebServer::apiPageHandler(AsyncWebServerRequest *request) {
 void WebServer::uploadPageHandler1(AsyncWebServerRequest *request) {
 
 #ifdef NO_OTA
-AsyncWebServerResponse *response =
-    request->beginResponse(200, "text/plain", "Device does not support OTA.");
-#else
   AsyncWebServerResponse *response =
-      request->beginResponse(200, "text/plain", uploadOk ? "ok" : tarball.getLastError().c_str());
-#endif      
+      request->beginResponse(200, "text/plain", "Device does not support OTA.");
+#else
+  AsyncWebServerResponse *response = request->beginResponse(
+      200, "text/plain", uploadOk ? "ok" : tarball.getLastError().c_str());
+#endif
   response->addHeader("Connection", "close");
   request->send(response);
 }
@@ -365,20 +373,20 @@ void WebServer::uploadPageHandler2(AsyncWebServerRequest *request,
 #ifndef NO_OTA
   if (!index) {
     // this is the first chunk
-    //D("starting upload");
-    //D("removing...");
+    // D("starting upload");
+    // D("removing...");
     uploadOk = tarball.remove();
     if (uploadOk)
       uploadOk = tarball.beginWrite();
     else
       api.error(tarball.getLastError());
-    //D("writing begun.");
+    // D("writing begun.");
     if (!uploadOk)
       api.error(tarball.getLastError());
     else
       api.info("uploading tarball from file " + filename);
   };
-  //Di("writing...", len)
+  // Di("writing...", len)
   if (uploadOk) {
     if (!tarball.write(data, len)) {
       uploadOk = false;
@@ -386,7 +394,7 @@ void WebServer::uploadPageHandler2(AsyncWebServerRequest *request,
     }
   }
   if (final) {
-    //D("finished");
+    // D("finished");
     api.info("tarball successfully uploaded (" + String(index + len) +
              " bytes)");
     tarball.endWrite();

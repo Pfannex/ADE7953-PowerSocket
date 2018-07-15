@@ -59,7 +59,9 @@ void Clock::updateUptime() {
   uptimeLo = ms;
 }
 
-double Clock::uptime() { return uptimeLo / 1000.0 + uptimeHi * 4294967.296; }
+unsigned long long Clock::uptimeMillis() {
+  return uptimeLo + uptimeHi * 4294967296;
+}
 
 //...............................................................................
 //  now
@@ -68,9 +70,21 @@ double Clock::uptime() { return uptimeLo / 1000.0 + uptimeHi * 4294967.296; }
 time_t Clock::now() {
 
   if (ntpClient == nullptr) {
-    return (time_t)uptime();
+    return (time_t)(uptimeMillis() / 1000);
   } else {
     return tz.toLocal(ntpClient->getEpochTime());
+  }
+}
+
+unsigned long long Clock::nowMillis() {
+
+  if (ntpClient == nullptr) {
+    return uptimeMillis();
+  } else {
+    unsigned long long t= ntpClient->getEpochMillis();
+    //time_t td= t/1000;
+    //return (tz.toLocal(td)-td)*1000+t;
+    return t;
   }
 }
 
@@ -106,9 +120,7 @@ void Clock::forceUpdate() {
 //  time differential in seconds between local time and UTC
 //...............................................................................
 
-long Clock::timezone(time_t t) {
-  return t-tz.toUTC(t);
-}
+long Clock::timezone(time_t t) { return t - tz.toUTC(t); }
 
 //...............................................................................
 //  root() get root string as JSON
@@ -117,12 +129,11 @@ long Clock::timezone(time_t t) {
 String Clock::root() {
 
   time_t t = now();
-  return "{\"date\":\"" + SysUtils::strDate(t) + "\"," +
-          "\"time\":\"" + SysUtils::strTime(t) + "\"," +
-          "\"dateTime\":\"" + SysUtils::strDateTime(t) + + "\"," +
-          "\"uptime\":\"" + SysUtils::uptimeStr(uptime()) + "\"," +
-          "\"timezone\":\"" + String(timezone(t), DEC) +
-          "\"}";
+  return "{\"date\":\"" + SysUtils::strDate(t) + "\"," + "\"time\":\"" +
+         SysUtils::strTime(t) + "\"," + "\"dateTime\":\"" +
+         SysUtils::strDateTime(t) + +"\"," + "\"uptime\":\"" +
+         SysUtils::uptimeStr(uptimeMillis()) + "\"," + "\"timezone\":\"" +
+         String(timezone(t), DEC) + "\"}";
 }
 
 //...............................................................................
@@ -170,7 +181,7 @@ String Clock::get(Topic &topic) {
     /*} else if (topic.itemIs(3, "dateTime_ms")) {
       return SysUtils::strDateTime_ms(now());*/
   } else if (topic.itemIs(3, "uptime")) {
-    return SysUtils::uptimeStr(uptime());
+    return SysUtils::uptimeStr(uptimeMillis());
   } else if (topic.itemIs(3, "timezone")) {
     return String(timezone(now()), DEC);
   } else {

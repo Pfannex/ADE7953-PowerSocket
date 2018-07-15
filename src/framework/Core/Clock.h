@@ -21,7 +21,8 @@ public:
   void handle();
   void forceUpdate();
   time_t now();    // current time in seconds since the epoch
-  double uptime(); // uptime in s (with ms accuracy)
+  unsigned long long nowMillis();  // current time in milliseconds since the epoch
+  unsigned long long uptimeMillis(); // uptime in ms (with ms accuracy)
 
   String set(Topic &topic);
   String get(Topic &topic);
