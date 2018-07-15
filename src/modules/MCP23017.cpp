@@ -80,6 +80,7 @@ void MCP23017::irqHandle() {
 
     clearIRQ();
 
+/*
     while (mcp.readRegister(MCP23017_INTFA) > 0 || mcp.readRegister(MCP23017_INTFB) > 0){
       Serial.println("  hanging.....");
       //Serial.print("INTFA - ");Serial.println(MCP23017.readRegister(MCP23017_INTFA), BIN);
@@ -87,6 +88,7 @@ void MCP23017::irqHandle() {
       Serial.print("  GPIOA - ");Serial.println(mcp.readRegister(MCP23017_GPIOA), BIN);
       Serial.print("  GPIOB - ");Serial.println(mcp.readRegister(MCP23017_GPIOB), BIN);
     }
+*/
     irqSetMode(FALLING);
   }
 
@@ -107,7 +109,7 @@ void MCP23017::irqHandle() {
 // clear MCP23017 IRQ
 //...............................................................................
 void MCP23017::clearIRQ() {
-
+/*
   while (mcp.readRegister(MCP23017_INTFA) > 0 || mcp.readRegister(MCP23017_INTFB) > 0){
     mcp.readRegister(MCP23017_GPIOA);
     mcp.readRegister(MCP23017_GPIOB);
@@ -119,7 +121,7 @@ void MCP23017::clearIRQ() {
     //Serial.print("  GPIOB - ");Serial.println(mcp.readRegister(MCP23017_GPIOB), BIN);
     //configMCP();
     //Serial.println("---------------------------------------------");
-  }
+  }*/
 
   //logging.debug("INTCAPA " + String(mcp.readRegister(MCP23017_INTCAPA)));
   //logging.debug("INTCAPB " + String(mcp.readRegister(MCP23017_INTCAPB)));

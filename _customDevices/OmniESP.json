@@ -3,7 +3,7 @@
   "device_username":        "admin",
   "device_password":        "admin",
 
-  "wifi":                   "dhcp",
+  "wifi":                   "off",
   "wifi_ssid":              "",
   "wifi_password":          "",
   "wifi_ip":                "",
@@ -11,9 +11,9 @@
   "wifi_gateway":           "",
   "wifi_dns":               "",
 
-  "ap":                     "off",
+  "ap":                     "auto",
   "ap_ssid":                "",
-  "ap_password":            "admin",
+  "ap_password":            "",
 
   "lan":                    "off",
   "lan_ip":                 "",
