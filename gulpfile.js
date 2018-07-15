@@ -172,6 +172,13 @@ gulp.task('copyfirmware', function() {
     .pipe(gulp.dest(datadir + '/firmware'));
 });
 
+/* copy firmware to update folder */
+gulp.task('copyparts', function() {
+  return gulp.src([bindir + '/firmware.bin', bindir + '/spiffs.bin'])
+    .pipe(gulp.dest(updatedir));
+});
+
+
 /* delete firmware from folder structure */
 // npm install --save-dev gulp del
 gulp.task('delfirmware', function() {
@@ -202,8 +209,8 @@ gulp.task('buildfs', gulp.series('clean', 'versioninfo',
   gulp.parallel('files', 'lib', 'html')));
 gulp.task('buildfs2', gulp.series('clean', 'versioninfo',
   gulp.parallel('files', 'lib', 'inline')));
-gulp.task('default', gulp.series('buildfs', 'versioninfo'));
-gulp.task('tarball', gulp.series('buildfs', 'copyfirmware', 'tar', 'delfirmware'));
+gulp.task('default', gulp.series('buildfs'));
+gulp.task('tarball', gulp.series('buildfs', 'copyparts', 'copyfirmware', 'tar', 'delfirmware'));
 
 // -----------------------------------------------------------------------------
 // PlatformIO support
