@@ -80,6 +80,7 @@ private:
 
   String scanWifi();
   String scanResult();
+  void on_scanWifi_complete();
   int scanStatus = -2; //in progress: -1; not been triggered: -2; >0 = found
 
   CallbackFunction on_wl_connected;

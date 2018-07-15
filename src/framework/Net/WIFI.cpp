@@ -92,8 +92,6 @@ String WIFI::set(Topic &topic) {
 
   if (topic.itemIs(3, "scan")) {
     return scanWifi();
-  } else if (topic.itemIs(3, "scan_result")){
-    return scanResult();
   } else {
     return TOPIC_NO;
   }
@@ -106,11 +104,14 @@ String WIFI::set(Topic &topic) {
 ~/get
 └─wifi              (level 2)
   └─macAddress      (level 3)
+  └─scanResult      (level 3)
 */
 
 String WIFI::get(Topic &topic) {
   if (topic.itemIs(3, "macAddress")) {
     return macAddress();
+  } else if (topic.itemIs(3, "scanResult")){
+    return scanResult();
   } else {
     return TOPIC_NO;
   }
@@ -283,8 +284,13 @@ String WIFI::scanWifi() {
   logging.info("start Networkscan");
   // WiFi.scanNetworks will return the number of networks found
   WiFi.scanDelete();
-  WiFi.scanNetworksAsync(std::bind(&WIFI::scanResult, this));
+  WiFi.scanNetworksAsync(std::bind(&WIFI::on_scanWifi_complete, this));
   return "running";
+}
+
+void WIFI::on_scanWifi_complete(){
+  String result = scanResult();
+  if (on_wifi_scan_result != nullptr) on_wifi_scan_result(result);
 }
 
 String WIFI::scanResult(){
@@ -305,6 +311,5 @@ String WIFI::scanResult(){
   }
   json += "]";
 
-  if (on_wifi_scan_result != nullptr) on_wifi_scan_result(json);
   return json;
 }

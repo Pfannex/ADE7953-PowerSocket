@@ -211,7 +211,7 @@ void Controller::on_wifi_scan_result(String result) {
   logging.info("Networkscan done");
   logging.info(result);
 
-  topicQueue.put("~/event/wifi/on_wifi_scan_result " + result);
+  topicQueue.put("~/event/wifi/scanResult " + result);
 }
 
 //...............................................................................
