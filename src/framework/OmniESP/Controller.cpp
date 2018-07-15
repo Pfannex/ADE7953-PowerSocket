@@ -455,18 +455,20 @@ void Controller::setConfigDefaults() {
   bool f= setConfigDefault("device_name", "ESP8266_" + espTools.genericName());
   deviceName= ffs.cfg.readItem("device_name");
   // set other defaults
-  f= f ||
-    setConfigDefault("device_username", USERNAME) ||
-    setConfigDefault("device_password", PASSWORD) ||
-    setConfigDefault("update", "manual") ||
-    setConfigDefault("ap", "auto") ||
-    setConfigDefault("ap_ssid", deviceName) ||
-    setConfigDefault("ap_password", APPASSWORD) ||
-    setConfigDefault("wifi", "off") ||
-    setConfigDefault("lan", "off") ||
-    setConfigDefault("ntp", "off") ||
-    setConfigDefault("ftp", "off") ||
-    setConfigDefault("mqtt", "off");
+  // we need to do this the hard way because the compiler optimizes the
+  // the setConfigDefault() calls away if f is already true in a f= f || ..
+  // sequence
+  if(setConfigDefault("device_username", USERNAME)) f= true;
+  if(setConfigDefault("device_password", PASSWORD)) f= true;
+  if(setConfigDefault("update", "manual")) f= true;
+  if(setConfigDefault("ap", "auto")) f= true;
+  if(setConfigDefault("ap_ssid", deviceName)) f= true;
+  if(setConfigDefault("ap_password", APPASSWORD)) f= true;
+  if(setConfigDefault("wifi", "off")) f= true;
+  if(setConfigDefault("lan", "off")) f= true;
+  if(setConfigDefault("ntp", "off")) f= true;
+  if(setConfigDefault("ftp", "off")) f= true;
+  if(setConfigDefault("mqtt", "off")) f= true;
   // ensure minimum length of AP password
   String appassword= ffs.cfg.readItem("ap_password");
   if(appassword.length()< 8) {
