@@ -19,6 +19,11 @@ private:
   API &api;
   Tarball tarball;
 
+  // stores variables for template
+  String macAddress;
+  String deviceName;
+  String firmwareVersion;
+
   bool uploadOk = true; // flag for upload running fine
 
   // authenticator

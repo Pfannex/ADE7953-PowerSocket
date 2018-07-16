@@ -79,6 +79,11 @@ void WebServer::start() {
   // Authentificator
   auth.reset();
 
+  // get variables for templates
+  macAddress= api.call("~/get/wifi/macAddress");
+  deviceName= api.call("~/get/ffs/cfg/item/device_name");
+  firmwareVersion= api.call("~/get/ffs/version/item/version");
+
   // start serving requests
   webServer.begin();
   api.info("webserver started.");
@@ -214,11 +219,11 @@ String WebServer::subst(const String &var) {
   if (var == "TITLE")
     return (F(TITLE));
   else if (var == "MACADDRESS")
-    return api.call("~/get/wifi/macAddress");
+    return macAddress;
   else if (var == "DEVICENAME")
-    return api.call("~/get/ffs/cfg/item/device_name");
+    return deviceName;
   else if (var == "FIRMWARE")
-    return api.call("~/get/ffs/version/item/version");
+    return firmwareVersion;
   else
     return F("?");
 }
@@ -251,7 +256,7 @@ void WebServer::rootPageHandler(AsyncWebServerRequest *request) {
 
     String action = request->arg("action");
 
-    api.info("request authenticated.");
+    //api.info("request authenticated.");
     request->send(SPIFFS, "/web/ui.html", String(), false,
                   std::bind(&WebServer::subst, this, std::placeholders::_1));
   } else {
