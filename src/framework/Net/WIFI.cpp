@@ -157,7 +157,8 @@ void WIFI::startSTA() {
       logging.error("could not apply WiFi configuration");
     }
   }
-
+  
+  logging.info("try to connect to SSID: " + ssid);
   WiFi.begin(ssid.c_str(), psk.c_str());
 }
 

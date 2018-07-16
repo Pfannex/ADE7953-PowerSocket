@@ -164,7 +164,8 @@ void Controller::handleEvent(String &topicsArgs) {
 void Controller::on_wl_connected() {
   logging.info("WiFi STA has connected");
   topicQueue.put("~/event/wifi/wl_connected");
-  logging.info("STA connected with IP " + WiFi.localIP().toString());
+  logging.info("STA connected to " + WiFi.SSID() + " | IP " 
+                                   + WiFi.localIP().toString());
 
   startNtp();
   //topicQueue.put("~/set/mqtt/state", 1);

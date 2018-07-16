@@ -240,11 +240,11 @@ String WebServer::subst(const String &var) {
 
 void WebServer::rootPageHandler(AsyncWebServerRequest *request) {
 
-  api.info("serving root page");
+/*  api.info("serving root page");
 
   if (request->hasHeader("User-Agent")) {
     api.info("User-Agent: " + request->header("User-Agent"));
-  }
+  }*/
 
 #ifdef NO_AUTH
   bool authenticated = true;
@@ -254,11 +254,11 @@ void WebServer::rootPageHandler(AsyncWebServerRequest *request) {
 
   if (authenticated) {
 
-    String action = request->arg("action");
-
+    //String action = request->arg("action");
     //api.info("request authenticated.");
     request->send(SPIFFS, "/web/ui.html", String(), false,
                   std::bind(&WebServer::subst, this, std::placeholders::_1));
+
   } else {
     // send user to login page
     api.info("request not authenticated.");
