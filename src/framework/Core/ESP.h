@@ -1,9 +1,11 @@
 #pragma once
 #include <Arduino.h>
+/*
 extern "C" {
 #include <cont.h>
 extern cont_t g_cont;
 }
+*/
 #include "framework/Utils/Logger.h"
 
 //###############################################################################

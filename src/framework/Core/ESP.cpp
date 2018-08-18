@@ -87,13 +87,23 @@ uint32_t ESP_Tools::freeHeapSize() { // long?
 }
 
 int ESP_Tools::freeStackSize() {
+  /*
   register uint32_t *sp asm("a1");
   return 4 * (sp - g_cont.stack);
+  */
+  return -1;
 }
 
-int ESP_Tools::minFreeStackSize() { return cont_get_free_stack(&g_cont); }
+int ESP_Tools::minFreeStackSize() {
+/*return cont_get_free_stack(&g_cont);*/
+return -1; }
 
-int ESP_Tools::stackCorrupted() { return cont_check(&g_cont); }
+int ESP_Tools::stackCorrupted() {
+  /*
+  return cont_check(&g_cont);
+  */
+  return false;
+}
 
 //...............................................................................
 //  get Chip ID
