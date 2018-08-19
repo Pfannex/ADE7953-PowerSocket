@@ -426,7 +426,9 @@ String Controller::call(Topic &topic) {
 void Controller::t_1s_Update() {}
 
 void Controller::t_short_Update() {
-  espTools.debugMem();
+  /*
+    espTools.debugMem();
+  */
   logging.debug("uptime: "+SysUtils::uptimeStr(clock.uptimeMillis()));
 };
 

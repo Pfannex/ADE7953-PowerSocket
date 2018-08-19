@@ -82,28 +82,26 @@ void ESP_Tools::reboot() {
 //...............................................................................
 //  get free memSize
 //...............................................................................
+
+/*
+
 uint32_t ESP_Tools::freeHeapSize() { // long?
   return ESP.getFreeHeap();
 }
 
 int ESP_Tools::freeStackSize() {
-  /*
   register uint32_t *sp asm("a1");
   return 4 * (sp - g_cont.stack);
-  */
-  return -1;
 }
 
 int ESP_Tools::minFreeStackSize() {
-/*return cont_get_free_stack(&g_cont);*/
-return -1; }
+  return cont_get_free_stack(&g_cont);
+ }
 
 int ESP_Tools::stackCorrupted() {
-  /*
   return cont_check(&g_cont);
-  */
-  return false;
 }
+*/
 
 //...............................................................................
 //  get Chip ID
@@ -138,6 +136,8 @@ String ESP_Tools::update() {
 //...............................................................................
 //  DEBUG MEM
 //...............................................................................
+
+/*
 void ESP_Tools::debugMem() {
   char msg[200];
   sprintf(msg, "free heap: %d, free stack: %d (min: %d, corrupt: %d)",
@@ -158,7 +158,7 @@ void ESP_Tools::debugMem_stop() {
           freeStackSize(), freeStackSize() - stackStart);
   logging.debug(msg);
 }
-
+*/
 //...............................................................................
 //  ESP_Tools SET
 //...............................................................................
@@ -200,8 +200,10 @@ String ESP_Tools::set(Topic &topic) {
 String ESP_Tools::get(Topic &topic) {
   if (topic.itemIs(3, "chipId")) {
     return String(chipId());
+  /*
   } else if (topic.itemIs(3, "freeHeapSize")) {
     return String(freeHeapSize());
+  */
   } else {
     return TOPIC_NO;
   }
