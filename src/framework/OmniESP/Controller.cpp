@@ -164,7 +164,7 @@ void Controller::handleEvent(String &topicsArgs) {
 void Controller::on_wl_connected() {
   logging.info("WiFi STA has connected");
   topicQueue.put("~/event/wifi/wl_connected");
-  logging.info("STA connected to " + WiFi.SSID() + " | IP " 
+  logging.info("STA connected to " + WiFi.SSID() + " | IP "
                                    + WiFi.localIP().toString());
 
   startNtp();
@@ -311,7 +311,7 @@ void Controller::on_wifi_state_change() {
       //set staTimeout to 0 if no valid SSID is available
       staTimeout = wifi.validSSID ? STA_TIMEOUT : 0;
       //start the STA Timer
-      staTimeout_t = millis();
+      staTimeout_t = clock.nowMillis();
       staTimeoutActive = true;
       logging.debug("start staTimeoutTimer");
     }
@@ -340,7 +340,7 @@ void Controller::on_wifi_state_change() {
       //set apTimeoutActive to false if no valid SSID is available
       apTimeoutActive = wifi.validSSID ? true : false;
       //start the AP Timer
-      apTimeout_t = millis();
+      apTimeout_t = clock.nowMillis();
       logging.debug("start apTimeoutTimer");
     }
 
@@ -363,7 +363,7 @@ void Controller::on_wifi_state_change() {
 //  handle WiFi timeout
 //...............................................................................
 void Controller::handleWifiTimout() {
-  unsigned long now = millis();
+  unsigned long long now = clock.nowMillis();
 
   if (staTimeoutActive)
     if (now - staTimeout_t > staTimeout){

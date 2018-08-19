@@ -92,8 +92,8 @@ private:
   ap_state_t  apState  = AP_UNKNOWN;
   long staTimeout = STA_TIMEOUT;
   long apTimeout  = AP_TIMEOUT;
-  unsigned long staTimeout_t = 0;
-  unsigned long apTimeout_t  = 0;
+  unsigned long long staTimeout_t = 0;
+  unsigned long long apTimeout_t  = 0;
   int  staTimeoutActive = false;
   int  apTimeoutActive = false;
   void handleWifiTimout();
