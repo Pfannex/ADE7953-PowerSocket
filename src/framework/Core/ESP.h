@@ -19,20 +19,28 @@ public:
 
   void start();
   void checkFlash();
+  /*
+  This portion was removed after g_cont was not available any more in a
+  recent version of the Arduino library. As a positive side effect, untraceable
+  hangs in the web interface disappeared.
+
   uint32_t freeHeapSize();
   int freeStackSize();
   int minFreeStackSize();
   int stackCorrupted();
+
+  void debugMem();
+  void debugMem_start();
+  void debugMem_stop();
+
+  */
+
   void reboot();
   long chipId();
   String genericName();
 
   bool updateRequested();
   String update();
-
-  void debugMem();
-  void debugMem_start();
-  void debugMem_stop();
 
   String set(Topic &topic);
   String get(Topic &topic);

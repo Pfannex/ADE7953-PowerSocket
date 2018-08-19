@@ -164,7 +164,7 @@ void Controller::handleEvent(String &topicsArgs) {
 void Controller::on_wl_connected() {
   logging.info("WiFi STA has connected");
   topicQueue.put("~/event/wifi/wl_connected");
-  logging.info("STA connected to " + WiFi.SSID() + " | IP " 
+  logging.info("STA connected to " + WiFi.SSID() + " | IP "
                                    + WiFi.localIP().toString());
 
   startNtp();
@@ -426,7 +426,9 @@ String Controller::call(Topic &topic) {
 void Controller::t_1s_Update() {}
 
 void Controller::t_short_Update() {
-  espTools.debugMem();
+  /*
+    espTools.debugMem();
+  */
   logging.debug("uptime: "+SysUtils::uptimeStr(clock.uptimeMillis()));
 };
 
