@@ -1,9 +1,11 @@
+"use strict";
+
 //
 // login
 //
 function login() {
-		username=$("#username").val();
-		password=$("#password").val();
+		var username=$("#username").val();
+		var password=$("#password").val();
 		$.ajax({
 			type: "POST",
 			url: "./auth.html",
