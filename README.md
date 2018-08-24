@@ -1,4 +1,4 @@
-# <img src="https://github.com/Pfannex/OmniESP/wiki/_pics/OmniESP.png" width="60%" align="right" align="top"/>
+<img src="././pics/OmniESP.png" width="60%" align="right"/>  
 <br />
 <br />
 <br />
