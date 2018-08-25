@@ -25,7 +25,6 @@ void WIFI::start() {
   WiFi.persistent(false);
   //ESP.eraseConfig();
   WiFi.mode(WIFI_OFF);
-  WiFiStatus = false;
 
   if (staMode=="off" and apMode=="off"){
     logging.info("WiFi staMode=off and apMode=off -> no WiFi functions available!");
@@ -157,7 +156,7 @@ void WIFI::startSTA() {
       logging.error("could not apply WiFi configuration");
     }
   }
-  
+
   logging.info("try to connect to SSID: " + ssid);
   WiFi.begin(ssid.c_str(), psk.c_str());
 }

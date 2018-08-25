@@ -46,7 +46,6 @@ public:
   FFS& ffs;
 
   WiFiClient client;
-  bool WiFiStatus= false;
   void set_callback(CallbackFunction wl_connected,
                     CallbackFunction wl_connect_failed,
                     CallbackFunction wl_no_ssid_avail,

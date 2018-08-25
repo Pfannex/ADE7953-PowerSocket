@@ -5,10 +5,15 @@
 #include <Arduino.h>
 #include <IPAddress.h>
 #include <PubSubClient.h>
+//#include "framework/Core/Clock.h"
 
 //###############################################################################
 //  MQTT client
 //###############################################################################
+
+// time in ms to try MQTT reconnection
+//#define MQTT_RECONNECT 1000
+
 class MQTT {
 public:
   MQTT(API &api);
@@ -27,6 +32,7 @@ public:
   void on_topicFunction(const time_t, Topic &topic);
 
 private:
+  bool state = 0;
   String deviceName;
   WiFiClient espClient;
   PubSubClient client;

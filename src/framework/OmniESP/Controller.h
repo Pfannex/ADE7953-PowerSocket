@@ -24,6 +24,8 @@
 #define STA_TIMEOUT 300000
 // time in ms to switch from AP_OPEN_WITHOUT_STATION to try STA reconnect
 #define AP_TIMEOUT 300000
+// time in ms to check MQTT state
+#define MQTT_CHECK_STATE 1000
 
 class Controller {
 public:
@@ -87,6 +89,7 @@ private:
 
   bool startFtp();
   bool startNtp();
+  void checkMqttState();
 
   sta_state_t staState = STA_UNKNOWN;
   ap_state_t  apState  = AP_UNKNOWN;
@@ -97,6 +100,7 @@ private:
   int  staTimeoutActive = false;
   int  apTimeoutActive = false;
   void handleWifiTimout();
+  unsigned long long mqttTimeout_t = 0;
 
 
   TopicQueue topicQueue;

@@ -33,7 +33,7 @@ MQTT::MQTT(API &api) : api(api), espClient(), client(espClient) {
 //  MQTT start connection
 //...............................................................................
 bool MQTT::start() {
-  bool MQTTOK = false;
+  //bool MQTTOK = false;
 
   api.info("MQTT maximum packet size: "+String(MQTT_MAX_PACKET_SIZE, DEC));
 
@@ -44,14 +44,14 @@ bool MQTT::start() {
     deviceName = api.call("~/get/ffs/cfg/item/device_name");
     String lastWillTopic = "Devices/" + deviceName;
 
-    api.info("MQTT client connecting to " + strIP + ":" + String(port));
+    api.info("MQTT try to connect to broker @" + strIP + ":" + String(port));
     api.info("MQTT DeviceName: " + deviceName);
 
     client.disconnect();
     client.setServer(IP, port);
     if (client.connect(deviceName.c_str(), lastWillTopic.c_str(), 0, false,
                        "Dead")) {
-      MQTTOK = true;
+      state = true;
       api.info("MQTT client connected to MQTT broker");
 
       client.publish(lastWillTopic.c_str(), "Alive");
@@ -89,18 +89,17 @@ bool MQTT::start() {
   } else {
     api.info("MQTT is switched off");
   }
-
-  return MQTTOK;
+  return state;
 }
 
 //...............................................................................
 //  MQTT stop connection
 //...............................................................................
 bool MQTT::stop() {
-  bool MQTTOK = false;
+  bool state = false;
   client.disconnect();
   api.info("MQTT client has disconnected");
-  return MQTTOK;
+  return state;
 }
 
 //...............................................................................
@@ -108,9 +107,19 @@ bool MQTT::stop() {
 //...............................................................................
 bool MQTT::handle() {
   if (client.connected()) {
+    //MQTT has CONNECTED
+    //if (state == 0) api.call("~/mqtt/state 1");
     client.loop();
+    state = 1;
     return true;
   } else
+    //MQTT has DISCONNECTED
+    if (state == 1){
+      api.info("MQTT client has disconnected");
+    }
+    //ToDo  Wartezeit.....
+    //api.call("~/mqtt/state 0");
+    state = 0;
     return false;
 }
 
@@ -172,6 +181,7 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
   // First react on events that affect us...
   String topicStr = "~/" + tail;
 
+  //Connect to broker after net/connected
   if (topicStr == "~/event/net/connected") {
     if (topic.getArgAsLong(0)) {
       start(); // start MQTT
@@ -179,6 +189,22 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
       stop();  // stop MQTT
     }
   }
+
+  //MQTT connection state
+  if (topicStr == "~/get/mqtt/state") {
+    String strState = String(state);
+    api.call("~/mqtt/state " + strState);
+  }
+
+  //Connect to broker after losing connection
+  if (topicStr == "~/event/mqtt/reconnect") {
+    if (topic.getArgAsLong(0) == 1) {
+      api.info("MQTT trying to reconnect");
+      start();
+    }
+  }
+
+
 
   // ..then publish the topic.
 

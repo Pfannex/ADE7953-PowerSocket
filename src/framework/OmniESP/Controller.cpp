@@ -102,6 +102,7 @@ String Controller::getDeviceName() {
 void Controller::handle() {
 
   wifi.handle();
+  checkMqttState();
   on_wifi_state_change();
   handleWifiTimout();
 
@@ -383,6 +384,14 @@ void Controller::handleWifiTimout() {
 //...............................................................................
 
 String Controller::call(Topic &topic) {
+
+  //MQTT has DISCONNECTED
+  if (topic.asString() == "~/mqtt/state 0") {
+    if (staState == STA_CONNECTED and apState == AP_CLOSED){
+      topicQueue.put("~/event/mqtt/reconnect", 1);
+    }
+  }
+
   // D("Controller: begin call");
   // set
   if (topic.itemIs(1, "set")) {
@@ -524,5 +533,18 @@ bool Controller::startNtp() {
     clock.start(ntpServer.c_str(), NO_TIME_OFFSET, NTP_UPDATE_INTERVAL);
   } else {
     logging.info("NTP client is off");
+  }
+}
+
+//...............................................................................
+//  check MQTT state
+//...............................................................................
+void Controller::checkMqttState() {
+  unsigned long long now = clock.nowMillis();
+
+  if (now - mqttTimeout_t > MQTT_CHECK_STATE){
+    //Serial.println("check MQTT");
+    mqttTimeout_t = clock.nowMillis();
+    topicQueue.put("~/get/mqtt/state");
   }
 }
