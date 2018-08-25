@@ -108,17 +108,12 @@ bool MQTT::stop() {
 bool MQTT::handle() {
   if (client.connected()) {
     //MQTT has CONNECTED
-    //if (state == 0) api.call("~/mqtt/state 1");
     client.loop();
     state = 1;
     return true;
   } else
     //MQTT has DISCONNECTED
-    if (state == 1){
-      api.info("MQTT client has disconnected");
-    }
-    //ToDo  Wartezeit.....
-    //api.call("~/mqtt/state 0");
+    if (state == 1) api.info("MQTT client has disconnected");
     state = 0;
     return false;
 }
@@ -184,31 +179,21 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
   //Connect to broker after net/connected
   if (topicStr == "~/event/net/connected") {
     if (topic.getArgAsLong(0)) {
+      wifiState = 1;
       start(); // start MQTT
     } else {
+      wifiState = 0;
       stop();  // stop MQTT
     }
   }
 
-  //MQTT connection state
-  if (topicStr == "~/get/mqtt/state") {
-    String strState = String(state);
-    api.call("~/mqtt/state " + strState);
+  //1s Timer to try MQTT reconnect
+  if (topicStr == "~/event/timer/1sUpdate") {
+    tryReconnect();
   }
-
-  //Connect to broker after losing connection
-  if (topicStr == "~/event/mqtt/reconnect") {
-    if (topic.getArgAsLong(0) == 1) {
-      api.info("MQTT trying to reconnect");
-      start();
-    }
-  }
-
-
 
   // ..then publish the topic.
-
-  //direkt c-string uebergeben!
+  // direkt c-string uebergeben!
   pub(topic.topic_asCStr(), topic.arg_asCStr());
 
 }
@@ -216,6 +201,16 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
 //-------------------------------------------------------------------------------
 //  MQTT private
 //-------------------------------------------------------------------------------
+
+//...............................................................................
+//  check MQTT state
+//...............................................................................
+void MQTT::tryReconnect() {
+  if (!state and wifiState) {
+    api.info("MQTT trying to reconnect");
+    start();
+  }
+}
 
 //...............................................................................
 //  MQTT publish
