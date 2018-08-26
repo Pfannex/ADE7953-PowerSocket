@@ -1,0 +1,25 @@
+[
+  {
+    "type": "group",
+    "name": "group1",
+    "caption": "Lightsensor Dashboard",
+    "data": [
+      {
+        "type": "text",
+        "name": "clock",
+        "caption": "Time",
+        "readonly": 1,
+        "event": "~/event/clock/time",
+        "inputtype": "datetime"
+      },
+      {
+        "type": "text",
+        "name": "illuminance",
+        "caption": "Illuminance",
+        "readonly": 1,
+        "event": "~/event/device/illuminance",
+        "suffix": " lux"
+      }
+    ]
+  }
+]
