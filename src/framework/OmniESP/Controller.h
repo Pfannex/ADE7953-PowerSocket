@@ -16,6 +16,18 @@
 // Dear developer: you need to copy a file set from _customDevices in place
 #include "customDevice/customDevice.h"
 
+typedef enum {
+  LAN_DISCONNECTED,
+  LAN_CONNECTED,
+  LAN_UNKNOWN
+} lan_state_t;
+
+typedef enum {
+  NET_DISCONNECTED,
+  NET_CONNECTED,
+  NET_UNKNOWN
+} net_state_t;
+
 //###############################################################################
 //  controller class
 //###############################################################################
@@ -92,6 +104,7 @@ private:
   bool startFtp();
   bool startNtp();
 
+  //WiFi
   sta_state_t staState = STA_UNKNOWN;
   ap_state_t  apState  = AP_UNKNOWN;
   long staTimeout = STA_TIMEOUT;
@@ -101,6 +114,10 @@ private:
   int  staTimeoutActive = false;
   int  apTimeoutActive = false;
   void handleWifiTimout();
+  //LAN
+  lan_state_t lanState = LAN_UNKNOWN;
+  //NET
+  net_state_t netState = NET_UNKNOWN;
 
 
   TopicQueue topicQueue;
