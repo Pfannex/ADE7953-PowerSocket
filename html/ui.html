@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-  <title>%TITLE%</title>
+  <title>%DEVICENAME% - %TITLE%</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta charset="utf-8">
   <script src="lib/jquery.js"></script>
@@ -57,7 +57,7 @@
     <!-- header -->
     <div data-role="header">
       <a href="https://github.com/Pfannex/OmniESP/wiki" target="_blank" id="info" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left">Info</a>
-      <h1>%TITLE%</h1>
+      <h1>%DEVICENAME% - %TITLE%</h1>
       <a class="ui-btn ui-corner-all ui-shadow ui-icon-delete ui-btn-icon-left" onClick="logout()">Logout</a>
       <div data-role="navbar">
         <ul>
@@ -89,18 +89,15 @@
     </div>
     <!-- footer -->
     <div data-role="footer">
-      <div class="ui-grid-b">
-        <div class="ui-block-a">
-          MAC Address<br>%MACADDRESS%
-        </div>
-        <div class="ui-block-b">
-          Device Name<br>%DEVICENAME%
-        </div>
-        <div class="ui-block-c">
-          Firmware<br>%FIRMWARE%
-        </div>
-      </div>
-    </div>
+  		<div class="ui-grid-a">
+  			<div class="ui-block-a">
+  				%DEVICENAME%<br>%MACADDRESS%
+  			</div>
+  			<div class="ui-block-b">
+  				%TYPE% %VERSION%<br>%TITLE% %FIRMWARE%
+  			</div>
+  		</div>
+  	</div>
   </div>
   <!--
 
@@ -110,7 +107,7 @@
   <div data-role="page" data-theme="a" id="page2">
     <div data-role="header">
       <a href="https://github.com/Pfannex/OmniESP/wiki" target="_blank" id="info" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left">Info</a>
-      <h1>%TITLE%</h1>
+      <h1>%DEVICENAME% - %TITLE%</h1>
       <a class="ui-btn ui-corner-all ui-shadow ui-icon-delete ui-btn-icon-left" onClick="logout()">Logout</a>
       <div data-role="navbar">
         <ul>
@@ -323,18 +320,15 @@
     </div>
     <!-- footer -->
     <div data-role="footer">
-      <div class="ui-grid-b">
-        <div class="ui-block-a">
-          MAC Address<br>%MACADDRESS%
-        </div>
-        <div class="ui-block-b">
-          Device Name<br>%DEVICENAME%
-        </div>
-        <div class="ui-block-c">
-          Firmware<br>%FIRMWARE%
-        </div>
-      </div>
-    </div>
+  		<div class="ui-grid-a">
+  			<div class="ui-block-a">
+  				%DEVICENAME%<br>%MACADDRESS%
+  			</div>
+  			<div class="ui-block-b">
+  				%TYPE% %VERSION%<br>%TITLE% %FIRMWARE%
+  			</div>
+  		</div>
+  	</div>
     <!-- Popups -->
     <div data-role="popup" id="popupProcessing" class="ui-content" data-dismissible="false" data-position-to="#config">
       <p>Processing configuration....</p>
@@ -369,7 +363,7 @@
   <div data-role="page" data-theme="a" id="page3">
     <div data-role="header">
       <a href="https://github.com/Pfannex/OmniESP/wiki" target="_blank" id="info" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left">Info</a>
-      <h1>%TITLE%</h1>
+      <h1>%DEVICENAME% - %TITLE%</h1>
       <a class="ui-btn ui-corner-all ui-shadow ui-icon-delete ui-btn-icon-left" onClick="logout()">Logout</a>
       <div data-role="navbar">
         <ul>
@@ -396,18 +390,15 @@
     </div>
     <!-- footer -->
     <div data-role="footer">
-      <div class="ui-grid-b">
-        <div class="ui-block-a">
-          MAC Address<br>%MACADDRESS%
-        </div>
-        <div class="ui-block-b">
-          Device Name<br>%DEVICENAME%
-        </div>
-        <div class="ui-block-c">
-          Firmware<br>%FIRMWARE%
-        </div>
-      </div>
-    </div>
+  		<div class="ui-grid-a">
+  			<div class="ui-block-a">
+  				%DEVICENAME%<br>%MACADDRESS%
+  			</div>
+  			<div class="ui-block-b">
+  				%TYPE% %VERSION%<br>%TITLE% %FIRMWARE%
+  			</div>
+  		</div>
+  	</div>
   </div>
 
 

@@ -60,7 +60,7 @@ void Controller::start() {
 
   // enable the logging subsystem
   logging.start();
-  logging.info(SysUtils::fullVersion());
+  logging.info(SysUtils::fullVersion()); // framework version
 
   // start esp tools
   espTools.start();
@@ -433,7 +433,13 @@ String Controller::call(Topic &topic) {
     } else if (topic.itemIs(2, "wifi")) {
       return wifi.get(topic);
     } else if (topic.itemIs(2, "device")) {
-      return device.get(topic);
+      if(topic.itemIs(3, "version")) {
+        return device.getVersion();
+      } else if (topic.itemIs(3, "type")) {
+        return device.getType();
+      } else {
+        return device.get(topic);
+      }
     } else {
       return TOPIC_NO;
     }

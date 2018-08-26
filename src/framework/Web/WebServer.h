@@ -22,6 +22,8 @@ private:
   // stores variables for template
   String macAddress;
   String deviceName;
+  String deviceType;
+  String deviceVersion;
   String firmwareVersion;
 
   bool uploadOk = true; // flag for upload running fine

@@ -11,6 +11,8 @@ class Device {
 
 public:
   Device(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
+  virtual String getType();
+  virtual String getVersion();
   virtual void start();
   virtual void handle();
   virtual String set(Topic &topic);
@@ -21,4 +23,7 @@ protected:
   LOGGING &logging;
   TopicQueue &topicQueue;
   FFS &ffs;
+
+  String type= "generic device";
+  String version= "v0";
 };

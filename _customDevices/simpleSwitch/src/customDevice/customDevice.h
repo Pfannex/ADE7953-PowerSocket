@@ -15,6 +15,7 @@
 //###############################################################################
 
 #define DEVICETYPE      "SimpleSwitch"
+#define DEVICEVERSION   "v1"
 
 class customDevice : public Device {
 

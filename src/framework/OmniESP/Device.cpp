@@ -9,33 +9,44 @@
 //  Device public
 //-------------------------------------------------------------------------------
 Device::Device(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
-       :logging(logging), topicQueue(topicQueue), ffs(ffs){}
+    : logging(logging), topicQueue(topicQueue), ffs(ffs) {
+
+}
 
 //...............................................................................
 // Device start
 //...............................................................................
 void Device::start() {
+
+  logging.info("starting device");
+  logging.info("type   : " + getType());
+  logging.info("version: " + getVersion());
+
 }
 //...............................................................................
 // handle - periodically called by the controller
 //...............................................................................
-void Device::handle() {
-}
+void Device::handle() {}
 //...............................................................................
 //  Device set
 //...............................................................................
-String Device::set(Topic &topic) {
-}
+String Device::set(Topic &topic) {}
 //...............................................................................
 //  Device get
 //...............................................................................
-String Device::get(Topic &topic) {
-}
+String Device::get(Topic &topic) {}
 //...............................................................................
 // Eventhandler - called by the controller after receiving a topic (event)
 //...............................................................................
-void Device::on_events(Topic &topic) {
-}
+void Device::on_events(Topic &topic) {}
+
+//...............................................................................
+//  Device getType, getVersion
+//...............................................................................
+
+String Device::getType() { return type; }
+
+String Device::getVersion() { return version; }
 
 //-------------------------------------------------------------------------------
 //  Device private

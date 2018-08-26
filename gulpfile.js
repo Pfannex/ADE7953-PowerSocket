@@ -88,12 +88,12 @@ gulp.task('getDevicetype', function() {
   });
 });
 
-gulp.task('showVersion', function() {
+gulp.task('writeVersionFile', function() {
   return new Promise(function(resolve, reject) {
-    version = devicetype + "-" + branch + "-" + description;
+    version = /*devicetype + "-" +*/ branch + "-" + description;
     vobj.version= version;
     vobj.date= new Date();
-    vobj.devicetype= devicetype;
+    //vobj.devicetype= devicetype;
     vobj.branch= branch;
     vobj.description= description;
     console.log(vobj);
@@ -105,8 +105,8 @@ gulp.task('showVersion', function() {
 
 gulp.task('versioninfo',
   gulp.series(
-    gulp.parallel('getBranch', 'getDescription', 'getDevicetype'),
-    'showVersion'
+    gulp.parallel('getBranch', 'getDescription'/*, 'getDevicetype'*/),
+    'writeVersionFile'
   )
 );
 
@@ -196,7 +196,7 @@ gulp.task('tar', function() {
       'web',
       'customDevice/*.json'
     ])
-    .pipe(tar(version+'.tar'))
+    .pipe(tar(devicetype+"-"+branch+"-"+description+'.tar'))
     .pipe(gulp.dest(updatedir));
   process.chdir(__dirname);
   return result;
@@ -210,7 +210,9 @@ gulp.task('buildfs', gulp.series('clean', 'versioninfo',
 gulp.task('buildfs2', gulp.series('clean', 'versioninfo',
   gulp.parallel('files', 'lib', 'inline')));
 gulp.task('default', gulp.series('buildfs'));
-gulp.task('tarball', gulp.series('versioninfo', 'copyparts', 'copyfirmware', 'tar', 'delfirmware'));
+gulp.task('tarball', gulp.series('copyparts', 'copyfirmware',
+    gulp.parallel('getBranch', 'getDescription', 'getDevicetype'),
+   'tar', 'delfirmware'));
 
 // -----------------------------------------------------------------------------
 // PlatformIO support

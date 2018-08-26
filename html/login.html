@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>%TITLE% Authentification</title>
+<title>%DEVICENAME% - %TITLE% Authentication</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta charset="utf-8">
 <script src="lib/jquery.js"></script>
@@ -18,7 +18,7 @@
 	<div data-role="header">
                 <a href="https://github.com/Pfannex/OmniESP/wiki" target="_blank"
                 id="info" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left">Info</a>
-		<h1>%TITLE% Authentification</h1>
+		<h1>%DEVICENAME% - %TITLE% Authentication</h1>
 	</div>
 	<div data-role="content">
 		<form id="loginForm" action="/" method="POST">
@@ -42,18 +42,15 @@
 	</div>
 	<!-- footer -->
 	<div data-role="footer">
-		<div class="ui-grid-b">
+		<div class="ui-grid-a">
 			<div class="ui-block-a">
-				MAC Address<br>%MACADDRESS%
+				%DEVICENAME%<br>%MACADDRESS%
 			</div>
 			<div class="ui-block-b">
-				Device Name<br>%DEVICENAME%
-			</div>
-			<div class="ui-block-c">
-				Firmware<br>%FIRMWARE%
+				%TYPE% %VERSION%<br>%TITLE% %FIRMWARE%
 			</div>
 		</div>
-
+	</div>
 </div>
 </body>
 

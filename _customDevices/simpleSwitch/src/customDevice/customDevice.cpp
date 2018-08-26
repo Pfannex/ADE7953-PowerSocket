@@ -9,20 +9,25 @@
 //  Device public
 //-------------------------------------------------------------------------------
 customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
-           :Device(logging, topicQueue, ffs),
-            button("button", logging, topicQueue, PIN_BUTTON),
-            led("led", logging, topicQueue, PIN_LED, NORMAL),
-            relay("relay", logging, topicQueue, PIN_RELAY, NORMAL)
-          {}
+    : Device(logging, topicQueue, ffs),
+      button("button", logging, topicQueue, PIN_BUTTON),
+      led("led", logging, topicQueue, PIN_LED, NORMAL),
+      relay("relay", logging, topicQueue, PIN_RELAY, NORMAL) {
+
+  type= String(DEVICETYPE);
+  version = String(DEVICEVERSION);
+}
 
 //...............................................................................
 // device start
 //...............................................................................
 void customDevice::start() {
-  Device::start();
-  logging.info("starting device " + String(DEVICETYPE));
 
-  logging.info("starting " + button.getVersion()); //only first time a class is started
+  Device::start();
+  /*
+  logging.info("starting " +
+               button.getVersion()); // only first time a class is started
+  */
   button.start();
   led.start();
   relay.start();
@@ -56,15 +61,15 @@ String customDevice::set(Topic &topic) {
   logging.debug("device set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
-  //if (topic.getItemCount() != 4) // ~/set/device/(power|toggle)
-    //return TOPIC_NO;
+  // if (topic.getItemCount() != 4) // ~/set/device/(power|toggle)
+  // return TOPIC_NO;
   if (topic.itemIs(3, "power")) {
     setPowerMode(topic.getArgAsLong(0));
     return TOPIC_OK;
-  } else if(topic.itemIs(3, "toggle")) {
+  } else if (topic.itemIs(3, "toggle")) {
     setPowerMode(power ? 0 : 1);
     return TOPIC_OK;
-  } else if(topic.itemIs(3, "led")) {
+  } else if (topic.itemIs(3, "led")) {
     if (topic.itemIs(4, "blink")) {
       setLedMode(topic.getArgAsLong(0));
       return TOPIC_OK;
@@ -102,7 +107,7 @@ String customDevice::get(Topic &topic) {
 //...............................................................................
 void customDevice::on_events(Topic &topic) {
 
-  //listen to ~/device/led/setmode
+  // listen to ~/device/led/setmode
   if (led.isForModule(topic)) {
     if (led.isItem(topic, "setmode"))
       setLedMode(topic.getArgAsLong(0));
@@ -155,7 +160,7 @@ void customDevice::setConfigMode(int value) {
   configMode = value;
   topicQueue.put("~/event/device/configMode", configMode);
 
-  if (configMode == 1){
+  if (configMode == 1) {
     setLedMode(2);
   } else {
     setLedMode(0);
@@ -163,10 +168,18 @@ void customDevice::setConfigMode(int value) {
 }
 
 void customDevice::setLedMode(int value) {
-  switch(value) {
-    case 0: led.setOutputMode(OFF); break;
-    case 1: led.setOutputMode(ON); break;
-    case 2: led.setOutputMode(BLINK, 100); break;
-    case 3: led.setOutputMode(BLINK, 1000); break;
+  switch (value) {
+  case 0:
+    led.setOutputMode(OFF);
+    break;
+  case 1:
+    led.setOutputMode(ON);
+    break;
+  case 2:
+    led.setOutputMode(BLINK, 100);
+    break;
+  case 3:
+    led.setOutputMode(BLINK, 1000);
+    break;
   }
 }
