@@ -360,6 +360,19 @@ void Controller::on_wifi_state_change() {
 }
 
 //...............................................................................
+//  API-Call EVENT MQTT connected
+//...............................................................................
+void Controller::on_mqtt_connected() {
+  mqtt_state = 1;
+}
+//...............................................................................
+//  API-Call EVENT MQTT disconnected
+//...............................................................................
+void Controller::on_mqtt_disconnected() {
+  mqtt_state = 0;
+}
+
+//...............................................................................
 //  handle WiFi timeout
 //...............................................................................
 void Controller::handleWifiTimout() {
@@ -383,6 +396,15 @@ void Controller::handleWifiTimout() {
 //...............................................................................
 
 String Controller::call(Topic &topic) {
+
+  // MQTT state information via API-call
+  if (topic.modifyTopic(0) == "event/mqtt/connected"){
+    if (topic.argIs(0, "1")){
+      on_mqtt_connected();
+    }else{
+      on_mqtt_disconnected();
+    }
+  }
 
   // D("Controller: begin call");
   // set
@@ -425,6 +447,12 @@ String Controller::call(Topic &topic) {
 //  idle timer
 //...............................................................................
 void Controller::t_1s_Update() {
+  //Check MQTT state and try reconnect if necessary
+  if (staState == STA_CONNECTED and apState == AP_CLOSED and mqtt_state == 0){
+    logging.info("MQTT try reconnect");
+    topicQueue.put("~/event/mqtt/reconnect");
+  }
+
   topicQueue.put("~/event/timer/1sUpdate");
 }
 
