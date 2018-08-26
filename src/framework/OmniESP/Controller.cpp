@@ -219,6 +219,7 @@ void Controller::on_wifi_scan_result(String result) {
 //  EVENT LAN has connected
 //...............................................................................
 void Controller::on_lanConnected() {
+  lanState = LAN_CONNECTED;
   logging.info("LAN has connected");
   topicQueue.put("~/event/lan/connected", 1);
   on_netConnected();
@@ -228,6 +229,7 @@ void Controller::on_lanConnected() {
 //  EVENT lan has disconnected
 //...............................................................................
 void Controller::on_lanDisconnected() {
+  lanState = LAN_DISCONNECTED;
   logging.info("LAN has disconnected");
   topicQueue.put("~/event/lan/connected", 0);
   on_netDisconnected();
@@ -236,6 +238,7 @@ void Controller::on_lanDisconnected() {
 //  EVENT Network has connected
 //...............................................................................
 void Controller::on_netConnected() {
+  netState = NET_CONNECTED;
   logging.info("Network connection established");
   topicQueue.put("~/event/net/connected", 1);
 }
@@ -244,11 +247,11 @@ void Controller::on_netConnected() {
 //  EVENT lan has disconnected
 //...............................................................................
 void Controller::on_netDisconnected() {
-  //if LAN is presend
-  //check if LAN AND WiFi are disconnected!!
-  logging.info("Network connection aborted");
-  topicQueue.put("~/event/net/connected", 0);
-  //topicQueue.put("~/set/mqtt/state", 0);
+  if (staState == STA_DISCONNECTED and lanState == LAN_DISCONNECTED) {
+    netState = NET_CONNECTED;
+    logging.info("Network connection aborted");
+    topicQueue.put("~/event/net/connected", 0);
+  }
 }
 
 //...............................................................................
@@ -448,8 +451,8 @@ String Controller::call(Topic &topic) {
 //...............................................................................
 void Controller::t_1s_Update() {
   //Check MQTT state and try reconnect if necessary
-  if (staState == STA_CONNECTED and apState == AP_CLOSED and mqtt_state == 0){
-    logging.info("MQTT try reconnect");
+  if (netState == NET_CONNECTED and mqtt_state == 0){
+    logging.debug("MQTT try reconnect");
     topicQueue.put("~/event/mqtt/reconnect");
   }
 
