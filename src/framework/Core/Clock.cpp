@@ -82,9 +82,8 @@ unsigned long long Clock::nowMillis() {
     return uptimeMillis();
   } else {
     unsigned long long t= ntpClient->getEpochMillis();
-    //time_t td= t/1000;
-    //return (tz.toLocal(td)-td)*1000+t;
-    return t;
+    unsigned long long ts= t/1000;
+    return t+(tz.toLocal(ts)-ts)*1000;
   }
 }
 
