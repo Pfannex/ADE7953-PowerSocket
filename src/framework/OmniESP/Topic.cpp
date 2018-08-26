@@ -324,6 +324,12 @@ void TopicQueue::put(const char *topics, int arg) {
   put(topicsArgs);
 }
 
+void TopicQueue::put(const char *topics, float arg) {
+  char topicsArgs[128];
+  sprintf(topicsArgs, "%.110s %f", topics, arg);
+  put(topicsArgs);
+}
+
 String TopicQueue::get() {
 
   // D("queue: get begin");

@@ -1,0 +1,5 @@
+Im Wurzelverzeichnis des Projekts
+    doxygen doc/doxygen.conf
+aufrufen.
+
+Vorbedingungen: doxygen und graphviz sind installiert.
