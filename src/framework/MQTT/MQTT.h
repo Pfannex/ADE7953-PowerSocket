@@ -28,9 +28,7 @@ public:
   void on_topicFunction(const time_t, Topic &topic);
 
 private:
-  void tryReconnect();
   bool state = 0;
-  bool wifiState = 0;
   String deviceName;
   WiFiClient espClient;
   PubSubClient client;

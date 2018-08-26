@@ -54,7 +54,11 @@ public:
   void on_staTimeout();
   void on_apTimeout();
   void on_wifi_state_change();
+  //API-Call events
+  void on_mqtt_connected();
+  void on_mqtt_disconnected();
 
+  bool mqtt_state = 0;
 
   // the subsystems
   Clock clock;

@@ -51,8 +51,8 @@ bool MQTT::start() {
     client.setServer(IP, port);
     if (client.connect(deviceName.c_str(), lastWillTopic.c_str(), 0, false,
                        "Dead")) {
-      state = true;
-      api.info("MQTT client connected to MQTT broker");
+      //state = true;
+      //api.info("MQTT client connected to MQTT broker");
 
       client.publish(lastWillTopic.c_str(), "Alive");
 
@@ -96,9 +96,9 @@ bool MQTT::start() {
 //  MQTT stop connection
 //...............................................................................
 bool MQTT::stop() {
-  bool state = false;
+  //bool state = false;
   client.disconnect();
-  api.info("MQTT client has disconnected");
+  //api.info("MQTT client has disconnected");
   return state;
 }
 
@@ -108,12 +108,19 @@ bool MQTT::stop() {
 bool MQTT::handle() {
   if (client.connected()) {
     //MQTT has CONNECTED
+    if (!state){
+      api.info("MQTT client connected to MQTT broker");
+      api.call("~/event/mqtt/connected", "1");
+    }
     client.loop();
     state = 1;
     return true;
   } else
     //MQTT has DISCONNECTED
-    if (state == 1) api.info("MQTT client has disconnected");
+    if (state){
+      api.info("MQTT client has disconnected");
+      api.call("~/event/mqtt/connected", "0");
+    }
     state = 0;
     return false;
 }
@@ -176,20 +183,22 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
   // First react on events that affect us...
   String topicStr = "~/" + tail;
 
+  //npm install -g gulp-cli
+
   //Connect to broker after net/connected
   if (topicStr == "~/event/net/connected") {
     if (topic.getArgAsLong(0)) {
-      wifiState = 1;
+      //wifiState = 1;
       start(); // start MQTT
     } else {
-      wifiState = 0;
+      //wifiState = 0;
       stop();  // stop MQTT
     }
   }
 
-  //1s Timer to try MQTT reconnect
-  if (topicStr == "~/event/timer/1sUpdate") {
-    tryReconnect();
+  //MQTT reconnect handled by the controller
+  if (topicStr == "~/event/mqtt/reconnect") {
+    start();
   }
 
   // ..then publish the topic.
@@ -201,16 +210,6 @@ void MQTT::on_topicFunction(const time_t, Topic &topic) {
 //-------------------------------------------------------------------------------
 //  MQTT private
 //-------------------------------------------------------------------------------
-
-//...............................................................................
-//  check MQTT state
-//...............................................................................
-void MQTT::tryReconnect() {
-  if (!state and wifiState) {
-    api.info("MQTT trying to reconnect");
-    start();
-  }
-}
 
 //...............................................................................
 //  MQTT publish
