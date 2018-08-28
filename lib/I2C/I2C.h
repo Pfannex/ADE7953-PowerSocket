@@ -70,5 +70,7 @@ public:
 
 
   void testI2C();
+
 private:
+  String deviceAdd(String& devices, String device);
 };
