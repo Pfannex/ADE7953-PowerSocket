@@ -50,11 +50,18 @@ void I2C::setDevice(uint8_t _i2cAddr, int _clockSpeed){
 //...............................................................................
 //  scan I2C-Bus for devices
 //...............................................................................
+
+String I2C::deviceAdd(String& devices, String device) {
+  if(devices.length()) devices.concat(",");
+  devices.concat(device);
+  return devices;
+}
+
 String I2C::scanBus() {
 
   byte error, address;
   int nDevices;
-  String device;
+  String devices;
   String json = "{";
 
   #if (DEBUG_I2C == 1)
@@ -89,34 +96,26 @@ String I2C::scanBus() {
     	            Command not sent to the slave, since this could yield to a
                   bus stall (SDA remains 0)
       */
-      if (address == 0x77) {
-        device = "BMP180";
-      } else if (address == 0x3c) {
-        device = "SSD1306";
-      } else if (address >= 0x20 & address <= 0x27) {
-        device = "MCP23017";
-      } else if (address == 0x40) {
-        device = "SI7021";
-      } else if (address >= 0x70 & address <= 0x77) {
-        device = "PCA9544";
-      } else if (address >= 0x60 & address <= 0x67) {
-        device = "MCP4725";
-      } else if (address >= 0x38) {
-        device = "ADE7953";
-      } else {
-        device = "unknown";
-      };
+      devices = "";
+      if (address == 0x76 | address == 0x77) deviceAdd(devices,  "BMP180");
+      if (address == 0x3c) deviceAdd(devices,  "SSD1306");
+      if (address >= 0x20 & address <= 0x27) deviceAdd(devices,  "MCP23017");
+      if (address == 0x40) deviceAdd(devices,  "SI7021");
+      if (address >= 0x70 & address <= 0x77) deviceAdd(devices,  "PCA9544");
+      if (address >= 0x60 & address <= 0x67) deviceAdd(devices,  "MCP4725");
+      if (address == 0x38) deviceAdd(devices,  "ADE7953");
+      if (address == 0x23 | address == 0x5c) deviceAdd(devices,  "BH1750");
+      if(!devices.length()) devices= "unknown";
 
-      if (String(device) != ""){
-        char adr[30];
-        sprintf(adr, "\"0x%02X\"", address);
-        device = String(adr) + ":\"" + device + "\",";
-        json += device;
+      char adr[30];
+      sprintf(adr, "\"0x%02X\"", address);
+      devices = String(adr) + ":\"" + devices + "\",";
+      json += devices;
 
-        #if (DEBUG_I2C == 1)
-          Serial.println(String(adr) + ":" + device);
-        #endif
-      }
+      #if (DEBUG_I2C == 1)
+        Serial.println(String(adr) + ":" + devices);
+      #endif
+
       nDevices++;
     } else if (error == 4) {
       char txt[50];
