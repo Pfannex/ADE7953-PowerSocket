@@ -1,3 +1,7 @@
+// SPI.h is part of the Arduino core. It needs to be included here because
+// otherwise Arduino sensor libraries fail to compile -
+// this is a known issue with the order of header resolution
+#include <SPI.h>
 #include "framework/Utils/Logger.h"
 #include "framework/Core/FFS.h"
 #include "Setup.h"
