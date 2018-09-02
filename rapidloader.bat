@@ -11,10 +11,12 @@ REM ----------------------------------------------------------------------------
   ECHO -------------------------------------------
   ECHO.
   ECHO [1] load device from archive
-  ECHO [2] archive modified device
+  ECHO [2] save device to archive
+  ECHO     (attention, overwriting files in archive!)
   ECHO [3] copy new clean OmniESP.json
-  ECHO [4] create NEW Device
-  ECHO [5] create NEW Module
+  ECHO     (attention, overwriting data\OmniESP.json!)
+  ECHO [4] create NEW Device and load
+  ECHO [5] create NEW Module 
   ECHO [6] EXIT
   SET /P toDo=
 
@@ -93,7 +95,7 @@ REM -----------------------------------------
   GOTO end
 
 REM ----------------------------------------------------------------------------
-REM [2] archive modified device
+REM [2] save device to archive
 REM ----------------------------------------------------------------------------
 
 :archiveDevice
