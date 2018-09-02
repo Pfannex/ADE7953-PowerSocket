@@ -15,6 +15,7 @@
 //###############################################################################
 
 #define DEVICETYPE      "SWA1"
+#define DEVICEVERSION   "v1"
 
 class customDevice : public Device {
 
