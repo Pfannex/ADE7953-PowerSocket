@@ -1,0 +1,33 @@
+[
+  {
+    "type": "group",
+    "name": "group1",
+    "caption": "Pressure Sensor Dashboard",
+    "data": [
+      {
+        "type": "text",
+        "name": "clock",
+        "caption": "Time",
+        "readonly": 1,
+        "event": "~/event/clock/time",
+        "inputtype": "datetime"
+      },
+      {
+        "type": "text",
+        "name": "pressure",
+        "caption": "Pressure",
+        "readonly": 1,
+        "event": "~/event/device/pressure",
+        "suffix": " hPa"
+      },
+      {
+        "type": "text",
+        "name": "temperature",
+        "caption": "Temperature",
+        "readonly": 1,
+        "event": "~/event/device/temperature",
+        "suffix": " °C"
+      }
+    ]
+  }
+]
