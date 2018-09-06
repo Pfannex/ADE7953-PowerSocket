@@ -122,10 +122,17 @@ gulp.task('files', function() {
     .pipe(gulp.dest(webdir + '/'));
 });
 
-gulp.task('lib', function() {
-  return gulp.src(htmldir + '/lib/**/*.*')
-    .pipe(gzip())
-    .pipe(gulp.dest(webdir + '/lib/'));
+// lib removed -- all js files will be merged into one
+// gulp.task('lib', function() {
+//   return gulp.src(htmldir + '/lib/**/*.*')
+//     .pipe(gzip())
+//     .pipe(gulp.dest(webdir + '/lib/'));
+// });
+
+
+gulp.task('lib', function(done) {
+  // stub
+  done();
 });
 
 /* Process HTML, CSS, JS  --- INLINE --- */
@@ -144,7 +151,7 @@ gulp.task('inline', function() {
       minifyJS: true
     }))
     //.pipe(gzip()) // if we gzip, the subst in the webserver does not work
-    .pipe(gulp.dest(webdir));
+    .pipe(gulp.dest(webdir))
 });
 
 /* Process HTML, CSS, JS */
@@ -163,7 +170,9 @@ gulp.task('html', function() {
       minifyJS: true
     })))
     //.pipe(gzip()) // if we gzip, the subst in the webserver does not work
-    .pipe(gulp.dest(webdir));
+    .pipe(gulpif('*.js', gzip({gzipOptions:{level:9}})))
+    .pipe(gulp.dest(webdir))
+    ;
 });
 
 /* copy firmware to folder structure */
