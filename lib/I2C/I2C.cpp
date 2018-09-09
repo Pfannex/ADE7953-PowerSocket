@@ -104,6 +104,7 @@ String I2C::scanBus() {
       if (address >= 0x70 & address <= 0x77) deviceAdd(devices,  "PCA9544");
       if (address >= 0x60 & address <= 0x67) deviceAdd(devices,  "MCP4725");
       if (address == 0x38) deviceAdd(devices,  "ADE7953");
+      if (address == 0x38 | address == 0x39) deviceAdd(devices,  "VEML6070");
       if (address == 0x23 | address == 0x5c) deviceAdd(devices,  "BH1750");
       if(!devices.length()) devices= "unknown";
 

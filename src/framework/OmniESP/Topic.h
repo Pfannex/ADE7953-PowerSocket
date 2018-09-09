@@ -76,7 +76,7 @@ public:
     void put(String& topicsArgs);
     void put(const char*);
     void put(const char *topics, int arg);
-    void put(const char *topics, float arg);
+    void put(const char *topics, float arg, const char* format= "%f");
     String get();
     int count= 0;
 private:
