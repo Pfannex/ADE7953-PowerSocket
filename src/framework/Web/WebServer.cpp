@@ -15,14 +15,16 @@ WebServer::WebServer(API &api)
       tarball(DEFAULTTARBALL) {
 
   // static pages
+  /*
   webServer.serveStatic("/lib/jquery.js", SPIFFS, "/web/lib/jquery.js",
                         "max-age=86400");
   webServer.serveStatic("/lib/jquery.mobile.js", SPIFFS,
                         "/web/lib/jquery.mobile.js", "max-age=86400");
+  */                        
   webServer.serveStatic("/css/jquery.mobile.css", SPIFFS,
                         "/web/css/jquery.mobile.css", "max-age=86400");
   webServer.serveStatic("/omniesp.js", SPIFFS,
-                        "/web/omniesp.js" /*, "max-age=86400"*/);
+                        "/web/omniesp.js", "max-age=86400");
   webServer.serveStatic("/css/images/ajax-loader.gif", SPIFFS,
                         "/web/css/images/ajax-loader.gif", "max-age=86400");
 
