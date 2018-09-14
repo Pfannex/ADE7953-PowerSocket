@@ -8,19 +8,17 @@ REM ----------------------------------------------------------------------------
 :start
   ECHO.
   ECHO what to do?
-  ECHO -----------------------------------------------
-  ECHO.
-  ECHO [1] load device from archive
-  ECHO [2] save device to archive
-  ECHO     (attention, overwriting files in archive!)
-  ECHO [3] copy new clean OmniESP.json
-  ECHO     (attention, overwriting data\OmniESP.json!)
-  ECHO [4] create NEW Device and load
-  ECHO [5] create NEW Module
-  ECHO -----------------------------------------------
-  ECHO [6] build tarball
-  ECHO [7] save build to archive
-  ECHO [8] EXIT
+  ECHO -------------------------------------------------------------
+  ECHO   [1] load device from archive into framework
+  ECHO   [2] save device from framework to archive   (overwriting!)
+  ECHO   [3] copy new clean OmniESP.json             (overwriting!)
+  ECHO   [4] create NEW Device and load
+  ECHO   [5] create NEW Module
+  ECHO -------------------------------------------------------------
+  ECHO   [6] build bin-files and tarball
+  ECHO   [7] save build to archive                   (overwriting!)
+  ECHO -------------------------------------------------------------
+  ECHO   [8] EXIT
   SET /P toDo=
 
   IF %toDo% == 1 GOTO loadDevice
@@ -67,7 +65,7 @@ REM ----------------------------------------------------------------------------
     FOR /D %%G in ("*") DO (
       SET /a i+=1
       SET "deviceDir[!i!]=%%~nxG"
-      ECHO [!i!] %%~nxG
+      ECHO   [!i!] %%~nxG
     )
     SET /a i+=1
     ECHO [!i!] EXIT
@@ -93,8 +91,9 @@ REM -----------------------------------------
   REM -----------------------------------------
 
   ECHO copy files...
-  copy %~d0%~p0_customDevices\!deviceDir[%dirCounter%]!\data\customDevice\*.json data\customDevice
-  copy %~d0%~p0_customDevices\!deviceDir[%dirCounter%]!\src\customDevice\customDevice*.* src\customDevice
+  xcopy _customDevices\!deviceDir[%dirCounter%]!\data\customDevice\*.json data\customDevice /Y
+  xcopy _customDevices\!deviceDir[%dirCounter%]!\src\customDevice\customDevice*.* src\customDevice /Y
+  xcopy _customDevices\!deviceDir[%dirCounter%]!\firmware\version.json data /Y
   ECHO done
   ECHO.
   GOTO end
@@ -119,7 +118,7 @@ REM ----------------------------------------------------------------------------
   FOR /D %%G in ("*") DO (
     SET /a i+=1
     SET "deviceDir[!i!]=%%~nxG"
-    ECHO [!i!] %%~nxG
+    ECHO   [!i!] %%~nxG
   )
   SET /a i+=1
   ECHO [!i!] EXIT
@@ -155,9 +154,9 @@ REM ----------------------------------------------------------------------------
   REM -----------------------------------------
 
   ECHO archive files to !deviceDir[%dirCounter%]!
-  copy %~d0%~p0data\customDevice\*.json _customDevices\!deviceDir[%dirCounter%]!\data\customDevice
-  copy %~d0%~p0update\*.* _customDevices\!deviceDir[%dirCounter%]!\firmware
-  copy %~d0%~p0src\customDevice\customDevice*.* _customDevices\!deviceDir[%dirCounter%]!\src\customDevice
+  xcopy data\customDevice\*.json _customDevices\!deviceDir[%dirCounter%]!\data\customDevice /Y
+  xcopy update\*.* _customDevices\!deviceDir[%dirCounter%]!\firmware /Y
+  xcopy src\customDevice\customDevice*.* _customDevices\!deviceDir[%dirCounter%]!\src\customDevice /Y
   ECHO done
   ECHO.
   GOTO end
@@ -172,7 +171,7 @@ REM ----------------------------------------------------------------------------
   ECHO -------------------------------------------
   ECHO.
   ECHO copy files...
-  copy %~d0%~p0_customDevices\OmniESP.json data
+  xcopy _customDevices\OmniESP.json data /Y
   ECHO done
   ECHO.
 
@@ -223,10 +222,15 @@ REM ----------------------------------------------------------------------------
 
 :buildTarball
   CLS
-  ECHO build tarball
+  ECHO build bin-files and tarball
   ECHO -------------------------------------------
   ECHO.
-  ECHO in process...
+  
+  pio run -t clean
+  pio run
+  pio run -t buildfs
+  gulp tarball
+
   ECHO.
   GOTO end
 
@@ -238,8 +242,45 @@ REM ----------------------------------------------------------------------------
   CLS
   ECHO archive build
   ECHO -------------------------------------------
+
+  REM -----------------------------------------
+  REM read directory and show
+  REM -----------------------------------------
+
+  setlocal EnableDelayedExpansion
+  CD _customDevices
+  SET /a i = 0
+  FOR /D %%G in ("*") DO (
+    SET /a i+=1
+    SET "deviceDir[!i!]=%%~nxG"
+    ECHO   [!i!] %%~nxG
+  )
+  SET /a i+=1
+  ECHO [!i!] EXIT
+  CD ..
   ECHO.
-  ECHO in process...
+  ECHO select Device.....
+
+  REM -----------------------------------------
+  REM choose device
+  REM -----------------------------------------
+
+  SET /P dirCounter=
+  IF %dirCounter% == !i! GOTO end
+
+  CLS
+  ECHO archive build for Device: !deviceDir[%dirCounter%]!
+  ECHO -------------------------------------------
+  ECHO.
+
+  REM -----------------------------------------
+  REM save build
+  REM -----------------------------------------
+
+  xcopy update\*.bin _customDevices\!deviceDir[%dirCounter%]!\firmware /Y
+  xcopy update\*.tar _customDevices\!deviceDir[%dirCounter%]!\firmware /Y
+  xcopy data\version.json _customDevices\!deviceDir[%dirCounter%]!\firmware /Y
+
   ECHO.
   GOTO end
 
