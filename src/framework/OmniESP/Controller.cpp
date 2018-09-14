@@ -462,11 +462,11 @@ void Controller::t_1s_Update() {
     topicQueue.put("~/event/mqtt/reconnect");
   }
 
-  topicQueue.put("~/event/timer/1sUpdate");
+  //topicQueue.put("~/event/timer/1sUpdate");
 }
 
 void Controller::t_short_Update() {
-  topicQueue.put("~/event/timer/shortUpdate");
+  //topicQueue.put("~/event/timer/shortUpdate");
   /*
     espTools.debugMem();
   */
@@ -474,7 +474,7 @@ void Controller::t_short_Update() {
 };
 
 void Controller::t_long_Update() {
-  topicQueue.put("~/event/timer/longUpdate");
+  //topicQueue.put("~/event/timer/longUpdate");
 }
 
 //-------------------------------------------------------------------------------
