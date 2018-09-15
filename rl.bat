@@ -62,13 +62,13 @@ REM ----------------------------------------------------------------------------
     setlocal EnableDelayedExpansion
     CD _customDevices
     SET /a i = 0
-    FOR /D %%G in ("*") DO (
+    FOR /D %%G in (*) DO (
       SET /a i+=1
       SET "deviceDir[!i!]=%%~nxG"
       ECHO   [!i!] %%~nxG
     )
     SET /a i+=1
-    ECHO [!i!] EXIT
+    ECHO   [!i!] EXIT
     CD ..
     ECHO.
 
@@ -91,8 +91,8 @@ REM -----------------------------------------
   REM -----------------------------------------
 
   ECHO copy files...
-  xcopy _customDevices\!deviceDir[%dirCounter%]!\data\customDevice\*.json data\customDevice /Y
-  xcopy _customDevices\!deviceDir[%dirCounter%]!\src\customDevice\customDevice*.* src\customDevice /Y
+  xcopy _customDevices\!deviceDir[%dirCounter%]!\data\customDevice\*.json data\customDevice\ /S /Y
+  xcopy _customDevices\!deviceDir[%dirCounter%]!\src\customDevice\customDevice*.* src\customDevice\ /S /Y
   xcopy _customDevices\!deviceDir[%dirCounter%]!\firmware\version.json data /Y
   ECHO done
   ECHO.
@@ -115,13 +115,13 @@ REM ----------------------------------------------------------------------------
   setlocal EnableDelayedExpansion
   CD _customDevices
   SET /a i = 0
-  FOR /D %%G in ("*") DO (
+  FOR /D %%G in (*) DO (
     SET /a i+=1
     SET "deviceDir[!i!]=%%~nxG"
     ECHO   [!i!] %%~nxG
   )
   SET /a i+=1
-  ECHO [!i!] EXIT
+  ECHO   [!i!] EXIT
   CD ..
   ECHO.
   ECHO select Device.....
@@ -154,9 +154,9 @@ REM ----------------------------------------------------------------------------
   REM -----------------------------------------
 
   ECHO archive files to !deviceDir[%dirCounter%]!
-  xcopy data\customDevice\*.json _customDevices\!deviceDir[%dirCounter%]!\data\customDevice /Y
-  xcopy update\*.* _customDevices\!deviceDir[%dirCounter%]!\firmware /Y
-  xcopy src\customDevice\customDevice*.* _customDevices\!deviceDir[%dirCounter%]!\src\customDevice /Y
+  xcopy data\customDevice\*.json _customDevices\!deviceDir[%dirCounter%]!\data\customDevice\ /S /Y
+  xcopy update\*.* _customDevices\!deviceDir[%dirCounter%]!\firmware\ /S /Y
+  xcopy src\customDevice\customDevice*.* _customDevices\!deviceDir[%dirCounter%]!\src\customDevice\ /S /Y
   ECHO done
   ECHO.
   GOTO end
@@ -171,7 +171,7 @@ REM ----------------------------------------------------------------------------
   ECHO -------------------------------------------
   ECHO.
   ECHO copy files...
-  xcopy _customDevices\OmniESP.json data /Y
+  xcopy _customDevices\OmniESP.json data /S /Y
   ECHO done
   ECHO.
 
@@ -193,11 +193,11 @@ REM ----------------------------------------------------------------------------
   mkdir _customDevices\%deviceName%\doc
 
   ECHO copy template to _customDevices\%deviceName%
-  xcopy _customDevices\_template\*.* _customDevices\%deviceName%\*.* /S
+  xcopy _customDevices\_template\*.* _customDevices\%deviceName%\*.* /S /Y
 
   ECHO load %deviceName% into framework
-  copy %~d0%~p0_customDevices\%deviceName%\data\customDevice\*.json data\customDevice
-  copy %~d0%~p0_customDevices\%deviceName%\src\customDevice\customDevice*.* src\customDevice
+  xcopy _customDevices\%deviceName%\data\customDevice\*.json data\customDevice\ /S /Y
+  xcopy _customDevices\%deviceName%\src\customDevice\customDevice*.* src\customDevice\ /S /Y
   ECHO done
 
   ECHO.
@@ -225,7 +225,7 @@ REM ----------------------------------------------------------------------------
   ECHO build bin-files and tarball
   ECHO -------------------------------------------
   ECHO.
-  
+
   pio run -t clean
   pio run
   pio run -t buildfs
@@ -250,13 +250,13 @@ REM ----------------------------------------------------------------------------
   setlocal EnableDelayedExpansion
   CD _customDevices
   SET /a i = 0
-  FOR /D %%G in ("*") DO (
+  FOR /D %%G in (*) DO (
     SET /a i+=1
     SET "deviceDir[!i!]=%%~nxG"
     ECHO   [!i!] %%~nxG
   )
   SET /a i+=1
-  ECHO [!i!] EXIT
+  ECHO   [!i!] EXIT
   CD ..
   ECHO.
   ECHO select Device.....
@@ -277,9 +277,9 @@ REM ----------------------------------------------------------------------------
   REM save build
   REM -----------------------------------------
 
-  xcopy update\*.bin _customDevices\!deviceDir[%dirCounter%]!\firmware /Y
-  xcopy update\*.tar _customDevices\!deviceDir[%dirCounter%]!\firmware /Y
-  xcopy data\version.json _customDevices\!deviceDir[%dirCounter%]!\firmware /Y
+  xcopy update\*.bin _customDevices\!deviceDir[%dirCounter%]!\firmware\ /S /Y
+  xcopy update\*.tar _customDevices\!deviceDir[%dirCounter%]!\firmware\ /S /Y
+  xcopy data\version.json _customDevices\!deviceDir[%dirCounter%]!\firmware\ /S /Y
 
   ECHO.
   GOTO end
