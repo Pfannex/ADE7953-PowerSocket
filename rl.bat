@@ -9,7 +9,7 @@ REM ----------------------------------------------------------------------------
   ECHO.
   ECHO what to do?
   ECHO -------------------------------------------------------------
-  ECHO   [1] load device from archive into framework
+  ECHO   [1] load device from archive into framework (overwriting!)
   ECHO   [2] save device from framework to archive   (overwriting!)
   ECHO   [3] copy new clean OmniESP.json             (overwriting!)
   ECHO   [4] create NEW Device and load
