@@ -20,13 +20,15 @@ WebServer::WebServer(API &api)
                         "max-age=86400");
   webServer.serveStatic("/lib/jquery.mobile.js", SPIFFS,
                         "/web/lib/jquery.mobile.js", "max-age=86400");
-  */                        
+  */
   webServer.serveStatic("/css/jquery.mobile.css", SPIFFS,
                         "/web/css/jquery.mobile.css", "max-age=86400");
   webServer.serveStatic("/omniesp.js", SPIFFS,
                         "/web/omniesp.js", "max-age=86400");
   webServer.serveStatic("/css/images/ajax-loader.gif", SPIFFS,
                         "/web/css/images/ajax-loader.gif", "max-age=86400");
+  webServer.serveStatic("/css/images/OmniESP.png", SPIFFS,
+                        "/web/css/images/OmniESP.png", "max-age=86400");
 
   // dynamic pages
   webServer.on(
