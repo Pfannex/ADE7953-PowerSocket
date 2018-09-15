@@ -115,7 +115,7 @@ private:
   int  apTimeoutActive = false;
   void handleWifiTimout();
   //LAN
-  lan_state_t lanState = LAN_UNKNOWN;
+  lan_state_t lanState = LAN_DISCONNECTED; // later if LAN is available -> LAN_UNKNOWN;
   //NET
   net_state_t netState = NET_UNKNOWN;
 
