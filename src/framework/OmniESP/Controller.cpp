@@ -197,12 +197,15 @@ void Controller::on_ap_stations_connected() {
   //on_netConnected();
 }
 //...............................................................................
-//  EVENT AP has connected without stations
+//  EVENT AP has opened without stations
 //...............................................................................
 void Controller::on_ap_no_stations_connected() {
   logging.info("WiFi AP open without connected stations");
   topicQueue.put("~/event/wifi/on_ap_no_stations_connected");
-  //on_netDisconnected();
+
+  //is this the right place?
+  staState = STA_DISCONNECTED;
+  on_netDisconnected();
 }
 
 //...............................................................................
@@ -247,8 +250,8 @@ void Controller::on_netConnected() {
 //  EVENT lan has disconnected
 //...............................................................................
 void Controller::on_netDisconnected() {
-  if (staState == STA_DISCONNECTED and lanState == LAN_DISCONNECTED) {
-    netState = NET_CONNECTED;
+  if (staState != STA_CONNECTED and lanState != LAN_CONNECTED) {
+    netState = NET_DISCONNECTED;
     logging.info("Network connection aborted");
     topicQueue.put("~/event/net/connected", 0);
   }
