@@ -44,6 +44,12 @@ function setRadioHandlers() {
 // events
 // ---------------------------
 
+function delayedPopup(id) {
+  var popup = setInterval(function() {
+    $(id).popup('open');
+    clearInterval(popup);
+  }, 250);
+}
 
 function uiEvalEvent(topics, args) {
   // react on NAME/event/esp/update STATE
@@ -59,10 +65,10 @@ function uiEvalEvent(topics, args) {
         if(args=="fail") {
           logmsg("Update failed.");
           $("#update_error").html("Update failed. See log for details.");
-          $("#popupUpdateFail").popup("open");
+          delayedPopup("#popupUpdateFail");
         } else {
           logmsg("Update successful.");
-          $("#popupUpdateOk").popup("open");
+          delayedPopup("#popupUpdateOk");
           reloadIfAlive();
         }
 
