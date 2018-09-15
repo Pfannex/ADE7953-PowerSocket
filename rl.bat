@@ -193,7 +193,7 @@ REM ----------------------------------------------------------------------------
   mkdir _customDevices\%deviceName%\doc
 
   ECHO copy template to _customDevices\%deviceName%
-  xcopy _customDevices\_template\*.* _customDevices\%deviceName%\*.* /S /Y
+  xcopy _customDevices\_template\*.* _customDevices\%deviceName%\ /S /Y
 
   ECHO load %deviceName% into framework
   xcopy _customDevices\%deviceName%\data\customDevice\*.json data\customDevice\ /S /Y
