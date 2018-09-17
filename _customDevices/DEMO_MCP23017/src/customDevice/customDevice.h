@@ -9,18 +9,12 @@
 
 // modules required by device
 #include <Wire.h>
-#include "modules/LCD.h"
-#include "modules/oneWire.h"
 #include "modules/MCP23017.h"
-//#include "modules/QRE1113.h"
-//#include "modules/WS2812.h"
-#include "Adafruit_BMP085.h"
-#include "Adafruit_Si7021.h"
 
 //###############################################################################
 //  Device
 //###############################################################################
-#define DEVICETYPE "DEMO_I2C_OW"
+#define DEVICETYPE "DEMO_MCP23017"
 #define DEVICEVERSION "V1.00"
 
 class customDevice : public Device{
@@ -34,14 +28,6 @@ public:
   void on_events(Topic &topic);
 
 private:
-  LCD lcd;
-  //OW ow;
   MCP23017 mcpGPIO;
   void configMCP();
-
-  int sensorPollTime;
-  unsigned long lastPoll = 0;
-  void readBMP180(String name);
-  void readSi7021(String name);
-
 };
