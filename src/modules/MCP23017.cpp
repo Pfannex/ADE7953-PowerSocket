@@ -24,6 +24,10 @@ void MCP23017::start() {
 
   pinMode(irqPin, INPUT_PULLUP);
   irqSetMode(FALLING);
+
+  // clear Outputs
+  Wire.i2c.write8_8(MCP23017_GPIOA, 0x00);
+  Wire.i2c.write8_8(MCP23017_GPIOB, 0x00);
 }
 
 //...............................................................................
