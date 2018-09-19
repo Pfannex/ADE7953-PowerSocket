@@ -1,0 +1,65 @@
+[
+  {
+    "type": "group",
+    "name": "group1",
+    "caption": "Sensoren_01",
+    "data": [
+      {
+        "type": "text",
+        "name": "clock",
+        "caption": "Time",
+        "readonly": 1,
+        "event": "~/event/clock/time",
+        "inputtype": "datetime"
+      },
+      {
+        "type": "text",
+        "name": "sensor1",
+        "caption": "Temperatur",
+        "readonly": 1,
+        "event": "~/event/device/Sensor_01/temperature",
+        "suffix": " °C"
+      },
+      {
+        "type": "text",
+        "name": "sensor2",
+        "caption": "Luftdruck",
+        "readonly": 1,
+        "event": "~/event/device/Sensor_01/pressure",
+        "suffix": " hPa"
+      },
+      {
+        "type": "text",
+        "name": "sensor3",
+        "caption": "Temperatur",
+        "readonly": 1,
+        "event": "~/event/device/Sensor_02/temperature",
+        "suffix": " °C"
+      },
+      {
+        "type": "text",
+        "name": "sensor4",
+        "caption": "Luftdruck",
+        "readonly": 1,
+        "event": "~/event/device/Sensor_02/humidity",
+        "suffix": " %rel"
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "name": "group2",
+    "caption": "Sensoren_02",
+    "data": [
+      {
+        "type": "text",
+        "name": "clock2",
+        "caption": "Time",
+        "readonly": 1,
+        "event": "~/event/clock/time",
+        "inputtype": "datetime"
+      }
+    ]
+  }
+
+]
