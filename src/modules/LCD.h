@@ -3,7 +3,7 @@
 #include "framework/Utils/Logger.h"
 #include "Setup.h"
 #include "framework/OmniESP/Topic.h"
-#include <SSD1306Brzo.h>
+#include <ssd1306.h>
 #include <Wire.h> //I²C
 
 //###############################################################################
@@ -31,5 +31,5 @@ public:
   void println(String txt, int yPos);
 
 private:
-  SSD1306Brzo ssd1306;
+  //SSD1306 ssd1306;
 };
