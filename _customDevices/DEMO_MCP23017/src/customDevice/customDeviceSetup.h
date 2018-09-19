@@ -22,11 +22,6 @@ ADC  A0     2     Analog
 // GPIO
 //###############################################################################
 
-// Arduino Pin 12 = = IO12 = Physical Pin 6 = NodeMCU/WeMos Pin D6
-#define PIN_BUTTON 12
-
-// Arduino Pin 15 = IO15 = Physical Pin 16 = NodeMCU/WeMos Pin D8
-#define PIN_LED 15
-
-// Arduino Pin 14 = IO14 = Physical Pin 5 = NodeMCU/WeMos Pin D5
-#define PIN_RELAY 14
+#define SDA 4
+#define SCL 5
+#define MCPIRQ 13

@@ -8,16 +8,16 @@
 #include "customDeviceSetup.h"
 
 // modules required by device
-#include "modules/GPIO.h"
+#include <Wire.h>
+#include "modules/MCP23017.h"
 
 //###############################################################################
 //  Device
 //###############################################################################
+#define DEVICETYPE "DEMO_MCP23017"
+#define DEVICEVERSION "V1.00"
 
-#define DEVICETYPE      "SimpleSwitch"
-#define DEVICEVERSION   "v1"
-
-class customDevice : public Device {
+class customDevice : public Device{
 
 public:
   customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
@@ -28,14 +28,6 @@ public:
   void on_events(Topic &topic);
 
 private:
-  GPIOinput button;
-  GPIOoutput led;
-  GPIOoutput relay;
-
-  // the central modes
-  int power = 0;
-  int configMode = 0;
-  void setConfigMode(int value);
-  void setPowerMode(int value);
-  void setLedMode(int value);
+  MCP23017 mcpGPIO;
+  void configMCP();
 };

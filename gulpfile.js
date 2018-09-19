@@ -182,6 +182,10 @@ gulp.task('copyfirmware', function() {
 });
 
 /* copy firmware to update folder */
+gulp.task('cleanparts', function() {
+  return del([updatedir + '/*']);
+});
+
 gulp.task('copyparts', function() {
   return gulp.src([bindir + '/firmware.bin', bindir + '/spiffs.bin'])
     .pipe(gulp.dest(updatedir));
@@ -219,7 +223,7 @@ gulp.task('buildfs', gulp.series('clean', 'versioninfo',
 gulp.task('buildfs2', gulp.series('clean', 'versioninfo',
   gulp.parallel('files', 'lib', 'inline')));
 gulp.task('default', gulp.series('buildfs'));
-gulp.task('tarball', gulp.series('copyparts', 'copyfirmware',
+gulp.task('tarball', gulp.series('cleanparts', 'copyparts', 'copyfirmware',
     gulp.parallel('getBranch', 'getDescription', 'getDevicetype'),
    'tar', 'delfirmware'));
 

@@ -18,9 +18,16 @@ MCP23017::MCP23017(string name, LOGGING &logging, TopicQueue &topicQueue,
 //...............................................................................
 void MCP23017::start() {
   Module::start();
+  Wire.begin(sda, scl);
+  Wire.i2c.i2cAddr = 0x20;
   logging.info("setting GPIO pin " + String(irqPin) + " to IRQ-Pin");
+
   pinMode(irqPin, INPUT_PULLUP);
   irqSetMode(FALLING);
+
+  // clear Outputs
+  Wire.i2c.write8_8(MCP23017_GPIOA, 0x00);
+  Wire.i2c.write8_8(MCP23017_GPIOB, 0x00);
 }
 
 //...............................................................................
@@ -80,15 +87,20 @@ void MCP23017::irqHandle() {
 
     clearIRQ();
 
-/*
-    while (mcp.readRegister(MCP23017_INTFA) > 0 || mcp.readRegister(MCP23017_INTFB) > 0){
-      Serial.println("  hanging.....");
+
+    while (Wire.i2c.read8_8(MCP23017_INTFA) > 0 || Wire.i2c.read8_8(MCP23017_INTFB) > 0){
+      //while (mcp.readRegister(MCP23017_INTFA) > 0 || mcp.readRegister(MCP23017_INTFB) > 0){
+      logging.error("MCP23017 IRQ is hanging.....");
       //Serial.print("INTFA - ");Serial.println(MCP23017.readRegister(MCP23017_INTFA), BIN);
       //Serial.print("INTFB - ");Serial.println(MCP23017.readRegister(MCP23017_INTFB), BIN);
-      Serial.print("  GPIOA - ");Serial.println(mcp.readRegister(MCP23017_GPIOA), BIN);
-      Serial.print("  GPIOB - ");Serial.println(mcp.readRegister(MCP23017_GPIOB), BIN);
+      //Serial.print("  GPIOA - ");//Serial.println(mcp.readRegister(MCP23017_GPIOA), BIN);
+      //Serial.print("  GPIOB - ");//Serial.println(mcp.readRegister(MCP23017_GPIOB), BIN);
+      //mcp.readRegister(MCP23017_GPIOA);
+      //mcp.readRegister(MCP23017_GPIOB);
+      Wire.i2c.read8_8(MCP23017_GPIOA);
+      Wire.i2c.read8_8(MCP23017_GPIOB);
     }
-*/
+
     irqSetMode(FALLING);
   }
 

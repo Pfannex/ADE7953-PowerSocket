@@ -20,11 +20,13 @@
 //###############################################################################
 //  Device
 //###############################################################################
+#define DEVICETYPE "DEMO_I2C_OW"
+#define DEVICEVERSION "V1.00"
 
-class DEMO_I2C_OW : public Device{
+class customDevice : public Device{
 
 public:
-  DEMO_I2C_OW(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
+  customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
   void start();
   void handle();
   String set(Topic &topic);
