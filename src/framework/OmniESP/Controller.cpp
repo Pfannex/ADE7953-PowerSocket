@@ -162,19 +162,20 @@ void Controller::handleEvent(String &topicsArgs) {
 //  EVENT Wifi has connected
 //...............................................................................
 void Controller::on_wl_connected() {
+  on_wifi_state_change();
   logging.info("WiFi STA has connected");
   topicQueue.put("~/event/wifi/wl_connected");
   logging.info("STA connected to " + WiFi.SSID() + " | IP "
                                    + WiFi.localIP().toString());
 
   startNtp();
-  //topicQueue.put("~/set/mqtt/state", 1);
   on_netConnected();
 }
 //...............................................................................
 //  EVENT wifi has disconnected
 //...............................................................................
 void Controller::on_wl_connect_failed() {
+  on_wifi_state_change();
   logging.info("WiFi STA has failed to connect");
   topicQueue.put("~/event/wifi/wl_connect_failed");
   on_netDisconnected();
@@ -183,6 +184,7 @@ void Controller::on_wl_connect_failed() {
 //  EVENT wifi no SSID avail
 //...............................................................................
 void Controller::on_wl_no_ssid_avail() {
+  on_wifi_state_change();
   logging.info("WiFi STA SSID is not avail");
   topicQueue.put("~/event/wifi/no_ssid_avail");
   on_netDisconnected();
@@ -192,14 +194,15 @@ void Controller::on_wl_no_ssid_avail() {
 //  EVENT AP has connected with stations
 //...............................................................................
 void Controller::on_ap_stations_connected() {
+  on_wifi_state_change();
   logging.info("WiFi AP open with connected stations");
   topicQueue.put("~/event/wifi/ap_stations_connected");
-  //on_netConnected();
 }
 //...............................................................................
 //  EVENT AP has opened without stations
 //...............................................................................
 void Controller::on_ap_no_stations_connected() {
+  on_wifi_state_change();
   logging.info("WiFi AP open without connected stations");
   topicQueue.put("~/event/wifi/on_ap_no_stations_connected");
 
