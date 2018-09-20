@@ -155,8 +155,6 @@ REM ----------------------------------------------------------------------------
 
   ECHO archive files to !deviceDir[%dirCounter%]!
   XCOPY data\customDevice\*.json _customDevices\!deviceDir[%dirCounter%]!\data\customDevice\ /S /Y
-  XCOPY update\*.tar _customDevices\!deviceDir[%dirCounter%]!\firmware\ /S /Y
-  XCOPY update\*.bin _customDevices\!deviceDir[%dirCounter%]!\firmware\ /S /Y
   XCOPY src\customDevice\customDevice*.* _customDevices\!deviceDir[%dirCounter%]!\src\customDevice\ /S /Y
   ECHO done
   ECHO.
