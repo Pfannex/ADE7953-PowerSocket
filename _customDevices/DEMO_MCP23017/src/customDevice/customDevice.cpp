@@ -103,48 +103,43 @@ void customDevice::on_events(Topic &topic) {
 void customDevice::configMCP() {
 // IODIRx [RW] Datenrichtungsregister der GPIO-Ports:
   // 1 = INPUT; 0 = OUTPUT
-  mcpGPIO.mcp.writeRegister(MCP23017_IODIRA, B11111111);
-  mcpGPIO.mcp.writeRegister(MCP23017_IODIRB, B00000000);
+  Wire.i2c.write8_8(MCP23017_IODIRA, B11111111);
+  Wire.i2c.write8_8(MCP23017_IODIRB, B00000000);
 
 // IPOLx [RW] Polarität
   // 1 = invertiert; 0 = nicht invertiert
-  mcpGPIO.mcp.writeRegister(MCP23017_IPOLA, B11111111);
-  //mcpGPIO.mcp.writeRegister(MCP23017_IPOLB, B11111111);
+  Wire.i2c.write8_8(MCP23017_IPOLA, B11111111);
+  //Wire.i2c.write8_8(MCP23017_IPOLB, B11111111);
 
 // GPINTENx [RW] Interrupt-On-Change-Funktion
   // 1 = IRQ enabled; 0 = IRQ disabled
   // Es müssen zusätzlich die DEFVAL- und INTCON-Register konfiguriert werden.
-  mcpGPIO.mcp.writeRegister(MCP23017_GPINTENA, B11111111);
-  //mcpGPIO.mcp.writeRegister(MCP23017_GPINTENB, B11111111);
+  Wire.i2c.write8_8(MCP23017_GPINTENA, B11111111);
+  //Wire.i2c.write8_8(MCP23017_GPINTENB, B11111111);
 
 // DEFVALx [RW] IRQ-Vergleichsregister
   // Vergleich GPIO mit DEFVALx bei Opposition und aktivem IRQ über GPINTEN und INTCON wird ein Interrupt ausgelöst.
-  mcpGPIO.mcp.writeRegister(MCP23017_DEFVALA, B00000000);
-  //mcpGPIO.mcp.writeRegister(MCP23017_DEFVALB, B00000000);
+  Wire.i2c.write8_8(MCP23017_DEFVALA, B00000000);
+  //Wire.i2c.write8_8(MCP23017_DEFVALB, B00000000);
 
 // INTCONx [RW] Interruptmode
   // 1 = vergleich mit DEFVALx; 0 = Interrupt-On-Change
-  mcpGPIO.mcp.writeRegister(MCP23017_INTCONA, B00000000);
-  //mcpGPIO.mcp.writeRegister(MCP23017_INTCONB, B00000000);
+  Wire.i2c.write8_8(MCP23017_INTCONA, B00000000);
+  //Wire.i2c.write8_8(MCP23017_INTCONB, B00000000);
 
 // GPPUx [RW] INPUT Pull-Up 100k
   // 1 = enabled, 0 = disabled
-  mcpGPIO.mcp.writeRegister(MCP23017_GPPUA, B11111111);
-  //mcpGPIO.mcp.writeRegister(MCP23017_GPPUB, B11111111);
+  Wire.i2c.write8_8(MCP23017_GPPUA, B11111111);
+  //Wire.i2c.write8_8(MCP23017_GPPUB, B11111111);
 
 // IOCON [RW] IO-Konfigurationsregister
-  mcpGPIO.mcp.writeRegister(MCP23017_IOCONA, B01000000);
-  //                           BANK          ─┘│││││││
-  //                           MIRROR        ──┘││││││
-  //                           SEQOP         ───┘│││││
-  //                           DISSLW        ────┘││││
-  //                           HAEN          ─────┘│││
-  //                           ODR           ──────┘││
-  //                           INTPOL        ───────┘│
-  //                           allways 0     ────────┘
-
-// clear Outputs
-  mcpGPIO.mcp.writeRegister(MCP23017_GPIOA, 0x00);
-  mcpGPIO.mcp.writeRegister(MCP23017_GPIOB, 0x00);
-
+  Wire.i2c.write8_8(MCP23017_IOCONA, B01000000);
+  //                   BANK          ─┘│││││││
+  //                   MIRROR        ──┘││││││
+  //                   SEQOP         ───┘│││││
+  //                   DISSLW        ────┘││││
+  //                   HAEN          ─────┘│││
+  //                   ODR           ──────┘││
+  //                   INTPOL        ───────┘│
+  //                   allways 0     ────────┘
 }
