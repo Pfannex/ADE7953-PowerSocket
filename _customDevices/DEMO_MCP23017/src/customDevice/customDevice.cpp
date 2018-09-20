@@ -67,16 +67,16 @@ String customDevice::get(Topic &topic) {
   /*
   ~/get
   └─device             (level 2)
-    └─power            (level 3)
+    └─gpio             (level 3)
   */
 
   logging.debug("device get topic " + topic.topic_asString());
 
   if (topic.getItemCount() != 4) // ~/get/device/power
     return TOPIC_NO;
-  if (topic.itemIs(3, "power")) {
-    //topicQueue.put("~/event/device/power", power);
-    //return String(power);
+  if (topic.itemIs(3, "gpio")) {
+    int pinState = mcpGPIO.mcp.digitalRead(topic.getArgAsLong(0));
+    return String(pinState);
   } else {
     return TOPIC_NO;
   }
@@ -89,7 +89,6 @@ void customDevice::on_events(Topic &topic) {
   // central business logic
 
   if (topic.modifyTopic(0) == "event/wifi/wl_connected"){
-    //lcd.println(WiFi.localIP().toString(), 0);
     mcpGPIO.mcp.digitalWrite(8, true);
   }
 }
