@@ -35,7 +35,7 @@ void MCP23017::start() {
 //...............................................................................
 void MCP23017::handle() {
   Module::handle();
-  irqHandle();
+  if (irqDetected) irqHandle();
 }
 
 //...............................................................................
@@ -49,7 +49,10 @@ String MCP23017::getVersion() {
 // IRQ
 //...............................................................................
 void MCP23017::irq() {
-  irqDetected = true;
+  irqDetected++;
+  pin = mcp.getLastInterruptPin();
+  val = mcp.getLastInterruptPinValue();
+  state = mcp.digitalRead(pin);
 }
 
 void MCP23017::irqSetMode(int mode){
@@ -63,33 +66,39 @@ void MCP23017::irqSetMode(int mode){
 }
 
 void MCP23017::irqHandle() {
-  unsigned long now = millis();
+  //unsigned long now = millis();
   String eventPrefix= "~/event/device/" + String(name) + "/";
 
 // main handling
-  if (irqDetected){
-    irqSetMode(irqOFF);
-    irqDetected = false;
-    lastIrqTime = now;
+  //Di("irqDetected", irqDetected);
+  while (irqDetected){
+    irqDetected--;
+    //Di("while irqDetected", irqDetected);
+    //irqSetMode(irqOFF);
+    //irqDetected = false;
+    //lastIrqTime = now;
 
     // find pin
-    uint8_t pin = mcp.getLastInterruptPin();
-    uint8_t val = mcp.getLastInterruptPinValue();
-    uint8_t state = mcp.digitalRead(pin);
+    //uint8_t pin = mcp.getLastInterruptPin();
+    //uint8_t val = mcp.getLastInterruptPinValue();
+    //uint8_t state = mcp.digitalRead(pin);
+
+
 
     logging.debug("mcpGPIO " + String(pin) + " | " + String(val));
     topicQueue.put(eventPrefix + "/" + String(pin) + " " + String(val));
 
     //sledge hammer
-    Wire.i2c.read8_8(MCP23017_GPIOA);
-    Wire.i2c.read8_8(MCP23017_GPIOB);
+    //Wire.i2c.read8_8(MCP23017_GPIOA);
+    //Wire.i2c.read8_8(MCP23017_GPIOB);
 
-    delay(1);
-    irqSetMode(FALLING);
+    //delay(1);
+    //irqSetMode(FALLING);
 
-    clearIRQ();
+    //clearIRQ();
 
   }
+  clearIRQ();
 
 //debouncing
 /*
@@ -111,9 +120,9 @@ void MCP23017::irqHandle() {
 //...............................................................................
 void MCP23017::clearIRQ() {
 
-  while (Wire.i2c.read8_8(MCP23017_INTFA) > 0 || Wire.i2c.read8_8(MCP23017_INTFB) > 0){
+  if (Wire.i2c.read8_8(MCP23017_INTFA) > 0 || Wire.i2c.read8_8(MCP23017_INTFB) > 0){
     logging.error("MCP23017 IRQ is hanging.....");
-    Wire.i2c.read8_8(MCP23017_GPIOA);
-    Wire.i2c.read8_8(MCP23017_GPIOB);
+    //Wire.i2c.read8_8(MCP23017_GPIOA);
+    //Wire.i2c.read8_8(MCP23017_GPIOB);
   }
 }
