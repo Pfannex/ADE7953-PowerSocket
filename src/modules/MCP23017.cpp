@@ -45,6 +45,9 @@ String MCP23017::getVersion() {
   return  String(MCP23017_Name) + " v" + String(MCP23017_Version);
 }
 
+//-------------------------------------------------------------------------------
+//  MCP23017 private
+//-------------------------------------------------------------------------------
 //...............................................................................
 // IRQ
 //...............................................................................
@@ -55,22 +58,12 @@ void MCP23017::irq() {
   state = mcp.digitalRead(pin);
 }
 
-void MCP23017::irqSetMode(int mode){
-  if (mode == 4){
-    detachInterrupt(irqPin);
-  }else{
-    //LOW     = 0, HIGH    = 1, RISING  = 1, FALLING = 2
-    //CHANGE  = 3, OFF     = 4
-    attachInterrupt(digitalPinToInterrupt(irqPin), std::bind(&MCP23017::irq, this), mode);
-  }
-}
-
 void MCP23017::irqHandle() {
   //unsigned long now = millis();
   String eventPrefix= "~/event/device/" + String(name) + "/";
 
 // main handling
-  //Di("irqDetected", irqDetected);
+  if (irqDetected > 1) Di("irqDetected", irqDetected);
   while (irqDetected){
     irqDetected--;
     //Di("while irqDetected", irqDetected);
@@ -98,7 +91,7 @@ void MCP23017::irqHandle() {
     //clearIRQ();
 
   }
-  clearIRQ();
+  clearIRQ();  //check for hanging MCP-IRQs
 
 //debouncing
 /*
@@ -111,9 +104,21 @@ void MCP23017::irqHandle() {
 */
 
 }
-//-------------------------------------------------------------------------------
-//  MCP23017 private
-//-------------------------------------------------------------------------------
+
+
+
+//...............................................................................
+// set IRQ mode
+//...............................................................................
+void MCP23017::irqSetMode(int mode){
+  if (mode == 4){
+    detachInterrupt(irqPin);
+  }else{
+    //LOW     = 0, HIGH    = 1, RISING  = 1, FALLING = 2
+    //CHANGE  = 3, OFF     = 4
+    attachInterrupt(digitalPinToInterrupt(irqPin), std::bind(&MCP23017::irq, this), mode);
+  }
+}
 
 //...............................................................................
 // clear MCP23017 IRQ
