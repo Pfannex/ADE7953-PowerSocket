@@ -40,13 +40,8 @@ private:
   void irqHandle();                   // handle irq function
   #define irqOFF 4                    // irq detachInterrupt mode
   void irqSetMode(int mode);          // irq mode setter
-  volatile int irqDetected = 0;
+  volatile bool irqDetected = false;
   unsigned long lastIrqTime = 0;
-
-  uint8_t pin = 255;
-  uint8_t val = 255;
-  uint8_t state = 255;
-
 };
 
 //...............................................................................

@@ -35,7 +35,7 @@ void MCP23017::start() {
 //...............................................................................
 void MCP23017::handle() {
   Module::handle();
-  if (irqDetected) irqHandle();
+  irqHandle();
 }
 
 //...............................................................................
@@ -45,53 +45,52 @@ String MCP23017::getVersion() {
   return  String(MCP23017_Name) + " v" + String(MCP23017_Version);
 }
 
-//-------------------------------------------------------------------------------
-//  MCP23017 private
-//-------------------------------------------------------------------------------
 //...............................................................................
 // IRQ
 //...............................................................................
 void MCP23017::irq() {
-  irqDetected++;
-  pin = mcp.getLastInterruptPin();
-  val = mcp.getLastInterruptPinValue();
-  state = mcp.digitalRead(pin);
+  irqDetected = true;
+}
+
+void MCP23017::irqSetMode(int mode){
+  if (mode == 4){
+    detachInterrupt(irqPin);
+  }else{
+    //LOW     = 0, HIGH    = 1, RISING  = 1, FALLING = 2
+    //CHANGE  = 3, OFF     = 4
+    attachInterrupt(digitalPinToInterrupt(irqPin), std::bind(&MCP23017::irq, this), mode);
+  }
 }
 
 void MCP23017::irqHandle() {
-  //unsigned long now = millis();
+  unsigned long now = millis();
   String eventPrefix= "~/event/device/" + String(name) + "/";
 
 // main handling
-  if (irqDetected > 1) Di("irqDetected", irqDetected);
-  while (irqDetected){
-    irqDetected--;
-    //Di("while irqDetected", irqDetected);
-    //irqSetMode(irqOFF);
-    //irqDetected = false;
-    //lastIrqTime = now;
+  if (irqDetected){
+    irqSetMode(irqOFF);
+    irqDetected = false;
+    lastIrqTime = now;
 
     // find pin
-    //uint8_t pin = mcp.getLastInterruptPin();
-    //uint8_t val = mcp.getLastInterruptPinValue();
-    //uint8_t state = mcp.digitalRead(pin);
-
-
+    uint8_t pin = mcp.getLastInterruptPin();
+    uint8_t val = mcp.getLastInterruptPinValue();
+    uint8_t state = mcp.digitalRead(pin);
 
     logging.debug("mcpGPIO " + String(pin) + " | " + String(val));
     topicQueue.put(eventPrefix + "/" + String(pin) + " " + String(val));
 
     //sledge hammer
-    //Wire.i2c.read8_8(MCP23017_GPIOA);
-    //Wire.i2c.read8_8(MCP23017_GPIOB);
+    Wire.i2c.read8_8(MCP23017_GPIOA);
+    Wire.i2c.read8_8(MCP23017_GPIOB);
 
-    //delay(1);
-    //irqSetMode(FALLING);
+    delay(1);
+    irqSetMode(FALLING);
 
-    //clearIRQ();
+    clearIRQ();
 
   }
-  clearIRQ();  //check for hanging MCP-IRQs
+
 
 //debouncing
 /*
@@ -104,30 +103,18 @@ void MCP23017::irqHandle() {
 */
 
 }
-
-
-
-//...............................................................................
-// set IRQ mode
-//...............................................................................
-void MCP23017::irqSetMode(int mode){
-  if (mode == 4){
-    detachInterrupt(irqPin);
-  }else{
-    //LOW     = 0, HIGH    = 1, RISING  = 1, FALLING = 2
-    //CHANGE  = 3, OFF     = 4
-    attachInterrupt(digitalPinToInterrupt(irqPin), std::bind(&MCP23017::irq, this), mode);
-  }
-}
+//-------------------------------------------------------------------------------
+//  MCP23017 private
+//-------------------------------------------------------------------------------
 
 //...............................................................................
 // clear MCP23017 IRQ
 //...............................................................................
 void MCP23017::clearIRQ() {
 
-  if (Wire.i2c.read8_8(MCP23017_INTFA) > 0 || Wire.i2c.read8_8(MCP23017_INTFB) > 0){
+  while (Wire.i2c.read8_8(MCP23017_INTFA) > 0 || Wire.i2c.read8_8(MCP23017_INTFB) > 0){
     logging.error("MCP23017 IRQ is hanging.....");
-    //Wire.i2c.read8_8(MCP23017_GPIOA);
-    //Wire.i2c.read8_8(MCP23017_GPIOB);
+    Wire.i2c.read8_8(MCP23017_GPIOA);
+    Wire.i2c.read8_8(MCP23017_GPIOB);
   }
 }
