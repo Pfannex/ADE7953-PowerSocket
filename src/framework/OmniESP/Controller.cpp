@@ -204,7 +204,7 @@ void Controller::on_ap_stations_connected() {
 void Controller::on_ap_no_stations_connected() {
   on_wifi_state_change();
   logging.info("WiFi AP open without connected stations");
-  topicQueue.put("~/event/wifi/on_ap_no_stations_connected");
+  topicQueue.put("~/event/wifi/ap_no_stations_connected");
 
   //is this the right place?
   staState = STA_DISCONNECTED;
