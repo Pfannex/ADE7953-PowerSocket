@@ -163,7 +163,7 @@ void customDevice::setConfigMode(int value) {
   if (configMode == 1) {
     setLedMode(2);
   } else {
-    setLedMode(0);
+    setLedMode(power);
   }
 }
 
