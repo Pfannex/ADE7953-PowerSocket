@@ -43,6 +43,8 @@ public:
   bool writeItem(String itemName, String value);
   bool saveFile();
 
+  void replaceObject(String Name, String jsonObject);
+
 private:
   String readJsonString();
   int parseJsonObject(JsonObject& jsonObject);

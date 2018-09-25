@@ -174,7 +174,7 @@ String FFS::get(Topic &topic) {
   } else if (topic.itemIs(3, "version")) {
     tmpFile = &vers;
   }
-  
+
   if (tmpFile != NULL) {
     // filePath
     if (topic.itemIs(4, "filePath")) {
@@ -259,6 +259,60 @@ FFSjsonFile::FFSjsonFile(LOGGING& logging, String filePath, int type)
 //-------------------------------------------------------------------------------
 //  FFSjsonFile public
 //-------------------------------------------------------------------------------
+void FFSjsonFile::replaceObject(String Name, String jsonObject){
+  String root = readJsonString();
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject &rootObject = jsonBuffer.parseObject(root);
+
+  int count = 0;
+   logging.info("old Object");
+  for (auto &element : rootObject) {
+    String strKey = element.key;
+    String strValue = element.value;
+      logging.info("Key: " + strKey);
+      logging.info("Val: " + strValue);
+    count++;
+  }
+
+  rootObject.remove(Name);
+
+  count = 0;
+   logging.info("old Object " + Name + " removed");
+  for (auto &element : rootObject) {
+    String strKey = element.key;
+    String strValue = element.value;
+      logging.info("Key: " + strKey);
+      logging.info("Val: " + strValue);
+    count++;
+  }
+
+
+  JsonObject &insertObject = jsonBuffer.parseObject(jsonObject);
+  rootObject[Name] = insertObject;
+
+  count = 0;
+   logging.info("inser " + Name + " in oldObject");
+  for (auto &element : rootObject) {
+    String strKey = element.key;
+    String strValue = element.value;
+      logging.info("Key: " + strKey);
+      logging.info("Val: " + strValue);
+    count++;
+  }
+
+  //JsonObject& ret_jsonObject = jsonBuffer.createObject();
+
+  //JsonVariant variant = jsonObject1.get<JsonVariant>(Name);
+  //JsonObject& ret_jsonObject = variant;
+
+  //if (variant.is<JsonArray>()) {
+  //}
+
+
+
+
+  //return variant;
+}
 
 //...............................................................................
 //  load root string from FFS-File (for external use)
