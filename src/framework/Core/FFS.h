@@ -47,6 +47,7 @@ public:
 
 private:
   String readJsonString();
+  void parseJson(JsonVariant root);
   int parseJsonObject(JsonObject& jsonObject);
   void parseJsonArray(JsonArray& jsonArray);
 };

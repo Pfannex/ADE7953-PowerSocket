@@ -259,6 +259,10 @@ FFSjsonFile::FFSjsonFile(LOGGING& logging, String filePath, int type)
 //-------------------------------------------------------------------------------
 //  FFSjsonFile public
 //-------------------------------------------------------------------------------
+
+//...............................................................................
+//  replace object in jsonRootArray at index
+//...............................................................................
 void FFSjsonFile::replaceObject(String Name, String jsonObject){
   String root = readJsonString();
   DynamicJsonBuffer jsonBuffer;
@@ -307,9 +311,6 @@ void FFSjsonFile::replaceObject(String Name, String jsonObject){
 
   //if (variant.is<JsonArray>()) {
   //}
-
-
-
 
   //return variant;
 }
@@ -446,6 +447,96 @@ String FFSjsonFile::readJsonString() {
   //D(jsonData.c_str());
   return jsonData;
 }
+
+//...............................................................................
+//  parse json recursively
+//...............................................................................
+void FFSjsonFile::parseJson(JsonVariant root) {
+  //WARNING do not use big jsons -> memory overflow
+  //logging.info("parseJson");
+
+  if (root.is<JsonArray>()){
+    //logging.info("root isArray");
+    JsonArray& array = root;
+    for (auto &element : array) {
+      JsonVariant variant = element;
+      if (element.is<JsonArray &>()){
+        //logging.info("isArray");
+        parseJson(variant);
+      } else if (element.is<JsonObject>()){
+        //logging.info("isObject");
+        parseJson(variant);
+      } else {
+        //logging.info("DATA in Array");
+        logging.info("   " + String(element.as<char*>()));
+      }
+    }
+  }else if (root.is<JsonObject>()){
+    //logging.info("root isObject");
+    JsonObject& object = root;
+    //JsonArray& array = root;
+    for (auto &element : object){
+      JsonVariant variant = &element;
+      if (variant.is<JsonArray>()){
+        //logging.info("isArray");
+        parseJson(variant);
+      }else if (variant.is<JsonObject>()) {
+        //logging.info("isObject");
+        parseJson(variant);
+      }else{
+        String strKey = element.key;
+        String strValue = element.value;
+
+        DynamicJsonBuffer jsonBuffer;
+        JsonVariant nested = jsonBuffer.parse(strValue);
+        if (nested.success() and (nested.is<JsonArray &>() or nested.is<JsonObject>())){
+          //logging.info("nestedArray in Object");
+          logging.info("   " + strKey);
+          parseJson(nested);
+
+        }else{
+          //logging.info("DATA in Object");
+          logging.info("   " + strKey + " | " + strValue);
+        }
+      }
+    }
+  }
+}
+
+/*
+[{
+		"Array0": [1, 2, 3],
+		"Object1": {
+			"Item11": "Value1",
+			"Item12": "Value2",
+      "Array": [1,2,{"A1":"B1"}]
+		},
+		"Object2": {
+			"Item21": "Value1",
+			"Item22": "Value2"
+		}
+	},
+	{
+		"Array1": [{
+			"11_Key": "11_Val",
+			"12_Key": "12_Key"
+		  },1,2,3
+    ],
+		"Array2": [{
+			"21_Key": "21_Val",
+			"22_Key": "22_Val"
+		}]
+}]
+*/
+
+/*
+{
+  "obj1.key": "obj1.val",
+  "array1_inObj.key": ["array1.element1", "array1.element2"],
+  "array2_inObj.key": ["array2.element1", "array2.element2",
+                      {"obj2_inArray.key": "obj2_inArray.val"}]
+}
+*/
 
 //...............................................................................
 //  parse jsonObject recursively
