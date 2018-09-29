@@ -199,7 +199,7 @@ void GPIOoutput::handle() {
     // use arg[2] for frequency
     int outputOn = (now / currentOutputBlinkTime) % 2;
     if (currentOutputState != outputOn) {
-      digitalWrite(pin, outputOn);
+      digitalWrite(pin, outputOn ? myHIGH:myLOW);
       currentOutputState = outputOn;
       String strState = "";
       if (outputOn)
