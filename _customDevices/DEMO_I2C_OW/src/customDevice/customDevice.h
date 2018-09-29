@@ -11,7 +11,7 @@
 #include <Wire.h>
 #include "modules/LCD.h"
 #include "modules/oneWire.h"
-#include "modules/MCP23017.h"
+//#include "modules/MCP23017.h"
 //#include "modules/QRE1113.h"
 //#include "modules/WS2812.h"
 #include "Adafruit_BMP085.h"
@@ -36,8 +36,8 @@ public:
 private:
   LCD lcd;
   //OW ow;
-  MCP23017 mcpGPIO;
-  void configMCP();
+  //MCP23017 mcpGPIO;
+  //void configMCP();
 
   int sensorPollTime;
   unsigned long lastPoll = 0;
