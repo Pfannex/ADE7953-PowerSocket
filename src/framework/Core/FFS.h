@@ -9,6 +9,10 @@
   #include "framework/Utils/Debug.h"
   //#include "device/DeviceSetup.h"
 
+//links to arduino json
+//https://arduinojson.org/v5/assistant/
+//https://arduinojson.org/v5/doc/
+
 //###############################################################################
 //  stringFile
 //###############################################################################
@@ -43,7 +47,7 @@ public:
   bool writeItem(String itemName, String value);
   bool saveFile();
 
-  void replaceObject(String Name, String jsonObject);
+  int set_toRoot(String key, JsonArray& newArray);
 
 private:
   String readJsonString();

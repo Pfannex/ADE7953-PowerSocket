@@ -261,58 +261,64 @@ FFSjsonFile::FFSjsonFile(LOGGING& logging, String filePath, int type)
 //-------------------------------------------------------------------------------
 
 //...............................................................................
-//  replace object in jsonRootArray at index
+//  add or replace Array @key in root
 //...............................................................................
-void FFSjsonFile::replaceObject(String Name, String jsonObject){
-  String root = readJsonString();
+int FFSjsonFile::set_toRoot(String key, JsonArray& newArray){
+int result = 0;  //1=OK, 0=key not found,
+/*
+json structure
+[{                            //root is array with object widgets
+  "widget_1":[{               //code of widget_1 is nestedArray in rootArray/objectWidget
+    "type":"group",
+    "name":"group1",
+    "data":[{
+      "type":"controllgroup",
+      "name":"myName",
+      "data":[1,2]
+    }]
+  }],
+  "widget_2":[{
+    "type":"group",
+    "name":"group1",
+    "data":[{
+      "type":"controllgroup",
+      "name":"myName",
+      "data":[1,2]
+    }]
+  }]
+}]
+*/
+
+  //String root = readJsonString();
   DynamicJsonBuffer jsonBuffer;
-  JsonObject &rootObject = jsonBuffer.parseObject(root);
+  JsonArray &rootArray = jsonBuffer.parseArray(root);
+  JsonObject &rootObject = rootArray[0];
 
-  int count = 0;
-   logging.info("old Object");
-  for (auto &element : rootObject) {
-    String strKey = element.key;
-    String strValue = element.value;
-      logging.info("Key: " + strKey);
-      logging.info("Val: " + strValue);
-    count++;
-  }
+  Serial.println("loaded rootObject");
+  rootObject.prettyPrintTo(Serial);
+  Serial.println("");
 
-  rootObject.remove(Name);
-
-  count = 0;
-   logging.info("old Object " + Name + " removed");
-  for (auto &element : rootObject) {
-    String strKey = element.key;
-    String strValue = element.value;
-      logging.info("Key: " + strKey);
-      logging.info("Val: " + strValue);
-    count++;
-  }
+  //Serial.println("array to insert");
+  //newArray.prettyPrintTo(Serial);
+  //Serial.println("");
 
 
-  JsonObject &insertObject = jsonBuffer.parseObject(jsonObject);
-  rootObject[Name] = insertObject;
+  rootObject.set(key, newArray);
+  //Serial.println("rootObject after");
+  //rootObject.prettyPrintTo(Serial);
+  //Serial.println("");
+  result++;
 
-  count = 0;
-   logging.info("inser " + Name + " in oldObject");
-  for (auto &element : rootObject) {
-    String strKey = element.key;
-    String strValue = element.value;
-      logging.info("Key: " + strKey);
-      logging.info("Val: " + strValue);
-    count++;
-  }
+  rootArray.set(0, rootObject);
+  root = "";                     //printTo is additive
+  rootArray.printTo(root);
 
-  //JsonObject& ret_jsonObject = jsonBuffer.createObject();
+  //Serial.println("rootArray after");
+  //rootArray.prettyPrintTo(Serial);
+  //Serial.println("");
+  saveFile();
 
-  //JsonVariant variant = jsonObject1.get<JsonVariant>(Name);
-  //JsonObject& ret_jsonObject = variant;
-
-  //if (variant.is<JsonArray>()) {
-  //}
-
-  //return variant;
+  return result;
 }
 
 //...............................................................................
@@ -336,6 +342,7 @@ bool FFSjsonFile::saveFile() {
     jsonFile.close();
     return true;
   } else {
+    logging.debug("failed to parse json.root!");
     return false;
   }
 }

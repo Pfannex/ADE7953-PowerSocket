@@ -11,9 +11,9 @@
 customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
            :Device(logging, topicQueue, ffs),
 
-            lcd("SSD1306", logging, topicQueue, SDA, SCL),
+            lcd("SSD1306", logging, topicQueue, SDA, SCL)
             //ow("oneWire", logging, topicQueue, OWPIN),
-            mcpGPIO("MCP23017", logging, topicQueue, MCPIRQ, SDA, SCL)
+            //mcpGPIO("MCP23017", logging, topicQueue, MCPIRQ, SDA, SCL)
             {}
 
 //...............................................................................
@@ -32,8 +32,8 @@ void customDevice::start() {
   //logging.info("starting " + ow.getVersion()); //only first time a class is started
   //ow.start();
   logging.info("starting " + mcpGPIO.getVersion()); //only first time a class is started
-  mcpGPIO.start();
-  configMCP();
+  //mcpGPIO.start();
+  //configMCP();
 
   logging.info("device running");
   logging.info(ffs.deviceCFG.readItem("NEW"));
@@ -52,7 +52,7 @@ void customDevice::handle() {
 
   lcd.handle();
   //ow.handle();
-  mcpGPIO.handle();
+  //mcpGPIO.handle();
 
   if (now - lastPoll > sensorPollTime){
     lastPoll = now;
@@ -78,7 +78,7 @@ String customDevice::set(Topic &topic) {
   if (topic.getItemCount() != 4) // ~/set/device/gpio
     return TOPIC_NO;
   if (topic.itemIs(3, "gpio")) {
-    mcpGPIO.mcp.digitalWrite(topic.getArgAsLong(0), topic.getArgAsLong(1));
+    //mcpGPIO.mcp.digitalWrite(topic.getArgAsLong(0), topic.getArgAsLong(1));
     //setPowerMode(topic.getArgAsLong(0));
     return TOPIC_OK;
   } else {
@@ -116,7 +116,7 @@ void customDevice::on_events(Topic &topic) {
 
   if (topic.modifyTopic(0) == "event/wifi/connected"){
     //lcd.println(WiFi.localIP().toString(), 0);
-    mcpGPIO.mcp.digitalWrite(8, true);
+    //mcpGPIO.mcp.digitalWrite(8, true);
   }
 
 /*
@@ -151,6 +151,7 @@ void customDevice::on_events(Topic &topic) {
 //...............................................................................
 // config MCP23017
 //...............................................................................
+/*
 void customDevice::configMCP() {
   // IODIRx [RW] Datenrichtungsregister der GPIO-Ports:
   // 1 = INPUT; 0 = OUTPUT
@@ -188,7 +189,7 @@ void customDevice::configMCP() {
   //                           INTPOL        ───────┘│
   //                           allways 0     ────────┘
 }
-
+*/
 
 //...............................................................................
 // read BMP180
