@@ -1,0 +1,33 @@
+[
+  {
+    "type": "group",
+    "name": "dashboard",
+    "caption": "Dashboard",
+    "data": [
+      {
+        "type": "text",
+        "name": "clock",
+        "caption": "Time",
+        "readonly": 1,
+        "event": "~/event/clock/time",
+        "inputtype": "datetime"
+      },
+      {
+        "type": "text",
+        "name": "sensor1",
+        "caption": "Sensor 1",
+        "readonly": 1,
+        "event": "~/event/device/sensor1",
+        "suffix": " mA"
+      },
+      {
+        "type": "text",
+        "name": "sensor2",
+        "caption": "Sensor 2",
+        "readonly": 1,
+        "event": "~/event/device/sensor2",
+        "suffix": " °C"
+      }
+    ]
+  }
+]
