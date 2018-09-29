@@ -1,23 +1,21 @@
-#include "framework/OmniESP/Device.h"
-
-#include "framework/Core/FFS.h"
-#include "framework/OmniESP/Topic.h"
 #include "framework/Utils/Logger.h"
+#include "framework/Core/FFS.h"
+#include "Setup.h"
+#include "framework/OmniESP/Topic.h"
+#include "framework/OmniESP/Device.h"
 
 // device-specific setup
 #include "customDeviceSetup.h"
 
 // modules required by device
-// ...your includes here...
+#include "modules/GPIO.h"
 
 //###############################################################################
 //  Device
 //###############################################################################
 
-#define DEVICETYPE "yourDeviceName"
-#define DEVICEVERSION "yourVersionString"
-
-// maintainer: ...your name...
+#define DEVICETYPE      "SimpleSwitch"
+#define DEVICEVERSION   "v1"
 
 class customDevice : public Device {
 
@@ -30,9 +28,14 @@ public:
   void on_events(Topic &topic);
 
 private:
-  // ...your sensor objects, modules, functions here...
-  unsigned long configItem= DEFAULT_VALUE; // exammple
-  float measure(); // example
-  void inform(); // example
-  unsigned long lastPoll= 0;
+  GPIOinput button;
+  GPIOoutput led;
+  GPIOoutput relay;
+
+  // the central modes
+  int power = 0;
+  int configMode = 0;
+  void setConfigMode(int value);
+  void setPowerMode(int value);
+  void setLedMode(int value);
 };

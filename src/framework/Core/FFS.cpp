@@ -266,6 +266,7 @@ FFSjsonFile::FFSjsonFile(LOGGING& logging, String filePath, int type)
 int FFSjsonFile::set_toRoot(String key, JsonArray& newArray){
 int result = 0;  //1=OK, 0=key not found,
 
+/*
 json structure
 [{                            //root is array with object widgets
   "widget_1":[{               //code of widget_1 is nestedArray in rootArray/objectWidget

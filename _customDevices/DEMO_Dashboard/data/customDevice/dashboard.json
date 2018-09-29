@@ -1,8 +1,9 @@
 [
+
   {
     "type": "group",
-    "name": "dashboard",
-    "caption": "Dashboard",
+    "name": "group1",
+    "caption": "Simple Switch Leitstand",
     "data": [
       {
         "type": "text",
@@ -13,20 +14,40 @@
         "inputtype": "datetime"
       },
       {
-        "type": "text",
-        "name": "sensor1",
-        "caption": "Sensor 1",
+        "type": "checkbox",
+        "name": "led",
         "readonly": 1,
-        "event": "~/event/device/sensor1",
-        "suffix": " mA"
+        "caption": "LED",
+        "event": "~/event/device/led"
       },
       {
-        "type": "text",
-        "name": "sensor2",
-        "caption": "Sensor 2",
-        "readonly": 1,
-        "event": "~/event/device/sensor2",
-        "suffix": " °C"
+        "type": "group",
+        "name": "subgroup",
+        "caption": "Power Control",
+        "data": [
+          {
+            "type": "controlgroup",
+            "name": "power",
+            "caption": "Power",
+            "action": "~/set/device/power",
+            "event": "~/event/device/power",
+            "data": [{
+                "label": "Off",
+                "value": 0
+              },
+              {
+                "label": "On",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "name": "toggle",
+            "caption": "Toggle",
+            "action": "~/set/device/toggle"
+          }
+        ]
       }
     ]
   }
