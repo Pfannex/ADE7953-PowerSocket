@@ -15,8 +15,9 @@
       {
         "type": "checkbox",
         "name": "led",
-        "caption": "LED",
-        "readonly": 1,
+        "caption": "Signal",
+        "readonly": 0,
+        "action": "~/set/device/signal",
         "event": "~/event/device/led"
       },
       {
