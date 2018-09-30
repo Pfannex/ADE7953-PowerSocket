@@ -9,7 +9,8 @@
 //  Device public
 //-------------------------------------------------------------------------------
 Device::Device(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
-    : logging(logging), topicQueue(topicQueue), ffs(ffs) {
+    : logging(logging), topicQueue(topicQueue), ffs(ffs),
+      dashboard(logging, topicQueue, ffs) {
 
 }
 

@@ -6,6 +6,7 @@
 #include "framework/Core/FFS.h"
 #include "Setup.h"
 #include "framework/OmniESP/Topic.h"
+#include "framework/Web/Dashboard.h"
 
 //###############################################################################
 //  Device
@@ -27,6 +28,7 @@ protected:
   LOGGING &logging;
   TopicQueue &topicQueue;
   FFS &ffs;
+  Dashboard dashboard;
 
   String type= "generic device";
   String version= "v0";
