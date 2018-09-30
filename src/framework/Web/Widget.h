@@ -13,11 +13,12 @@
 class Text {
 public:
   Text(String name);
-  String type = "";
   String name = "";
+  String type = "";
   String caption = "";
+  int readonly = 1;
   String action = "";
   String event = "";
   String inputtype = "";
-  JsonArray& asArray();
+  JsonObject& asObject();
 };

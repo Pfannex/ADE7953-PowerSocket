@@ -241,7 +241,7 @@ function dashboardBuild(json) {
   debugmsg("HTML code follows...");
   debugmsg(content);
   var element = $("#dashboard");
-  var child = element.append(content);
+  var child = element.html(content);
   child.trigger('create');
   logmsg("Dashboard ready.");
 }
@@ -341,6 +341,13 @@ function dashboardEvalEvent(topics, args) {
   muteDashboardActions = 1;
   var topicStr = topics.join("/");
   //debugmsg("dashboard event for topic " + topicStr + " with arg " + args);
+
+  // rebuild dashboard on event
+  if(topicStr == "~/event/ui/dashboardChanged") {
+    logmsg("Requested dashboard rebuild");
+    var json = retrieveDashboard(dashboardBuild);
+    return;
+  }
 
   // look for a matching widget
   var i;

@@ -263,62 +263,58 @@ FFSjsonFile::FFSjsonFile(LOGGING& logging, String filePath, int type)
 //...............................................................................
 //  add or replace Array @key in root
 //...............................................................................
-int FFSjsonFile::set_toRoot(String key, JsonArray& newArray){
+int FFSjsonFile::set_toRoot(String key, JsonObject& newObject){
 int result = 0;  //1=OK, 0=key not found,
-
-/*
-json structure
-[{                            //root is array with object widgets
-  "widget_1":[{               //code of widget_1 is nestedArray in rootArray/objectWidget
-    "type":"group",
-    "name":"group1",
-    "data":[{
-      "type":"controllgroup",
-      "name":"myName",
-      "data":[1,2]
-    }]
-  }],
-  "widget_2":[{
-    "type":"group",
-    "name":"group1",
-    "data":[{
-      "type":"controllgroup",
-      "name":"myName",
-      "data":[1,2]
-    }]
-  }]
-}]
-*/
 
   //String root = readJsonString();
   DynamicJsonBuffer jsonBuffer;
   JsonArray &rootArray = jsonBuffer.parseArray(root);
-  JsonObject &rootObject = rootArray[0];
+  JsonObject &widgetObject = rootArray[0]["data"][0];  //rootArray[0]["data"][0];
 
+  Serial.println("root");
+  rootArray.prettyPrintTo(Serial);
+  Serial.println("");
+  Serial.println("-------------------------------------");
+  Serial.println("Object to replace");
+  widgetObject.prettyPrintTo(Serial);
+  Serial.println("");
+  Serial.println("-------------------------------------");
+
+
+
+  rootArray.set(rootArray[0]["data"][0], newObject);
+  root = "";                     //printTo is additive
+  rootArray.printTo(root);
+
+  Serial.println("root");
+  rootArray.prettyPrintTo(Serial);
+  Serial.println("");
+  Serial.println("-------------------------------------");
+
+
+/*
   Serial.println("loaded rootObject");
   rootObject.prettyPrintTo(Serial);
   Serial.println("");
-
+*/
   //Serial.println("array to insert");
   //newArray.prettyPrintTo(Serial);
   //Serial.println("");
 
 
-  rootObject.set(key, newArray);
+  //rootObject.set(key, newArray);
+
   //Serial.println("rootObject after");
   //rootObject.prettyPrintTo(Serial);
   //Serial.println("");
-  result++;
 
-  rootArray.set(0, rootObject);
-  root = "";                     //printTo is additive
-  rootArray.printTo(root);
 
   //Serial.println("rootArray after");
   //rootArray.prettyPrintTo(Serial);
   //Serial.println("");
-  saveFile();
+  //saveFile();
 
+  result++;
   return result;
 }
 
