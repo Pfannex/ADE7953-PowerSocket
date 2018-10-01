@@ -39,7 +39,7 @@ bool MQTT::start() {
 
   if (api.call("~/get/ffs/cfg/item/mqtt") == "on") {
     String strIP = api.call("~/get/ffs/cfg/item/mqtt_ip");
-    IPAddress IP = SysUtils::strToIP(strIP);
+    //IPAddress IP = SysUtils::strToIP(strIP);
     int port = api.call("~/get/ffs/cfg/item/mqtt_port").toInt();
     deviceName = api.call("~/get/ffs/cfg/item/device_name");
     String lastWillTopic = "Devices/" + deviceName;
@@ -48,7 +48,8 @@ bool MQTT::start() {
     api.info("MQTT DeviceName: " + deviceName);
 
     client.disconnect();
-    client.setServer(IP, port);
+    //client.setServer(IP, port);
+    client.setServer(strIP.c_str(), port);
     if (client.connect(deviceName.c_str(), lastWillTopic.c_str(), 0, false,
                        "Dead")) {
       //state = true;

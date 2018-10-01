@@ -104,10 +104,13 @@ device and watch the OmniESP boot messages on your serial console.
 
 7. You are done.
 
+If flashing fails, user lower baud rate in platformio.ini, e.g. use
+upload_speed = 115200 instead of upload_speed = 921600.
+
+
 ----------------
 Similar projects
 ----------------
 
 https://nathan.chantrell.net/20170528/lingan-swa1-plug-in-wi-fi-socket-with-mqtt-esp8266/
 https://github.com/arendst/Sonoff-Tasmota/wiki/Lingan-SWA1
-

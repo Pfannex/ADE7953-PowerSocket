@@ -19,6 +19,10 @@ customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
 // device start
 //...............................................................................
 void customDevice::start() {
+
+  type = String(DEVICETYPE);
+  version = String(DEVICEVERSION);
+  
   Device::start();
   logging.info("starting device " + String(DEVICETYPE));
 
@@ -50,15 +54,15 @@ String customDevice::set(Topic &topic) {
   └─device             (level 2)
     └─power            (level 3)
     └─toggle           (level 3)
-    └─led              (level 3)
+    └─signal           (level 3)
 */
 
   logging.debug("device set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
-  if (topic.getItemCount() != 4) // ~/set/device/(power|toggle)
+  if (topic.getItemCount() != 4) // ~/set/device/(power|toggle|signal)
     return TOPIC_NO;
-  if (topic.itemIs(3, "led")) {
+  if (topic.itemIs(3, "signal")) {
     setLedMode(topic.getArgAsLong(0));
     return TOPIC_OK;
   } else if (topic.itemIs(3, "power")) {
