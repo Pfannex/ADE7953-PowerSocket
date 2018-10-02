@@ -3,69 +3,65 @@
 //###############################################################################
 //  Widget
 //###############################################################################
-
 Dashboard::Dashboard(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
                     :logging(logging), topicQueue(topicQueue), ffs(ffs){
-
 }
 
 //-------------------------------------------------------------------------------
 //  FFS public
 //-------------------------------------------------------------------------------
 //...............................................................................
-// buildDashboard
+// set Dashboard
 //...............................................................................
-void Dashboard::buildDashboard(){
-
-}
+void Dashboard::setDashboard(int number){
 
 
-
-void Dashboard::sayHello(){
-
-  Text myText("Widget_1");
-    myText.type      = "text";
-    myText.caption   = "NEWTime";
-    myText.readonly  = 1;
-    myText.event     = "~/event/clock/time";
-    myText.inputtype = "datetime";
-
-  String str;
-  myText.asArray().prettyPrintTo(Serial);
-  myText.asArray().printTo(str);
-  ffs.webCFG.root = str;
+  ffs.webCFG.root = buildDashboard();
   //ffs.webCFG.saveFile();
 }
 
-/*
-Text text1("Clock");
-  text1.type      = "text";
-  text1.caption   = "NEW Time!";
-  text1.readonly  = 1;
-  text1.action    = "";
-  text1.event     = "~/event/clock/time";
-  text1.inputtype = "datetime";
+//...............................................................................
+// build Dashboard
+//...............................................................................
+String Dashboard::buildDashboard(){
 
-  Serial.println("newObject");
-  text1.asObject().prettyPrintTo(Serial);
-  Serial.println("");
-  Serial.println("-------------------------------------");
+  return page_main();
+}
 
 
-  StaticJsonBuffer<2000> jsonBuffer;
+//...............................................................................
+// page_main
+//...............................................................................
+String Dashboard::page_main(){
 
-  // create an object
-  //JsonObject& object1 = jsonBuffer.createObject();
-  //DynamicJsonBuffer jsonBuffer;
-  //object1 = text1.asObject();
+  Widget w1("Widget_1");
+    w1.type      = "text";
+    w1.caption   = "NEWTime";
+    w1.readonly  = 1;
+    w1.event     = "~/event/clock/time";
+    w1.inputtype = "datetime";
 
-  Serial.println("newObject");
-  //rootObject.prettyPrintTo(Serial);
-  Serial.println("");
-  Serial.println("-------------------------------------");
+  w1.asObject().prettyPrintTo(Serial);
+  Serial.println("-------------------------");
 
-  ffs.webCFG.set_toRoot("", text1.asObject());
+  Widget w2("Widget_2");
+    w2.type      = "text";
+    w2.caption   = "NEWNEWTime";
+    w2.readonly  = 1;
+    w2.event     = "~/event/clock/time";
+    w2.inputtype = "datetime";
 
+  w2.asObject().prettyPrintTo(Serial);
+  Serial.println("-------------------------");
 
-  topicQueue.put("~/event/ui/dashboardChanged");
-*/
+  DynamicJsonBuffer jsonBuffer;
+  JsonArray& root = jsonBuffer.createArray();
+  root.add(w1.asObject());
+  root.add(w2.asObject());
+
+  String rootStr;
+  root.prettyPrintTo(Serial);
+  Serial.println("-------------------------");
+  root.printTo(rootStr);
+  return rootStr;
+}

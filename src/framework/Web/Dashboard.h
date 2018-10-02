@@ -16,10 +16,10 @@
 class Dashboard {
 public:
   Dashboard(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
-  void buildDashboard();
-  String getDashboard();
+  void setDashboard(int number);
 
-  void sayHello();
+  String buildDashboard();
+  String page_main();
 
 private:
   LOGGING &logging;

@@ -11,17 +11,21 @@
   //  Widget
   //###############################################################################
 
-  class Text {
+  class Widget {
   public:
-    Text(String name);
-    String name = "test";
+    Widget(String name);
+    String name = "";
     String type = "";
     String caption = "";
     int readonly = 1;
-    String event = "";
     String inputtype = "";
-    JsonArray& asArray();
-    String json();
+    String direction = "";
+    int min = 1;
+    int max = 1;
+    String event = "";
+    String action = "";
+
+    JsonObject& asObject();
   };
 
 //###############################################################################
@@ -29,8 +33,7 @@
 //###############################################################################
 class WidgetList {
 public:
-  //WidgetList(String name);
-  WidgetList();
+  WidgetList(String name);
   String name = "";
 
 

@@ -47,7 +47,7 @@ public:
   bool writeItem(String itemName, String value);
   bool saveFile();
 
-  int set_toRoot(String key, JsonObject& newObject);
+  int set_toRoot();
 
 private:
   String readJsonString();

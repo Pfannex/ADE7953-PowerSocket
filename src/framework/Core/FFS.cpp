@@ -263,9 +263,16 @@ FFSjsonFile::FFSjsonFile(LOGGING& logging, String filePath, int type)
 //...............................................................................
 //  add or replace Array @key in root
 //...............................................................................
-int FFSjsonFile::set_toRoot(String key, JsonObject& newObject){
+int FFSjsonFile::set_toRoot(){
 int result = 0;  //1=OK, 0=key not found,
 
+  DynamicJsonBuffer jsonBuffer;
+  JsonVariant rootVariant = jsonBuffer.parse(root);
+  parseJson(rootVariant);
+
+  //JsonVariant nested = jsonBuffer.parse(strValue);
+
+/*
   //String root = readJsonString();
   DynamicJsonBuffer jsonBuffer;
   JsonArray &rootArray = jsonBuffer.parseArray(root);
@@ -290,7 +297,7 @@ int result = 0;  //1=OK, 0=key not found,
   rootArray.prettyPrintTo(Serial);
   Serial.println("");
   Serial.println("-------------------------------------");
-
+*/
 
 /*
   Serial.println("loaded rootObject");
@@ -463,13 +470,13 @@ void FFSjsonFile::parseJson(JsonVariant root) {
     //logging.info("root isArray");
     JsonArray& array = root;
     for (auto &element : array) {
-      JsonVariant variant = element;
+      //JsonVariant variant = element;
       if (element.is<JsonArray &>()){
         //logging.info("isArray");
-        parseJson(variant);
+        parseJson(element);
       } else if (element.is<JsonObject>()){
         //logging.info("isObject");
-        parseJson(variant);
+        parseJson(element);
       } else {
         //logging.info("DATA in Array");
         logging.info("   " + String(element.as<char*>()));
