@@ -34,4 +34,7 @@ void Widget::fillObject(JsonObject& root){
 
   if (event != "")     root["event"]     = event;
   if (action != "")    root["action"]    = action;
+
+  if (prefix != "")    root["prefix"]    = prefix;
+  if (suffix != "")    root["suffix"]    = suffix;
 }

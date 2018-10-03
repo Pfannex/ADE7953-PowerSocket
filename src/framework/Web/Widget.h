@@ -14,16 +14,18 @@
   class Widget {
   public:
     Widget(String name, String type);
-    String name = "";
-    String type = "";
-    String caption = "";
-    int readonly = -1;
+    String name      = "";
+    String type      = "";
+    String caption   = "";
+    int readonly     = -1;
     String inputtype = "";
     String direction = "";
-    int min = 9999;
-    int max = -9999;
-    String event = "";
-    String action = "";
+    int min          = 9999;
+    int max          = -9999;
+    String event     = "";
+    String action    = "";
+    String prefix    = "";
+    String suffix    = "";
 
     void fillObject(JsonObject& root);
   };

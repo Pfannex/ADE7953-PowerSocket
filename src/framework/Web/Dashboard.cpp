@@ -55,6 +55,7 @@ String Dashboard::get(Topic &topic) {
   } else {
     return TOPIC_NO;
   }*/
+  return TOPIC_NO;
 }
 
 //...............................................................................
@@ -78,9 +79,12 @@ void Dashboard::setPage(int page){
   case 0:
     ffs.webCFG.root = page_main();
     break;
-  case 1:
-    ffs.webCFG.root = page_test();
-    break;
+    case 1:
+      ffs.webCFG.root = page_test();
+      break;
+    case 2:
+      ffs.webCFG.root = page_config();
+      break;
 
   default:
     ffs.webCFG.root = page_main();
@@ -110,7 +114,92 @@ void Dashboard::fillMenue(JsonObject& root){
     JsonObject& m2 = cg1_data.createNestedObject();
       m2["label"] = "Test";
       m2["value"] = 1;
+    JsonObject& m3 = cg1_data.createNestedObject();
+      m3["label"] = "OmniESP.json";
+      m3["value"] = 2;
 }
+
+//...............................................................................
+// page_Config
+//...............................................................................
+String Dashboard::page_config(){
+//get the OmniESP.json
+  DynamicJsonBuffer rootCFG_jsonBuffer;
+  JsonObject& rootCFG = rootCFG_jsonBuffer.parseObject(ffs.deviceCFG.root);
+
+//page_config root json
+  DynamicJsonBuffer root_jsonBuffer;
+  JsonArray& root = root_jsonBuffer.createArray();
+  //add Menue
+  JsonObject& root_menue = root.createNestedObject();
+  fillMenue(root_menue);
+
+//create gridObjects
+  JsonObject& grid = root.createNestedObject();
+    grid["type"] = "grid";
+    grid["name"] = "grid1";
+
+//create grid
+  //fill GridData
+  JsonArray& gridData = grid.createNestedArray("data");
+  int i = 0;
+  for (auto &element : rootCFG) {
+    JsonArray& gridDataRow = gridData.createNestedArray();
+    //column 1 "key"
+    JsonObject& keyObject = gridDataRow.createNestedObject();
+      keyObject["type"]     = "text";
+      keyObject["name"]     = "c1" + String(i);
+      keyObject["caption"]  = element.key;
+      keyObject["readonly"] =  1;
+      keyObject["event"]    =  "";
+      keyObject["prefix"]   =  "";
+      keyObject["suffix"]   =  "";
+    //column 1 "key"
+    JsonObject& valueObject = gridDataRow.createNestedObject();
+      valueObject["type"]     = "text";
+      valueObject["name"]     = "c2" + String(i);
+      valueObject["caption"]  = element.key;
+      valueObject["readonly"] =  1;
+      valueObject["event"]    =  "";
+      valueObject["prefix"]   =  "";
+      valueObject["suffix"]   =  "";
+    i++;
+  }
+
+//return main_page rootArray as String
+  String rootStr;
+  root.printTo(rootStr);
+  root.prettyPrintTo(Serial);
+  return rootStr;
+}
+
+
+/*
+  //fill GridData
+  JsonArray& gridData = grid.createNestedArray("data");
+  JsonArray& gridDataRow = gridData.createNestedArray();
+
+  for (int i = 0; i < rootCFG.size(); i++) {
+    gridDataRow[i].
+  }
+
+  int j = 0;
+  for (auto &element : rootCFG) {
+    //column 1 "key"
+    JsonObject& keyObject = gridDataRow.createNestedObject();
+      keyObject["type"]     = "text";
+      keyObject["name"]     = "r" + String(j);
+      keyObject["readonly"] =  1;
+      keyObject["event"]    =  "";
+      keyObject["prefix"]   =  String(element.key);
+      keyObject["suffix"]   =  "";
+
+    String strKey = element.key;
+    String strValue = element.value;
+
+    j++;
+  }*/
+
 
 //...............................................................................
 // page_test
@@ -146,7 +235,7 @@ String Dashboard::page_test(){
       w3.caption   = "Switch";
     w3.fillObject(w1_data_w2);
 
-//return main_page rootArray as String
+//return config_page rootArray as String
   String rootStr;
   root.printTo(rootStr);
   //root.prettyPrintTo(Serial);

@@ -25,6 +25,7 @@ public:
   void fillMenue(JsonObject& root);
   String page_main();
   String page_test();
+  String page_config();
   String page_scanResult();
 
 private:
