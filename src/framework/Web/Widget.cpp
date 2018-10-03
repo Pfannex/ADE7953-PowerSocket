@@ -3,7 +3,6 @@
 //###############################################################################
 //  WidgetList
 //###############################################################################
-
 WidgetList::WidgetList(String name) : name(name){}
 
 //-------------------------------------------------------------------------------
@@ -17,27 +16,22 @@ WidgetList::WidgetList(String name) : name(name){}
 //###############################################################################
 //  Widget
 //###############################################################################
-
-Widget::Widget(String name) : name(name){
+Widget::Widget(String name, String type) : name(name), type(type){
 }
 
 //-------------------------------------------------------------------------------
 //  Widget public
 //-------------------------------------------------------------------------------
-JsonObject& Widget::asObject(){
-  const size_t bufferSize = JSON_OBJECT_SIZE(10);
-  DynamicJsonBuffer jsonBuffer(bufferSize);
-  JsonObject& root = jsonBuffer.createObject();
-    root["name"]      = name;
-    root["type"]      = type;
-    root["caption"]   = caption;
-    root["readonly"]  = readonly;
-    root["inputtype"] = inputtype;
-    root["direction"] = direction;
-    root["min"]       = min;
-    root["max"]       = max;
+void Widget::fillObject(JsonObject& root){
+  if (name != "")      root["name"]      = name;
+  if (type != "")      root["type"]      = type;
+  if (caption != "")   root["caption"]   = caption;
+  if (readonly != -1)  root["readonly"]  = readonly;
+  if (inputtype != "") root["inputtype"] = inputtype;
+  if (direction != "") root["direction"] = direction;
+  if (min != 9999)     root["min"]       = min;
+  if (max != -9999)    root["max"]       = max;
 
-    root["event"]     = event;
-    root["action"]    = action;
-  return root;
+  if (event != "")     root["event"]     = event;
+  if (action != "")    root["action"]    = action;
 }

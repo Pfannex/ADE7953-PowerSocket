@@ -16,10 +16,16 @@
 class Dashboard {
 public:
   Dashboard(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs);
-  void setDashboard(int number);
+  String set(Topic &topic);
+  String get(Topic &topic);
+  void on_events(Topic &topic);
 
-  String buildDashboard();
+  void setPage(int number);
+
+  void fillMenue(JsonObject& root);
   String page_main();
+  String page_test();
+  String page_scanResult();
 
 private:
   LOGGING &logging;

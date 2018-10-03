@@ -13,19 +13,19 @@
 
   class Widget {
   public:
-    Widget(String name);
+    Widget(String name, String type);
     String name = "";
     String type = "";
     String caption = "";
-    int readonly = 1;
+    int readonly = -1;
     String inputtype = "";
     String direction = "";
-    int min = 1;
-    int max = 1;
+    int min = 9999;
+    int max = -9999;
     String event = "";
     String action = "";
 
-    JsonObject& asObject();
+    void fillObject(JsonObject& root);
   };
 
 //###############################################################################
