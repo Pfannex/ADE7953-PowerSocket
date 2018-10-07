@@ -385,7 +385,7 @@ String Dashboard::page_editSensornames(){
     //if (event == "") event = element.key;
 
     JsonObject& sensor = root.createNestedObject();
-    Widget sensors("sensor", "text");
+    Widget sensors(String(element.key), "text");
       sensors.caption   = String(element.key);
       sensors.readonly  = 0;
       //sensors.event     = "~/event/device/sensors/" + String(element.key);
@@ -395,12 +395,12 @@ String Dashboard::page_editSensornames(){
 
   }
 
-  //add EDIT button
-  JsonObject& edit = root.createNestedObject();
-  Widget bu_edit("edit", "button");
-    bu_edit.caption   = "APPLY";
-    bu_edit.action     = "~/set/device/dashboard/sensors/setNames";
-  bu_edit.fillObject(edit);
+  //add RETURN button
+  JsonObject& back = root.createNestedObject();
+  Widget bu_back("edit", "button");
+    bu_back.caption   = "RETURN";
+    bu_back.action     = "~/set/device/dashboard/setPage 0";
+  bu_back.fillObject(back);
 
 //return config_page rootArray as String
   ffs.webCFG.root = "";
