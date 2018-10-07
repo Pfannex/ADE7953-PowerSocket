@@ -20,6 +20,8 @@ String Dashboard::set(Topic &topic) {
   └─device             (level 2)
     └─dashboard        (level 3)
       └─setPage        (level 4)
+      └─sensors        (level 4)
+        └─alias        (level 5)
   */
 
   logging.debug("Dashboard set topic " + topic.topic_asString() + " to " +
@@ -29,6 +31,13 @@ String Dashboard::set(Topic &topic) {
     setPage(topic.getArgAsLong(0));
     //~/set/device/dashboard/setPage 0
     return TOPIC_OK;
+  } else if (topic.itemIs(4, "sensors")){
+    if (topic.itemIs(5, "alias")) {
+      setAlias(topic.getItem(6), topic.getArg(0));
+      return TOPIC_OK;
+    }else{
+      return TOPIC_NO;
+    }
   } else {
     return TOPIC_NO;
   }
@@ -340,7 +349,7 @@ String Dashboard::page_main(){
       if (event == "") event = element.key;
 
       JsonObject& sensor = root_group3_data.createNestedObject();
-      Widget sensors("sensor", "text");
+      Widget sensors(String(element.key), "text");
         sensors.caption   = event;
         sensors.readonly  = 1;
         sensors.event     = "~/event/device/sensors/" + String(element.key);
@@ -389,7 +398,7 @@ String Dashboard::page_editSensornames(){
       sensors.caption   = String(element.key);
       sensors.readonly  = 0;
       //sensors.event     = "~/event/device/sensors/" + String(element.key);
-      sensors.action     = "~/set/device/dashboard/sensors/" + String(element.key);
+      sensors.action     = "~/set/device/dashboard/sensors/alias/" + String(element.key);
       sensors.inputtype = "text";
     sensors.fillObject(sensor);
 
@@ -435,4 +444,24 @@ void Dashboard::addSensor(String newSensorID, String type){
 
   //topicQueue.put("~/event/ui/dashboardChanged");
   setPage(0);
+}
+
+//...............................................................................
+// Sensors set Alias
+//...............................................................................
+void Dashboard::setAlias(String serial, String alias){
+//get the device config
+  DynamicJsonBuffer deviceCFG_jsonBuffer;
+  JsonObject& deviceCFG = deviceCFG_jsonBuffer.parseObject(ffs.deviceCFG.root);
+  JsonObject& deviceCFG_sensors = deviceCFG["sensors"];
+  JsonObject& deviceCFG_sensor = deviceCFG_sensors[serial];
+    deviceCFG_sensor["name"] = alias;
+
+
+
+//return main_page rootArray as String
+  //String rootStr;
+  ffs.deviceCFG.root = "";
+  deviceCFG.printTo(ffs.deviceCFG.root);
+  deviceCFG.prettyPrintTo(ffs.deviceCFG.root);
 }

@@ -36,4 +36,5 @@ private:
   TopicQueue &topicQueue;
   FFS &ffs;
 
+  void setAlias(String serial, String alias);
 };

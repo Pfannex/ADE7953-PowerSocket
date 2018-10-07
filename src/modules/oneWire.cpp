@@ -16,6 +16,7 @@ OW::OW(string name, LOGGING &logging, TopicQueue &topicQueue, int owPin)
 //...............................................................................
 void OW::start() {
   Module::start();
+
   logging.info("starting 1 Wire");
   scanBus();
   if (count == 0)
@@ -54,6 +55,7 @@ void OW::scanBus() {
   DS18B20.setResolution(12);  //##
   delay(100);
 
+  countOld = count;
   count = DS18B20.getDeviceCount();
   delay(100);
   DS18B20.requestTemperatures();
@@ -64,7 +66,12 @@ void OW::scanBus() {
 //  read DS18B20
 //...............................................................................
 void OW::readDS18B20() {
+  DynamicJsonBuffer root;
+  JsonObject& sensoren = root.parseObject(sensorenJson);
+
+  bool changed = false;
   scanBus();
+  if (countOld != count) changed = true;
 
   String eventPrefix= "~/event/device/" + String(name) + "/";
   for (int i = 0; i < count; i++) {
@@ -78,12 +85,25 @@ void OW::readDS18B20() {
       deviceValue += str;
       if (j < 7) deviceValue += "-";
     }
+
+    if (!sensoren.containsKey(deviceValue)) {
+      sensoren[deviceValue] = "";
+      changed = true;
+    }
+
     deviceValue += " ";
     deviceValue += String(DS18B20.getTempCByIndex(i));
     DS18B20.requestTemperatures();
 
     logging.debug(deviceValue);
     topicQueue.put(eventPrefix + "/" + deviceValue);
+
+  }
+  if (changed) {
+    sensorenJson = "";
+    sensoren.printTo(sensorenJson);
+    //sensoren.prettyPrintTo(Serial);
+    topicQueue.put("~/event/device/sensorsChanged " + sensorenJson);
   }
 
 }
