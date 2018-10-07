@@ -26,7 +26,10 @@ public:
   String page_main();
   String page_test();
   String page_config();
+  String page_editSensornames();
   String page_scanResult();
+
+  void addSensor(String newSensorID, String type);
 
 private:
   LOGGING &logging;

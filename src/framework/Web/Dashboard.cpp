@@ -77,17 +77,21 @@ void Dashboard::setPage(int page){
 
   switch(page){
   case 0:
-    ffs.webCFG.root = page_main();
+    page_main();
     break;
     case 1:
-      ffs.webCFG.root = page_test();
+      page_test();
       break;
     case 2:
-      ffs.webCFG.root = page_config();
+      //ffs.webCFG.root = page_config();
+      page_config();
+      break;
+    case 3:
+      page_editSensornames();
       break;
 
   default:
-    ffs.webCFG.root = page_main();
+    page_main();
   }
   //ffs.webCFG.saveFile();
   topicQueue.put("~/event/ui/dashboardChanged");
@@ -125,7 +129,7 @@ void Dashboard::fillMenue(JsonObject& root){
 String Dashboard::page_config(){
 //get the OmniESP.json
   DynamicJsonBuffer rootCFG_jsonBuffer;
-  JsonObject& rootCFG = rootCFG_jsonBuffer.parseObject(ffs.deviceCFG.root);
+  JsonObject& rootCFG = rootCFG_jsonBuffer.parseObject(ffs.cfg.root);
 
 //page_config root json
   DynamicJsonBuffer root_jsonBuffer;
@@ -151,26 +155,30 @@ String Dashboard::page_config(){
       keyObject["name"]     = "c1" + String(i);
       keyObject["caption"]  = element.key;
       keyObject["readonly"] =  1;
-      keyObject["event"]    =  "";
-      keyObject["prefix"]   =  "";
-      keyObject["suffix"]   =  "";
+      //keyObject["event"]    =  "";
+      //keyObject["prefix"]   =  "";
+      //keyObject["suffix"]   =  "";
     //column 1 "key"
+
+/*
     JsonObject& valueObject = gridDataRow.createNestedObject();
       valueObject["type"]     = "text";
       valueObject["name"]     = "c2" + String(i);
       valueObject["caption"]  = element.key;
       valueObject["readonly"] =  1;
-      valueObject["event"]    =  "";
-      valueObject["prefix"]   =  "";
-      valueObject["suffix"]   =  "";
+      //valueObject["event"]    =  "";
+      //valueObject["prefix"]   =  "";
+      //valueObject["suffix"]   =  ""; */
     i++;
   }
 
 //return main_page rootArray as String
-  String rootStr;
-  root.printTo(rootStr);
+  //String rootStr;
+  ffs.webCFG.root = "";
+  root.printTo(ffs.webCFG.root);
   root.prettyPrintTo(Serial);
-  return rootStr;
+  Serial.println(ffs.webCFG.root);
+  return "";//rootStr;
 }
 
 
@@ -236,10 +244,13 @@ String Dashboard::page_test(){
     w3.fillObject(w1_data_w2);
 
 //return config_page rootArray as String
-  String rootStr;
-  root.printTo(rootStr);
+  ffs.webCFG.root = "";
+  root.printTo(ffs.webCFG.root);
   //root.prettyPrintTo(Serial);
-  return rootStr;
+  Serial.println(ffs.webCFG.root);
+  return "";//rootStr;
+
+
 }
 
 //...............................................................................
@@ -309,10 +320,119 @@ String Dashboard::page_main(){
             bu_toggle.action     = "~/set/device/toggle";
           bu_toggle.fillObject(root_group1_data_group2_data_powerToggle);
 
+  //GROUP3 Sensors
+  JsonObject& root_group3 = root.createNestedObject();
+  Widget group3("group3", "group");
+    group3.caption   = "Sensoren";
+  group3.fillObject(root_group3);
+    //DATA
+    JsonArray& root_group3_data = root_group3.createNestedArray("data");
+
+    //get config.json "sensors"
+    DynamicJsonBuffer deviceCFG_jsonBuffer;
+    JsonObject& deviceCFG = deviceCFG_jsonBuffer.parseObject(ffs.deviceCFG.root);
+    JsonObject& deviceCFG_sensors = deviceCFG["sensors"];
+    //iterate the sensors
+    for (auto &element : deviceCFG_sensors) {
+      JsonObject& sensorData = deviceCFG_sensors[element.key];
+      const char* xevent = sensorData["name"];
+      String event = String(xevent);
+      if (event == "") event = element.key;
+
+      JsonObject& sensor = root_group3_data.createNestedObject();
+      Widget sensors("sensor", "text");
+        sensors.caption   = event;
+        sensors.readonly  = 1;
+        sensors.event     = "~/event/device/sensors/" + String(element.key);
+        sensors.inputtype = "text";
+      sensors.fillObject(sensor);
+
+    }
+
+    //add EDIT button
+    JsonObject& edit = root_group3_data.createNestedObject();
+    Widget bu_edit("edit", "button");
+      bu_edit.caption   = "EDIT Sensornames";
+      bu_edit.action     = "~/set/device/dashboard/setPage 3";
+    bu_edit.fillObject(edit);
 
 //return main_page rootArray as String
-  String rootStr;
-  root.printTo(rootStr);
+  ffs.webCFG.root = "";
+  root.printTo(ffs.webCFG.root);
   //root.prettyPrintTo(Serial);
-  return rootStr;
+  //Serial.println(ffs.webCFG.root);
+  return "";//rootStr;
+
+}
+
+//...............................................................................
+// page_EditSensornames
+//...............................................................................
+String Dashboard::page_editSensornames(){
+//page_main root json
+  DynamicJsonBuffer root_jsonBuffer;
+  JsonArray& root = root_jsonBuffer.createArray();
+
+  //get config.json "sensors"
+  DynamicJsonBuffer deviceCFG_jsonBuffer;
+  JsonObject& deviceCFG = deviceCFG_jsonBuffer.parseObject(ffs.deviceCFG.root);
+  JsonObject& deviceCFG_sensors = deviceCFG["sensors"];
+  //iterate the sensors
+  for (auto &element : deviceCFG_sensors) {
+    //JsonObject& sensorData = deviceCFG_sensors[element.key];
+    //const char* xevent = sensorData["name"];
+    //String event = String(xevent);
+    //if (event == "") event = element.key;
+
+    JsonObject& sensor = root.createNestedObject();
+    Widget sensors("sensor", "text");
+      sensors.caption   = String(element.key);
+      sensors.readonly  = 0;
+      //sensors.event     = "~/event/device/sensors/" + String(element.key);
+      sensors.action     = "~/set/device/dashboard/sensors/" + String(element.key);
+      sensors.inputtype = "text";
+    sensors.fillObject(sensor);
+
+  }
+
+  //add EDIT button
+  JsonObject& edit = root.createNestedObject();
+  Widget bu_edit("edit", "button");
+    bu_edit.caption   = "APPLY";
+    bu_edit.action     = "~/set/device/dashboard/sensors/setNames";
+  bu_edit.fillObject(edit);
+
+//return config_page rootArray as String
+  ffs.webCFG.root = "";
+  root.printTo(ffs.webCFG.root);
+  //root.prettyPrintTo(Serial);
+  //Serial.println(ffs.webCFG.root);
+  return "";//rootStr;
+}
+
+
+//...............................................................................
+// Sensors count change
+//...............................................................................
+void Dashboard::addSensor(String newSensorID, String type){
+//get the device config
+  DynamicJsonBuffer deviceCFG_jsonBuffer;
+  JsonObject& deviceCFG = deviceCFG_jsonBuffer.parseObject(ffs.deviceCFG.root);
+  JsonObject& deviceCFG_sensors = deviceCFG["sensors"];
+
+  //loop with array
+  if (!deviceCFG_sensors.containsKey(newSensorID)) {
+    JsonObject& deviceCFG_sensors_new = deviceCFG_sensors.createNestedObject(newSensorID);
+    deviceCFG_sensors_new["type"] = type;
+    deviceCFG_sensors_new["name"] = "";
+  }
+
+//return main_page rootArray as String
+  //String rootStr;
+  ffs.deviceCFG.root = "";
+  deviceCFG.printTo(ffs.deviceCFG.root);
+  //deviceCFG.prettyPrintTo(Serial);
+
+  //topicQueue.put("~/event/ui/dashboardChanged");
+  setPage(0);
 }
