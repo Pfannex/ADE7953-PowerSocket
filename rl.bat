@@ -7,28 +7,30 @@ REM ----------------------------------------------------------------------------
 
 :start
   ECHO.
-  ECHO what to do?
+  ECHO what to do?                         [RapidLoader V1.05]
   ECHO -------------------------------------------------------------
-  ECHO   [1] load device from archive into framework (overwriting!)
-  ECHO   [2] save device from framework to archive   (overwriting!)
-  ECHO   [3] copy new clean OmniESP.json             (overwriting!)
-  ECHO   [4] create NEW Device and load
-  ECHO   [5] create NEW Module
+  ECHO   [1] Load Device                   (overwriting!)
+  ECHO   [2] Save Device                   (overwriting!)
+  ECHO   [3] Save Device As...
+  ECHO   [4] Copy new clean OmniESP.json   (overwriting!)
+  ECHO   [5] Create NEW Device and Load
+  ECHO   [6] Create NEW Module
   ECHO -------------------------------------------------------------
-  ECHO   [6] build bin-files and tarball
-  ECHO   [7] save build to archive                   (overwriting!)
+  ECHO   [7] Build bin-files and tarball
+  ECHO   [8] Save Build to Archive         (overwriting!)
   ECHO -------------------------------------------------------------
-  ECHO   [8] EXIT
+  ECHO   [9] EXIT
   SET /P toDo=
 
   IF %toDo% == 1 GOTO loadDevice
-  IF %toDo% == 2 GOTO archiveDevice
-  IF %toDo% == 3 GOTO copyOmniesp
-  IF %toDo% == 4 GOTO newDevice
-  IF %toDo% == 5 GOTO newModule
-  IF %toDo% == 6 GOTO buildTarball
-  IF %toDo% == 7 GOTO archiveBuild
-  IF %toDo% == 8 GOTO end
+  IF %toDo% == 2 GOTO safeDevice
+  IF %toDo% == 3 GOTO safeAsDevice
+  IF %toDo% == 4 GOTO copyOmniesp
+  IF %toDo% == 5 GOTO newDevice
+  IF %toDo% == 6 GOTO newModule
+  IF %toDo% == 7 GOTO buildTarball
+  IF %toDo% == 8 GOTO archiveBuild
+  IF %toDo% == 9 GOTO end
 
   CLS
   ECHO Invalid Selection! Try again
@@ -37,7 +39,7 @@ REM ----------------------------------------------------------------------------
   GOTO start
 
 REM ----------------------------------------------------------------------------
-REM [1] load device from archive
+REM load device from archive
 REM ----------------------------------------------------------------------------
 
 :loadDevice
@@ -99,10 +101,10 @@ REM -----------------------------------------
   GOTO end
 
 REM ----------------------------------------------------------------------------
-REM [2] save device to archive
+REM save device to archive
 REM ----------------------------------------------------------------------------
 
-:archiveDevice
+:safeDevice
   CLS
   ECHO archive Device
   ECHO -------------------------------------------
@@ -159,6 +161,37 @@ REM ----------------------------------------------------------------------------
   GOTO end
 
 REM ----------------------------------------------------------------------------
+REM saveAS device to archive
+REM ----------------------------------------------------------------------------
+
+:safeAsDevice
+  CLS
+  ECHO Save Device as...
+  ECHO -------------------------------------------
+  ECHO.
+  ECHO please enter name of new device.....
+  SET /P deviceName=
+
+  ECHO creating directorys for %deviceName%
+  mkdir _customDevices\%deviceName%
+  mkdir _customDevices\%deviceName%\src
+  mkdir _customDevices\%deviceName%\data
+  mkdir _customDevices\%deviceName%\firmware
+  mkdir _customDevices\%deviceName%\doc
+  mkdir _customDevices\%deviceName%\fhem
+
+  REM -----------------------------------------
+  REM copy Files
+  REM -----------------------------------------
+
+  ECHO archive files to %deviceName%
+  XCOPY data\customDevice\*.json _customDevices\%deviceName%\data\customDevice\ /S /Y
+  XCOPY src\customDevice\customDevice*.* _customDevices\%deviceName%\src\customDevice\ /S /Y
+  ECHO done
+  ECHO.
+  GOTO end
+
+REM ----------------------------------------------------------------------------
 REM copy new clean OmniESP.json
 REM ----------------------------------------------------------------------------
 
@@ -186,8 +219,11 @@ REM ----------------------------------------------------------------------------
 
   ECHO creating directorys for %deviceName%
   mkdir _customDevices\%deviceName%
+  mkdir _customDevices\%deviceName%\src
+  mkdir _customDevices\%deviceName%\data
   mkdir _customDevices\%deviceName%\firmware
   mkdir _customDevices\%deviceName%\doc
+  mkdir _customDevices\%deviceName%\fhem
 
   ECHO copy template to _customDevices\%deviceName%
   XCOPY _customDevices\_template\*.* _customDevices\%deviceName%\ /S /Y
