@@ -12,7 +12,9 @@ customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
     : Device(logging, topicQueue, ffs),
       button("button", logging, topicQueue, PIN_BUTTON),
       led("led", logging, topicQueue, PIN_LED, NORMAL),
-      relay("relay", logging, topicQueue, PIN_RELAY, NORMAL) {
+      relay("relay", logging, topicQueue, PIN_RELAY, NORMAL),
+      ow("sensors", logging, topicQueue, OWPIN)
+ {
 
   type= String(DEVICETYPE);
   version = String(DEVICEVERSION);
@@ -32,6 +34,7 @@ void customDevice::start() {
   led.start();
   relay.start();
   setLedMode(50);
+  ow.start();
 
   logging.info("device running");
 }
@@ -43,6 +46,12 @@ void customDevice::handle() {
   button.handle();
   led.handle();
   relay.handle();
+  ow.handle();
+
+  //DynamicJsonBuffer ow_sensoren;
+  //JsonObject& sensoren = ow_sensoren.parseObject(ow.sensorenJson);
+  //sensoren.prettyPrintTo(Serial);
+
 }
 
 //...............................................................................
@@ -56,6 +65,7 @@ String customDevice::set(Topic &topic) {
     └─power            (level 3)
     └─led              (level 3)
     └─toggle           (level 3)
+    └─dashboard        (level 3)
   */
 
   logging.debug("device set topic " + topic.topic_asString() + " to " +
@@ -75,6 +85,8 @@ String customDevice::set(Topic &topic) {
       return TOPIC_OK;
     }
     return TOPIC_OK;
+  } else if (topic.itemIs(3, "dashboard")) {
+      return dashboard.set(topic);
   } else {
     return TOPIC_NO;
   }
@@ -106,6 +118,15 @@ String customDevice::get(Topic &topic) {
 // Eventhandler - called by the controller after receiving a topic (event)
 //...............................................................................
 void customDevice::on_events(Topic &topic) {
+
+  //1W sensors changed
+  if (topic.modifyTopic(0) == "event/device/sensorsChanged") {
+    DynamicJsonBuffer root;
+    JsonObject& sensoren = root.parseObject(topic.arg_asString());
+    for (auto &element : sensoren) {
+      dashboard.addSensor(element.key, "DS18B20");
+    }
+  }
 
   // listen to ~/device/led/setmode
   if (led.isForModule(topic)) {
@@ -148,6 +169,12 @@ void customDevice::setPowerMode(int value) {
   if (power) {
     relay.setOutputMode(ON);
     setLedMode(1);
+
+//##########################################
+  //String id = "08_15_47_11_00_" + String(random(10, 99));
+  //dashboard.addSensor(id, "DS18B20");
+//##########################################
+
   } else {
     relay.setOutputMode(OFF);
     setLedMode(0);

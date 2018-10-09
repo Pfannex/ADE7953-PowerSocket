@@ -9,12 +9,13 @@
 
 // modules required by device
 #include "modules/GPIO.h"
+#include "modules/oneWire.h"
 
 //###############################################################################
 //  Device
 //###############################################################################
 
-#define DEVICETYPE      "SimpleSwitch"
+#define DEVICETYPE      "DEMO_Dashboard"
 #define DEVICEVERSION   "v1"
 
 class customDevice : public Device {
@@ -31,6 +32,7 @@ private:
   GPIOinput button;
   GPIOoutput led;
   GPIOoutput relay;
+  OW ow;
 
   // the central modes
   int power = 0;

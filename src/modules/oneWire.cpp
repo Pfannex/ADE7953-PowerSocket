@@ -78,6 +78,8 @@ void OW::readDS18B20() {
     DS18B20.getAddress(DS18B20device, i);
     delay(100);
 
+//TODO check for alias name
+
     String deviceValue = "";
     char str[5];
     for (int j = 0; j < 8; j++) {

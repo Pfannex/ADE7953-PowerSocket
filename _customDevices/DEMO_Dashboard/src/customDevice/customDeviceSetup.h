@@ -30,3 +30,6 @@ ADC  A0     2     Analog
 
 // Arduino Pin 14 = IO14 = Physical Pin 5 = NodeMCU/WeMos Pin D5
 #define PIN_RELAY 14
+
+// Arduino Pin 13 = IO13 = Physical Pin 7 = NodeMCU/WeMos Pin D7
+#define OWPIN 13
