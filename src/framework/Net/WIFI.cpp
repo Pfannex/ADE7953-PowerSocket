@@ -51,6 +51,11 @@ void WIFI::start() {
 
   byte mac[] = {0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02};
 
+  //WARNING
+  //W5500 CS has internal PullUp, GPIO15 is also used for BootMode-selection
+  //with GPIO15 set to HIGH ESP starts with wrong BootMode!
+  //set CS-pin to GPIO4,
+  Ethernet.init(4);
   // start the Ethernet connection:
   Ethernet.begin(mac);
   //Serial.println("hardwareStatus: " + String(Ethernet.hardwareStatus()));
