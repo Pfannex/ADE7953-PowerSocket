@@ -30,7 +30,8 @@ public:
 private:
   bool state = 0;
   String deviceName;
-  WiFiClient espClient;
+  //WiFiClient espClient; 
+  EthernetClient espClient;
   PubSubClient client;
   void pub(const char* topic, const char* value);
   void pub(String& topic, const String& value);

@@ -1,0 +1,5 @@
+{
+  "I2CPOLL"  : "2500",
+  "NEW"      : "HelloWorld!",
+  "sensors"  : {}
+}

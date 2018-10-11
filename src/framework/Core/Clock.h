@@ -4,6 +4,7 @@
 #include <NTPClient.h>
 #include <Timezone.h>
 #include <WiFiUdp.h>
+#include <EthernetUdp.h>
 
 //###############################################################################
 //  NTP clock
@@ -30,7 +31,8 @@ public:
 
 private:
   TopicQueue &topicQueue;
-  WiFiUDP ntpUDP;
+  //WiFiUDP ntpUDP;
+  EthernetUDP ntpUDP;
   NTPClient *ntpClient = nullptr;
   void updateUptime();
   long timezone(time_t t);

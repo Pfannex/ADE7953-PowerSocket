@@ -165,8 +165,16 @@ void Controller::on_wl_connected() {
   on_wifi_state_change();
   logging.info("WiFi STA has connected");
   topicQueue.put("~/event/wifi/wl_connected");
-  logging.info("STA connected to " + WiFi.SSID() + " | IP "
-                                   + WiFi.localIP().toString());
+
+  String ethIP = "";
+  for (byte thisByte = 0; thisByte < 4; thisByte++) {
+    // print the value of each byte of the IP address:
+    ethIP += Ethernet.localIP()[thisByte];
+    if (thisByte == 3) break;
+    ethIP += ".";
+  }
+
+  logging.info("ETH connected to " + ethIP);
 
   startNtp();
   on_netConnected();

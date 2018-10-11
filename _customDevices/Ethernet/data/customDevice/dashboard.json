@@ -1,0 +1,76 @@
+[
+  {
+    "name": "cg1",
+    "type": "controlgroup",
+    "caption": "Menü",
+    "direction": "horizontal",
+    "event": "~/event/device/radio",
+    "action": "~/set/device/dashboard/setPage",
+    "data": [
+
+      {
+        "label": "Main",
+        "value": 0
+      },
+      {
+        "label": "Test",
+        "value": 1
+      },
+      {
+         "label": "OmniESP.json",
+          "value": 2
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "name": "group1",
+    "caption": "Simple Switch Leitstand",
+    "data": [
+      {
+        "type": "text",
+        "name": "clock",
+        "caption": "Time",
+        "readonly": 1,
+        "event": "~/event/clock/time",
+        "inputtype": "datetime"
+      },
+      {
+        "type": "checkbox",
+        "name": "led",
+        "readonly": 1,
+        "caption": "LED",
+        "event": "~/event/device/led"
+      },
+      {
+        "type": "group",
+        "name": "subgroup",
+        "caption": "Power Control",
+        "data": [
+          {
+            "type": "controlgroup",
+            "name": "power",
+            "caption": "Power",
+            "action": "~/set/device/power",
+            "event": "~/event/device/power",
+            "data": [{
+                "label": "Off",
+                "value": 0
+              },
+              {
+                "label": "On",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "name": "toggle",
+            "caption": "Toggle",
+            "action": "~/set/device/toggle"
+          }
+        ]
+      }
+    ]
+  }
+]

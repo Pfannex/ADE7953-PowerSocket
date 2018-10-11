@@ -26,6 +26,7 @@ void WIFI::start() {
   //ESP.eraseConfig();
   WiFi.mode(WIFI_OFF);
 
+/*
   if (staMode=="off" and apMode=="off"){
     logging.info("WiFi staMode=off and apMode=off -> no WiFi functions available!");
   } else if (apMode=="on") {
@@ -37,15 +38,109 @@ void WIFI::start() {
 
   } else {  //staMode dhcp or auto
     startSTA();
+  }*/
+
+
+
+  /*
+   * CLK  = GPIO 14 | D5
+   * MISO = GPIO 12 | D6
+   * MOSI = GPIO 13 | D7
+   * CS   = GPIO 15 | D8
+   */
+
+  byte mac[] = {0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02};
+
+  // start the Ethernet connection:
+  Ethernet.begin(mac);
+  //Serial.println("hardwareStatus: " + String(Ethernet.hardwareStatus()));
+  //Serial.println("linkStatus    : " + String(Ethernet.linkStatus()));
+
+  if (Ethernet.begin(mac) == 0) {
+      Serial.println("Failed to configure Ethernet using DHCP");
+      // no point in carrying on, so do nothing forevermore:
+      for (;;)
+        ;
+    }
+/*
+    // print your local IP address:
+    Serial.print("My IP address: ");
+    for (byte thisByte = 0; thisByte < 4; thisByte++) {
+      // print the value of each byte of the IP address:
+      Serial.print(Ethernet.localIP()[thisByte], DEC);
+      Serial.print(".");
+    }
+    Serial.println();
+*/
+
+
+
+  // Check for Ethernet hardware present
+  if (Ethernet.hardwareStatus() == EthernetNoHardware) {
+    Serial.println("Ethernet shield was not found.  Sorry, can't run without hardware. :(");
+    while (true) {
+      delay(1); // do nothing, no point running without Ethernet hardware
+    }
   }
+  if (Ethernet.linkStatus() == LinkOFF) {
+    Serial.println("Ethernet cable is not connected.");
+  }
+
+
+  // print your local IP address:
+  //Serial.print("My IP address: ");
+  //Serial.println(Ethernet.localIP());
+
+  staState = STA_CONNECTED;
+  apState  = AP_CLOSED;
+  if (on_wl_connected != nullptr) on_wl_connected();
+
 }
 
 //...............................................................................
 //  WiFi handle connection
 //...............................................................................
 void WIFI::handle() {
-  updateStaStatus();
-  updateApStatus();
+
+  auto link = Ethernet.linkStatus();
+  Serial.print("Link status: ");
+  switch (link) {
+    case Unknown:
+      Serial.println("Unknown");
+      break;
+    case LinkON:
+      Serial.println("ON");
+      break;
+    case LinkOFF:
+      Serial.println("OFF");
+      break;
+  }
+
+  auto hlink = Ethernet.hardwareStatus();
+  Serial.print("hardware status: ");
+  switch (hlink) {
+    case EthernetNoHardware:
+      Serial.println("EthernetNoHardware");
+      break;
+    case EthernetW5100:
+      Serial.println("EthernetW5100");
+      break;
+    case EthernetW5200:
+      Serial.println("EthernetW5200");
+      break;
+    case EthernetW5500:
+      Serial.println("EthernetW5500");
+      break;
+
+  }
+
+  delay(1000);
+
+
+  //Serial.println("hardwareStatus: " + String(Ethernet.hardwareStatus()));
+  //Serial.println("linkStatus    : " + String(Ethernet.linkStatus()));
+  //updateStaStatus();
+  //updateApStatus();
 }
 
 //...............................................................................
@@ -120,6 +215,7 @@ String WIFI::get(Topic &topic) {
 //  start STA
 //...............................................................................
 void WIFI::startSTA() {
+/*
   String ssid = ffs.cfg.readItem("wifi_ssid");
   String psk  = ffs.cfg.readItem("wifi_password");
   staMode     = ffs.cfg.readItem("wifi"); // off, dhcp, manual
@@ -159,6 +255,7 @@ void WIFI::startSTA() {
 
   logging.info("try to connect to SSID: " + ssid);
   WiFi.begin(ssid.c_str(), psk.c_str());
+  */
 }
 
 //...............................................................................
@@ -204,6 +301,9 @@ void WIFI::startAP(int state) {
 //  update STA status and send callback event
 //...............................................................................
 bool WIFI::updateStaStatus() {
+
+
+/*
   wl_status = WiFi.status();
   if (wl_status != wl_status_old) {
     switch (wl_status) {
@@ -237,7 +337,8 @@ bool WIFI::updateStaStatus() {
     return true;
   } else {
     return false;
-  }
+  }*/
+  return false;
 }
 //...............................................................................
 //  update AP status and send callback event

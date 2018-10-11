@@ -7,6 +7,11 @@
 #include "framework/Utils/Logger.h"
 //#include "I2C.h"
 
+#include <SPI.h>
+#include <Ethernet.h>
+
+
+
 //wl_status_t  = STA StatusEvents in WiFiClient
 //sta_state_t  = STA state
 typedef enum {
@@ -45,7 +50,8 @@ public:
   LOGGING& logging;
   FFS& ffs;
 
-  WiFiClient client;
+  //WiFiClient client;
+  EthernetClient client;
   void set_callback(CallbackFunction wl_connected,
                     CallbackFunction wl_connect_failed,
                     CallbackFunction wl_no_ssid_avail,
