@@ -29,6 +29,9 @@ public:
   void on_events(Topic &topic);
 
 private:
+  EthernetServer server;
+
+
   //GPIOinput button;
   //GPIOoutput led;
   //GPIOoutput relay;
