@@ -52,9 +52,13 @@ GND                         ADDR    0x23
 //
 // GPIO MCP23017
 //
-#include "modules/MCP23017.h"
 // 0x20 default
 #define ADDRESS_MCP 0x20
+
+//
+// voltage sensor ADS1115
+//
+#define ADDRESS_ADS 0x48
 
 
 // default polling interval in milliseconds

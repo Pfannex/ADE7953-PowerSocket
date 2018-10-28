@@ -10,7 +10,7 @@
 //-------------------------------------------------------------------------------
 customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
     : Device(logging, topicQueue, ffs), pressureSensor(),
-      lightSensor(ADDRESS_LS), uvSensor(), mcp() {
+      lightSensor(ADDRESS_LS), uvSensor(), mcp(), ads(ADDRESS_ADS) {
 
   type = String(DEVICETYPE);
   version = String(DEVICEVERSION);
@@ -79,11 +79,18 @@ void customDevice::start() {
 
   // MCP23017
   mcp.begin(ADDRESS_MCP);
-  mcpIsPresent= true; // how to check?
+  mcpIsPresent = true; // how to check?
   logging.info("MCP23017 found");
-  for(int relay= 0; relay< 8; relay++) {
+  for (int relay = 0; relay < 8; relay++) {
     mcp.pinMode(0, OUTPUT);
   }
+
+  // ADS1115
+  ads.begin();
+  ads.setGain(GAIN_ONE); // 4.096 V
+  adsIsPresent = true;   // how to check?
+  adsGain_t gain = ads.getGain();
+  logging.info("ADS1115 found");
 
   // poll if any sensors found
   if (count) {
@@ -114,20 +121,40 @@ float customDevice::measureTemperatureCelsius() {
 float customDevice::measurePressurehPa() {
   return 0.01 * round(pressureSensor.readPressure());
 }
-uint16_t customDevice::measureUVLevel() {
-  return uvSensor.readUV();
-}
+uint16_t customDevice::measureUVLevel() { return uvSensor.readUV(); }
 
-float customDevice::measureUVmuWpercm2() {
-  return measureUVLevel()*5.0;
+float customDevice::measureUVmuWpercm2() { return measureUVLevel() * 5.0; }
+
+float customDevice::measureVoltage(int channel) {
+  return ads.readADC_SingleEnded(channel) * 0.000125;
 }
 
 void customDevice::inform() {
-  topicQueue.put("~/event/device/temperature", measureTemperatureCelsius(),
-                 "%.2f");
-  topicQueue.put("~/event/device/pressure", measurePressurehPa(), "%.2f");
-  topicQueue.put("~/event/device/illuminance", measureIlluminanceLux(), "%.2f");
-  topicQueue.put("~/event/device/uv", measureUVmuWpercm2(), "%g");
+
+  float temperature = measureTemperatureCelsius();
+  float pressure = measurePressurehPa();
+  float illuminance = measureIlluminanceLux();
+  float uv = measureUVmuWpercm2();
+  float voltage[4];
+  for (int channel = 0; channel < 4; channel++)
+    voltage[channel] = measureVoltage(channel);
+
+  topicQueue.put("~/event/device/temperature", temperature, "%.2f");
+  topicQueue.put("~/event/device/pressure", pressure, "%.2f");
+  topicQueue.put("~/event/device/illuminance", illuminance, "%.2f");
+  topicQueue.put("~/event/device/uv", uv, "%g");
+  topicQueue.put("~/event/device/voltage0", voltage[0], "%g");
+  topicQueue.put("~/event/device/voltage1", voltage[1], "%g");
+  topicQueue.put("~/event/device/voltage2", voltage[2], "%g");
+  topicQueue.put("~/event/device/voltage3", voltage[3], "%g");
+  logging.info("temperature: " + String(temperature, 2) + " °C");
+  logging.info("pressure   : " + String(pressure, 2) + " hPa");
+  logging.info("illuminance: " + String(illuminance, 2) + " lux");
+  logging.info("uv         : " + String(uv, 2) + " µW/cm²");
+  logging.info("voltage0   : " + String(voltage[0], 3) + " V");
+  logging.info("voltage1   : " + String(voltage[1], 3) + " V");
+  logging.info("voltage2   : " + String(voltage[2], 3) + " V");
+  logging.info("voltage3   : " + String(voltage[3], 3) + " V");
 }
 
 //...............................................................................
@@ -136,7 +163,7 @@ void customDevice::inform() {
 
 void customDevice::switchRelay(int relay, int state) {
   mcp.digitalWrite(relay, state);
-  topicQueue.put("~/event/device/relay"+String(relay)+" "+String(state));
+  topicQueue.put("~/event/device/relay" + String(relay) + " " + String(state));
 }
 
 //...............................................................................
@@ -175,11 +202,13 @@ String customDevice::set(Topic &topic) {
     pollInterval = topic.getArgAsLong(0);
     logging.info("polling sensor every " + String(pollInterval) + "ms");
     return TOPIC_OK;
-  } else if(topic.itemIs(3, "relay")) {
-    int relay= topic.getArgAsLong(0);
-    int state= topic.getArgAsLong(1);
-    if(relay<0 || relay>7) return TOPIC_NO;
-    if(state<0 || state>1) return TOPIC_NO;
+  } else if (topic.itemIs(3, "relay")) {
+    int relay = topic.getArgAsLong(0);
+    int state = topic.getArgAsLong(1);
+    if (relay < 0 || relay > 7)
+      return TOPIC_NO;
+    if (state < 0 || state > 1)
+      return TOPIC_NO;
     switchRelay(relay, state);
     return TOPIC_OK;
   } else {

@@ -12,6 +12,7 @@
 #include "AS_BH1750.h"
 #include "Adafruit_VEML6070.h"
 #include "Adafruit_MCP23017.h"
+#include "Adafruit_ADS1015.h"
 #include <Wire.h>
 
 //###############################################################################
@@ -38,6 +39,7 @@ private:
   AS_BH1750 lightSensor;
   Adafruit_VEML6070 uvSensor;
   Adafruit_MCP23017 mcp;
+  Adafruit_ADS1115 ads;
 
   unsigned long pollInterval= 0;
   unsigned long lastPoll = 0;
@@ -46,6 +48,7 @@ private:
   float measurePressurehPa();
   uint16_t measureUVLevel();
   float measureUVmuWpercm2();
+  float measureVoltage(int channel);
   void switchRelay(int relay, int state);
   void inform();
   void logPollInterval();
@@ -53,4 +56,5 @@ private:
   bool lightSensorIsPresent= false;
   bool uvSensorIsPresent= false;
   bool mcpIsPresent= false;
+  bool adsIsPresent= false;
 };
