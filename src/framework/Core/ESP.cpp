@@ -83,12 +83,12 @@ void ESP_Tools::reboot() {
 //  get free memSize
 //...............................................................................
 
-/*
-
-uint32_t ESP_Tools::freeHeapSize() { // long?
+uint32_t ESP_Tools::freeHeapSize() {
   return ESP.getFreeHeap();
 }
 
+
+/*
 int ESP_Tools::freeStackSize() {
   register uint32_t *sp asm("a1");
   return 4 * (sp - g_cont.stack);

@@ -476,7 +476,8 @@ void Controller::t_short_Update() {
   /*
     espTools.debugMem();
   */
-  logging.debug("uptime: "+SysUtils::uptimeStr(clock.uptimeMillis()));
+  logging.debug("uptime: "+SysUtils::uptimeStr(clock.uptimeMillis())+
+    ", free heap: "+String(espTools.freeHeapSize())  );
 };
 
 void Controller::t_long_Update() {
