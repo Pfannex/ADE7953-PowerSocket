@@ -25,7 +25,8 @@
 //...............................................................................
 Controller::Controller()
     : logging(clock), ffs(logging), clock(topicQueue),
-      espTools(logging), wifi(logging, ffs), device(logging, topicQueue, ffs) {
+      espTools(logging),
+      dashboard(logging), wifi(logging, ffs), device(logging, topicQueue, ffs) {
 
   // callback Events
   // WiFi
@@ -74,6 +75,12 @@ void Controller::start() {
 
   // set config defaults
   setConfigDefaults();
+
+  // preload dashboard
+  dashboard.load();
+  String jsonDocument;
+  dashboard.serialize(jsonDocument);
+  logging.info("dashboard="+jsonDocument);
 
   // start FTP-Server and Web-server
   startFtp();
@@ -433,7 +440,13 @@ String Controller::call(Topic &topic) {
     }
     // get
   } else if (topic.itemIs(1, "get")) {
-    if (topic.itemIs(2, "ffs")) {
+    if (topic.itemIs(2, "ui")) {
+      if(topic.itemIs(3, "dashboard")) {
+        return dashboard.asJsonDocument();
+      } else {
+        return TOPIC_NO;
+      }
+    } else if (topic.itemIs(2, "ffs")) {
       return ffs.get(topic);
     } else if (topic.itemIs(2, "clock")) {
       return clock.get(topic);
