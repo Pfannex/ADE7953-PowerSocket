@@ -41,6 +41,14 @@ void WIFI::start() {
   }*/
 
 
+//https://wizwiki.net/wiki/doku.php?id=products:wiz850io:start
+  // GND        GND
+  // GND        3V3
+  // MOSI -D7   3V3
+  // CLK  -D5   NC
+  // CS   -D2   reset
+  // INT        MISO  -D6
+
 
   /*
    * CLK  = GPIO 14 | D5
