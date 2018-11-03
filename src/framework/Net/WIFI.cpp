@@ -4,7 +4,7 @@
 //###############################################################################
 //  WiFi
 //###############################################################################
-WIFI::WIFI(LOGGING &logging, FFS &ffs) : logging(logging), ffs(ffs) {}
+WIFI::WIFI(LOGGING &logging, FFS &ffs) : logging(logging), ffs(ffs), eth(CSPIN) {}
 
 //-------------------------------------------------------------------------------
 //  WiFi public
@@ -38,12 +38,34 @@ void WIFI::start() {
   } else {  //staMode dhcp or auto
     startSTA();
   }
+
+//############################################################
+  eth.setDefault(); // use ethernet for default route
+  int present = eth.begin();// eth.begin(mac);
+  // Serial.println("present= " + String(present, HEX));
+  if (!present) {
+    Serial.println("no W5500 present");
+    return;
+  }
+  Serial.print("connecting ethernet");
+  while (!eth.connected()) {
+    eth.loop();
+    Serial.print(".");
+    delay(1000);
+  }
+  Serial.println();
+  Serial.print("ethernet ip address: ");
+  Serial.println(eth.localIP());
+  if (on_wl_connected != nullptr) on_wl_connected();
+//############################################################
+
 }
 
 //...............................................................................
 //  WiFi handle connection
 //...............................................................................
 void WIFI::handle() {
+  eth.loop();
   updateStaStatus();
   updateApStatus();
 }

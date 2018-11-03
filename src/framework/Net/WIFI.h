@@ -4,6 +4,8 @@
 #include <Arduino.h>
 #include <WiFiClient.h>
 #include <ESP8266WiFi.h>
+//#include <netif/ethernet.h>
+#include <w5500-lwIP.h>
 #include "framework/Utils/Logger.h"
 //#include "I2C.h"
 
@@ -53,6 +55,9 @@ public:
                     CallbackFunction ap_no_stations_connected,
                     String_CallbackFunction wifi_scan_result
                    );
+
+  #define CSPIN 4
+  Wiznet5500lwIP eth;
 
   void start();
   void handle();
