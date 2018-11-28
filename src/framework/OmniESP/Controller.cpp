@@ -77,9 +77,9 @@ void Controller::start() {
   setConfigDefaults();
 
   // preload dashboard
+  D("preloading dashboard");
   dashboard.load();
-  String jsonDocument;
-  dashboard.serialize(jsonDocument);
+  String jsonDocument= dashboard.asJsonDocument();
   logging.info("dashboard="+jsonDocument);
 
   // start FTP-Server and Web-server
