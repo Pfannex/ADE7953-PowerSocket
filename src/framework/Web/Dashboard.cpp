@@ -55,9 +55,8 @@ void Widget::fromJsonObject(JsonObject &O) {
 //  WidgetArray
 //###############################################################################
 
-Widget* WidgetArray::createWidget(JsonObject &O) const {
+Widget *WidgetArray::createWidget(String &type) const {
   // here we need to create descendants of widgets depending on O["type"]
-  String type = O["type"];
   if (type.equals("group")) {
     D("creating WidgetGroup");
     return new WidgetGroup;
@@ -67,12 +66,16 @@ Widget* WidgetArray::createWidget(JsonObject &O) const {
   }
 }
 
+Widget *WidgetArray::createWidget(JsonObject &O) const {
+  return createWidget(O["type"]);
+}
+
 JsonArray &WidgetArray::serialize(DynamicJsonBuffer &jsonBuffer) {
   D("serializing widget array");
   JsonArray &A = jsonBuffer.createArray();
   for (auto w : widgets) {
-    String msg= "  widget type: "+w->type;
-    D(msg.c_str());
+    // String msg= "  widget type: "+w->type;
+    // D(msg.c_str());
     JsonObject &O = A.createNestedObject(); // create object and add to array
     w->toJsonObject(jsonBuffer, O);
   }
@@ -84,9 +87,49 @@ void WidgetArray::deserialize(JsonArray &A) {
   widgets.clear();
   for (JsonObject &O : A) {
     D("  widget");
-    Widget* w = createWidget(O);
+    Widget *w = createWidget(O);
     w->fromJsonObject(O);
     widgets.push_back(w);
+  }
+}
+
+bool WidgetArray::removeWidget(String &name) {
+  for (auto it = widgets.begin(); it != widgets.end();) {
+    Widget *w = *it;
+    if (w->name.equals(name)) {
+      it = widgets.erase(it);
+      return true;
+    } else {
+      if (w->type.equals("group")) {
+        WidgetArray *a = (WidgetArray *)(w);
+        if (a->removeWidget(name))
+          return true;
+      }
+      ++it;
+    }
+  }
+  return false;
+}
+
+Widget *WidgetArray::insertWidget(String &type, int position) {
+  D("insert widget");
+  Widget *w = createWidget(type);
+  int pos = position < 0 ? widgets.size() - position + 1 : position;
+  auto it = widgets.begin();
+  while (pos-- && it != widgets.end())
+    it++;
+  widgets.insert(it, w);
+  return w;
+}
+
+Widget *WidgetArray::insertWidget(String &type, String &group, int position) {
+  for (auto it = widgets.begin(); it != widgets.end(); it++) {
+    Widget *w = *it;
+    if (w->type.equals("group")) {
+      WidgetGroup *g = (WidgetGroup*)(w);
+      Widget *n = g->insertWidget(type, group, position);
+      if(n) return n;
+    }
   }
 }
 
@@ -98,9 +141,8 @@ void WidgetGroup::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
   D("WidgetGroup::toJsonObject");
   Widget::toJsonObject(jsonBuffer, O);
   D(">");
-  O["data"]= data.serialize(jsonBuffer);
+  O["data"] = data.serialize(jsonBuffer);
   D("<");
-
 }
 
 void WidgetGroup::fromJsonObject(JsonObject &O) {
@@ -109,6 +151,15 @@ void WidgetGroup::fromJsonObject(JsonObject &O) {
   data.deserialize(O["data"]);
   D("<");
 }
+
+Widget *WidgetGroup::insertWidget(String &type, String &group, int position) {
+  if(name.equals(group)) {
+    return data.insertWidget(type, position);
+  } else {
+    return data.insertWidget(type, group, position);
+  }
+}
+
 
 //###############################################################################
 //  Dashboard
