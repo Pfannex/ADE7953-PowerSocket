@@ -25,7 +25,8 @@ var widgets; // flat list of all widgets
 //
 function retrieveDashboard(callback) {
   logmsg("Retrieving dashboard from device...");
-  return call("~/get/ffs/webCFG/root", callback);
+  //return call("~/get/ffs/webCFG/root", callback);
+  return call("~/get/ui/dashboard", callback);
 }
 
 //
