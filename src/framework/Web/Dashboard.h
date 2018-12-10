@@ -7,6 +7,10 @@
 #define JSONBUFFERSIZE 4096
 #define DASHBOARDFILENAME "/customDevice/dashboard.json"
 
+//
+// Widget
+//
+
 class Widget {
 
 private:
@@ -14,6 +18,9 @@ private:
   void setProperty(JsonObject &O, const char *property, String value);
 
 public:
+  Widget();
+  Widget(String &type);
+  Widget(const char* type);
   String name; // must be unique across the whole structure
   String type;
   String caption;
@@ -27,6 +34,10 @@ public:
   virtual void fromJsonObject(JsonObject &);
 };
 
+//
+// WidgetArray
+//
+
 class WidgetArray {
 public:
   virtual JsonArray &serialize(DynamicJsonBuffer &);
@@ -36,9 +47,11 @@ public:
   bool removeWidget(String &name);
   // add the widget at given position
   // position is counted from the end if negative
-  Widget *insertWidget(String &type, int position = -1);
+  virtual Widget *insertWidget(String &type, int position = -1);
+  virtual Widget *insertWidget(const char* type, int position = -1);
   // add the widget to the named group at given position
-  Widget *insertWidget(String &type, String &group, int position = -1);
+  virtual Widget *insertWidget(String &type, String &group, int position = -1);
+  virtual Widget *insertWidget(const char* type, const char* group, int position = -1);
 
   /*
   usage:
@@ -58,17 +71,47 @@ private:
   Widget *createWidget(String &) const;
 };
 
+//
+// WidgetGroup
+//
+
 class WidgetGroup : public Widget {
 private:
   WidgetArray data;
 public:
+  WidgetGroup();
   // add the widget to the named group at given position
-  Widget *insertWidget(String &type, String &group, int position = -1);
+  virtual Widget *insertWidget(String &type, String &group, int position = -1);
   virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
   virtual void fromJsonObject(JsonObject &);
 };
 
-class Dashboard : WidgetArray {
+//
+// WidgetControlGroup
+//
+
+struct WidgetControlGroupElement {
+    String label;
+    String value;
+};
+
+class WidgetControlGroup : public Widget {
+private:
+  std::vector<WidgetControlGroupElement> data;
+public:
+  WidgetControlGroup();
+  virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
+  virtual void fromJsonObject(JsonObject &);
+  void appendElement(String&, String&);
+  void appendElement(const char*, const char*);
+};
+
+
+//
+// Dashboard
+//
+
+class Dashboard : public WidgetArray {
 
 public:
   Dashboard(LOGGING &logging);

@@ -77,7 +77,7 @@ void Controller::start() {
   setConfigDefaults();
 
   // preload dashboard
-  D("preloading dashboard");
+  //D("preloading dashboard");
   dashboard.load();
   String jsonDocument= dashboard.asJsonDocument();
   logging.info("dashboard="+jsonDocument);
@@ -491,6 +491,13 @@ void Controller::t_short_Update() {
   */
   logging.debug("uptime: "+SysUtils::uptimeStr(clock.uptimeMillis())+
     ", free heap: "+String(espTools.freeHeapSize())  );
+
+  // this is for testing the dashboard only! -----
+  Widget* w= dashboard.insertWidget("text", "group1");
+  w->name= String("text")+String(millis());
+  w->caption= w->name;
+  topicQueue.put("~/event/ui/dashboardChanged");
+  // -------------
 };
 
 void Controller::t_long_Update() {
