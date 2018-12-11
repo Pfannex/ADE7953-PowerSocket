@@ -14,7 +14,7 @@ customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
       led("led", logging, topicQueue, PIN_LED, NORMAL),
       relay("relay", logging, topicQueue, PIN_RELAY, NORMAL) {
 
-  type= String(DEVICETYPE);
+  type = String(DEVICETYPE);
   version = String(DEVICEVERSION);
 }
 
@@ -129,6 +129,15 @@ void customDevice::on_events(Topic &topic) {
       // -- long
       if (topic.argIs(0, "long"))
         setConfigMode(!configMode);
+      if (topic.argIs(0, "double")) {
+        // this is for testing the dashboard only! -----
+        D("double click -> new widget");
+        Widget *w = dashboard.insertWidget("text", "group1");
+        w->name = String("text") + String(millis());
+        w->caption = w->name;
+        dashboardChanged();
+        // -------------
+      }
     }
     // - idle
     if (button.isItem(topic, "idle"))
