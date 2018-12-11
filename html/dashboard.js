@@ -26,7 +26,7 @@ var widgets; // flat list of all widgets
 function retrieveDashboard(callback) {
   logmsg("Retrieving dashboard from device...");
   //return call("~/get/ffs/webCFG/root", callback);
-  return call("~/get/ui/dashboard", callback);
+  return call("~/get/device/dashboard", callback);
 }
 
 //
@@ -344,7 +344,7 @@ function dashboardEvalEvent(topics, args) {
   //debugmsg("dashboard event for topic " + topicStr + " with arg " + args);
 
   // rebuild dashboard on event
-  if(topicStr == "~/event/ui/dashboardChanged") {
+  if(topicStr == "~/event/device/dashboardChanged") {
     logmsg("Requested dashboard rebuild");
     var json = retrieveDashboard(dashboardBuild);
     return;

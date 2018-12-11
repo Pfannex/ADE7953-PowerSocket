@@ -10,7 +10,6 @@
 #include "framework/OmniESP/Topic.h"
 #include "framework/Net/WIFI.h"
 #include "framework/Utils/SysUtils.h"
-#include "framework/Web/Dashboard.h"
 #include <ESP8266FtpServer.h>
 
 
@@ -125,7 +124,4 @@ private:
   TopicQueue topicQueue;
   // if a new Topic is received this function is called
   TopicFunction topicFunction;
-
-  // Dashboard
-  Dashboard dashboard;
 };

@@ -24,27 +24,25 @@
 //  constructor
 //...............................................................................
 Controller::Controller()
-    : logging(clock), ffs(logging), clock(topicQueue),
-      espTools(logging),
-      dashboard(logging), wifi(logging, ffs), device(logging, topicQueue, ffs) {
+    : logging(clock), ffs(logging), clock(topicQueue), espTools(logging),
+      wifi(logging, ffs), device(logging, topicQueue, ffs) {
 
   // callback Events
   // WiFi
-  wifi.set_callback(std::bind(&Controller::on_wl_connected, this),
-                    std::bind(&Controller::on_wl_connect_failed, this),
-                    std::bind(&Controller::on_wl_no_ssid_avail, this),
-                    std::bind(&Controller::on_ap_stations_connected, this),
-                    std::bind(&Controller::on_ap_no_stations_connected, this),
-                    std::bind(&Controller::on_wifi_scan_result, this,
-                                           std::placeholders::_1)
-                   );
+  wifi.set_callback(
+      std::bind(&Controller::on_wl_connected, this),
+      std::bind(&Controller::on_wl_connect_failed, this),
+      std::bind(&Controller::on_wl_no_ssid_avail, this),
+      std::bind(&Controller::on_ap_stations_connected, this),
+      std::bind(&Controller::on_ap_no_stations_connected, this),
+      std::bind(&Controller::on_wifi_scan_result, this, std::placeholders::_1));
 }
 
 //...............................................................................
 //  API set callback
 //...............................................................................
 void Controller::setTopicFunction(TopicFunction topicFn) {
-  topicFunction= topicFn;
+  topicFunction = topicFn;
 }
 
 //-------------------------------------------------------------------------------
@@ -70,21 +68,15 @@ void Controller::start() {
   ffs.mount();
 
   // show the versioning
-  logging.info("version: "+ffs.vers.readItem("version"));
-  logging.info("date   : "+ffs.vers.readItem("date"));
+  logging.info("version: " + ffs.vers.readItem("version"));
+  logging.info("date   : " + ffs.vers.readItem("date"));
 
   // set config defaults
   setConfigDefaults();
 
-  // preload dashboard
-  //D("preloading dashboard");
-  dashboard.load();
-  String jsonDocument= dashboard.asJsonDocument();
-  logging.info("dashboard="+jsonDocument);
-
   // start FTP-Server and Web-server
   startFtp();
-  //topicQueue.put("~/set/webserver/state", 1);
+  // topicQueue.put("~/set/webserver/state", 1);
 
   // start WiFi for the first time
   wifi.start();
@@ -92,16 +84,13 @@ void Controller::start() {
   // startup the device
   device.start();
   logging.info("controller started");
-  topicQueue.put("~/event/wifi/start"); //web server will start here
-
+  topicQueue.put("~/event/wifi/start"); // web server will start here
 }
 
 //-------------------------------------------------------------------------------
 //  getDeviceName()
 //-------------------------------------------------------------------------------
-String Controller::getDeviceName() {
-  return deviceName;
-}
+String Controller::getDeviceName() { return deviceName; }
 
 //...............................................................................
 //  handle connection
@@ -117,22 +106,22 @@ void Controller::handle() {
   device.handle();
 
   // flash?
-  if(espTools.updateRequested()) {
+  if (espTools.updateRequested()) {
     String event;
-    event= "~/event/esp/update begin";
+    event = "~/event/esp/update begin";
     handleEvent(event);
-    if(espTools.update() == TOPIC_OK) {
-      event= "~/event/esp/update end";
+    if (espTools.update() == TOPIC_OK) {
+      event = "~/event/esp/update end";
       handleEvent(event);
       delay(1000);
       espTools.reboot();
     } else {
-      event= "~/event/esp/update fail";
+      event = "~/event/esp/update fail";
       handleEvent(event);
     }
   }
 
-  //handle events
+  // handle events
   while (topicQueue.count) {
     String topicsArgs = topicQueue.get();
     yield();
@@ -149,9 +138,9 @@ void Controller::handleEvent(String &topicsArgs) {
   // this is the central routine that dispatches events from devices
   // and views
   //
-  time_t t= clock.now();
+  time_t t = clock.now();
 
-  //logging.debug("handling event " + topicsArgs);
+  // logging.debug("handling event " + topicsArgs);
   Topic topic(topicsArgs);
 
   // propagate event to views and the device
@@ -159,9 +148,11 @@ void Controller::handleEvent(String &topicsArgs) {
   device.on_events(topic);
 
   // configMode request from devices, only if supported by device
-  if (topic.modifyTopic(0) == "event/device/configMode"){
-    if (topic.argIs(0, "1")) on_config_mode_on();
-      else on_config_mode_off();
+  if (topic.modifyTopic(0) == "event/device/configMode") {
+    if (topic.argIs(0, "1"))
+      on_config_mode_on();
+    else
+      on_config_mode_off();
   }
 }
 
@@ -172,8 +163,8 @@ void Controller::on_wl_connected() {
   on_wifi_state_change();
   logging.info("WiFi STA has connected");
   topicQueue.put("~/event/wifi/wl_connected");
-  logging.info("STA connected to " + WiFi.SSID() + " | IP "
-                                   + WiFi.localIP().toString());
+  logging.info("STA connected to " + WiFi.SSID() + " | IP " +
+               WiFi.localIP().toString());
 
   startNtp();
   on_netConnected();
@@ -213,7 +204,7 @@ void Controller::on_ap_no_stations_connected() {
   logging.info("WiFi AP open without connected stations");
   topicQueue.put("~/event/wifi/ap_no_stations_connected");
 
-  //is this the right place?
+  // is this the right place?
   staState = STA_DISCONNECTED;
   on_netDisconnected();
 }
@@ -272,7 +263,7 @@ void Controller::on_netDisconnected() {
 //...............................................................................
 void Controller::on_config_mode_on() {
   logging.info("config mode ON");
-  if (wifi.apMode != "off"){
+  if (wifi.apMode != "off") {
     wifi.startAP(true);
   }
 }
@@ -314,62 +305,62 @@ void Controller::on_apTimeout() {
 void Controller::on_wifi_state_change() {
   if (staState != wifi.staState or apState != wifi.apState) {
     staState = wifi.staState;
-    apState  = wifi.apState;
+    apState = wifi.apState;
 
-//STA_DISCONNECTED
-    if (staState == STA_DISCONNECTED and apState == AP_CLOSED){
+    // STA_DISCONNECTED
+    if (staState == STA_DISCONNECTED and apState == AP_CLOSED) {
       logging.info("WiFi state changed to STA_DISCONNECTED");
       logging.debug("  STA_DISCONNECTED");
       logging.debug("  AP_CLOSED");
 
-      //turn off apTimeout
+      // turn off apTimeout
       apTimeoutActive = false;
-      //set staTimeout to 0 if no valid SSID is available
+      // set staTimeout to 0 if no valid SSID is available
       staTimeout = wifi.validSSID ? STA_TIMEOUT : 0;
-      //start the STA Timer
+      // start the STA Timer
       staTimeout_t = clock.nowMillis();
       staTimeoutActive = true;
       logging.debug("start staTimeoutTimer");
     }
 
-//STA_CONNECTED
-    if (staState == STA_CONNECTED and apState == AP_CLOSED){
+    // STA_CONNECTED
+    if (staState == STA_CONNECTED and apState == AP_CLOSED) {
       logging.info("WiFi state changed to STA_CONNECTED");
       logging.debug("  STA_CONNECTED");
       logging.debug("  AP_CLOSED");
 
-      //turn off staTimeout
+      // turn off staTimeout
       staTimeoutActive = false;
     }
 
-//AP_OPEN_WITHOUT_STATION
-    if (staState == STA_DISCONNECTED and apState == AP_OPEN_WITHOUT_STATION){
-      //change blink frequency
+    // AP_OPEN_WITHOUT_STATION
+    if (staState == STA_DISCONNECTED and apState == AP_OPEN_WITHOUT_STATION) {
+      // change blink frequency
       topicQueue.put("~/event/device/led/setmode", 2);
 
       logging.info("WiFi state changed to AP_OPEN_WITHOUT_STATION");
       logging.debug("  STA_DISCONNECTED");
       logging.debug("  AP_OPEN_WITHOUT_STATION");
 
-      //turn off staTimeout
+      // turn off staTimeout
       staTimeoutActive = false;
-      //set apTimeoutActive to false if no valid SSID is available
+      // set apTimeoutActive to false if no valid SSID is available
       apTimeoutActive = wifi.validSSID ? true : false;
-      //start the AP Timer
+      // start the AP Timer
       apTimeout_t = clock.nowMillis();
       logging.debug("start apTimeoutTimer");
     }
 
-//AP_OPEN_WITH_STATION
-    if (staState == STA_DISCONNECTED and apState == AP_OPEN_WITH_STATION){
-      //change blink frequency
+    // AP_OPEN_WITH_STATION
+    if (staState == STA_DISCONNECTED and apState == AP_OPEN_WITH_STATION) {
+      // change blink frequency
       topicQueue.put("~/event/device/led/setmode", 3);
 
       logging.info("WiFi state changed to AP_OPEN_WITH_STATION");
       logging.debug("  STA_DISCONNECTED");
       logging.debug("  AP_OPEN_WITH_STATION");
 
-      //turn off apTimeout
+      // turn off apTimeout
       apTimeoutActive = false;
     }
   }
@@ -378,15 +369,11 @@ void Controller::on_wifi_state_change() {
 //...............................................................................
 //  API-Call EVENT MQTT connected
 //...............................................................................
-void Controller::on_mqtt_connected() {
-  mqtt_state = 1;
-}
+void Controller::on_mqtt_connected() { mqtt_state = 1; }
 //...............................................................................
 //  API-Call EVENT MQTT disconnected
 //...............................................................................
-void Controller::on_mqtt_disconnected() {
-  mqtt_state = 0;
-}
+void Controller::on_mqtt_disconnected() { mqtt_state = 0; }
 
 //...............................................................................
 //  handle WiFi timeout
@@ -395,13 +382,13 @@ void Controller::handleWifiTimout() {
   unsigned long long now = clock.nowMillis();
 
   if (staTimeoutActive)
-    if (now - staTimeout_t > staTimeout){
+    if (now - staTimeout_t > staTimeout) {
       staTimeoutActive = false;
       on_staTimeout();
     }
 
   if (apTimeoutActive)
-    if (now - apTimeout_t > apTimeout){
+    if (now - apTimeout_t > apTimeout) {
       apTimeoutActive = false;
       on_apTimeout();
     }
@@ -414,10 +401,10 @@ void Controller::handleWifiTimout() {
 String Controller::call(Topic &topic) {
 
   // MQTT state information via API-call
-  if (topic.modifyTopic(0) == "event/mqtt/connected"){
-    if (topic.argIs(0, "1")){
+  if (topic.modifyTopic(0) == "event/mqtt/connected") {
+    if (topic.argIs(0, "1")) {
       on_mqtt_connected();
-    }else{
+    } else {
       on_mqtt_disconnected();
     }
   }
@@ -440,13 +427,7 @@ String Controller::call(Topic &topic) {
     }
     // get
   } else if (topic.itemIs(1, "get")) {
-    if (topic.itemIs(2, "ui")) {
-      if(topic.itemIs(3, "dashboard")) {
-        return dashboard.asJsonDocument();
-      } else {
-        return TOPIC_NO;
-      }
-    } else if (topic.itemIs(2, "ffs")) {
+    if (topic.itemIs(2, "ffs")) {
       return ffs.get(topic);
     } else if (topic.itemIs(2, "clock")) {
       return clock.get(topic);
@@ -455,10 +436,12 @@ String Controller::call(Topic &topic) {
     } else if (topic.itemIs(2, "wifi")) {
       return wifi.get(topic);
     } else if (topic.itemIs(2, "device")) {
-      if(topic.itemIs(3, "version")) {
+      if (topic.itemIs(3, "version")) {
         return device.getVersion();
       } else if (topic.itemIs(3, "type")) {
         return device.getType();
+      } else if (topic.itemIs(3, "dashboard")) {
+        return device.getDashboard();
       } else {
         return device.get(topic);
       }
@@ -475,33 +458,27 @@ String Controller::call(Topic &topic) {
 //  idle timer
 //...............................................................................
 void Controller::t_1s_Update() {
-  //Check MQTT state and try reconnect if necessary
-  if (netState == NET_CONNECTED and mqtt_state == 0 and ffs.cfg.readItem("mqtt") == "on"){
+  // Check MQTT state and try reconnect if necessary
+  if (netState == NET_CONNECTED and mqtt_state == 0 and
+      ffs.cfg.readItem("mqtt") == "on") {
     logging.debug("MQTT try reconnect");
     topicQueue.put("~/event/mqtt/reconnect");
   }
 
-  //topicQueue.put("~/event/timer/1sUpdate");
+  // topicQueue.put("~/event/timer/1sUpdate");
 }
 
 void Controller::t_short_Update() {
-  //topicQueue.put("~/event/timer/shortUpdate");
+  // topicQueue.put("~/event/timer/shortUpdate");
   /*
     espTools.debugMem();
   */
-  logging.debug("uptime: "+SysUtils::uptimeStr(clock.uptimeMillis())+
-    ", free heap: "+String(espTools.freeHeapSize())  );
-
-  // this is for testing the dashboard only! -----
-  Widget* w= dashboard.insertWidget("text", "group1");
-  w->name= String("text")+String(millis());
-  w->caption= w->name;
-  topicQueue.put("~/event/ui/dashboardChanged");
-  // -------------
+  logging.debug("uptime: " + SysUtils::uptimeStr(clock.uptimeMillis()) +
+                ", free heap: " + String(espTools.freeHeapSize()));
 };
 
 void Controller::t_long_Update() {
-  //topicQueue.put("~/event/timer/longUpdate");
+  // topicQueue.put("~/event/timer/longUpdate");
 }
 
 //-------------------------------------------------------------------------------
@@ -512,44 +489,56 @@ void Controller::t_long_Update() {
 //  set config defaults
 //-------------------------------------------------------------------------------
 bool Controller::setConfigDefault(String item, String defaultValue) {
-    String value= ffs.cfg.readItem(item);
-    if(value == "") {
-          ffs.cfg.writeItem(item, defaultValue);
-          logging.info("setting "+item+" to "+defaultValue);
-          return true;
-    } else {
-      return false;
-    }
+  String value = ffs.cfg.readItem(item);
+  if (value == "") {
+    ffs.cfg.writeItem(item, defaultValue);
+    logging.info("setting " + item + " to " + defaultValue);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void Controller::setConfigDefaults() {
 
   // set ESP name
-  bool f= setConfigDefault("device_name", "ESP8266_" + espTools.genericName());
-  deviceName= ffs.cfg.readItem("device_name");
+  bool f = setConfigDefault("device_name", "ESP8266_" + espTools.genericName());
+  deviceName = ffs.cfg.readItem("device_name");
   // set other defaults
   // we need to do this the hard way because the compiler optimizes the
   // the setConfigDefault() calls away if f is already true in a f= f || ..
   // sequence
-  if(setConfigDefault("device_username", USERNAME)) f= true;
-  if(setConfigDefault("device_password", PASSWORD)) f= true;
-  if(setConfigDefault("update", "manual")) f= true;
-  if(setConfigDefault("ap", "auto")) f= true;
-  if(setConfigDefault("ap_ssid", deviceName)) f= true;
-  if(setConfigDefault("ap_password", APPASSWORD)) f= true;
-  if(setConfigDefault("wifi", "off")) f= true;
-  if(setConfigDefault("lan", "off")) f= true;
-  if(setConfigDefault("ntp", "off")) f= true;
-  if(setConfigDefault("ftp", "off")) f= true;
-  if(setConfigDefault("mqtt", "off")) f= true;
+  if (setConfigDefault("device_username", USERNAME))
+    f = true;
+  if (setConfigDefault("device_password", PASSWORD))
+    f = true;
+  if (setConfigDefault("update", "manual"))
+    f = true;
+  if (setConfigDefault("ap", "auto"))
+    f = true;
+  if (setConfigDefault("ap_ssid", deviceName))
+    f = true;
+  if (setConfigDefault("ap_password", APPASSWORD))
+    f = true;
+  if (setConfigDefault("wifi", "off"))
+    f = true;
+  if (setConfigDefault("lan", "off"))
+    f = true;
+  if (setConfigDefault("ntp", "off"))
+    f = true;
+  if (setConfigDefault("ftp", "off"))
+    f = true;
+  if (setConfigDefault("mqtt", "off"))
+    f = true;
   // ensure minimum length of AP password
-  String appassword= ffs.cfg.readItem("ap_password");
-  if(appassword.length()< 8) {
+  String appassword = ffs.cfg.readItem("ap_password");
+  if (appassword.length() < 8) {
     ffs.cfg.writeItem("ap_password", APPASSWORD);
-    f= true;
+    f = true;
   }
-  if(f) { ffs.cfg.saveFile(); }
-
+  if (f) {
+    ffs.cfg.saveFile();
+  }
 }
 
 //...............................................................................
@@ -568,8 +557,8 @@ void Controller::viewsUpdate(time_t t, Topic &topic) {
 bool Controller::startFtp() {
 
   if (ffs.cfg.readItem("ftp") == "on") {
-    String username= ffs.cfg.readItem("device_username");
-    String password= ffs.cfg.readItem("device_password");
+    String username = ffs.cfg.readItem("device_username");
+    String password = ffs.cfg.readItem("device_password");
     logging.info("starting FTP server");
     ftpSrv.begin(username, password);
   } else {
