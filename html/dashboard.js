@@ -149,7 +149,10 @@ function dashboardGetText(w) {
   // the additional blank ensures grid spacing
   //if(!w.caption) { caption= " "; } else { caption= " "+w.caption;}
   var name = w.name;
-  var data = w.data;
+  var value = w.value;
+  if(!value) {
+    value = "";
+  }
   var inputtype = w.inputtype;
   if (!inputtype) {
     inputtype = "text";
@@ -164,7 +167,7 @@ function dashboardGetText(w) {
   }
   content +=
     '<input type="' + inputtype + '" data-mini="true" ' +
-    'id="' + id + '" value="" ' +
+    'id="' + id + '" value="'+value+'" ' +
     (readonly ? 'readonly ' : '');
   if (!readonly) {
     content += 'onChange="dashboardAction(\'' + name + '\')"';
