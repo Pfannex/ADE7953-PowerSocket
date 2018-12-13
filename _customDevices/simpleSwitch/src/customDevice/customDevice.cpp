@@ -33,6 +33,12 @@ void customDevice::start() {
   relay.start();
   setLedMode(50);
 
+  // EXAMPLE ----
+  Widget* w= dashboard.insertWidget("group");
+  w->name= "group_sensors";
+  w->caption = "Sensors";
+  // ----
+
   logging.info("device running");
 }
 
@@ -130,11 +136,20 @@ void customDevice::on_events(Topic &topic) {
       if (topic.argIs(0, "long"))
         setConfigMode(!configMode);
       if (topic.argIs(0, "double")) {
-        // this is for testing the dashboard only! -----
-        D("double click -> new widget");
-        Widget *w = dashboard.insertWidget("text", "group1");
-        w->name = String("text") + String(millis());
-        w->caption = w->name;
+        // EXAMPLE -----
+        // NOTE: only use characters which are valid IDs in HTML, e.g. no dots
+        String id= "xx"+String(millis());
+        // name field
+        Widget *w1 = dashboard.insertWidget("text", "group_sensors");
+        w1->name= id+"_name";
+        w1->caption = id;
+        w1->value = id;
+        w1->action = "~/set/device/"+id+"/name";
+        // value field
+        Widget *w2 = dashboard.insertWidget("text", "group_sensors");
+        w2->name= id+"_value";
+        w1->event = "~/event/device/"+id+"/value";
+        //
         dashboardChanged();
         // -------------
       }
