@@ -23,6 +23,7 @@ public:
   Widget(const char* type);
   String name; // must be unique across the whole structure
   String type;
+  String value;
   String caption;
   String action;
   String event;
@@ -30,6 +31,8 @@ public:
   String readonly;
   String min;
   String max;
+  String prefix;
+  String suffix;
   virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
   virtual void fromJsonObject(JsonObject &);
 };
@@ -85,6 +88,19 @@ public:
   virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
   virtual void fromJsonObject(JsonObject &);
 };
+
+//
+// WidgetGrid
+//
+/*
+class WidgetGrid : public Widget {
+private:
+    std::vector<WidgetArray> data;
+public:
+    WidgetGrid();
+    WidgetArray* addRow();
+}
+*/
 
 //
 // WidgetControlGroup
