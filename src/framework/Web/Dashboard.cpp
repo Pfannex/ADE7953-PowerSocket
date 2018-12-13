@@ -16,8 +16,8 @@ Widget::Widget(const char *t) { type = String(t); }
 String Widget::getProperty(JsonObject &O, const char *property) {
   if (O.containsKey(property)) {
     String value = O[property].as<String>();
-    //String msg = "Widget::getProperty()    " + String(property) + ": " + value;
-    //D(msg.c_str());
+    // String msg = "Widget::getProperty()    " + String(property) + ": " +
+    // value; D(msg.c_str());
     return value;
   } else {
     return "";
@@ -27,15 +27,16 @@ String Widget::getProperty(JsonObject &O, const char *property) {
 void Widget::setProperty(JsonObject &O, const char *property, String value) {
   if (value.length() > 0) {
     O[property] = value;
-    //String msg = "Widget::setProperty()    " + String(property) + ": " + value;
-    //D(msg.c_str());
+    // String msg = "Widget::setProperty()    " + String(property) + ": " +
+    // value; D(msg.c_str());
   }
 }
 
 void Widget::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
-  //D("Widget::toJsonObject");
+  // D("Widget::toJsonObject");
   setProperty(O, "type", type);
   setProperty(O, "name", name);
+  setProperty(O, "value", value);
   setProperty(O, "caption", caption);
   setProperty(O, "action", action);
   setProperty(O, "event", event);
@@ -43,11 +44,14 @@ void Widget::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
   setProperty(O, "readonly", readonly);
   setProperty(O, "min", min);
   setProperty(O, "max", max);
+  setProperty(O, "prefix", prefix);
+  setProperty(O, "suffix", suffix);
 }
 
 void Widget::fromJsonObject(JsonObject &O) {
   type = getProperty(O, "type");
   name = getProperty(O, "name");
+  value = getProperty(O, "value");
   caption = getProperty(O, "caption");
   action = getProperty(O, "action");
   event = getProperty(O, "event");
@@ -55,6 +59,8 @@ void Widget::fromJsonObject(JsonObject &O) {
   readonly = getProperty(O, "readonly");
   min = getProperty(O, "min");
   max = getProperty(O, "max");
+  prefix = getProperty(O, "prefix");
+  suffix = getProperty(O, "suffix");
 }
 
 //###############################################################################
@@ -67,10 +73,10 @@ Widget *WidgetArray::createWidget(String &type) const {
     //D("creating WidgetGroup");
     return new WidgetGroup;
   } else if (type.equals("controlgroup")) {
-    //D("creating WidgetControlGroup");
+    // D("creating WidgetControlGroup");
     return new WidgetControlGroup;
   } else {
-    //D("creating Widget");
+    // D("creating Widget");
     return new Widget(type);
   }
 }
@@ -81,7 +87,7 @@ Widget *WidgetArray::createWidget(JsonObject &O) const {
 }
 
 JsonArray &WidgetArray::serialize(DynamicJsonBuffer &jsonBuffer) {
-  //D("serializing widget array");
+  // D("serializing widget array");
   JsonArray &A = jsonBuffer.createArray();
   for (auto w : widgets) {
     // String msg= "  widget type: "+w->type;
@@ -93,10 +99,10 @@ JsonArray &WidgetArray::serialize(DynamicJsonBuffer &jsonBuffer) {
 }
 
 void WidgetArray::deserialize(JsonArray &A) {
-  //D("deserializing widget array");
+  // D("deserializing widget array");
   widgets.clear();
   for (JsonObject &O : A) {
-    //D("  widget");
+    // D("  widget");
     Widget *w = createWidget(O);
     w->fromJsonObject(O);
     widgets.push_back(w);
@@ -122,7 +128,7 @@ bool WidgetArray::removeWidget(String &name) {
 }
 
 Widget *WidgetArray::insertWidget(String &type, int position) {
-  //D("insert widget");
+  // D("insert widget");
   Widget *w = createWidget(type);
   int pos = position < 0 ? widgets.size() - position + 1 : position;
   auto it = widgets.begin();
@@ -161,16 +167,16 @@ Widget *WidgetArray::insertWidget(const char *type, const char *group,
 //  WidgetGroup
 //###############################################################################
 
-WidgetGroup::WidgetGroup() { Widget("group"); }
+WidgetGroup::WidgetGroup() : Widget("group") {}
 
 void WidgetGroup::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
-  //D("WidgetGroup::toJsonObject");
+  // D("WidgetGroup::toJsonObject");
   Widget::toJsonObject(jsonBuffer, O);
   O["data"] = data.serialize(jsonBuffer);
 }
 
 void WidgetGroup::fromJsonObject(JsonObject &O) {
-  //D("WidgetGroup::fromJsonObject");
+  // D("WidgetGroup::fromJsonObject");
   Widget::fromJsonObject(O);
   data.deserialize(O["data"]);
 }
@@ -187,13 +193,13 @@ Widget *WidgetGroup::insertWidget(String &type, String &group, int position) {
 //  WidgetControlGroup
 //###############################################################################
 
-WidgetControlGroup::WidgetControlGroup() { Widget("controlgroup"); }
+WidgetControlGroup::WidgetControlGroup() : Widget("controlgroup"){};
 
 void WidgetControlGroup::toJsonObject(DynamicJsonBuffer &jsonBuffer,
                                       JsonObject &O) {
-  //D("WidgetControlGroup::toJsonObject");
+  // D("WidgetControlGroup::toJsonObject");
   Widget::toJsonObject(jsonBuffer, O);
-  //D("serializing WidgetControlGroup elements");
+  // D("serializing WidgetControlGroup elements");
   JsonArray &A = jsonBuffer.createArray();
   for (WidgetControlGroupElement E : data) {
     JsonObject &OE = A.createNestedObject(); // create object and add to array
@@ -204,10 +210,10 @@ void WidgetControlGroup::toJsonObject(DynamicJsonBuffer &jsonBuffer,
 }
 
 void WidgetControlGroup::fromJsonObject(JsonObject &O) {
-  //D("WidgetControlGroup::fromJsonObject");
+  // D("WidgetControlGroup::fromJsonObject");
   Widget::fromJsonObject(O);
-  //D("deserializing WidgetControlGroup elements");
-  JsonArray &A= O["data"];
+  // D("deserializing WidgetControlGroup elements");
+  JsonArray &A = O["data"];
   data.clear();
   for (JsonObject &OE : A) {
     WidgetControlGroupElement E;
