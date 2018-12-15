@@ -92,15 +92,15 @@ public:
 //
 // WidgetGrid
 //
-/*
 class WidgetGrid : public Widget {
 private:
-    std::vector<WidgetArray> data;
+    std::vector<WidgetArray*> data;
 public:
     WidgetGrid();
+    virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
+    virtual void fromJsonObject(JsonObject &);
     WidgetArray* addRow();
-}
-*/
+};
 
 //
 // WidgetControlGroup

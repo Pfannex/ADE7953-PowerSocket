@@ -88,7 +88,7 @@ function dashboardGetGrid(w) {
   var name = w.name;
   var data = w.data; // array of array elements
   var rows = data.length;
-  var columns = data[1].length;
+  var columns = rows ? data[0].length : 0;
   var row, column;
   var cellId;
 
