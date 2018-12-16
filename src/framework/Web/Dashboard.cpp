@@ -1,467 +1,306 @@
+#include "FS.h"
+#include "framework/Utils/Debug.h"
 #include "framework/Web/Dashboard.h"
+#include <vector>
 
 //###############################################################################
 //  Widget
 //###############################################################################
-Dashboard::Dashboard(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
-                    :logging(logging), topicQueue(topicQueue), ffs(ffs){
-}
 
-//-------------------------------------------------------------------------------
-//  Dashboard public
-//-------------------------------------------------------------------------------
-//...............................................................................
-//  Dashboard set
-//...............................................................................
+Widget::Widget() { type = "<not set>"; }
 
-String Dashboard::set(Topic &topic) {
-  /*
-  ~/set
-  └─device             (level 2)
-    └─dashboard        (level 3)
-      └─setPage        (level 4)
-      └─sensors        (level 4)
-        └─alias        (level 5)
-  */
+Widget::Widget(String &t) { type = t; }
 
-  logging.debug("Dashboard set topic " + topic.topic_asString() + " to " +
-                topic.arg_asString());
+Widget::Widget(const char *t) { type = String(t); }
 
-  if (topic.itemIs(4, "setPage")) {
-    setPage(topic.getArgAsLong(0));
-    //~/set/device/dashboard/setPage 0
-    return TOPIC_OK;
-  } else if (topic.itemIs(4, "sensors")){
-    if (topic.itemIs(5, "alias")) {
-      setAlias(topic.getItem(6), topic.getArg(0));
-      return TOPIC_OK;
-    }else{
-      return TOPIC_NO;
-    }
+String Widget::getProperty(JsonObject &O, const char *property) {
+  if (O.containsKey(property)) {
+    String value = O[property].as<String>();
+    // String msg = "Widget::getProperty()    " + String(property) + ": " +
+    // value; D(msg.c_str());
+    return value;
   } else {
-    return TOPIC_NO;
+    return "";
   }
 }
-//...............................................................................
-//  Dashboard get
-//...............................................................................
 
-String Dashboard::get(Topic &topic) {
-  /*
-  ~/get
-  └─device             (level 2)
-    └─power            (level 3)
-  */
+void Widget::setProperty(JsonObject &O, const char *property, String value) {
+  if (value.length() > 0) {
+    O[property] = value;
+    // String msg = "Widget::setProperty()    " + String(property) + ": " +
+    // value; D(msg.c_str());
+  }
+}
 
-  logging.debug("Dashboard get topic " + topic.topic_asString());
+void Widget::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
+  // D("Widget::toJsonObject");
+  setProperty(O, "type", type);
+  setProperty(O, "name", name);
+  setProperty(O, "value", value);
+  setProperty(O, "caption", caption);
+  setProperty(O, "action", action);
+  setProperty(O, "event", event);
+  setProperty(O, "inputtype", inputtype);
+  setProperty(O, "readonly", readonly);
+  setProperty(O, "min", min);
+  setProperty(O, "max", max);
+  setProperty(O, "prefix", prefix);
+  setProperty(O, "suffix", suffix);
+}
 
-/*
-  if (topic.getItemCount() != 4) // ~/get/device/power
-    return TOPIC_NO;
-  if (topic.itemIs(3, "power")) {
-    topicQueue.put("~/event/device/power", power);
-    return TOPIC_OK;
+void Widget::fromJsonObject(JsonObject &O) {
+  type = getProperty(O, "type");
+  name = getProperty(O, "name");
+  value = getProperty(O, "value");
+  caption = getProperty(O, "caption");
+  action = getProperty(O, "action");
+  event = getProperty(O, "event");
+  inputtype = getProperty(O, "inputtype");
+  readonly = getProperty(O, "readonly");
+  min = getProperty(O, "min");
+  max = getProperty(O, "max");
+  prefix = getProperty(O, "prefix");
+  suffix = getProperty(O, "suffix");
+}
+
+//###############################################################################
+//  WidgetArray
+//###############################################################################
+
+Widget *WidgetArray::createWidget(String &type) const {
+  // here we need to create descendants of widgets depending on O["type"]
+  if (type.equals("group")) {
+    //D("creating WidgetGroup");
+    return new WidgetGroup;
+  } else if (type.equals("controlgroup")) {
+    // D("creating WidgetControlGroup");
+    return new WidgetControlGroup;
+  } else if (type.equals("grid")) {
+    // D("creating WidgetGrid");
+    return new WidgetGrid;
   } else {
-    return TOPIC_NO;
-  }*/
-  return TOPIC_NO;
-}
-
-//...............................................................................
-// Eventhandler - called by the controller after receiving a topic (event)
-//...............................................................................
-void Dashboard::on_events(Topic &topic) {
-
-  if (topic.modifyTopic(0) == "event/wifi/connected"){
-    //lcd.println(WiFi.localIP().toString(), 0);
-    //mcpGPIO.mcp.digitalWrite(8, true);
+    // D("creating Widget");
+    return new Widget(type);
   }
-
 }
 
-//...............................................................................
-// set Dashboard
-//...............................................................................
-void Dashboard::setPage(int page){
+Widget *WidgetArray::createWidget(JsonObject &O) const {
+  String type = O["type"].as<String>();
+  return createWidget(type);
+}
 
-  switch(page){
-  case 0:
-    page_main();
-    break;
-    case 1:
-      page_test();
-      break;
-    case 2:
-      //ffs.webCFG.root = page_config();
-      page_config();
-      break;
-    case 3:
-      page_editSensornames();
-      break;
-
-  default:
-    page_main();
+JsonArray &WidgetArray::serialize(DynamicJsonBuffer &jsonBuffer) {
+  // D("serializing widget array");
+  JsonArray &A = jsonBuffer.createArray();
+  for (auto w : widgets) {
+    // String msg= "  widget type: "+w->type;
+    // D(msg.c_str());
+    JsonObject &O = A.createNestedObject(); // create object and add to array
+    w->toJsonObject(jsonBuffer, O);
   }
-  //ffs.webCFG.saveFile();
-  topicQueue.put("~/event/ui/dashboardChanged");
+  return A;
 }
 
-//...............................................................................
-// page_menue
-//...............................................................................
-void Dashboard::fillMenue(JsonObject& root){
-
-//Menue GRID
-  Widget cg1("cg1", "controlgroup");
-    cg1.caption   = "Menü";
-    cg1.direction = "horizontal";
-    cg1.action    = "~/set/device/dashboard/setPage";
-    cg1.event     = "~/event/device/radio";
-
-  cg1.fillObject(root);
-    //DATA
-    JsonArray& cg1_data = root.createNestedArray("data");
-    JsonObject& m1 = cg1_data.createNestedObject();
-      m1["label"] = "Main";
-      m1["value"] = 0;
-    JsonObject& m2 = cg1_data.createNestedObject();
-      m2["label"] = "Test";
-      m2["value"] = 1;
-    JsonObject& m3 = cg1_data.createNestedObject();
-      m3["label"] = "OmniESP.json";
-      m3["value"] = 2;
-}
-
-//...............................................................................
-// page_Config
-//...............................................................................
-String Dashboard::page_config(){
-//get the OmniESP.json
-  DynamicJsonBuffer rootCFG_jsonBuffer;
-  JsonObject& rootCFG = rootCFG_jsonBuffer.parseObject(ffs.cfg.root);
-
-//page_config root json
-  DynamicJsonBuffer root_jsonBuffer;
-  JsonArray& root = root_jsonBuffer.createArray();
-  //add Menue
-  JsonObject& root_menue = root.createNestedObject();
-  fillMenue(root_menue);
-
-//create gridObjects
-  JsonObject& grid = root.createNestedObject();
-    grid["type"] = "grid";
-    grid["name"] = "grid1";
-
-//create grid
-  //fill GridData
-  JsonArray& gridData = grid.createNestedArray("data");
-  int i = 0;
-  for (auto &element : rootCFG) {
-    JsonArray& gridDataRow = gridData.createNestedArray();
-    //column 1 "key"
-    JsonObject& keyObject = gridDataRow.createNestedObject();
-      keyObject["type"]     = "text";
-      keyObject["name"]     = "c1" + String(i);
-      keyObject["caption"]  = element.key;
-      keyObject["readonly"] =  1;
-      //keyObject["event"]    =  "";
-      //keyObject["prefix"]   =  "";
-      //keyObject["suffix"]   =  "";
-    //column 1 "key"
-
-/*
-    JsonObject& valueObject = gridDataRow.createNestedObject();
-      valueObject["type"]     = "text";
-      valueObject["name"]     = "c2" + String(i);
-      valueObject["caption"]  = element.key;
-      valueObject["readonly"] =  1;
-      //valueObject["event"]    =  "";
-      //valueObject["prefix"]   =  "";
-      //valueObject["suffix"]   =  ""; */
-    i++;
+void WidgetArray::deserialize(JsonArray &A) {
+  // D("deserializing widget array");
+  widgets.clear();
+  for (JsonObject &O : A) {
+    // D("  widget");
+    Widget *w = createWidget(O);
+    w->fromJsonObject(O);
+    widgets.push_back(w);
   }
-
-//return main_page rootArray as String
-  //String rootStr;
-  ffs.webCFG.root = "";
-  root.printTo(ffs.webCFG.root);
-  root.prettyPrintTo(Serial);
-  Serial.println(ffs.webCFG.root);
-  return "";//rootStr;
 }
 
-
-/*
-  //fill GridData
-  JsonArray& gridData = grid.createNestedArray("data");
-  JsonArray& gridDataRow = gridData.createNestedArray();
-
-  for (int i = 0; i < rootCFG.size(); i++) {
-    gridDataRow[i].
-  }
-
-  int j = 0;
-  for (auto &element : rootCFG) {
-    //column 1 "key"
-    JsonObject& keyObject = gridDataRow.createNestedObject();
-      keyObject["type"]     = "text";
-      keyObject["name"]     = "r" + String(j);
-      keyObject["readonly"] =  1;
-      keyObject["event"]    =  "";
-      keyObject["prefix"]   =  String(element.key);
-      keyObject["suffix"]   =  "";
-
-    String strKey = element.key;
-    String strValue = element.value;
-
-    j++;
-  }*/
-
-
-//...............................................................................
-// page_test
-//...............................................................................
-String Dashboard::page_test(){
-//page_main root json
-  DynamicJsonBuffer root_jsonBuffer;
-  JsonArray& root = root_jsonBuffer.createArray();
-  //add Menue
-  JsonObject& root_menue = root.createNestedObject();
-  fillMenue(root_menue);
-
-//widget 1 GROUP
-  JsonObject& w1_root = root.createNestedObject();
-  Widget w1("Widget_1", "group");
-    w1.caption   = "Sensors";
-  w1.fillObject(w1_root);
-
-//DATA
-  JsonArray& w1_data = w1_root.createNestedArray("data");
-  //widget 1 in GROUP
-  JsonObject& w1_data_w1 = w1_data.createNestedObject();
-    Widget w2("Widget_2", "text");
-      w2.caption   = "Time 2";
-      w2.readonly  = 1;
-      w2.event     = "~/event/clock/time";
-      w2.inputtype = "datetime";
-    w2.fillObject(w1_data_w1);
-
-  //widget 2 in GROUP
-  JsonObject& w1_data_w2 = w1_data.createNestedObject();
-    Widget w3("Widget_3", "button");
-      w3.caption   = "Switch";
-    w3.fillObject(w1_data_w2);
-
-//return config_page rootArray as String
-  ffs.webCFG.root = "";
-  root.printTo(ffs.webCFG.root);
-  //root.prettyPrintTo(Serial);
-  Serial.println(ffs.webCFG.root);
-  return "";//rootStr;
-
-
-}
-
-//...............................................................................
-// page_main
-//...............................................................................
-String Dashboard::page_main(){
-  //page_main root json
-  DynamicJsonBuffer root_jsonBuffer;
-  JsonArray& root = root_jsonBuffer.createArray();
-  //add Menue
-  JsonObject& root_menue = root.createNestedObject();
-  fillMenue(root_menue);
-
-  //GROUP1
-  JsonObject& root_group1 = root.createNestedObject();
-  Widget group1("group1", "group");
-    group1.caption   = "Simple Switch Leitstand";
-  group1.fillObject(root_group1);
-    //DATA
-    JsonArray& root_group1_data = root_group1.createNestedArray("data");
-
-      //Time in GROUP
-      JsonObject& root_group1_data_clock = root_group1_data.createNestedObject();
-      Widget clock1("clock", "text");
-        clock1.caption   = "Time";
-        clock1.readonly  = 1;
-        clock1.event     = "~/event/clock/time";
-        clock1.inputtype = "datetime";
-      clock1.fillObject(root_group1_data_clock);
-
-      //LED in GROUP
-      JsonObject& root_group1_data_led = root_group1_data.createNestedObject();
-      Widget led("led", "checkbox");
-        led.caption   = "LED";
-        led.readonly  = 1;
-        led.event     = "~/event/device/led";
-      led.fillObject(root_group1_data_led);
-
-      //SUBGROUP in GROUP
-      JsonObject& root_group1_data_group2 = root_group1_data.createNestedObject();
-        Widget group2("group2", "group");
-        group2.caption   = "Power Control";
-      group2.fillObject(root_group1_data_group2);
-        //DATA
-        JsonArray& root_group1_data_group2_data = root_group1_data_group2.createNestedArray("data");
-
-          //powercontrol in SUBGROUP
-          JsonObject& root_group1_data_group2_data_power = root_group1_data_group2_data.createNestedObject();
-          Widget power("power", "controlgroup");
-            power.caption   = "Power";
-            power.action    = "~/set/device/power";
-            power.event     = "~/event/device/power";
-          power.fillObject(root_group1_data_group2_data_power);
-            //DATA
-            JsonArray& root_group1_data_group2_data_power_data = root_group1_data_group2_data_power.createNestedArray("data");
-            JsonObject& d1 = root_group1_data_group2_data_power_data.createNestedObject();
-              d1["label"] = "Off";
-              d1["value"] = 0;
-            JsonObject& d2 = root_group1_data_group2_data_power_data.createNestedObject();
-              d2["label"] = "On";
-              d2["value"] = 1;
-
-          //powerbutton
-          JsonObject& root_group1_data_group2_data_powerToggle = root_group1_data_group2_data.createNestedObject();
-          Widget bu_toggle("toggle", "button");
-            bu_toggle.caption   = "Toggle";
-            bu_toggle.action     = "~/set/device/toggle";
-          bu_toggle.fillObject(root_group1_data_group2_data_powerToggle);
-
-  //GROUP3 Sensors
-  JsonObject& root_group3 = root.createNestedObject();
-  Widget group3("group3", "group");
-    group3.caption   = "Sensoren";
-  group3.fillObject(root_group3);
-    //DATA
-    JsonArray& root_group3_data = root_group3.createNestedArray("data");
-
-    //get config.json "sensors"
-    DynamicJsonBuffer deviceCFG_jsonBuffer;
-    JsonObject& deviceCFG = deviceCFG_jsonBuffer.parseObject(ffs.deviceCFG.root);
-    JsonObject& deviceCFG_sensors = deviceCFG["sensors"];
-    //iterate the sensors
-    for (auto &element : deviceCFG_sensors) {
-      JsonObject& sensorData = deviceCFG_sensors[element.key];
-      const char* xevent = sensorData["name"];
-      String event = String(xevent);
-      if (event == "") event = element.key;
-
-      JsonObject& sensor = root_group3_data.createNestedObject();
-      Widget sensors(String(element.key), "text");
-        sensors.caption   = event;
-        sensors.readonly  = 1;
-        sensors.event     = "~/event/device/sensors/" + String(element.key);
-        sensors.inputtype = "text";
-      sensors.fillObject(sensor);
-
+bool WidgetArray::removeWidget(String &name) {
+  for (auto it = widgets.begin(); it != widgets.end();) {
+    Widget *w = *it;
+    if (w->name.equals(name)) {
+      it = widgets.erase(it);
+      return true;
+    } else {
+      if (w->type.equals("group")) {
+        WidgetArray *a = (WidgetArray *)(w);
+        if (a->removeWidget(name))
+          return true;
+      }
+      ++it;
     }
-
-    //add EDIT button
-    JsonObject& edit = root_group3_data.createNestedObject();
-    Widget bu_edit("edit", "button");
-      bu_edit.caption   = "EDIT Sensornames";
-      bu_edit.action     = "~/set/device/dashboard/setPage 3";
-    bu_edit.fillObject(edit);
-
-//return main_page rootArray as String
-  ffs.webCFG.root = "";
-  root.printTo(ffs.webCFG.root);
-  //root.prettyPrintTo(Serial);
-  //Serial.println(ffs.webCFG.root);
-  return "";//rootStr;
-
-}
-
-//...............................................................................
-// page_EditSensornames
-//...............................................................................
-String Dashboard::page_editSensornames(){
-//page_main root json
-  DynamicJsonBuffer root_jsonBuffer;
-  JsonArray& root = root_jsonBuffer.createArray();
-
-  //get config.json "sensors"
-  DynamicJsonBuffer deviceCFG_jsonBuffer;
-  JsonObject& deviceCFG = deviceCFG_jsonBuffer.parseObject(ffs.deviceCFG.root);
-  JsonObject& deviceCFG_sensors = deviceCFG["sensors"];
-  //iterate the sensors
-  for (auto &element : deviceCFG_sensors) {
-    //JsonObject& sensorData = deviceCFG_sensors[element.key];
-    //const char* xevent = sensorData["name"];
-    //String event = String(xevent);
-    //if (event == "") event = element.key;
-
-    JsonObject& sensor = root.createNestedObject();
-    Widget sensors(String(element.key), "text");
-      sensors.caption   = String(element.key);
-      sensors.readonly  = 0;
-      //sensors.event     = "~/event/device/sensors/" + String(element.key);
-      sensors.action     = "~/set/device/dashboard/sensors/alias/" + String(element.key);
-      sensors.inputtype = "text";
-    sensors.fillObject(sensor);
-
   }
-
-  //add RETURN button
-  JsonObject& back = root.createNestedObject();
-  Widget bu_back("edit", "button");
-    bu_back.caption   = "RETURN";
-    bu_back.action     = "~/set/device/dashboard/setPage 0";
-  bu_back.fillObject(back);
-
-//return config_page rootArray as String
-  ffs.webCFG.root = "";
-  root.printTo(ffs.webCFG.root);
-  //root.prettyPrintTo(Serial);
-  //Serial.println(ffs.webCFG.root);
-  return "";//rootStr;
+  return false;
 }
 
+Widget *WidgetArray::insertWidget(String &type, int position) {
+  // D("insert widget");
+  Widget *w = createWidget(type);
+  int pos = position < 0 ? widgets.size() - position + 1 : position;
+  auto it = widgets.begin();
+  while (pos-- && it != widgets.end())
+    it++;
+  widgets.insert(it, w);
+  return w;
+}
 
-//...............................................................................
-// Sensors count change
-//...............................................................................
-void Dashboard::addSensor(String newSensorID, String type){
-//get the device config
-  DynamicJsonBuffer deviceCFG_jsonBuffer;
-  JsonObject& deviceCFG = deviceCFG_jsonBuffer.parseObject(ffs.deviceCFG.root);
-  JsonObject& deviceCFG_sensors = deviceCFG["sensors"];
+Widget *WidgetArray::insertWidget(const char *type, int position) {
+  String t = String(type);
+  return insertWidget(t, position);
+}
 
-  //loop with array
-  if (!deviceCFG_sensors.containsKey(newSensorID)) {
-    JsonObject& deviceCFG_sensors_new = deviceCFG_sensors.createNestedObject(newSensorID);
-    deviceCFG_sensors_new["type"] = type;
-    deviceCFG_sensors_new["name"] = "";
+Widget *WidgetArray::insertWidget(String &type, String &group, int position) {
+  for (auto it = widgets.begin(); it != widgets.end(); it++) {
+    Widget *w = *it;
+    if (w->type.equals("group")) {
+      WidgetGroup *g = (WidgetGroup *)(w);
+      Widget *n = g->insertWidget(type, group, position);
+      if (n)
+        return n;
+    }
   }
-
-//return main_page rootArray as String
-  //String rootStr;
-  ffs.deviceCFG.root = "";
-  deviceCFG.printTo(ffs.deviceCFG.root);
-  //deviceCFG.prettyPrintTo(Serial);
-
-  //topicQueue.put("~/event/ui/dashboardChanged");
-  setPage(0);
+  return nullptr;
 }
 
-//...............................................................................
-// Sensors set Alias
-//...............................................................................
-void Dashboard::setAlias(String serial, String alias){
-//get the device config
-  DynamicJsonBuffer deviceCFG_jsonBuffer;
-  JsonObject& deviceCFG = deviceCFG_jsonBuffer.parseObject(ffs.deviceCFG.root);
-  JsonObject& deviceCFG_sensors = deviceCFG["sensors"];
-  JsonObject& deviceCFG_sensor = deviceCFG_sensors[serial];
-    deviceCFG_sensor["name"] = alias;
+Widget *WidgetArray::insertWidget(const char *type, const char *group,
+                                  int position) {
+  String t = String(type);
+  String g = String(group);
+  return insertWidget(t, g, position);
+}
+
+//###############################################################################
+//  WidgetGrid
+//###############################################################################
+
+WidgetGrid::WidgetGrid() : Widget("grid") {}
+
+void WidgetGrid::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
+  Widget::toJsonObject(jsonBuffer, O);
+  JsonArray &A = jsonBuffer.createArray();
+  for(WidgetArray* wa : data) {
+    A.add(wa->serialize(jsonBuffer));
+  }
+  O["data"] = A;
+}
+
+void WidgetGrid::fromJsonObject(JsonObject &O) {
+  Widget::fromJsonObject(O);
+  data.clear();
+  JsonArray &A = O["data"];
+  for(JsonArray &WA : A) {
+    WidgetArray* wa;
+    wa->deserialize(WA);
+    data.push_back(wa);
+  }
+}
+
+WidgetArray* WidgetGrid::addRow() {
+  WidgetArray* wa= new WidgetArray;
+  data.push_back(wa);
+  return wa;
+}
 
 
+//###############################################################################
+//  WidgetGroup
+//###############################################################################
 
-//return main_page rootArray as String
-  //String rootStr;
-  ffs.deviceCFG.root = "";
-  deviceCFG.printTo(ffs.deviceCFG.root);
-  deviceCFG.prettyPrintTo(ffs.deviceCFG.root);
+WidgetGroup::WidgetGroup() : Widget("group") {}
+
+void WidgetGroup::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
+  // D("WidgetGroup::toJsonObject");
+  Widget::toJsonObject(jsonBuffer, O);
+  O["data"] = data.serialize(jsonBuffer);
+}
+
+void WidgetGroup::fromJsonObject(JsonObject &O) {
+  // D("WidgetGroup::fromJsonObject");
+  Widget::fromJsonObject(O);
+  data.deserialize(O["data"]);
+}
+
+Widget *WidgetGroup::insertWidget(String &type, String &group, int position) {
+  if (name.equals(group)) {
+    return data.insertWidget(type, position);
+  } else {
+    return data.insertWidget(type, group, position);
+  }
+}
+
+//###############################################################################
+//  WidgetControlGroup
+//###############################################################################
+
+WidgetControlGroup::WidgetControlGroup() : Widget("controlgroup"){};
+
+void WidgetControlGroup::toJsonObject(DynamicJsonBuffer &jsonBuffer,
+                                      JsonObject &O) {
+  // D("WidgetControlGroup::toJsonObject");
+  Widget::toJsonObject(jsonBuffer, O);
+  // D("serializing WidgetControlGroup elements");
+  JsonArray &A = jsonBuffer.createArray();
+  for (WidgetControlGroupElement E : data) {
+    JsonObject &OE = A.createNestedObject(); // create object and add to array
+    OE["label"] = E.label;
+    OE["value"] = E.value;
+  }
+  O["data"] = A;
+}
+
+void WidgetControlGroup::fromJsonObject(JsonObject &O) {
+  // D("WidgetControlGroup::fromJsonObject");
+  Widget::fromJsonObject(O);
+  // D("deserializing WidgetControlGroup elements");
+  JsonArray &A = O["data"];
+  data.clear();
+  for (JsonObject &OE : A) {
+    WidgetControlGroupElement E;
+    E.label = OE["label"].as<String>();
+    E.value = OE["value"].as<String>();
+    data.push_back(E);
+  }
+}
+
+void WidgetControlGroup::appendElement(String &label, String &value) {
+  WidgetControlGroupElement E;
+  E.label = label;
+  E.value = value;
+  data.push_back(E);
+}
+
+void WidgetControlGroup::appendElement(const char *label, const char *value) {
+  String l = String(label);
+  String v = String(value);
+  appendElement(l, v);
+}
+
+//###############################################################################
+//  Dashboard
+//###############################################################################
+
+Dashboard::Dashboard(LOGGING &logging) : logging(logging) {}
+
+bool Dashboard::load() {
+  File file = SPIFFS.open(DASHBOARDFILENAME, "r");
+  if (!file) {
+    logging.error("could not open dashboard file " + String(DASHBOARDFILENAME));
+    return false;
+  }
+  DynamicJsonBuffer jsonBuffer(JSONBUFFERSIZE);
+  JsonArray &A = jsonBuffer.parseArray(file);
+  file.close();
+  if (A.success()) {
+    logging.info("dashboard successfully parsed");
+    deserialize(A);
+    return true;
+  } else {
+    logging.error("dashboard parsing failed");
+    return false;
+  }
+}
+
+String Dashboard::asJsonDocument() {
+  DynamicJsonBuffer jsonBuffer(JSONBUFFERSIZE);
+  JsonArray &A = serialize(jsonBuffer);
+  String jsonDocument;
+  A.printTo(jsonDocument);
+  return jsonDocument;
 }

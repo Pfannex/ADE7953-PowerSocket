@@ -101,6 +101,7 @@ String I2C::scanBus() {
       if (address == 0x3c) deviceAdd(devices,  "SSD1306");
       if (address >= 0x20 & address <= 0x27) deviceAdd(devices,  "MCP23017");
       if (address == 0x40) deviceAdd(devices,  "SI7021");
+      if (address >= 0x48 & address <= 0x4b) deviceAdd(devices,  "ADS1115");
       if (address >= 0x70 & address <= 0x77) deviceAdd(devices,  "PCA9544");
       if (address >= 0x60 & address <= 0x67) deviceAdd(devices,  "MCP4725");
       if (address == 0x38) deviceAdd(devices,  "ADE7953");

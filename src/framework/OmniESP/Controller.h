@@ -12,6 +12,7 @@
 #include "framework/Utils/SysUtils.h"
 #include <ESP8266FtpServer.h>
 
+
 // THE device
 // Dear developer: you need to copy a file set from _customDevices in place
 #include "customDevice/customDevice.h"

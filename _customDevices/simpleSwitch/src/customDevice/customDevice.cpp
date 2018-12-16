@@ -14,7 +14,7 @@ customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
       led("led", logging, topicQueue, PIN_LED, NORMAL),
       relay("relay", logging, topicQueue, PIN_RELAY, NORMAL) {
 
-  type= String(DEVICETYPE);
+  type = String(DEVICETYPE);
   version = String(DEVICEVERSION);
 }
 
@@ -32,6 +32,14 @@ void customDevice::start() {
   led.start();
   relay.start();
   setLedMode(50);
+
+  // EXAMPLE ----
+  Widget* w= dashboard.insertWidget("group");
+  w->name= "group_sensors";
+  w->caption = "Sensors";
+  // grid
+  grid= (WidgetGrid*) dashboard.insertWidget("grid", "group_sensors");
+  // ----
 
   logging.info("device running");
 }
@@ -129,6 +137,30 @@ void customDevice::on_events(Topic &topic) {
       // -- long
       if (topic.argIs(0, "long"))
         setConfigMode(!configMode);
+      if (topic.argIs(0, "double")) {
+        // EXAMPLE -----
+        // NOTE: only use characters which are valid IDs in HTML, e.g. no dots
+        String id= "xx"+String(millis());
+        WidgetArray* wa= grid->addRow();
+        // name field
+        Widget *w1 = wa->insertWidget("text");
+        w1->name= id+"_name";
+        w1->caption = id;
+        w1->value = id;
+        w1->action = "~/set/device/"+id+"/name";
+        // value field
+        Widget *w2 = wa->insertWidget("text");
+        w2->name= id+"_value";
+        w2->event = "~/event/device/"+id+"/value";
+        // color field
+        Widget *w3 = wa->insertWidget("text");
+        w3->inputtype = "color";
+        w3->name= id+"_color";
+        w3->action = "~/set/device/"+id+"/color";
+        //
+        dashboardChanged();
+        // -------------
+      }
     }
     // - idle
     if (button.isItem(topic, "idle"))

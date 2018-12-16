@@ -25,7 +25,8 @@ var widgets; // flat list of all widgets
 //
 function retrieveDashboard(callback) {
   logmsg("Retrieving dashboard from device...");
-  return call("~/get/ffs/webCFG/root", callback);
+  //return call("~/get/ffs/webCFG/root", callback);
+  return call("~/get/device/dashboard", callback);
 }
 
 //
@@ -87,7 +88,7 @@ function dashboardGetGrid(w) {
   var name = w.name;
   var data = w.data; // array of array elements
   var rows = data.length;
-  var columns = data[1].length;
+  var columns = rows ? data[0].length : 0;
   var row, column;
   var cellId;
 
@@ -148,7 +149,10 @@ function dashboardGetText(w) {
   // the additional blank ensures grid spacing
   //if(!w.caption) { caption= " "; } else { caption= " "+w.caption;}
   var name = w.name;
-  var data = w.data;
+  var value = w.value;
+  if(!value) {
+    value = "";
+  }
   var inputtype = w.inputtype;
   if (!inputtype) {
     inputtype = "text";
@@ -163,7 +167,7 @@ function dashboardGetText(w) {
   }
   content +=
     '<input type="' + inputtype + '" data-mini="true" ' +
-    'id="' + id + '" value="" ' +
+    'id="' + id + '" value="'+value+'" ' +
     (readonly ? 'readonly ' : '');
   if (!readonly) {
     content += 'onChange="dashboardAction(\'' + name + '\')"';
@@ -343,7 +347,7 @@ function dashboardEvalEvent(topics, args) {
   //debugmsg("dashboard event for topic " + topicStr + " with arg " + args);
 
   // rebuild dashboard on event
-  if(topicStr == "~/event/ui/dashboardChanged") {
+  if(topicStr == "~/event/device/dashboardChanged") {
     logmsg("Requested dashboard rebuild");
     var json = retrieveDashboard(dashboardBuild);
     return;

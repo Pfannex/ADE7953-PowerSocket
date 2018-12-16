@@ -19,12 +19,13 @@ public:
 
   void start();
   void checkFlash();
+  uint32_t freeHeapSize();
+
   /*
   This portion was removed after g_cont was not available any more in a
   recent version of the Arduino library. As a positive side effect, untraceable
   hangs in the web interface disappeared.
 
-  uint32_t freeHeapSize();
   int freeStackSize();
   int minFreeStackSize();
   int stackCorrupted();
