@@ -75,6 +75,9 @@ Widget *WidgetArray::createWidget(String &type) const {
   } else if (type.equals("controlgroup")) {
     // D("creating WidgetControlGroup");
     return new WidgetControlGroup;
+  } else if (type.equals("grid")) {
+    // D("creating WidgetGrid");
+    return new WidgetGrid;
   } else {
     // D("creating Widget");
     return new Widget(type);
@@ -162,6 +165,39 @@ Widget *WidgetArray::insertWidget(const char *type, const char *group,
   String g = String(group);
   return insertWidget(t, g, position);
 }
+
+//###############################################################################
+//  WidgetGrid
+//###############################################################################
+
+WidgetGrid::WidgetGrid() : Widget("grid") {}
+
+void WidgetGrid::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
+  Widget::toJsonObject(jsonBuffer, O);
+  JsonArray &A = jsonBuffer.createArray();
+  for(WidgetArray* wa : data) {
+    A.add(wa->serialize(jsonBuffer));
+  }
+  O["data"] = A;
+}
+
+void WidgetGrid::fromJsonObject(JsonObject &O) {
+  Widget::fromJsonObject(O);
+  data.clear();
+  JsonArray &A = O["data"];
+  for(JsonArray &WA : A) {
+    WidgetArray* wa;
+    wa->deserialize(WA);
+    data.push_back(wa);
+  }
+}
+
+WidgetArray* WidgetGrid::addRow() {
+  WidgetArray* wa= new WidgetArray;
+  data.push_back(wa);
+  return wa;
+}
+
 
 //###############################################################################
 //  WidgetGroup
