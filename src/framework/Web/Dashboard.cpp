@@ -186,7 +186,7 @@ void WidgetGrid::fromJsonObject(JsonObject &O) {
   data.clear();
   JsonArray &A = O["data"];
   for(JsonArray &WA : A) {
-    WidgetArray* wa;
+    WidgetArray* wa= new WidgetArray;
     wa->deserialize(WA);
     data.push_back(wa);
   }
