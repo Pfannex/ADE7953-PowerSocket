@@ -29,6 +29,7 @@ void customDevice::start() {
   */
   d1_IN.start();
   d1_OUT.start();
+  d1_OUT.color = String(ffs.deviceCFG.readItem("WS2812_01_COLOR")).toInt();
 
   logging.info("device running");
 }
@@ -49,6 +50,7 @@ String customDevice::set(Topic &topic) {
   /*
   ~/set
   └─device             (level 2)
+    └─color            (level 3)
     └─power            (level 3)
     └─led              (level 3)
     └─toggle           (level 3)
@@ -59,9 +61,19 @@ String customDevice::set(Topic &topic) {
 
   // if (topic.getItemCount() != 4) // ~/set/device/(power|toggle)
   // return TOPIC_NO;
-  if (topic.itemIs(3, "power")) {
-    //setPowerMode(topic.getArgAsLong(0));
+  if (topic.itemIs(3, "color")) {
+    String str = topic.getArg(0);
+    d1_OUT.color = (int) strtol( &str[1], NULL, 16);
+    ffs.deviceCFG.writeItem("WS2812_01_COLOR", String(d1_OUT.color));
+    ffs.deviceCFG.saveFile();
+    d1_OUT.WS2812_on(1);
     return TOPIC_OK;
+
+  } else if (topic.itemIs(3, "power")) {
+    d1_OUT.WS2812_on(topic.getArgAsLong(0));
+    //setPowerMode(power ? 0 : 1);
+    return TOPIC_OK;
+    
   } else if (topic.itemIs(3, "toggle")) {
     //setPowerMode(power ? 0 : 1);
     return TOPIC_OK;
@@ -75,6 +87,7 @@ String customDevice::set(Topic &topic) {
     return TOPIC_NO;
   }
 }
+
 //...............................................................................
 //  Device get
 //...............................................................................
@@ -106,7 +119,7 @@ void customDevice::on_events(Topic &topic){
   // listen to ~/device/drawer1/state
   if (d1_IN.isForModule(topic)) {
     if (d1_IN.isItem(topic, "state"))
-      d1_OUT.WS2812_on(topic.getArgAsLong(0), 44444);
+      d1_OUT.WS2812_on(topic.getArgAsLong(0));
   }
 
 

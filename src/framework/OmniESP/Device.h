@@ -30,7 +30,6 @@ protected:
   LOGGING &logging;
   TopicQueue &topicQueue;
   FFS &ffs;
-  Dashboard dashboard;
 
   String type= "generic device";
   String version= "v0";
