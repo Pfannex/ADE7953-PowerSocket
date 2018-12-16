@@ -37,6 +37,8 @@ void customDevice::start() {
   Widget* w= dashboard.insertWidget("group");
   w->name= "group_sensors";
   w->caption = "Sensors";
+  // grid
+  grid= (WidgetGrid*) dashboard.insertWidget("grid", "group_sensors");
   // ----
 
   logging.info("device running");
@@ -139,16 +141,22 @@ void customDevice::on_events(Topic &topic) {
         // EXAMPLE -----
         // NOTE: only use characters which are valid IDs in HTML, e.g. no dots
         String id= "xx"+String(millis());
+        WidgetArray* wa= grid->addRow();
         // name field
-        Widget *w1 = dashboard.insertWidget("text", "group_sensors");
+        Widget *w1 = wa->insertWidget("text");
         w1->name= id+"_name";
         w1->caption = id;
         w1->value = id;
         w1->action = "~/set/device/"+id+"/name";
         // value field
-        Widget *w2 = dashboard.insertWidget("text", "group_sensors");
+        Widget *w2 = wa->insertWidget("text");
         w2->name= id+"_value";
-        w1->event = "~/event/device/"+id+"/value";
+        w2->event = "~/event/device/"+id+"/value";
+        // color field
+        Widget *w3 = wa->insertWidget("text");
+        w3->inputtype = "color";
+        w3->name= id+"_color";
+        w3->action = "~/set/device/"+id+"/color";
         //
         dashboardChanged();
         // -------------

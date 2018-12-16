@@ -38,4 +38,7 @@ private:
   void setConfigMode(int value);
   void setPowerMode(int value);
   void setLedMode(int value);
+
+  // grid for sensors
+  WidgetGrid* grid;
 };
