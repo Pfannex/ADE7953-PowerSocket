@@ -1,63 +1,94 @@
-[
-  {
-    "type": "group",
-    "name": "dasboard",
-    "caption": "Dashboard",
-    "data": [
-      {
-        "type": "text",
-        "name": "clock",
-        "caption": "Time",
-        "readonly": 1,
-        "event": "~/event/clock/time",
-        "inputtype": "datetime"
-      },
-      {
-        "type": "text",
-        "name": "pressure",
-        "caption": "Pressure",
-        "readonly": 1,
-        "event": "~/event/device/pressure",
-        "suffix": " hPa"
-      },
-      {
-        "type": "text",
-        "name": "temperature",
-        "caption": "Temperature",
-        "readonly": 1,
-        "event": "~/event/device/temperature",
-        "suffix": " °C"
-      },
-      {
-        "type": "text",
-        "name": "illuminance",
-        "caption": "Illuminance",
-        "readonly": 1,
-        "event": "~/event/device/illuminance",
-        "suffix": " lux"
-      },
-      {
-        "type": "text",
-        "name": "uv",
-        "caption": "UV-A",
-        "readonly": 1,
-        "event": "~/event/device/uv",
-        "suffix": " µW/cm²"
-      },
-      {
-        "type": "checkbox",
-        "name": "relay0",
-        "caption": "Relay 0",
-        "action": "~/set/device/relay 0",
-        "event": "~/event/device/relay0"
-      },
-      {
-        "type": "checkbox",
-        "name": "relay1",
-        "caption": "Relay 1",
-        "action": "~/set/device/relay 1",
-        "event": "~/event/device/relay1"
-      }
-    ]
-  }
-]
+[{
+  "type": "group",
+  "name": "dasboard",
+  "caption": "Dashboard",
+  "data": [{
+      "type": "text",
+      "name": "clock",
+      "caption": "Time",
+      "readonly": 1,
+      "event": "~/event/clock/time",
+      "inputtype": "datetime"
+    },
+    {
+      "type": "text",
+      "name": "pressure",
+      "caption": "Pressure",
+      "readonly": 1,
+      "event": "~/event/device/pressure",
+      "suffix": " hPa"
+    },
+    {
+      "type": "text",
+      "name": "temperature",
+      "caption": "Temperature",
+      "readonly": 1,
+      "event": "~/event/device/temperature",
+      "suffix": " °C"
+    },
+    {
+      "type": "text",
+      "name": "illuminance",
+      "caption": "Illuminance",
+      "readonly": 1,
+      "event": "~/event/device/illuminance",
+      "suffix": " lux"
+    },
+    {
+      "type": "text",
+      "name": "uv",
+      "caption": "UV-A",
+      "readonly": 1,
+      "event": "~/event/device/uv",
+      "suffix": " µW/cm²"
+    },
+    {
+      "type": "grid",
+      "data": [
+        [{
+            "type": "checkbox",
+            "name": "pump",
+            "caption": "Pump",
+            "action": "~/set/device/pump",
+            "event": "~/event/device/pump"
+          },
+          {
+            "type": "checkbox",
+            "name": "valve1",
+            "caption": "Valve 1",
+            "action": "~/set/device/valve1",
+            "event": "~/event/device/valve1"
+          },
+          {
+            "type": "checkbox",
+            "name": "valve2",
+            "caption": "Valve 2",
+            "action": "~/set/device/valve2",
+            "event": "~/event/device/valve2"
+          },
+          {
+            "type": "checkbox",
+            "name": "valve3",
+            "caption": "Valve 3",
+            "action": "~/set/device/valve3",
+            "event": "~/event/device/valve3"
+          }
+        ]
+      ]
+    },
+    {
+      "type": "checkbox",
+      "name": "lamp",
+      "caption": "Lamp",
+      "action": "~/set/device/lamp",
+      "event": "~/event/device/lamp"
+    },
+    {
+      "type": "checkbox",
+      "name": "camera",
+      "caption": "Camera",
+      "action": "~/set/device/camera",
+      "event": "~/event/device/camera"
+    }
+  ]
+}]

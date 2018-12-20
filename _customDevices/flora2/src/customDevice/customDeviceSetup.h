@@ -2,24 +2,24 @@
 // ESP8266 - BH1750
 //###############################################################################
 /*
-GPIO WeMos ESPpin Function  BH1750
- 2   D4    17
- 0   D3    18
- 4   D2    19     SDA       SDA
- 5   D1    20     SCL       SCL
- 3   RX    21
- 1   TX    22
-15   D8    16     SS
-13   D7     7     MOSI
-12   D6     6     MISO
-14   D5     5     SCK
-16   D0     4     SLEEP!
-ADC  A0     2     Analog
-3V3                         VCC
-GND                         GND
-GND                         ADDR    0x23
+   GPIO WeMos ESPpin Function  BH1750
+   2   D4    17
+   0   D3    18
+   4   D2    19     SDA       SDA
+   5   D1    20     SCL       SCL
+   3   RX    21
+   1   TX    22
+   15   D8    16     SS
+   13   D7     7     MOSI
+   12   D6     6     MISO
+   14   D5     5     SCK
+   16   D0     4     SLEEP!
+   ADC  A0     2     Analog
+   3V3                         VCC
+   GND                         GND
+   GND                         ADDR    0x23
 
-*/
+ */
 
 
 //###############################################################################
@@ -53,13 +53,23 @@ GND                         ADDR    0x23
 // GPIO MCP23017
 //
 // 0x20 default
-#define ADDRESS_MCP 0x20
+#define ADDRESS_MCP (0x21)
 
 //
 // voltage sensor ADS1115
 //
-#define ADDRESS_ADS 0x48
+#define ADDRESS_ADS (0x48)
 
-
+//
 // default polling interval in milliseconds
-#define POLL_IVL_DEF 5000
+//
+#define POLL_IVL_DEF (5000)
+
+//
+// the number and names of the relays
+//
+#define RELAY_COUNT (6)
+
+struct relays {
+        static const char* names[];
+};
