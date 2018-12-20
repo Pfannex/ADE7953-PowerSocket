@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <title>Sample</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="css/jquery.mobile.css">
+  <script src="jquery.js"></script>
+  <script src="jquery.mobile.js"></script>
+  <style>
+    .ui-bar-a {
+      background-color: #fff;
+      font-weight: 400;
+      font-size: smaller
+    }
+
+    .no-margin-grid .ui-field-contain {
+      margin: 0
+    }
+
+    .sidebyside {
+      float: left;
+      position: relative;
+      display: inline-block
+    }
+
+    #overlay {
+      background-color: rgba(0, 0, 0, .8);
+      z-index: 999;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100?;
+      display: none
+    }
+  </style>
+</head>
+
+<body>
+  <h1>tight grid</h1>
+  <div class='ui-grid-b' id='gridid'>
+    <div class='ui-block-a'>
+      <div class='ui-bar ui-bar-a' id='rid_t'>1</div>
+    </div>
+    <div class='ui-block-b'>
+      <div class='ui-bar ui-bar-a' id='rid'>2</div>
+    </div>
+    <div class='ui-block-c'>
+      <div class='ui-bar ui-bar-a' id='rid_v'>3</div>
+    </div>
+  </div>
+
+  <h1>wide grid</h1>
+  <div class="no-margin-grid">
+    <fieldset class="ui-grid-b">
+      <div class="ui-block-a" id="cellid_1">1</div>
+      <div class="ui-block-b" id="cellid_2">2</div>
+      <div class="ui-block-c" id="cellid_3">3</div>
+    </fieldset>
+  </div>
+
+</body>
+
+</html>
