@@ -32,4 +32,6 @@ public:
 private:
   QRE1113 d1_IN;
   WS2812  d1_OUT;
+  QRE1113 d2_IN;
+  WS2812  d2_OUT;
 };

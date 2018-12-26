@@ -23,4 +23,7 @@ ADC  A0     2     Analog
 
 #define DRAWER1_IN  5
 #define DRAWER1_OUT 4
-#define DRAWER1_LEDCOUNT 3
+#define DRAWER1_LEDCOUNT 51
+#define DRAWER2_IN  13
+#define DRAWER2_OUT 15
+#define DRAWER2_LEDCOUNT 51

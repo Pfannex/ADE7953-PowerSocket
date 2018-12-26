@@ -1,34 +1,75 @@
 [
    {
-      "type":"grid",
-      "name":"drawerGrid",
+      "type":"text",
+      "name":"clock",
+      "caption":"Time",
+      "readonly":1,
+      "event":"~/event/clock/time",
+      "inputtype":"datetime"
+   },
+   {
+      "type":"group",
+      "name":"subgroup",
+      "caption":"Drawer Control",
       "data":[
-         [
-            {
-               "type":"controlgroup",
-               "name":"Drawer01",
-               "caption":"Drawer 1",
-               "action":"~/set/device/power",
-               "event":"~/event/device/drawer1/state",
-               "data":[
+         {
+            "type":"grid",
+            "name":"drawerGrid",
+            "data":[
+               [
                   {
-                     "label":"closed",
-                     "value":0
+                     "type":"controlgroup",
+                     "name":"Drawer01",
+                     "caption":"Drawer 1",
+                     "action":"~/set/device/power01",
+                     "event":"~/event/device/drawer1/state",
+                     "data":[
+                        {
+                           "label":"closed",
+                           "value":0
+                        },
+                        {
+                           "label":"open",
+                           "value":1
+                        }
+                     ]
                   },
                   {
-                     "label":"open",
-                     "value":1
+                     "type":"text",
+                     "name":"color01",
+                     "caption":"color",
+                     "inputtype":"color",
+                     "action":"~/set/device/color01"
+                  }
+               ],
+               [
+                  {
+                     "type":"controlgroup",
+                     "name":"Drawer02",
+                     "caption":"Drawer 2",
+                     "action":"~/set/device/power02",
+                     "event":"~/event/device/drawer2/state",
+                     "data":[
+                        {
+                           "label":"closed",
+                           "value":0
+                        },
+                        {
+                           "label":"open",
+                           "value":1
+                        }
+                     ]
+                  },
+                  {
+                     "type":"text",
+                     "name":"color02",
+                     "caption":"color",
+                     "inputtype":"color",
+                     "action":"~/set/device/color02"
                   }
                ]
-            },
-            {
-               "type":"text",
-               "name":"color",
-               "caption":"color",
-               "inputtype":"color",
-               "action":"~/set/device/color"
-            }
-         ]
+            ]
+         }
       ]
    }
 ]
