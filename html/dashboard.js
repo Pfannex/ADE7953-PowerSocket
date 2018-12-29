@@ -247,6 +247,7 @@ function dashboardBuild(json) {
   var element = $("#dashboard");
   var child = element.html(content);
   child.trigger('create');
+  call("~/set/device/fillDashboard");
   logmsg("Dashboard ready.");
 }
 
