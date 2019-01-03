@@ -422,7 +422,11 @@ String Controller::call(Topic &topic) {
     } else if (topic.itemIs(2, "wifi")) {
       return wifi.set(topic);
     } else if (topic.itemIs(2, "device")) {
-      return device.set(topic);
+      if (topic.itemIs(3, "fillDashboard")) {
+        return device.fillDashboard();
+      } else {
+        return device.set(topic);
+      }
     } else {
       return TOPIC_NO;
     }
