@@ -61,6 +61,7 @@ String customDevice::set(Topic &topic) {
   /*
   ~/set
   └─device             (level 2)
+    └─fillDashboard    (level 3)
     └─power            (level 3)
     └─led              (level 3)
     └─toggle           (level 3)
@@ -167,10 +168,21 @@ void customDevice::on_events(Topic &topic) {
       setConfigMode(0);
   }
 }
+//...............................................................................
+//  on request, fillDashboard with values
+//...............................................................................
+String customDevice::fillDashboard() {
+  topicQueue.put("~/event/device/led", power);
+  topicQueue.put("~/event/device/power", power);
+
+  logging.debug("dashboard filled with values");
+  return TOPIC_OK;
+}
 
 //-------------------------------------------------------------------------------
 //  Device private
 //-------------------------------------------------------------------------------
+
 //...............................................................................
 //  mode setter
 //...............................................................................
