@@ -5,6 +5,15 @@
 //  Device
 //===============================================================================
 
+const char* relays::names[] = {
+        "pump",
+        "valve1",
+        "valve2",
+        "valve3",
+        "lamp",
+        "camera"
+};
+
 //-------------------------------------------------------------------------------
 //  constructor
 //-------------------------------------------------------------------------------
@@ -78,11 +87,11 @@ void customDevice::start() {
   }
 
   // MCP23017
-  mcp.begin(ADDRESS_MCP);
+  mcp.begin(ADDRESS_MCP - 0x20);
   mcpIsPresent = true; // how to check?
   logging.info("MCP23017 found");
-  for (int relay = 0; relay < 8; relay++) {
-    mcp.pinMode(0, OUTPUT);
+  for (int relay = 0; relay < RELAY_COUNT; relay++) {
+    mcp.pinMode(relay, OUTPUT);
   }
 
   // ADS1115
@@ -162,8 +171,10 @@ void customDevice::inform() {
 //...............................................................................
 
 void customDevice::switchRelay(int relay, int state) {
-  mcp.digitalWrite(relay, state);
-  topicQueue.put("~/event/device/relay" + String(relay) + " " + String(state));
+  Di("relay=", relay); Di("state=", state);
+  //mcp.digitalWrite(relay, state);
+  mcp.digitalWrite(0, state ? HIGH : LOW);
+  topicQueue.put("~/event/device/" + String(relays::names[relay]) + " " + String(state));
 }
 
 //...............................................................................
@@ -202,18 +213,20 @@ String customDevice::set(Topic &topic) {
     pollInterval = topic.getArgAsLong(0);
     logging.info("polling sensor every " + String(pollInterval) + "ms");
     return TOPIC_OK;
-  } else if (topic.itemIs(3, "relay")) {
-    int relay = topic.getArgAsLong(0);
-    int state = topic.getArgAsLong(1);
-    if (relay < 0 || relay > 7)
-      return TOPIC_NO;
-    if (state < 0 || state > 1)
-      return TOPIC_NO;
-    switchRelay(relay, state);
-    return TOPIC_OK;
   } else {
-    return TOPIC_NO;
+    for (int relay = 0; relay < RELAY_COUNT; relay++) {
+      if (topic.itemIs(3, relays::names[relay])) {
+        int state = topic.getArgAsLong(0);
+        if (state < 0 || state > 1)
+          return TOPIC_NO;
+        else {
+          switchRelay(relay, state);
+          return TOPIC_OK;
+        }
+      }
+    }
   }
+  return TOPIC_NO;
 }
 
 //...............................................................................

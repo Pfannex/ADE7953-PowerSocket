@@ -57,6 +57,8 @@ String Device::getDashboard() {
   return dashboard.asJsonDocument();
 }
 
+String Device::fillDashboard() {}
+
 void Device::dashboardChanged() { // fire event
   topicQueue.put("~/event/device/dashboardChanged");
 }

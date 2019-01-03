@@ -20,6 +20,7 @@ public:
   virtual String getType();
   virtual String getVersion();
   String getDashboard();
+  virtual String fillDashboard();
   virtual void start();
   virtual void handle();
   virtual String set(Topic &topic);

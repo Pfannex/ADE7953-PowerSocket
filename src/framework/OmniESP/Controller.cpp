@@ -315,6 +315,7 @@ void Controller::on_wifi_state_change() {
 
       // turn off apTimeout
       apTimeoutActive = false;
+      topicQueue.put("~/event/device/led/setmode", 0);
       // set staTimeout to 0 if no valid SSID is available
       staTimeout = wifi.validSSID ? STA_TIMEOUT : 0;
       // start the STA Timer
@@ -421,7 +422,11 @@ String Controller::call(Topic &topic) {
     } else if (topic.itemIs(2, "wifi")) {
       return wifi.set(topic);
     } else if (topic.itemIs(2, "device")) {
-      return device.set(topic);
+      if (topic.itemIs(3, "fillDashboard")) {
+        return device.fillDashboard();
+      } else {
+        return device.set(topic);
+      }
     } else {
       return TOPIC_NO;
     }
