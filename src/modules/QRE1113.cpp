@@ -26,20 +26,26 @@ void QRE1113::start() {
 //...............................................................................
 void QRE1113::handle() {
   Module::handle();
+  unsigned long now = millis();
 
-  String IO = String(pin);
-  int QRE_Value = readQRE();
-  String eventPrefix= "~/event/device/" + String(name) + "/";
+  //debouncing and state detection
+  if (now - lastChangeTime > DEBOUNCETIME){
+    lastChangeTime = now;
 
-  if (QRE_Value > 500 && !pinState){
-    pinState = 1;
-    logging.debug("QRE1113 " + String(pin) + " on");
-    topicQueue.put(eventPrefix + "/state 1");
-    //digitalWrite( 14, LOW );
-  }else if (QRE_Value < 500 && pinState){
-    pinState = 0;
-    logging.debug("QRE1113 " + String(pin) + " off");
-    topicQueue.put(eventPrefix + "/state 0");
+    String IO = String(pin);
+    int QRE_Value = readQRE();
+    String eventPrefix= "~/event/device/" + String(name) + "/";
+
+    if (QRE_Value > 500 && !pinState){
+      pinState = 1;
+      logging.debug("QRE1113 " + String(pin) + " open");
+      topicQueue.put(eventPrefix + "/state 1");
+      //digitalWrite( 14, LOW );
+    }else if (QRE_Value < 500 && pinState){
+      pinState = 0;
+      logging.debug("QRE1113 " + String(pin) + " closed");
+      topicQueue.put(eventPrefix + "/state 0");
+    }
   }
 }
 
@@ -49,6 +55,17 @@ void QRE1113::handle() {
 String QRE1113::getVersion() {
   return  String(QRE1113_Name) + " v" + String(QRE1113_Version);
 }
+
+//...............................................................................
+// return pinState
+//...............................................................................
+int QRE1113::state() {
+  return pinState;
+}
+
+//-------------------------------------------------------------------------------
+//  QRE1113 private
+//-------------------------------------------------------------------------------
 //...............................................................................
 //  input software debouncer
 //...............................................................................
@@ -68,7 +85,3 @@ int QRE1113::readQRE() {
   }
   return diff;
 }
-
-//-------------------------------------------------------------------------------
-//  QRE1113 private
-//-------------------------------------------------------------------------------

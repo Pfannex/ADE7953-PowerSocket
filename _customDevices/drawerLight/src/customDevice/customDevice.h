@@ -26,6 +26,7 @@ public:
   void start();
   void handle();
   String set(Topic &topic);
+    String fillDashboard();
   String get(Topic &topic);
   void on_events(Topic &topic);
 

@@ -29,12 +29,17 @@ void customDevice::start() {
   logging.info("starting " +
                button.getVersion()); // only first time a class is started
   */
+
   d1_IN.start();
   d1_OUT.start();
-  d1_OUT.color = String(ffs.deviceCFG.readItem("WS2812_01_COLOR")).toInt();
+  String col = ffs.deviceCFG.readItem("drawer1_COLOR");
+  d1_OUT.color = (int) strtol( &col[1], NULL, 16);
+  //------------------
   d2_IN.start();
   d2_OUT.start();
-  d2_OUT.color = String(ffs.deviceCFG.readItem("WS2812_02_COLOR")).toInt();
+  col = ffs.deviceCFG.readItem("drawer2_COLOR");
+  d2_OUT.color = (int) strtol( &col[1], NULL, 16);
+  //------------------
 
   logging.info("device running");
 }
@@ -57,34 +62,57 @@ String customDevice::set(Topic &topic) {
   /*
   ~/set
   └─device             (level 2)
-    └─color            (level 3)
-    └─power            (level 3)
-    └─led              (level 3)
-    └─toggle           (level 3)
+    └─drawer1          (level 3)
+      └─color          (level 4)
+      └─state          (level 4)
+    └─drawer2          (level 3)
+      └─color          (level 4)
+      └─state          (level 4)
   */
 
   logging.debug("device set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
 
-  // if (topic.getItemCount() != 4) // ~/set/device/(power|toggle)
-  // return TOPIC_NO;
-  if (topic.itemIs(3, "color01")) {
+  if (topic.itemIs(3, "drawer1")){
+    if (topic.itemIs(4, "state")) {
+      d1_OUT.WS2812_on(topic.getArgAsLong(0));
+      return TOPIC_OK;
+    }else if (topic.itemIs(4, "color")) {
+      String str = topic.getArg(0);
+      d1_OUT.color = (int) strtol( &str[1], NULL, 16);
+      ffs.deviceCFG.writeItem("drawer1_COLOR", str);
+      ffs.deviceCFG.saveFile();
+      d1_OUT.WS2812_on(1);
+      return TOPIC_OK;
+    }else{
+      return TOPIC_NO;
+    }
+
+  }else if (topic.itemIs(3, "drawer2")){
+
+  }else{
+    return TOPIC_NO;
+  }
+
+/*
+
+  if (topic.itemIs(3, "color1")) {
     String str = topic.getArg(0);
     d1_OUT.color = (int) strtol( &str[1], NULL, 16);
-    ffs.deviceCFG.writeItem("WS2812_01_COLOR", String(d1_OUT.color));
+    ffs.deviceCFG.writeItem("Drawer1_COLOR", str);
     ffs.deviceCFG.saveFile();
     d1_OUT.WS2812_on(1);
     return TOPIC_OK;
-
-  } else if (topic.itemIs(3, "power01")) {
+  } else if (topic.itemIs(3, "power1")) {
     d1_OUT.WS2812_on(topic.getArgAsLong(0));
     //setPowerMode(power ? 0 : 1);
     return TOPIC_OK;
 
-  } else if (topic.itemIs(3, "color02")) {
+  } else if (topic.itemIs(3, "color2")) {
     String str = topic.getArg(0);
     d2_OUT.color = (int) strtol( &str[1], NULL, 16);
-    ffs.deviceCFG.writeItem("WS2812_02_COLOR", String(d2_OUT.color));
+    //ffs.deviceCFG.writeItem("WS2812_02_COLOR", String(d2_OUT.color));
+    ffs.deviceCFG.writeItem("WS2812_02_COLOR", str);
     ffs.deviceCFG.saveFile();
     d2_OUT.WS2812_on(1);
     return TOPIC_OK;
@@ -107,7 +135,7 @@ String customDevice::set(Topic &topic) {
     return TOPIC_OK;
   } else {
     return TOPIC_NO;
-  }
+  }*/
 }
 
 //...............................................................................
@@ -138,12 +166,13 @@ String customDevice::get(Topic &topic) {
 //...............................................................................
 void customDevice::on_events(Topic &topic){
 
-  // listen to ~/device/drawer01/state
+
+  // listen to QRE ~/device/drawer1/state
   if (d1_IN.isForModule(topic)) {
     if (d1_IN.isItem(topic, "state"))
       d1_OUT.WS2812_on(topic.getArgAsLong(0));
   }
-  // listen to ~/device/drawer02/state
+  // listen to ~/device/drawer2/state
   if (d2_IN.isForModule(topic)) {
     if (d2_IN.isItem(topic, "state"))
       d2_OUT.WS2812_on(topic.getArgAsLong(0));
@@ -179,6 +208,20 @@ void customDevice::on_events(Topic &topic){
       setConfigMode(0);
   }
 */
+}
+
+//...............................................................................
+//  on request, fillDashboard with values
+//...............................................................................
+String customDevice::fillDashboard() {
+  topicQueue.put("~/event/device/drawer1/state", d1_IN.state());
+  topicQueue.put("~/event/device/drawer1/color " + ffs.deviceCFG.readItem("drawer1_COLOR"));
+
+  topicQueue.put("~/event/device/drawer2/state", d2_IN.state());
+  topicQueue.put("~/event/device/drawer2/color " + ffs.deviceCFG.readItem("drawer2_COLOR"));
+
+  logging.debug("dashboard filled with values");
+  return TOPIC_OK;
 }
 
 //-------------------------------------------------------------------------------

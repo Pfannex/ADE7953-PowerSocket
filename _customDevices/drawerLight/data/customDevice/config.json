@@ -1,22 +1,10 @@
 {
-  "WS2812_01_COLOR" : "55555",
-  "WS2812_02_COLOR" : "55555",
-"I2CPOLL"         : "2500",
-
-"SAGCYC"        : "",
-"DISNOLOAD"     : "",
-"LCYCMODE"      : "",
-"PGA_V"         : "",
-"PGA_IA"        : "",
-"PGA_IB"        : "",
-"WRITE_PROTECT" : "",
-"EX_REF"        : "",
-"unlock"        : "173",
-"ZXTOUT"        : "",
-"LINECYC"       : "",
-"CONFIG"        : "",
-"CF1DEN"        : "69",
-"CF2DEN"        : "69",
-"CFMODE"        : "115",
-"k_IB"          : "1"
+  "drawer1_COLOR" : "#FF0000",
+  "drawer2_COLOR" : "#FF0000",
+  "drawer3_COLOR" : "#FF0000",
+  "drawer4_COLOR" : "#FF0000",
+  "drawer5_COLOR" : "#FF0000",
+  "drawer6_COLOR" : "#FF0000",
+  "drawer7_COLOR" : "#FF0000",
+  "drawer8_COLOR" : "#FF0000"
 }

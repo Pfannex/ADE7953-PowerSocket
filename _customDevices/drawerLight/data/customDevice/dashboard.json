@@ -19,9 +19,9 @@
                [
                   {
                      "type":"controlgroup",
-                     "name":"Drawer01",
+                     "name":"drawer1",
                      "caption":"Drawer 1",
-                     "action":"~/set/device/power01",
+                     "action":"~/set/device/drawer1/state",
                      "event":"~/event/device/drawer1/state",
                      "data":[
                         {
@@ -36,18 +36,19 @@
                   },
                   {
                      "type":"text",
-                     "name":"color01",
+                     "name":"color1",
                      "caption":"color",
                      "inputtype":"color",
-                     "action":"~/set/device/color01"
+                     "action":"~/set/device/drawer1/color",
+                     "event":"~/event/device/drawer1/color"
                   }
                ],
                [
                   {
                      "type":"controlgroup",
-                     "name":"Drawer02",
+                     "name":"drawer2",
                      "caption":"Drawer 2",
-                     "action":"~/set/device/power02",
+                     "action":"~/set/device/drawer2/state",
                      "event":"~/event/device/drawer2/state",
                      "data":[
                         {
@@ -62,10 +63,11 @@
                   },
                   {
                      "type":"text",
-                     "name":"color02",
+                     "name":"color2",
                      "caption":"color",
                      "inputtype":"color",
-                     "action":"~/set/device/color02"
+                     "action":"~/set/device/drawer2/color",
+                     "event":"~/event/device/drawer2/color"
                   }
                ]
             ]
