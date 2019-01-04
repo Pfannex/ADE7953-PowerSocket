@@ -41,6 +41,8 @@ bool MQTT::start() {
     String strIP = api.call("~/get/ffs/cfg/item/mqtt_ip");
     //IPAddress IP = SysUtils::strToIP(strIP);
     int port = api.call("~/get/ffs/cfg/item/mqtt_port").toInt();
+    String username = api.call("~/get/ffs/cfg/item/mqtt_username");
+    String password = api.call("~/get/ffs/cfg/item/mqtt_password");
     deviceName = api.call("~/get/ffs/cfg/item/device_name");
     String lastWillTopic = "Devices/" + deviceName;
 
@@ -50,9 +52,18 @@ bool MQTT::start() {
     client.disconnect();
     //client.setServer(IP, port);
     client.setServer(strIP.c_str(), port);
-    if (client.connect(deviceName.c_str(), lastWillTopic.c_str(), 0, false,
-                       "Dead")) {
-      //state = true;
+
+    // MQTT connect method depending on username presence
+    bool mqtt_connected = false;
+    if (username.length() == 0) {
+      mqtt_connected = client.connect(deviceName.c_str(),
+        lastWillTopic.c_str(), 0, false, "Dead");
+    } else {
+      mqtt_connected = client.connect(deviceName.c_str(),
+        username.c_str(), password.c_str(), lastWillTopic.c_str(), 0, false, "Dead");
+    }
+
+    if (mqtt_connected) {
       //api.info("MQTT client connected to MQTT broker");
 
       client.publish(lastWillTopic.c_str(), "Alive");
