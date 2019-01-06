@@ -1,0 +1,4 @@
+defmod floodControl MQTT_DEVICE
+attr floodControl IODev mqttBroker
+attr floodControl room Keller
+attr floodControl subscribeReading_water qos:1 washer/event/device/water

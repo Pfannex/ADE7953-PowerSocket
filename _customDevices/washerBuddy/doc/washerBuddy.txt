@@ -1,0 +1,15 @@
+WasherBuddy
+===========
+
+Unterstützt 2 Sensoren:
+
+ 1. Wassersensor als Überflutungsalarm
+ 2. Beschleunigungsmesser zur Benachrichtigung beim Ende des Waschgangs
+
+Als Wassersensor kann ein beliebiges Element genutzt werden, welches bei
+Wasserkontakt den Eingangs-Pin (Standard: D7) auf LOW setzt.
+
+Beschleunigungsmesser ist vom Typ MPU6050, über die Pins SCL (D1) und SDA (D2)
+angeschlossen. In der Bibliothek MPU6050 von Jeff Rowberg ist ein Programm
+zur Kalibrierung enthalten (IMU_Zero), mit welchem möglicherweise genauere
+Werte für
