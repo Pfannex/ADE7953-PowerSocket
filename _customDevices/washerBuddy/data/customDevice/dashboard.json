@@ -18,7 +18,7 @@
         "caption": "Water detected",
         "readonly": 1,
         "event": "~/event/device/water",
-        "suffix": " (0: true, 1: false)"
+        "suffix": " (0: absent, 1: present)"
       },
       {
         "type": "text",
@@ -36,37 +36,24 @@
     "caption": "MPU6050 Acceleration Offsets",
     "data": [
       {
-        "type": "button",
-        "name": "calibrate",
-        "caption": "Calibrate MPU6050",
-        "action": "~/set/device/calibrate"
-      },
-      {
-        "type": "text",
-        "name": "calibrationState",
-        "caption": "Calibration state",
-        "readonly": 1,
-        "event": "~/event/device/calibrationState"
-      },
-      {
         "type": "text",
         "name": "xAccelOffset",
         "caption": "X offset",
-        "readonly": 1,
+        "action": "~/set/device/xAccelOffset",
         "event": "~/event/device/xAccelOffset"
       },
       {
         "type": "text",
         "name": "yAccelOffset",
         "caption": "Y offset",
-        "readonly": 1,
+        "action": "~/set/device/yAccelOffset",
         "event": "~/event/device/yAccelOffset"
       },
       {
         "type": "text",
         "name": "zAccelOffset",
         "caption": "Z offset",
-        "readonly": 1,
+        "action": "~/set/device/zAccelOffset",
         "event": "~/event/device/zAccelOffset"
       }
     ]

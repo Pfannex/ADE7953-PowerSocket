@@ -58,5 +58,5 @@ private:
 
   void calibrate();
   bool calibration_running = false;
-  String calibrationState = "Idle";
+  String calibrationState;
 };
