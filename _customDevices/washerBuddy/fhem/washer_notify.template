@@ -1,0 +1,6 @@
+defmod do_monitor_washer DOIF ( [washer:acceleration] > 150 )\
+  (  ) \
+DOELSE \
+  ( set JabberClient1 msg fhemaccount@jabber.de Waschmaschine fertig )
+attr do_monitor_washer room Keller
+attr do_monitor_washer wait 10:720
