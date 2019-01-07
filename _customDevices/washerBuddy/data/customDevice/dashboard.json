@@ -1,0 +1,61 @@
+[
+  {
+    "type": "group",
+    "name": "dashboard",
+    "caption": "Dashboard",
+    "data": [
+      {
+        "type": "text",
+        "name": "clock",
+        "caption": "Time",
+        "readonly": 1,
+        "event": "~/event/clock/time",
+        "inputtype": "datetime"
+      },
+      {
+        "type": "text",
+        "name": "water",
+        "caption": "Water detected",
+        "readonly": 1,
+        "event": "~/event/device/water",
+        "suffix": " (0: absent, 1: present)"
+      },
+      {
+        "type": "text",
+        "name": "acceleration",
+        "caption": "Acceleration",
+        "readonly": 1,
+        "event": "~/event/device/acceleration",
+        "suffix": " g"
+      },
+    ]
+  },
+  {
+    "type": "group",
+    "name": "MPU6050_settings",
+    "caption": "MPU6050 Acceleration Offsets",
+    "data": [
+      {
+        "type": "text",
+        "name": "xAccelOffset",
+        "caption": "X offset",
+        "action": "~/set/device/xAccelOffset",
+        "event": "~/event/device/xAccelOffset"
+      },
+      {
+        "type": "text",
+        "name": "yAccelOffset",
+        "caption": "Y offset",
+        "action": "~/set/device/yAccelOffset",
+        "event": "~/event/device/yAccelOffset"
+      },
+      {
+        "type": "text",
+        "name": "zAccelOffset",
+        "caption": "Z offset",
+        "action": "~/set/device/zAccelOffset",
+        "event": "~/event/device/zAccelOffset"
+      }
+    ]
+  }
+]

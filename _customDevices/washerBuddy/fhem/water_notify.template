@@ -1,0 +1,4 @@
+defmod do_alert_flooding DOIF ( [floodControl:water] eq "1" ) \
+  ( { set alert("Wasser in Waschküche","alert",1) } ) \
+DOELSE \
+  ( { set_alert("Wasser in Waschküche","alert",0) } )

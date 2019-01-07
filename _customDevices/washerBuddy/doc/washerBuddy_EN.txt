@@ -1,0 +1,28 @@
+WasherBuddy
+===========
+
+Pin standards are for Wemos D1 R2 (mini).
+
+Supports 2 sensors:
+
+ 1. Water sensor for flooding protection
+ 2. Acceleration sensor for notification at the end of a washing programme
+
+Water sensor can be anything that pulls a pin (default: D7) to low if water
+is detected.
+
+Accelerometer has to be of type MPU6050 (GY-521), connected via pins SCL (D1)
+and SDA (D2).
+
+This devices uses offset settings for X, Y and Z acceleration. The presets given
+may be less appropriate for your device. The library for the MPU6050 by Jeff
+Rowberg contains a calibration sketch (IMU_Zero [1]), which can give you better
+values. These values can be entered in the web interface, reboot to activate
+the new settings.
+
+I doubt the statements are correct which say the output is measured in 'g'.
+Since there are no better information, this unit is still used.
+
+The 3D models in directory 'models' are suitable for standard 6x4mm boards.
+
+[1] https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050

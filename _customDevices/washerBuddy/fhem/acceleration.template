@@ -1,0 +1,4 @@
+defmod washer MQTT_DEVICE
+attr washer IODev mqttBroker
+attr washer room Keller
+attr washer subscribeReading_acceleration qos:1 washer/event/device/acceleration
