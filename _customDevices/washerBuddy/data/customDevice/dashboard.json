@@ -18,7 +18,7 @@
         "caption": "Water detected",
         "readonly": 1,
         "event": "~/event/device/water",
-        "suffix": " (1: true, 2: false)"
+        "suffix": " (0: true, 1: false)"
       },
       {
         "type": "text",
@@ -33,27 +33,40 @@
   {
     "type": "group",
     "name": "MPU6050_settings",
-    "caption": "MPU6050 Settings",
+    "caption": "MPU6050 Acceleration Offsets",
     "data": [
+      {
+        "type": "button",
+        "name": "calibrate",
+        "caption": "Calibrate MPU6050",
+        "action": "~/set/device/calibrate"
+      },
+      {
+        "type": "text",
+        "name": "calibrationState",
+        "caption": "Calibration state",
+        "readonly": 1,
+        "event": "~/event/device/calibrationState"
+      },
       {
         "type": "text",
         "name": "xAccelOffset",
-        "caption": "X acceleration offset",
-        "action": "~/set/device/xAccelOffset",
+        "caption": "X offset",
+        "readonly": 1,
         "event": "~/event/device/xAccelOffset"
       },
       {
         "type": "text",
         "name": "yAccelOffset",
-        "caption": "Y acceleration offset",
-        "action": "~/set/device/yAccelOffset",
+        "caption": "Y offset",
+        "readonly": 1,
         "event": "~/event/device/yAccelOffset"
       },
       {
         "type": "text",
         "name": "zAccelOffset",
-        "caption": "Z acceleration offset",
-        "action": "~/set/device/zAccelOffset",
+        "caption": "Z offset",
+        "readonly": 1,
         "event": "~/event/device/zAccelOffset"
       }
     ]

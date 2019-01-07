@@ -29,9 +29,11 @@ public:
   String set(Topic &topic);
   String get(Topic &topic);
   void on_events(Topic &topic);
+  String fillDashboard();
 
 private:
   int measure_water();
+  int measure_acceleration();
 
   uint8_t mpuStatus;      // return status after each device operation (0 = success, !0 = error)
   bool dmpReady = false;  // set true if DMP init was successful
@@ -53,4 +55,8 @@ private:
 
   void inform();
   unsigned long lastPoll= 0;
+
+  void calibrate();
+  bool calibration_running = false;
+  String calibrationState = "Idle";
 };
