@@ -36,12 +36,11 @@ void QRE1113::handle() {
     int QRE_Value = readQRE();
     String eventPrefix= "~/event/device/" + String(name) + "/";
 
-    if (QRE_Value > 500 && !pinState){
+    if (QRE_Value > THRESHOLD_ON && !pinState){
       pinState = 1;
       logging.debug("QRE1113 " + String(pin) + " open");
       topicQueue.put(eventPrefix + "/state 1");
-      //digitalWrite( 14, LOW );
-    }else if (QRE_Value < 500 && pinState){
+    }else if (QRE_Value < THRESHOLD_OFF && pinState){
       pinState = 0;
       logging.debug("QRE1113 " + String(pin) + " closed");
       topicQueue.put(eventPrefix + "/state 0");
