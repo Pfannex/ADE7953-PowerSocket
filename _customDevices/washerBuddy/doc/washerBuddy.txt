@@ -1,6 +1,8 @@
 WasherBuddy
 ===========
 
+Pin-Standards gelten für Wemos D1 R2 (mini).
+
 Unterstützt 2 Sensoren:
 
  1. Wassersensor als Überflutungsalarm
@@ -9,7 +11,20 @@ Unterstützt 2 Sensoren:
 Als Wassersensor kann ein beliebiges Element genutzt werden, welches bei
 Wasserkontakt den Eingangs-Pin (Standard: D7) auf LOW setzt.
 
-Beschleunigungsmesser ist vom Typ MPU6050, über die Pins SCL (D1) und SDA (D2)
-angeschlossen. In der Bibliothek MPU6050 von Jeff Rowberg ist ein Programm
-zur Kalibrierung enthalten (IMU_Zero), mit welchem möglicherweise genauere
-Werte für
+Beschleunigungsmesser ist vom Typ MPU6050 (GY-521), über die Pins SCL (D1) und
+SDA (D2) angeschlossen.
+
+Der MPU6050 nutzt Einstellungen für die internen Berechnungen: X-, Y- und Z-
+Offsets. Die voreingestellten Werte können abhängig von Produktionstoleranzen
+suboptimal sein. In der Bibliothek MPU6050 von Jeff Rowberg ist ein Programm
+zur Kalibrierung enthalten (IMU_Zero [1]), mit welchem möglicherweise genauere
+Werte ermittelt werden können. Anpassungen können im Webinterface vorgenommen
+werden, das Gerät muss danach neu gestartet werden.
+
+Die Aussage, dass die Beschleunigung in 'g' ausgegeben wird, ist eher
+zweifelhaft. Mangels besserer Informationen bleibt es vorerst bei dieser Einheit.
+
+Die Modelldateien für das Gehäuse im Verzeichnis 'models' passen zu einer
+üblichen 6x4cm-Platine.
+
+[1] https://github.com/jrowberg/i2cdevlib/tree/master/Arduino/MPU6050
