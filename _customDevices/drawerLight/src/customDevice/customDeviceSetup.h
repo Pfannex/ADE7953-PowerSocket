@@ -21,9 +21,11 @@ ADC  A0     2     Analog
 // GPIO
 //###############################################################################
 
-#define DRAWER1_IN  5
-#define DRAWER1_OUT 4
-#define DRAWER1_LEDCOUNT 51
-#define DRAWER2_IN  13
-#define DRAWER2_OUT 15
-#define DRAWER2_LEDCOUNT 51
+#define WS_PIN  5
+#define QRE_PIN 4
+#define S0 14
+#define S1 12
+#define S2 13
+#define S3 15
+
+#define LEDCOUNT 3

@@ -31,8 +31,6 @@ public:
   void on_events(Topic &topic);
 
 private:
-  QRE1113 d1_IN;
-  WS2812  d1_OUT;
-  QRE1113 d2_IN;
-  WS2812  d2_OUT;
+  QRE1113 QRE_IN;
+  WS2812  WS_DI;
 };

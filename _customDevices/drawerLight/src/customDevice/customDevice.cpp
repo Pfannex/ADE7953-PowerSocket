@@ -10,10 +10,8 @@
 //-------------------------------------------------------------------------------
 customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
     : Device(logging, topicQueue, ffs),
-    d1_IN("drawer1", logging, topicQueue, DRAWER1_IN),
-    d1_OUT("drawer1", logging, topicQueue, DRAWER1_OUT, DRAWER1_LEDCOUNT),
-    d2_IN("drawer2", logging, topicQueue, DRAWER2_IN),
-    d2_OUT("drawer2", logging, topicQueue, DRAWER2_OUT, DRAWER2_LEDCOUNT) {
+    QRE_IN("QRE1113", logging, topicQueue, QRE_PIN),
+    WS_DI("WS2812", logging, topicQueue, WS_PIN, LEDCOUNT) {
 
   type= String(DEVICETYPE);
   version = String(DEVICEVERSION);
@@ -30,16 +28,19 @@ void customDevice::start() {
                button.getVersion()); // only first time a class is started
   */
 
-  d1_IN.start();
-  d1_OUT.start();
+  QRE_IN.start();
+  WS_DI.start();
   String col = ffs.deviceCFG.readItem("drawer1_COLOR");
-  d1_OUT.color = (int) strtol( &col[1], NULL, 16);
-  //------------------
-  d2_IN.start();
-  d2_OUT.start();
-  col = ffs.deviceCFG.readItem("drawer2_COLOR");
-  d2_OUT.color = (int) strtol( &col[1], NULL, 16);
-  //------------------
+  WS_DI.color = (int) strtol( &col[1], NULL, 16);
+
+  pinMode(S0, OUTPUT);
+  pinMode(S1, OUTPUT);
+  pinMode(S2, OUTPUT);
+  pinMode(S3, OUTPUT);
+  digitalWrite(S0, LOW);
+  digitalWrite(S1, LOW);
+  digitalWrite(S2, LOW);
+  digitalWrite(S3, LOW);
 
   logging.info("device running");
 }
@@ -48,10 +49,29 @@ void customDevice::start() {
 // handle - periodically called by the controller
 //...............................................................................
 void customDevice::handle() {
-  d1_IN.handle();
-  d1_OUT.handle();
-  d2_IN.handle();
-  d2_OUT.handle();
+  QRE_IN.handle();
+  WS_DI.handle();
+
+  for (byte i = 0; i < 16; i++) {
+    ((i & 0b00000001) == 0b00000001) ? (digitalWrite(S0, HIGH)) : (digitalWrite(S0, LOW));
+    ((i & 0b00000010) == 0b00000010) ? (digitalWrite(S1, HIGH)) : (digitalWrite(S1, LOW));
+    ((i & 0b00000100) == 0b00000100) ? (digitalWrite(S2, HIGH)) : (digitalWrite(S2, LOW));
+    ((i & 0b00001000) == 0b00001000) ? (digitalWrite(S3, HIGH)) : (digitalWrite(S3, LOW));
+
+    WS_DI.color = 55555;
+    for (size_t j = 0; j < 100; j++) {
+      WS_DI.WS2812_on(QRE_IN.state());
+
+      QRE_IN.handle();
+      WS_DI.handle();
+      //WS_DI.WS2812_on(1);
+      //delay(200);
+      //WS_DI.WS2812_on(0);
+      delay(50);
+    }
+
+  }
+
 }
 
 //...............................................................................
@@ -75,14 +95,14 @@ String customDevice::set(Topic &topic) {
 
   if (topic.itemIs(3, "drawer1")){
     if (topic.itemIs(4, "state")) {
-      d1_OUT.WS2812_on(topic.getArgAsLong(0));
+      WS_DI.WS2812_on(topic.getArgAsLong(0));
       return TOPIC_OK;
     }else if (topic.itemIs(4, "color")) {
       String str = topic.getArg(0);
-      d1_OUT.color = (int) strtol( &str[1], NULL, 16);
+      WS_DI.color = (int) strtol( &str[1], NULL, 16);
       ffs.deviceCFG.writeItem("drawer1_COLOR", str);
       ffs.deviceCFG.saveFile();
-      d1_OUT.WS2812_on(1);
+      WS_DI.WS2812_on(1);
       return TOPIC_OK;
     }else{
       return TOPIC_NO;
@@ -168,15 +188,11 @@ void customDevice::on_events(Topic &topic){
 
 
   // listen to QRE ~/device/drawer1/state
-  if (d1_IN.isForModule(topic)) {
-    if (d1_IN.isItem(topic, "state"))
-      d1_OUT.WS2812_on(topic.getArgAsLong(0));
+  if (QRE_IN.isForModule(topic)) {
+    if (QRE_IN.isItem(topic, "state"))
+      WS_DI.WS2812_on(topic.getArgAsLong(0));
   }
-  // listen to ~/device/drawer2/state
-  if (d2_IN.isForModule(topic)) {
-    if (d2_IN.isItem(topic, "state"))
-      d2_OUT.WS2812_on(topic.getArgAsLong(0));
-  }
+
 
 
 /*
@@ -214,11 +230,9 @@ void customDevice::on_events(Topic &topic){
 //  on request, fillDashboard with values
 //...............................................................................
 String customDevice::fillDashboard() {
-  topicQueue.put("~/event/device/drawer1/state", d1_IN.state());
+  topicQueue.put("~/event/device/drawer1/state", QRE_IN.state());
   topicQueue.put("~/event/device/drawer1/color " + ffs.deviceCFG.readItem("drawer1_COLOR"));
 
-  topicQueue.put("~/event/device/drawer2/state", d2_IN.state());
-  topicQueue.put("~/event/device/drawer2/color " + ffs.deviceCFG.readItem("drawer2_COLOR"));
 
   logging.debug("dashboard filled with values");
   return TOPIC_OK;

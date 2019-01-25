@@ -69,6 +69,17 @@
                      "action":"~/set/device/drawer2/color",
                      "event":"~/event/device/drawer2/color"
                   }
+               ],
+               [
+                 {
+                    "type":"text",
+                    "name":"test",
+                    "caption":"caption",
+                    "readonly":0,
+                    "event":"",
+                    "inputtype":"text",
+                    "value":"Vorgabewert"
+                 }
                ]
             ]
          }
