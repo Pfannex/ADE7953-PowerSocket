@@ -10,7 +10,6 @@
 //-------------------------------------------------------------------------------
 customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
     : Device(logging, topicQueue, ffs),
-    QRE_IN("QRE1113", logging, topicQueue, QRE_PIN),
     WS_DI("WS2812", logging, topicQueue, WS_PIN, LEDCOUNT) {
 
   type= String(DEVICETYPE);
@@ -28,15 +27,17 @@ void customDevice::start() {
                button.getVersion()); // only first time a class is started
   */
 
-  QRE_IN.start();
   WS_DI.start();
   String col = ffs.deviceCFG.readItem("drawer1_COLOR");
   WS_DI.color = (int) strtol( &col[1], NULL, 16);
 
+
+  pinMode(QRE_PIN, OUTPUT);
   pinMode(S0, OUTPUT);
   pinMode(S1, OUTPUT);
   pinMode(S2, OUTPUT);
   pinMode(S3, OUTPUT);
+  digitalWrite(QRE_PIN, LOW);
   digitalWrite(S0, LOW);
   digitalWrite(S1, LOW);
   digitalWrite(S2, LOW);
@@ -163,52 +164,13 @@ String customDevice::get(Topic &topic) {
 // Eventhandler - called by the controller after receiving a topic (event)
 //...............................................................................
 void customDevice::on_events(Topic &topic){
-
-
-  // listen to QRE ~/device/drawer1/state
-  if (QRE_IN.isForModule(topic)) {
-    if (QRE_IN.isItem(topic, "state"))
-      WS_DI.WS2812_on(topic.getArgAsLong(0));
-  }
-
-
-
-/*
-  // listen to ~/device/led/setmode
-  if (led.isForModule(topic)) {
-    if (led.isItem(topic, "setmode"))
-      setLedMode(topic.getArgAsLong(0));
-  }
-
-  // central business logic
-  if (button.isForModule(topic)) {
-    // events from button
-    //
-    // - click
-    if (button.isItem(topic, "click")) {
-      // -- short
-      if (topic.argIs(0, "short")) {
-        if (configMode)
-          setConfigMode(0);
-        else
-          setPowerMode(!power);
-      }
-      // -- long
-      if (topic.argIs(0, "long"))
-        setConfigMode(!configMode);
-    }
-    // - idle
-    if (button.isItem(topic, "idle"))
-      setConfigMode(0);
-  }
-*/
 }
 
 //...............................................................................
 //  on request, fillDashboard with values
 //...............................................................................
 String customDevice::fillDashboard() {
-  topicQueue.put("~/event/device/drawer1/state", QRE_IN.state());
+  //topicQueue.put("~/event/device/drawer1/state", QRE_IN.state());
   topicQueue.put("~/event/device/drawer1/color " + ffs.deviceCFG.readItem("drawer1_COLOR"));
 
 
@@ -223,36 +185,63 @@ String customDevice::fillDashboard() {
 //  select Channel
 //...............................................................................
 void customDevice::setChannel(int channel){
-
+  ((channel & 1) == 1) ? (digitalWrite(S0, HIGH)) : (digitalWrite(S0, LOW));
+  ((channel & 2) == 2) ? (digitalWrite(S1, HIGH)) : (digitalWrite(S1, LOW));
+  ((channel & 4) == 4) ? (digitalWrite(S2, HIGH)) : (digitalWrite(S2, LOW));
+  ((channel & 8) == 8) ? (digitalWrite(S3, HIGH)) : (digitalWrite(S3, LOW));
 }
+
 //...............................................................................
 //  handle Channels
 //...............................................................................
 void customDevice::handleChannels(){
 
   for (byte i = 0; i < CHANNELSCOUNT; i++) {
+    //select channel
+    setChannel(i);
     //Serial.println("Channel: " + String(i));
-    ((i & 0b00000001) == 0b00000001) ? (digitalWrite(S0, HIGH)) : (digitalWrite(S0, LOW));
-    ((i & 0b00000010) == 0b00000010) ? (digitalWrite(S1, HIGH)) : (digitalWrite(S1, LOW));
-    ((i & 0b00000100) == 0b00000100) ? (digitalWrite(S2, HIGH)) : (digitalWrite(S2, LOW));
-    ((i & 0b00001000) == 0b00001000) ? (digitalWrite(S3, HIGH)) : (digitalWrite(S3, LOW));
 
-    //QRE_IN.handle();
-    //WS_DI.handle();
+    //select color from ffs
+    if (i == 0) WS_DI.color = 0x0000FF;
+    if (i == 1) WS_DI.color = 0x00FF00;
+    if (i == 2) WS_DI.color = 0xFF0000;
 
-    WS_DI.color = 55555;
-    //for (size_t j = 0; j < 4; j++) {
-      QRE_IN.handle();
-      WS_DI.WS2812_on(QRE_IN.state());
+    //read QRE-value
+    pinMode(QRE_PIN, OUTPUT);
+    digitalWrite(QRE_PIN, HIGH);
+    delayMicroseconds(10);
+    pinMode(QRE_PIN, INPUT );
 
-      //QRE_IN.handle();
-      //WS_DI.handle();
-      //WS_DI.WS2812_on(1);
-      //delay(200);
-      //WS_DI.WS2812_on(0);
-      //delay(50);
-    //}
-    //delay(200);
+    long time = micros();
+    //time how long the input is HIGH, but quit after 3ms as nothing happens after that
+    int diff = 0;
+    while (digitalRead(QRE_PIN) == HIGH and diff < TIMEOUT){
+      diff = micros() - time;
+    }
+    //Serial.println("Channel " + String(i) + " = " + String(diff));
+
+    //check QRE-value
+    unsigned long now = millis();
+
+    //debouncing and state detection
+    if (now - lastChangeTime[i] > DEBOUNCETIME){
+      lastChangeTime[i] = now;
+
+      String IO = String(i);
+      //Serial.println(QRE_Value);
+      String eventPrefix= "~/event/device/drawer" + String(i) + "/";
+
+      if (diff > THRESHOLD_ON && !pinState[i]){
+        pinState[i] = 1;
+        logging.debug("Drawer " + String(i) + " open");
+        topicQueue.put(eventPrefix + "/state 1");
+        WS_DI.WS2812_on(1);
+      }else if (diff < THRESHOLD_OFF && pinState[i]){
+        pinState[i] = 0;
+        logging.debug("Drawer " + String(i) + " closed");
+        topicQueue.put(eventPrefix + "/state 0");
+        WS_DI.WS2812_on(0);
+      }
+    }
   }
-
 }

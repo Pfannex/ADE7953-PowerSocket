@@ -27,6 +27,15 @@ ADC  A0     2     Analog
 #define S1 12
 #define S2 13
 #define S3 15
-#define CHANNELSCOUNT 3
+#define CHANNELSCOUNT 16
 
 #define LEDCOUNT 3
+
+// threshold to detect ON
+#define THRESHOLD_ON 500
+// threshold to detect OFF
+#define THRESHOLD_OFF 500
+// timeout maximum RC-loading time
+#define TIMEOUT 3000
+// time in ms pin must be stable before reporting change
+#define DEBOUNCETIME 100  //50

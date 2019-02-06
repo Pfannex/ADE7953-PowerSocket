@@ -9,7 +9,6 @@
 
 // modules required by device
 #include "modules/GPIO.h"
-#include "modules/QRE1113.h"
 #include "modules/WS2812.h"
 
 //###############################################################################
@@ -31,8 +30,9 @@ public:
   void on_events(Topic &topic);
 
 private:
-  QRE1113 QRE_IN;
   WS2812  WS_DI;
   void setChannel(int channel);
   void handleChannels();
+  int pinState[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};   // the last pin state
+  unsigned long lastChangeTime[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};   // last time pin changed
 };
