@@ -33,4 +33,6 @@ public:
 private:
   QRE1113 QRE_IN;
   WS2812  WS_DI;
+  void setChannel(int channel);
+  void handleChannels();
 };

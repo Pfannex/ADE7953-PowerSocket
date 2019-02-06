@@ -27,5 +27,6 @@ ADC  A0     2     Analog
 #define S1 12
 #define S2 13
 #define S3 15
+#define CHANNELSCOUNT 3
 
 #define LEDCOUNT 3

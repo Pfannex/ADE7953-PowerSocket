@@ -34,9 +34,10 @@ public:
   void handle();
   String getVersion();
   int state();
+  int readQRE();                         // debouncer and state detector
 
 private:
-  int readQRE();                         // debouncer and state detector
+  //int readQRE();                         // debouncer and state detector
   int pinState = 0;                      // the last pin state
   unsigned long lastChangeTime = 0;      // last time pin changed
 };

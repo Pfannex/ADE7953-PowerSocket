@@ -34,6 +34,7 @@ void QRE1113::handle() {
 
     String IO = String(pin);
     int QRE_Value = readQRE();
+    Serial.println(QRE_Value);
     String eventPrefix= "~/event/device/" + String(name) + "/";
 
     if (QRE_Value > THRESHOLD_ON && !pinState){

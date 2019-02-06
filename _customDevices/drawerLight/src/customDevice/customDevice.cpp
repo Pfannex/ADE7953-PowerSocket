@@ -49,29 +49,7 @@ void customDevice::start() {
 // handle - periodically called by the controller
 //...............................................................................
 void customDevice::handle() {
-  QRE_IN.handle();
-  WS_DI.handle();
-
-  for (byte i = 0; i < 16; i++) {
-    ((i & 0b00000001) == 0b00000001) ? (digitalWrite(S0, HIGH)) : (digitalWrite(S0, LOW));
-    ((i & 0b00000010) == 0b00000010) ? (digitalWrite(S1, HIGH)) : (digitalWrite(S1, LOW));
-    ((i & 0b00000100) == 0b00000100) ? (digitalWrite(S2, HIGH)) : (digitalWrite(S2, LOW));
-    ((i & 0b00001000) == 0b00001000) ? (digitalWrite(S3, HIGH)) : (digitalWrite(S3, LOW));
-
-    WS_DI.color = 55555;
-    for (size_t j = 0; j < 100; j++) {
-      WS_DI.WS2812_on(QRE_IN.state());
-
-      QRE_IN.handle();
-      WS_DI.handle();
-      //WS_DI.WS2812_on(1);
-      //delay(200);
-      //WS_DI.WS2812_on(0);
-      delay(50);
-    }
-
-  }
-
+  handleChannels();
 }
 
 //...............................................................................
@@ -242,5 +220,39 @@ String customDevice::fillDashboard() {
 //  Device private
 //-------------------------------------------------------------------------------
 //...............................................................................
-//  mode setter
+//  select Channel
 //...............................................................................
+void customDevice::setChannel(int channel){
+
+}
+//...............................................................................
+//  handle Channels
+//...............................................................................
+void customDevice::handleChannels(){
+
+  for (byte i = 0; i < CHANNELSCOUNT; i++) {
+    //Serial.println("Channel: " + String(i));
+    ((i & 0b00000001) == 0b00000001) ? (digitalWrite(S0, HIGH)) : (digitalWrite(S0, LOW));
+    ((i & 0b00000010) == 0b00000010) ? (digitalWrite(S1, HIGH)) : (digitalWrite(S1, LOW));
+    ((i & 0b00000100) == 0b00000100) ? (digitalWrite(S2, HIGH)) : (digitalWrite(S2, LOW));
+    ((i & 0b00001000) == 0b00001000) ? (digitalWrite(S3, HIGH)) : (digitalWrite(S3, LOW));
+
+    //QRE_IN.handle();
+    //WS_DI.handle();
+
+    WS_DI.color = 55555;
+    //for (size_t j = 0; j < 4; j++) {
+      QRE_IN.handle();
+      WS_DI.WS2812_on(QRE_IN.state());
+
+      //QRE_IN.handle();
+      //WS_DI.handle();
+      //WS_DI.WS2812_on(1);
+      //delay(200);
+      //WS_DI.WS2812_on(0);
+      //delay(50);
+    //}
+    //delay(200);
+  }
+
+}
