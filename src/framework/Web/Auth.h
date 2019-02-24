@@ -10,10 +10,10 @@
 
 #define sessionLifetime 600000 // session life time in milliseconds (10 minutes)
 
-class Session {
+class OmniESPSession {
 
 public:
-   Session(String username, API& api);
+   OmniESPSession(String username, API& api);
    String getSessionId();
    String getUsername();
    bool isExpired();
@@ -28,7 +28,7 @@ public:
 
 };
 
-typedef Session* SessionPtr;
+typedef OmniESPSession* SessionPtr;
 
 //###############################################################################
 //  Authentification

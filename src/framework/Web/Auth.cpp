@@ -6,7 +6,7 @@
 //  Session
 //###############################################################################
 
-Session::Session(String username, API& api):
+OmniESPSession::OmniESPSession(String username, API& api):
   username(username),
   api(api) {
 
@@ -18,15 +18,15 @@ Session::Session(String username, API& api):
   touch();
 }
 
-String Session::getSessionId() {
+String OmniESPSession::getSessionId() {
   return sessionId;
 }
 
-String Session::getUsername() {
+String OmniESPSession::getUsername() {
   return username;
 }
 
-bool Session::isExpired() {
+bool OmniESPSession::isExpired() {
   bool expired= millis() - lastTouch > sessionLifetime;
   if(expired) {
     api.debug("session "+sessionId+" has expired.");
@@ -34,7 +34,7 @@ bool Session::isExpired() {
   return expired;
 }
 
-void Session::touch() {
+void OmniESPSession::touch() {
   lastTouch= millis();
   //api.debug("session "+sessionId+" renewed.");
 }
@@ -96,7 +96,7 @@ SessionPtr Auth::createSession(String username) {
     api.error("maximum number of sessions reached.");
     return nullptr;
   } else {
-    SessionPtr session= new Session(username, api);
+    SessionPtr session= new OmniESPSession(username, api);
     sessions[numSessions++]= session;
     api.info("session " + session->getSessionId() +
       " created for user " + session->getUsername());
