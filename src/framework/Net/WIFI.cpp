@@ -243,7 +243,7 @@ bool WIFI::updateStaStatus() {
 //  update AP status and send callback event
 //...............................................................................
 bool WIFI::updateApStatus() {
-  if (WiFi.softAPIP().toString() != "0.0.0.0") {
+  if (WiFi.softAPIP().toString() != "(IP unset)") {
     apStationsCount = WiFi.softAPgetStationNum();
     //set status
     if (apStationsCount > 0) {
