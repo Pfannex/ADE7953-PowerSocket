@@ -9,8 +9,8 @@
 //  Device public
 //-------------------------------------------------------------------------------
 customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
-    : Device(logging, topicQueue, ffs),
-    WS_DI("WS2812", logging, topicQueue, WS_PIN, LEDCOUNT) {
+    : Device(logging, topicQueue, ffs){//,
+    //WS_DI("WS2812", logging, topicQueue, WS_PIN, LEDCOUNT) {
 
   type= String(DEVICETYPE);
   version = String(DEVICEVERSION);
@@ -27,9 +27,9 @@ void customDevice::start() {
                button.getVersion()); // only first time a class is started
   */
 
-  WS_DI.start();
-  String col = ffs.deviceCFG.readItem("drawer1_COLOR");
-  WS_DI.color = (int) strtol( &col[1], NULL, 16);
+  //WS_DI.start();
+  //String col = ffs.deviceCFG.readItem("drawer1_COLOR");
+  //WS_DI.color = (int) strtol( &col[1], NULL, 16);
 
 
   pinMode(QRE_PIN, OUTPUT);
@@ -42,6 +42,19 @@ void customDevice::start() {
   digitalWrite(S1, LOW);
   digitalWrite(S2, LOW);
   digitalWrite(S3, LOW);
+
+  FastLED.addLeds<SM16703, WS_PIN, BRG>(leds, LEDCOUNT);
+  for (int i = 0; i<CHANNELSCOUNT; i++){
+    setChannel(i);
+    setStrip(0);
+  }
+
+
+
+  //ws.begin();
+  //ws.clear();
+
+
 
   logging.info("device running");
 }
@@ -71,27 +84,83 @@ String customDevice::set(Topic &topic) {
 
   logging.debug("device set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
+  String ret = TOPIC_NO;
+
+//drawer/color
+  if (topic.itemIs(3, "drawer")) {
+    if (topic.itemIs(4, "color")) {
+      String str = topic.getArg(0);
+      ffs.deviceCFG.writeItem("drawer_COLOR", str);
+      ffs.deviceCFG.saveFile();
+      return TOPIC_OK;
+    }
+  }
+
+//floor/color
+  if (topic.itemIs(3, "floor")) {
+    if (topic.itemIs(4, "color")) {
+      String str = topic.getArg(0);
+      ffs.deviceCFG.writeItem("floor_COLOR", str);
+      ffs.deviceCFG.saveFile();
+      return TOPIC_OK;
+    }
+  }
+
+//switch drawer/floorlight
+  for (size_t i = 0; i < CHANNELSCOUNT; i++) {
+    char ch[80] = "drawer";
+    strcat (ch, String(i+1).c_str());
+    if (topic.itemIs(3, ch)){
+      if (topic.itemIs(4, "state")){
+        setChannel(i);
+        if (topic.getArgAsLong(0)){
+          setStrip(ffs.deviceCFG.readItem("drawer_COLOR"));
+        }else{
+          setStrip(0);
+        }
+        return TOPIC_OK;
+      }
+    }
+  }
+  return ret;
+
+
+
+
+/*
 
   if (topic.itemIs(3, "drawer1")){
     if (topic.itemIs(4, "state")) {
-      WS_DI.WS2812_on(topic.getArgAsLong(0));
+      setChannel(0);
+      if (topic.getArgAsLong(0)){
+        Serial.println("on");
+        String col = ffs.deviceCFG.readItem("drawer1_COLOR");
+        //color = (int) strtol( &col[1], NULL, 16);
+        setStrip(col);
+      }else{
+        Serial.println("off");
+        setStrip(0);
+      }
       return TOPIC_OK;
     }else if (topic.itemIs(4, "color")) {
       String str = topic.getArg(0);
-      WS_DI.color = (int) strtol( &str[1], NULL, 16);
+      //color = (int) strtol( &str[1], NULL, 16);
       ffs.deviceCFG.writeItem("drawer1_COLOR", str);
       ffs.deviceCFG.saveFile();
-      WS_DI.WS2812_on(1);
+      setChannel(1);
+      setStrip(str);
       return TOPIC_OK;
     }else{
       return TOPIC_NO;
     }
 
   }else if (topic.itemIs(3, "drawer2")){
+    return TOPIC_NO;
 
   }else{
     return TOPIC_NO;
   }
+*/
 
 /*
 
@@ -171,8 +240,10 @@ void customDevice::on_events(Topic &topic){
 //...............................................................................
 String customDevice::fillDashboard() {
   //topicQueue.put("~/event/device/drawer1/state", QRE_IN.state());
-  topicQueue.put("~/event/device/drawer1/color " + ffs.deviceCFG.readItem("drawer1_COLOR"));
 
+
+  topicQueue.put("~/event/device/drawer/color " + ffs.deviceCFG.readItem("drawer_COLOR"));
+  topicQueue.put("~/event/device/floor/color " + ffs.deviceCFG.readItem("floor_COLOR"));
 
   logging.debug("dashboard filled with values");
   return TOPIC_OK;
@@ -189,13 +260,87 @@ void customDevice::setChannel(int channel){
   ((channel & 2) == 2) ? (digitalWrite(S1, HIGH)) : (digitalWrite(S1, LOW));
   ((channel & 4) == 4) ? (digitalWrite(S2, HIGH)) : (digitalWrite(S2, LOW));
   ((channel & 8) == 8) ? (digitalWrite(S3, HIGH)) : (digitalWrite(S3, LOW));
+  //delay(100);
+}
+void customDevice::setStrip(int color){
+  for (int i = 0; i<LEDCOUNT; i++){
+    leds[i] = color;
+  }
+  FastLED.show();
+}
+void customDevice::setStrip(String col){
+  int color = (int) strtol( &col[1], NULL, 16);
+  setStrip(color);
 }
 
 //...............................................................................
 //  handle Channels
 //...............................................................................
 void customDevice::handleChannels(){
+/*
+  setStrip(0, 0x00FF00);
+  setStrip(1, 0x00FF00);
+  setStrip(2, 0x00FF00);
+  delay(500);
 
+  setStrip(0, 0xFF0000);
+  setStrip(1, 0x0000FF);
+  setStrip(2, 0xFF00FF);
+  delay(500);
+*/
+
+
+  for (byte i = 0; i < CHANNELSCOUNT; i++) {
+    //select channel
+    setChannel(i);
+    //Serial.println("Channel: " + String(i));
+
+    //select color from ffs
+    //String itemColor = "drawer" + String(i+1) + "_COLOR";
+    String col = ffs.deviceCFG.readItem("drawer_COLOR");
+    //color = (int) strtol( &col[1], NULL, 16);
+
+    //read QRE-value
+    pinMode(QRE_PIN, OUTPUT);
+    digitalWrite(QRE_PIN, HIGH);
+    delayMicroseconds(10);
+    pinMode(QRE_PIN, INPUT );
+
+    long time = micros();
+    //time how long the input is HIGH, but quit after 3ms as nothing happens after that
+    int diff = 0;
+    while (digitalRead(QRE_PIN) == HIGH and diff < TIMEOUT){
+      diff = micros() - time;
+    }
+    //Serial.println("Channel " + String(i) + " = " + String(diff));
+
+    //check QRE-value
+    unsigned long now = millis();
+
+    //debouncing and state detection
+    if (now - lastChangeTime[i] > DEBOUNCETIME){
+      lastChangeTime[i] = now;
+
+      //String IO = String(i);
+      //Serial.println(QRE_Value);
+      String eventPrefix= "~/event/device/drawer" + String(i+1) + "/";
+
+      if (diff > THRESHOLD_ON && !pinState[i]){
+        pinState[i] = 1;
+        logging.debug("Drawer " + String(i+1) + " open");
+        topicQueue.put(eventPrefix + "/state 1");
+        setStrip(col);
+      }else if (diff < THRESHOLD_OFF && pinState[i]){
+        pinState[i] = 0;
+        logging.debug("Drawer " + String(i+1) + " closed");
+        topicQueue.put(eventPrefix + "/state 0");
+        setStrip(0);
+      }
+    }
+  }
+
+
+/*
   for (byte i = 0; i < CHANNELSCOUNT; i++) {
     //select channel
     setChannel(i);
@@ -205,6 +350,9 @@ void customDevice::handleChannels(){
     if (i == 0) WS_DI.color = 0x0000FF;
     if (i == 1) WS_DI.color = 0x00FF00;
     if (i == 2) WS_DI.color = 0xFF0000;
+    if (i == 0) WS_DI.count = 17;
+    if (i == 1) WS_DI.count = 17;
+    if (i == 2) WS_DI.count = 38;
 
     //read QRE-value
     pinMode(QRE_PIN, OUTPUT);
@@ -244,4 +392,5 @@ void customDevice::handleChannels(){
       }
     }
   }
+  */
 }

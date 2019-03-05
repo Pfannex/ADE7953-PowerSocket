@@ -9,7 +9,9 @@
 
 // modules required by device
 #include "modules/GPIO.h"
-#include "modules/WS2812.h"
+//#include "modules/WS2812.h"
+//#include <Adafruit_NeoPixel.h>
+#include <FastLED.h>
 
 //###############################################################################
 //  Device
@@ -30,7 +32,16 @@ public:
   void on_events(Topic &topic);
 
 private:
-  WS2812  WS_DI;
+  //WS2812  WS_DI;
+  //Adafruit_NeoPixel ws = Adafruit_NeoPixel(LEDCOUNT, WS_PIN, NEO_RGB + NEO_KHZ400);
+
+  CRGB leds[LEDCOUNT];
+  void setStrip(int color);
+  void setStrip(String col);
+
+  int color = 0;
+  int count = 0;
+
   void setChannel(int channel);
   void handleChannels();
   int pinState[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};   // the last pin state

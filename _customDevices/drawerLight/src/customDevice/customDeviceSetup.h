@@ -29,7 +29,7 @@ ADC  A0     2     Analog
 #define S3 15
 #define CHANNELSCOUNT 16
 
-#define LEDCOUNT 3
+#define LEDCOUNT 40
 
 // threshold to detect ON
 #define THRESHOLD_ON 500
