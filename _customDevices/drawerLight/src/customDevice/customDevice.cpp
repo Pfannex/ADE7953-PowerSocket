@@ -43,7 +43,7 @@ void customDevice::start() {
   digitalWrite(S2, LOW);
   digitalWrite(S3, LOW);
 
-  FastLED.addLeds<SM16703, WS_PIN, BRG>(leds, LEDCOUNT);
+  FastLED.addLeds<SM16703, WS_PIN, GRB>(leds, LEDCOUNT);
   for (int i = 0; i<CHANNELSCOUNT; i++){
     setChannel(i);
     setStrip(0);
@@ -262,15 +262,25 @@ void customDevice::setChannel(int channel){
   ((channel & 8) == 8) ? (digitalWrite(S3, HIGH)) : (digitalWrite(S3, LOW));
   //delay(100);
 }
+
+//...............................................................................
+//  Stripcontroll
+//...............................................................................
 void customDevice::setStrip(int color){
   for (int i = 0; i<LEDCOUNT; i++){
     leds[i] = color;
   }
   FastLED.show();
 }
+
 void customDevice::setStrip(String col){
-  int color = (int) strtol( &col[1], NULL, 16);
-  setStrip(color);
+  if (col.length() == 7) col.remove(0,1);  //maybe a leading #
+  if (col.length() == 6){
+    int color = (int) strtol( &col[0], NULL, 16);
+    setStrip(color);
+  }else{
+    setStrip(0);
+  }
 }
 
 //...............................................................................
