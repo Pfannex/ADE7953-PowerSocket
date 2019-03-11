@@ -43,7 +43,7 @@ void customDevice::start() {
   digitalWrite(S2, LOW);
   digitalWrite(S3, LOW);
 
-  FastLED.addLeds<SM16703, WS_PIN, GRB>(leds, LEDCOUNT);
+  FastLED.addLeds<SM16703, WS_PIN, BRG>(leds, LEDCOUNT);
   for (int i = 0; i<CHANNELSCOUNT; i++){
     setChannel(i);
     setStrip(0);
@@ -114,10 +114,17 @@ String customDevice::set(Topic &topic) {
       if (topic.itemIs(4, "state")){
         setChannel(i);
         if (topic.getArgAsLong(0)){
-          setStrip(ffs.deviceCFG.readItem("drawer_COLOR"));
+          setStrip(i+1, 1);
         }else{
           setStrip(0);
         }
+        return TOPIC_OK;
+      }
+      if (topic.itemIs(4, "color")){
+        setChannel(i);
+        String str = topic.getArg(0);
+        ffs.deviceCFG.writeItem("drawer" + String(i+1) + "_COLOR", str);
+        ffs.deviceCFG.saveFile();
         return TOPIC_OK;
       }
     }
@@ -283,6 +290,13 @@ void customDevice::setStrip(String col){
   }
 }
 
+void customDevice::setStrip(int channel, int state){
+  setChannel(channel-1);
+  String strItem = "drawer" + String(channel);
+  String col = ffs.deviceCFG.readItem(strItem + "_COLOR");
+  setStrip(col);
+}
+
 //...............................................................................
 //  handle Channels
 //...............................................................................
@@ -305,46 +319,50 @@ void customDevice::handleChannels(){
     setChannel(i);
     //Serial.println("Channel: " + String(i));
 
-    //select color from ffs
-    //String itemColor = "drawer" + String(i+1) + "_COLOR";
-    String col = ffs.deviceCFG.readItem("drawer_COLOR");
+    //select settings from ffs
+    String strItem = "drawer" + String(i+1);
+    //String col = ffs.deviceCFG.readItem(strItem + "_COLOR");
+    String name = ffs.deviceCFG.readItem(strItem + "_NAME");
+    int isDrawer = (ffs.deviceCFG.readItem(strItem + "_USECASE") == "drawer") ? (1) : (0);
     //color = (int) strtol( &col[1], NULL, 16);
 
-    //read QRE-value
-    pinMode(QRE_PIN, OUTPUT);
-    digitalWrite(QRE_PIN, HIGH);
-    delayMicroseconds(10);
-    pinMode(QRE_PIN, INPUT );
+    if (isDrawer){
+      //read QRE-value
+      pinMode(QRE_PIN, OUTPUT);
+      digitalWrite(QRE_PIN, HIGH);
+      delayMicroseconds(10);
+      pinMode(QRE_PIN, INPUT );
 
-    long time = micros();
-    //time how long the input is HIGH, but quit after 3ms as nothing happens after that
-    int diff = 0;
-    while (digitalRead(QRE_PIN) == HIGH and diff < TIMEOUT){
-      diff = micros() - time;
-    }
-    //Serial.println("Channel " + String(i) + " = " + String(diff));
+      long time = micros();
+      //time how long the input is HIGH, but quit after 3ms as nothing happens after that
+      int diff = 0;
+      while (digitalRead(QRE_PIN) == HIGH and diff < TIMEOUT){
+        diff = micros() - time;
+      }
+      //Serial.println("Channel " + String(i) + " = " + String(diff));
 
-    //check QRE-value
-    unsigned long now = millis();
+      //check QRE-value
+      unsigned long now = millis();
 
-    //debouncing and state detection
-    if (now - lastChangeTime[i] > DEBOUNCETIME){
-      lastChangeTime[i] = now;
+      //debouncing and state detection
+      if (now - lastChangeTime[i] > DEBOUNCETIME){
+        lastChangeTime[i] = now;
 
-      //String IO = String(i);
-      //Serial.println(QRE_Value);
-      String eventPrefix= "~/event/device/drawer" + String(i+1) + "/";
+        //String IO = String(i);
+        //Serial.println(QRE_Value);
+        String eventPrefix= "~/event/device/drawer/" + name + "/";
 
-      if (diff > THRESHOLD_ON && !pinState[i]){
-        pinState[i] = 1;
-        logging.debug("Drawer " + String(i+1) + " open");
-        topicQueue.put(eventPrefix + "/state 1");
-        setStrip(col);
-      }else if (diff < THRESHOLD_OFF && pinState[i]){
-        pinState[i] = 0;
-        logging.debug("Drawer " + String(i+1) + " closed");
-        topicQueue.put(eventPrefix + "/state 0");
-        setStrip(0);
+        if (diff > THRESHOLD_ON && !pinState[i]){
+          pinState[i] = 1;
+          logging.debug(name + " open");
+          topicQueue.put(eventPrefix + "/state 1");
+          setStrip(i+1, 1);
+        }else if (diff < THRESHOLD_OFF && pinState[i]){
+          pinState[i] = 0;
+          logging.debug(name + " closed");
+          topicQueue.put(eventPrefix + "/state 0");
+          setStrip(0);
+        }
       }
     }
   }

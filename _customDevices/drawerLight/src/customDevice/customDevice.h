@@ -38,6 +38,7 @@ private:
   CRGB leds[LEDCOUNT];
   void setStrip(int color);
   void setStrip(String col);
+  void setStrip(int channel, int state);
 
   int color = 0;
   int count = 0;
