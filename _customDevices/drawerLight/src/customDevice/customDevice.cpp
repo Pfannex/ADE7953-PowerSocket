@@ -86,30 +86,60 @@ String customDevice::set(Topic &topic) {
                 topic.arg_asString());
   String ret = TOPIC_NO;
 
-//drawer/color
+//store all drawer/color
   if (topic.itemIs(3, "drawer")) {
     if (topic.itemIs(4, "color")) {
       String str = topic.getArg(0);
       ffs.deviceCFG.writeItem("drawer_COLOR", str);
+      for (size_t i = 0; i < CHANNELSCOUNT; i++) {
+        String strItem = "drawer" + String(i+1);
+        if (ffs.deviceCFG.readItem(strItem + "_USECASE") == "drawer"){
+          if (!str.startsWith("#")) str = "#" + str;
+          ffs.deviceCFG.writeItem(strItem + "_COLOR", str);
+        }
+      }
       ffs.deviceCFG.saveFile();
       return TOPIC_OK;
     }
   }
 
-//floor/color
   if (topic.itemIs(3, "floor")) {
+//store all floor/color
     if (topic.itemIs(4, "color")) {
       String str = topic.getArg(0);
       ffs.deviceCFG.writeItem("floor_COLOR", str);
+      for (size_t i = 0; i < CHANNELSCOUNT; i++) {
+        String strItem = "drawer" + String(i+1);
+        if (ffs.deviceCFG.readItem(strItem + "_USECASE") == "floor"){
+          if (!str.startsWith("#")) str = "#" + str;
+          ffs.deviceCFG.writeItem(strItem + "_COLOR", str);
+        }
+      }
       ffs.deviceCFG.saveFile();
+      return TOPIC_OK;
+    }
+//switch all floor
+    if (topic.itemIs(4, "state")) {
+      for (size_t i = 0; i < CHANNELSCOUNT; i++) {
+        setChannel(i);
+        String strItem = "drawer" + String(i+1);
+        if (ffs.deviceCFG.readItem(strItem + "_USECASE") == "floor"){
+          if (topic.getArgAsLong(0)){
+            setStrip(i+1, 1);
+          }else{
+            setStrip(0);
+          }
+          //setStrip(i+1, topic.getArgAsLong(0));
+        }
+      }
       return TOPIC_OK;
     }
   }
 
-//switch drawer/floorlight
   for (size_t i = 0; i < CHANNELSCOUNT; i++) {
     char ch[80] = "drawer";
     strcat (ch, String(i+1).c_str());
+//switch individual drawer/floorlight
     if (topic.itemIs(3, ch)){
       if (topic.itemIs(4, "state")){
         setChannel(i);
@@ -120,9 +150,11 @@ String customDevice::set(Topic &topic) {
         }
         return TOPIC_OK;
       }
+//set individual drawer/floorlight color
       if (topic.itemIs(4, "color")){
         setChannel(i);
         String str = topic.getArg(0);
+        if (!str.startsWith("#")) str = "#" + str;
         ffs.deviceCFG.writeItem("drawer" + String(i+1) + "_COLOR", str);
         ffs.deviceCFG.saveFile();
         return TOPIC_OK;

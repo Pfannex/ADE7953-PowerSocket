@@ -13,7 +13,7 @@
   "drawer3_USECASE" : "floor",
   "drawer4_NAME"    : "drawer4",
   "drawer4_COLOR"   : "#0000FF",
-  "drawer4_USECASE" : "drawer",
+  "drawer4_USECASE" : "floor",
   "drawer5_NAME"    : "drawer5",
   "drawer5_COLOR"   : "#0000FF",
   "drawer5_USECASE" : "drawer",
