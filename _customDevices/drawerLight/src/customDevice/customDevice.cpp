@@ -90,11 +90,11 @@ String customDevice::set(Topic &topic) {
   if (topic.itemIs(3, "drawer")) {
     if (topic.itemIs(4, "color")) {
       String str = topic.getArg(0);
+      if (!str.startsWith("#")) str = "#" + str;
       ffs.deviceCFG.writeItem("drawer_COLOR", str);
       for (size_t i = 0; i < CHANNELSCOUNT; i++) {
         String strItem = "drawer" + String(i+1);
         if (ffs.deviceCFG.readItem(strItem + "_USECASE") == "drawer"){
-          if (!str.startsWith("#")) str = "#" + str;
           ffs.deviceCFG.writeItem(strItem + "_COLOR", str);
         }
       }
@@ -107,11 +107,11 @@ String customDevice::set(Topic &topic) {
 //store all floor/color
     if (topic.itemIs(4, "color")) {
       String str = topic.getArg(0);
+      if (!str.startsWith("#")) str = "#" + str;
       ffs.deviceCFG.writeItem("floor_COLOR", str);
       for (size_t i = 0; i < CHANNELSCOUNT; i++) {
         String strItem = "drawer" + String(i+1);
         if (ffs.deviceCFG.readItem(strItem + "_USECASE") == "floor"){
-          if (!str.startsWith("#")) str = "#" + str;
           ffs.deviceCFG.writeItem(strItem + "_COLOR", str);
         }
       }
