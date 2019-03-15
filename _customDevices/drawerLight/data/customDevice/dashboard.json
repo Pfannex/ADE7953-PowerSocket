@@ -1,89 +1,83 @@
 [
-   {
-      "type":"text",
-      "name":"clock",
-      "caption":"Time",
-      "readonly":1,
-      "event":"~/event/clock/time",
-      "inputtype":"datetime"
+  {
+     "type":"text",
+     "name":"clock",
+     "caption":"Time",
+     "readonly":1,
+     "event":"~/event/clock/time",
+     "inputtype":"datetime"
+  },
+  {
+     "type":"group",
+     "name":"color",
+     "caption":"übergeordnete Farbeinstellungen",
+     "data":[
+       {
+          "type":"text",
+          "name":"drawer_color",
+          "caption":"Drawer Color",
+          "inputtype":"color",
+          "action":"~/set/device/drawer/color",
+          "event":"~/event/device/drawer/color"
+       },
+       {
+          "type":"text",
+          "name":"floor_color",
+          "caption":"Floor Color",
+          "inputtype":"color",
+          "action":"~/set/device/floor/color",
+          "event":"~/event/device/floor/color"
+       }
+     ]
    },
    {
-      "type":"group",
-      "name":"subgroup",
-      "caption":"Drawer Control",
-      "data":[
-        {
-           "type":"text",
-           "name":"drawer_color",
-           "caption":"Drawer Color",
-           "inputtype":"color",
-           "action":"~/set/device/drawer/color",
-           "event":"~/event/device/drawer/color"
-        },
-        {
-           "type":"text",
-           "name":"floor_color",
-           "caption":"Floor Color",
-           "inputtype":"color",
-           "action":"~/set/device/floor/color",
-           "event":"~/event/device/floor/color"
-        },
-        {
-           "type":"checkbox",
-           "name":"cb_drawer1",
-           "caption":"Drawer 1",
-           "action":"~/set/device/drawer1/state",
-           "event":"~/event/device/drawer1/state"
-        },
-        {
-           "type":"checkbox",
-           "name":"cb_drawer2",
-           "caption":"Drawer 2",
-           "action":"~/set/device/drawer2/state",
-           "event":"~/event/device/drawer2/state"
-        },
-        {
-           "type":"checkbox",
-           "name":"cb_drawer3",
-           "caption":"Drawer 3",
-           "action":"~/set/device/drawer3/state",
-           "event":"~/event/device/drawer3/state"
-        },
-        {
-           "type":"checkbox",
-           "name":"cb_drawer4",
-           "caption":"Drawer 4",
-           "action":"~/set/device/drawer4/state",
-           "event":"~/event/device/drawer4/state"
-        },
-        {
-           "type":"checkbox",
-           "name":"cb_drawer5",
-           "caption":"Drawer 5",
-           "action":"~/set/device/drawer5/state",
-           "event":"~/event/device/drawer5/state"
-        },
-        {
-           "type":"checkbox",
-           "name":"cb_drawer6",
-           "caption":"Drawer 6",
-           "action":"~/set/device/drawer6/state",
-           "event":"~/event/device/drawer6/state"
-        },
-        {
-           "type":"checkbox",
-           "name":"cb_drawer7",
-           "caption":"Drawer 7",
-           "action":"~/set/device/drawer7/state",
-           "event":"~/event/device/drawer7/state"
-        },
-        {
-           "type":"checkbox",
-           "name":"cb_drawer8",
-           "caption":"Drawer 8",
-           "action":"~/set/device/drawer8/state",
-           "event":"~/event/device/drawer8/state"
-        }
-      ]
-    }
+     "type":"group",
+     "name":"drawer",
+     "caption":"Drawer Einstellungen",
+     "data":[
+       {
+         "type": "button",
+         "name": "previous",
+         "caption": "<--",
+         "action": "~/set/device/drawer/index previous"
+       },
+       {
+         "type": "button",
+         "name": "next",
+         "caption": "-->",
+         "action": "~/set/device/drawer/index next"
+       },
+       {
+          "type":"text",
+          "name":"drawer_index",
+          "caption":"Index",
+          "inputtype":"Text",
+          "action":"~/set/device/drawer/index",
+          "event":"~/event/device/drawer/index"
+       },
+       {
+          "type":"text",
+          "name":"drawer_name",
+          "caption":"Name",
+          "inputtype":"Text",
+          "action":"~/set/device/drawer/name",
+          "event":"~/event/device/drawer/name"
+       },
+       {
+          "type":"text",
+          "name":"individual_color",
+          "caption":"color",
+          "inputtype":"color",
+          "action":"~/set/device/drawer/individualColor",
+          "event":"~/event/device/drawer/individualColor"
+       },
+       {
+         "type": "checkbox",
+         "name": "drawer_usecase",
+         "caption": "Floorlight",
+         "action":"~/set/device/drawer/usecase",
+         "event":"~/event/device/drawer/usecase"
+       }
+     ]
+   }
 ]
