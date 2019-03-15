@@ -42,8 +42,6 @@ private:
   String color = "";
   String usecase = "";
 
-  //int pinState[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};   // the last pin state
-  //unsigned long lastChangeTime[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};   // last time pin changed
   int pinState[16] = {};   // the last pin state
   unsigned long lastChangeTime[16] = {};   // last time pin changed
 };

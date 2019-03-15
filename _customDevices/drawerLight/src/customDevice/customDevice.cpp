@@ -132,7 +132,7 @@ String customDevice::set(Topic &topic) {
       ffs.deviceCFG.saveFile();
       return TOPIC_OK;
     }
-    //usecase-------------------
+    //usecase--------------------
     if (topic.itemIs(4, "usecase")) {
       String str = topic.getArg(0);
       String strItem = "drawer" + String(index);
