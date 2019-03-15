@@ -20,6 +20,8 @@
 #define THRESHOLD_OFF 500
 // timeout maximum RC-loading time
 #define TIMEOUT 3000
+// time in ms pin must be stable before reporting change
+#define DEBOUNCETIME 100  //50
 
 
 class QRE1113 : public Module {
@@ -31,8 +33,10 @@ public:
   void start();
   void handle();
   String getVersion();
+  int state();
 
 private:
   int readQRE();                         // debouncer and state detector
   int pinState = 0;                      // the last pin state
+  unsigned long lastChangeTime = 0;      // last time pin changed
 };

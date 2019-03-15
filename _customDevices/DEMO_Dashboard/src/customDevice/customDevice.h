@@ -9,12 +9,13 @@
 
 // modules required by device
 #include "modules/GPIO.h"
+#include "modules/oneWire.h"
 
 //###############################################################################
 //  Device
 //###############################################################################
 
-#define DEVICETYPE      "SimpleSwitch"
+#define DEVICETYPE      "DEMO_Dashboard"
 #define DEVICEVERSION   "v1"
 
 class customDevice : public Device {
@@ -24,15 +25,14 @@ public:
   void start();
   void handle();
   String set(Topic &topic);
-    String fillDashboard();
   String get(Topic &topic);
   void on_events(Topic &topic);
 
 private:
-
   GPIOinput button;
   GPIOoutput led;
   GPIOoutput relay;
+  OW ow;
 
   // the central modes
   int power = 0;
@@ -40,7 +40,4 @@ private:
   void setConfigMode(int value);
   void setPowerMode(int value);
   void setLedMode(int value);
-
-  // grid for sensors
-  WidgetGrid* grid;
 };

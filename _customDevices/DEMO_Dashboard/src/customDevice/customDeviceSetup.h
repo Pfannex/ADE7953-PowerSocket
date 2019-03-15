@@ -17,25 +17,19 @@ GPIO WeMos ESPpin Function  Connection
 ADC  A0     2     Analog
 */
 
+
 //###############################################################################
 // GPIO
 //###############################################################################
 
-#define WS_PIN  5
-#define QRE_PIN 4
-#define S0 14
-#define S1 12
-#define S2 13
-#define S3 15
-#define CHANNELSCOUNT 16
+// Arduino Pin 12 = = IO12 = Physical Pin 6 = NodeMCU/WeMos Pin D6
+#define PIN_BUTTON 12
 
-#define LEDCOUNT 40
+// Arduino Pin 15 = IO15 = Physical Pin 16 = NodeMCU/WeMos Pin D8
+#define PIN_LED 15
 
-// threshold to detect ON
-#define THRESHOLD_ON 500
-// threshold to detect OFF
-#define THRESHOLD_OFF 500
-// timeout maximum RC-loading time
-#define TIMEOUT 3000
-// time in ms pin must be stable before reporting change
-#define DEBOUNCETIME 100  //50
+// Arduino Pin 14 = IO14 = Physical Pin 5 = NodeMCU/WeMos Pin D5
+#define PIN_RELAY 14
+
+// Arduino Pin 13 = IO13 = Physical Pin 7 = NodeMCU/WeMos Pin D7
+#define OWPIN 13

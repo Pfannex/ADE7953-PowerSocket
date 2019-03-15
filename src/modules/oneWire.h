@@ -35,6 +35,8 @@ public:
   void scanBus();
   void readDS18B20();
   int count = 0;
+  int countOld = 0;
+  String sensorenJson;
 
 private:
   OneWire oneWire;

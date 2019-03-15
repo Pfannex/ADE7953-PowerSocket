@@ -1,0 +1,413 @@
+{"1":"1","2":"2","3":"3","4":"4","5":"5","6":"6","7":"7","8":"8","9":"9","10":"10","11":"11","12":"12","13":"13","14":"14","15":"15","16":"16","17":"17","18":"18","19":"19","20":"20"}
+
+
+
+
+
+[{"name":"cg1","type":"controlgroup","caption":"Menü","direction":"horizontal","event":"~/event/device/radio","action":"~/set/device/dashboard/setPage","data":[{"l
+abel":"Main","value":0},{"label":"Test","value":1},{"label":"OmniESP.json","value":2}]},{"type":"grid","name":"grid1","data":[[{"type":"text","name":"c10","caption
+":"1","readonly":1},{"type":"text","name":"c20","caption":"1","readonly":1}],[{"type":"text","name":"c11","caption":"2","readonly":1},{"type":"text","name":"c21","
+caption":"2","readonly":1}],[{"type":"text","name":"c12","caption":"3","readonly":1},{"type":"text","name":"c22","caption":"3","readonly":1}],[{"type":"text","name
+":
+
+
+[{"name":"cg1","type":"controlgroup","caption":"Menü","direction":"horizontal","event":"~/event/device/radio","action":"~/set/device/dashboard/setPage","data":[{"l
+abel":"Main","value":0},{"label":"Test","value":1},{"label":"OmniESP.json","value":2}]},{"type":"grid","name":"grid1","data":[[{"type":"text","name":"c10","caption
+":"1","readonly":1},{"type":"text","name":"c20","caption":"1","readonly":1}],[{"type":"text","name":"c11","caption":"2","readonly":1},{"type":"text","name":"c21","
+caption":"2","readonly":1}],[{"type":"text","name":"c12","caption":"3","readonly":1},{"type":"text","name":"c22","caption":"3","readonly":1}],[{"type":"text","name
+":"c13","caption":"4","readonly":1},{"type":"text","name":"c23","caption":"4","readonly":1}],[{"type":"text","name":"c14","caption":"5","readonly":1},{"type":"tex
+
+
+
+  [{"name":"cg1","type":"controlgroup","caption":"Menü","direction":"horizontal","event":"~/event/device/radio","action":"~/set
+  /device/dashboard/setPage","data":[{"label":"Main","value":0},{"label":"Test","value":1},{"label":"OmniESP.json","value":2}]}
+  ,{"type":"grid","name":"grid1","data":[[{"type":"text","name":"c10","caption":"1","readonly":1},{"type":"text","name":"c20","
+  caption":"1","readonly":1}],[{"type":"text","name":"c11","caption":"2","readonly":1},{"type":"text","na
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[
+  {
+    "name": "cg1",
+    "type": "controlgroup",
+    "caption": "Menü",
+    "direction": "horizontal",
+    "event": "~/event/device/radio",
+
+    "action": "~/set/device/dashboard/setPage",
+    "data": [
+      {
+        "label": "Main",
+        "value": 0
+      },
+      {
+        "label": "Test",
+        "value": 1
+      },
+      {
+        "label": "OmniESP.json",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "type": "grid",
+    "name": "grid1",
+    "data": [
+      [
+        {
+          "type": "text",
+          "name": "c10",
+          "caption": "1",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c20",
+
+          "caption": "1",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c11",
+          "caption": "2",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c21",
+          "caption": "2",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c12",
+          "caption": "3",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c22",
+
+          "caption": "3",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c13",
+          "caption": "4",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c23",
+          "caption": "4",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c14",
+          "caption": "5",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+
+          "name": "c24",
+          "caption": "5",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c15",
+          "caption": "6",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c25",
+          "caption": "6",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c16",
+          "caption": "7",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c26",
+
+          "caption": "7",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c17",
+          "caption": "8",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c27",
+          "caption": "8",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c18",
+          "caption": "9",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c28",
+
+          "caption": "9",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c19",
+          "caption": "10",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c29",
+          "caption": "10",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c110",
+          "caption": "11",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c210",
+          "caption": "11",
+
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c111",
+          "caption": "12",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c211",
+          "caption": "12",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c112",
+          "caption": "13",
+          "readonly": 1
+        },
+
+        {
+          "type": "text",
+          "name": "c212",
+          "caption": "13",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c113",
+          "caption": "14",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c213",
+          "caption": "14",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+
+          "type": "text",
+          "name": "c114",
+          "caption": "15",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c214",
+          "caption": "15",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c115",
+          "caption": "16",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c215",
+          "caption": "16",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+          "name": "c115",
+          "caption": "16",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c215",
+          "caption": "16",
+          "readonly": 1
+        }
+      ],
+      [
+        {
+          "type": "text",
+
+          "name": "c116",
+          "caption": "17",
+          "readonly": 1
+        },
+        {
+          "type": "text",
+          "name": "c216",
+          "caption": "17",
+          "readonly": 1
+        }
+      ]
+    ]
+  }
+]
+
+*****
+
+[
+  {
+    "name": "cg1",
+    "type": "controlgroup",
+    "caption": "Menü",
+    "direction": "horizontal",
+    "event": "~/event/device/radio",
+    "action": "~/set/device/dashboard/setPage",
+    "data": [
+
+      {
+        "label": "Main",
+        "value": 0
+      },
+      {
+        "label": "Test",
+        "value": 1
+      },
+      {
+         "label": "OmniESP.json",
+          "value": 2
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "name": "group1",
+    "caption": "Simple Switch Leitstand",
+    "data": [
+      {
+        "type": "text",
+        "name": "clock",
+        "caption": "Time",
+        "readonly": 1,
+        "event": "~/event/clock/time",
+        "inputtype": "datetime"
+      },
+      {
+        "type": "checkbox",
+        "name": "led",
+        "readonly": 1,
+        "caption": "LED",
+        "event": "~/event/device/led"
+      },
+      {
+        "type": "group",
+        "name": "subgroup",
+        "caption": "Power Control",
+        "data": [
+          {
+            "type": "controlgroup",
+            "name": "power",
+            "caption": "Power",
+            "action": "~/set/device/power",
+            "event": "~/event/device/power",
+            "data": [{
+                "label": "Off",
+                "value": 0
+              },
+              {
+                "label": "On",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "type": "button",
+            "name": "toggle",
+            "caption": "Toggle",
+            "action": "~/set/device/toggle"
+          }
+        ]
+      }
+    ]
+  }
+]
+
+
+[{"name":"cg1","type":"controlgroup","caption":"Menü","direction":"horizontal","event":"~/event/device/radio","action":"~/set/device/dashboard/setPage","data":[{"label":"Main","value":0},{"label":"Test","value":1},{"label":"OmniESP.json","value":2}]},{"name":"Widget_1","type":"group","caption":"Sensors","data":[{"name":"Widget_2","type":"text","caption":"Time 2","readonly":1,"inputtype":"datetime","event":"~/event/clock/time"},{"name":"Widget_3","type":"button","caption":"Switch"}]}][{"name":"cg1","type":"controlgroup","caption":"Menü","direction":"horizontal","event":"~/event/device/radio","action":"~/set/device/dashboard/setPage","data":[{"label":"Main","value":0},{"label":"Test","value":1},{"label":"OmniESP.json","value":2}]},{"type":"grid","name":"grid1","data":[[{"type":"text","name":"c10","caption":"1","readonly":1,"event":"","prefix":"","suffix":""},{"type":"text","name":"c20","caption":"1","readonly":1,"event":"","prefix":"","suffix":""}],[{"type":"text","name":"c11","caption":"2","readonly":1,"event":"","prefix":"","suffix":""},{"type":"text","name":"c21","caption":"2","readonly":1,"event":"","prefix":"","suffix":""}],[{"type":"text","name":"c12","caption":"3","readonly":1,"event":"","prefix":"","suffix":""},{"type":"text","name":"c22","caption":"3","readonly":1,"event":"","prefix":"","suffix":""}],[{"type":"text","name":"c13","caption":"4","readonly":1,"event":"","prefix":"","suffix":""},{"type":"text","name":"c23","caption":"4","readonly":1,"event":"","prefix":"","suffix":""}],[{"type":"text","name":"c14","caption":"5","readonly":1,"event":"","prefix":"","suffix":""},{"type":"text","name":"c24","caption":"5","readonly":1,"event":"","prefix":"","suffix":""}],[{"type":"text","name":"c15","caption":"6","readonly":1,"event":"","prefix":"","suffix":""},{"type":"text","name":"c25","caption":"6","readonly":1,"event":"","prefix":"","suffix":""}],[{"type":"text","name":"c16","caption":"7","readonly":1,"event":"","prefix":"","suffix":""},{"type":"text","name":"c26","caption":"7","readonly":1,"event":"","prefix":"","suffix":""}],[{"type":"text","name":"c17","caption":"8","readonly":1,"event":"","prefix":"","suffix":""},{"type":"text","name":"c27","caption":"8","readonly":1,"event":"","prefix":"","suffix":""}],[{"type":"text","name":"c18","caption":"9","readonly":1,"event":"","prefix":"","suffix":""},{"type":"text","name":"c28","caption":"9","readonly":1,"event":"","prefix":"","suffix":""}],[{"type":"text","name":"c19","caption":"10","readonly":1,"event":"","prefix":"","suffix":""},{"type":"text","name":"c29","caption":"10","readonly":1,"event":"","prefix":"","suffix":""}]]}]

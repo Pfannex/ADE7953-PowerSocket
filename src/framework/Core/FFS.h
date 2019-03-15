@@ -9,6 +9,10 @@
   #include "framework/Utils/Debug.h"
   //#include "device/DeviceSetup.h"
 
+//links to arduino json
+//https://arduinojson.org/v5/assistant/
+//https://arduinojson.org/v5/doc/
+
 //###############################################################################
 //  stringFile
 //###############################################################################
@@ -43,8 +47,11 @@ public:
   bool writeItem(String itemName, String value);
   bool saveFile();
 
+  int set_toRoot();
+
 private:
   String readJsonString();
+  void parseJson(JsonVariant root);
   int parseJsonObject(JsonObject& jsonObject);
   void parseJsonArray(JsonArray& jsonArray);
 };

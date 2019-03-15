@@ -25,15 +25,16 @@ public:
          int LEDsCount);
   int pin;
   int count;
+  int color;
 
   void start();
   void handle();
   String getVersion();
 
-  void WS2812_on(int on, int color);
+  void WS2812_on(int on);
+  Adafruit_NeoPixel ws2812 = Adafruit_NeoPixel(count, pin, NEO_GRB + NEO_KHZ800);
 
 private:
-  Adafruit_NeoPixel ws2812 = Adafruit_NeoPixel(count, pin, NEO_GRB + NEO_KHZ800);
   void WS2812_setColor(uint32_t R, uint32_t G, uint32_t B);
   void WS2812_setColor(uint32_t color);
 };
