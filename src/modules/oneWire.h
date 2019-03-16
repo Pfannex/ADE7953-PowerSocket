@@ -3,6 +3,7 @@
 #include "framework/Utils/Logger.h"
 #include "Setup.h"
 #include "framework/OmniESP/Topic.h"
+#include "framework/Core/FFS.h"
 #include <Arduino.h>
 #include "OneWire.h" //1-Wire
 #include "DallasTemperature.h"
@@ -18,15 +19,15 @@
 //  I2C
 //###############################################################################
 
-#define OWPOLL 5000
 #define OWDIFF 1
 #define OWINT 1
 
 class OW : public Module {
 
 public:
-  OW(string name, LOGGING &logging, TopicQueue &topicQueue, int owPin);
+  OW(string name, LOGGING &logging, TopicQueue &topicQueue, int owPin, FFS &ffs);
   int owPin;
+
 
   void start();
   void handle();
@@ -34,13 +35,18 @@ public:
 
   void scanBus();
   void readDS18B20();
+  int owPoll = 5000;
   int count = 0;
   int countOld = 0;
   String sensorenJson;
 
+protected:
+  FFS &ffs;
+
 private:
   OneWire oneWire;
   DallasTemperature DS18B20;
-  DeviceAddress DS18B20device;
+  DeviceAddress addr;
   int tPoll = 0;
+  bool changed = true;
 };

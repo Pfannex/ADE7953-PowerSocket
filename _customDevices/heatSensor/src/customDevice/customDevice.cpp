@@ -9,7 +9,8 @@
 //  constructor
 //-------------------------------------------------------------------------------
 customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
-    : Device(logging, topicQueue, ffs) {
+    : Device(logging, topicQueue, ffs),
+      ow("oneWire", logging, topicQueue, OWPIN, ffs){
 
   type = String(DEVICETYPE);
   version = String(DEVICEVERSION);
@@ -21,25 +22,19 @@ customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
 
 void customDevice::start() {
 
-  Device::start(); // mandatory
+  Device::start();
+  sensorPollTime = ffs.deviceCFG.readItem("sensorPollTime").toInt();
+  logging.info("1wire sensors polling time: " + String(sensorPollTime));
+  logging.info("starting device " + String(DEVICETYPE) + String(DEVICEVERSION));
 
-  // ... your code here ...
-  configItem = ffs.deviceCFG.readItem("configItem").toInt();
-  logging.info("configItem is "+String(configItem));
+  //ow.start();
+  ow.owPoll = sensorPollTime;
+
   logging.info("device running");
-}
 
-//...............................................................................
-// measure
-//...............................................................................
+  logging.info("scanning I2C-Bus for devices");
+  logging.info(Wire.i2c.scanBus());
 
-float customDevice::measure() {
-  return 0.815;
-}
-
-void customDevice::inform() {
-  topicQueue.put("~/event/device/sensor1", measure());
-  topicQueue.put("~/event/device/sensor2 foobar");
 }
 
 //...............................................................................
@@ -47,11 +42,13 @@ void customDevice::inform() {
 //...............................................................................
 
 void customDevice::handle() {
+  ow.handle();
 
   unsigned long now = millis();
-  if (now - lastPoll >= 3000) {
+  if (now - lastPoll >= sensorPollTime) {
     lastPoll = now;
-    inform();
+    readBMP180("sensor1");
+    readSi7021("sensor2");
   }
 }
 
@@ -94,7 +91,7 @@ String customDevice::get(Topic &topic) {
   if (topic.getItemCount() != 4) // ~/get/device/sensor1
     return TOPIC_NO;
   if (topic.itemIs(3, "sensor1")) {
-    return String(measure());
+    return "";
   } else {
     return TOPIC_NO;
   }
@@ -104,8 +101,9 @@ String customDevice::get(Topic &topic) {
 // event handler - called by the controller after receiving a topic (event)
 //...............................................................................
 void customDevice::on_events(Topic &topic) {
-
-  // central business logic
+  if (topic.modifyTopic(0) == "event/device/sensorsChanged") {
+    handleSensors(topic.arg_asString());
+  }
 }
 
 //...............................................................................
@@ -117,4 +115,44 @@ String customDevice::fillDashboard() {
 
   logging.debug("dashboard filled with values");
   return TOPIC_OK;
+}
+
+//...............................................................................
+// read BMP180
+//...............................................................................
+void customDevice::handleSensors(String sen) {
+  Serial.println("SensorsChanged");
+  Serial.println(sen);
+}
+
+//...............................................................................
+// read BMP180
+//...............................................................................
+void customDevice::readBMP180(String name) {
+   Adafruit_BMP085 bmp;
+   String eventPrefix= "~/event/device/" + name + "/";
+
+   bmp.begin();
+   String value = "temperature " + String(bmp.readTemperature());
+   //logging.debug(value);
+   topicQueue.put(eventPrefix + "/" + value);
+   value = "pressure " + String(bmp.readPressure()/100);
+   //logging.debug(value);
+   topicQueue.put(eventPrefix + "/" + value);
+}
+
+//...............................................................................
+// read SI7021
+//...............................................................................
+void customDevice::readSi7021(String name) {
+   Adafruit_Si7021 si;
+   String eventPrefix= "~/event/device/" + name + "/";
+
+   si.begin();
+   String value = "temperature " + String(si.readTemperature());
+   //logging.debug(value);
+   topicQueue.put(eventPrefix + "/" + value);
+   value = "humidity " + String(si.readHumidity());
+   //logging.debug(value);
+   topicQueue.put(eventPrefix + "/" + value);
 }

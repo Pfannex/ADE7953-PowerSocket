@@ -3,9 +3,9 @@
 //===============================================================================
 //  1 Wire
 //===============================================================================
-OW::OW(string name, LOGGING &logging, TopicQueue &topicQueue, int owPin)
+OW::OW(string name, LOGGING &logging, TopicQueue &topicQueue, int owPin, FFS &ffs)
       :Module(name, logging, topicQueue),
-       owPin(owPin), oneWire(owPin), DS18B20(&oneWire)
+       owPin(owPin), oneWire(owPin), DS18B20(&oneWire), ffs(ffs)
        {}
 
 //-------------------------------------------------------------------------------
@@ -16,13 +16,14 @@ OW::OW(string name, LOGGING &logging, TopicQueue &topicQueue, int owPin)
 //...............................................................................
 void OW::start() {
   Module::start();
-
+/*
   logging.info("starting 1 Wire");
   scanBus();
   if (count == 0)
     logging.error("no 1 Wire devices found!!");
   else
   logging.info("1 Wire scan done, found " + String(count) + " devices");
+  count = 0; //reset for first real loop run*/
 }
 
 //...............................................................................
@@ -33,7 +34,7 @@ void OW::handle() {
   unsigned long now = millis();
 
 //poll measurement values
-  if (now - tPoll > OWPOLL){
+  if (now - tPoll > owPoll){
     tPoll = now;
     readDS18B20();
   }
@@ -60,6 +61,7 @@ void OW::scanBus() {
   delay(100);
   DS18B20.requestTemperatures();
   delay(100);
+  (countOld != count) ? (changed = true) : (changed = false);
 }
 
 //...............................................................................
@@ -67,48 +69,45 @@ void OW::scanBus() {
 //...............................................................................
 void OW::readDS18B20() {
   DynamicJsonBuffer root;
-  JsonObject& sensoren = root.parseObject(sensorenJson);
+  //JsonObject& sensoren = root.parseObject(sensorenJson);
+  JsonObject& sensoren = root.createObject();
 
-  bool changed = false;
   scanBus();
-  if (countOld != count) changed = true;
 
   String eventPrefix= "~/event/device/" + String(name) + "/";
+  String strAddr = "";
   for (int i = 0; i < count; i++) {
-    DS18B20.getAddress(DS18B20device, i);
+    DS18B20.getAddress(addr, i);
     delay(100);
 
-//TODO check for alias name
-
-    String deviceValue = "";
+    //create sddress string
+    strAddr = "";
     char str[5];
     for (int j = 0; j < 8; j++) {
-      sprintf(str, "%02X", DS18B20device[j]);
-      deviceValue += str;
-      if (j < 7) deviceValue += "-";
+      sprintf(str, "%02X", addr[j]);
+      strAddr += str;
+      if (j < 7) strAddr += "-";
     }
 
-    if (!sensoren.containsKey(deviceValue)) {
-      sensoren[deviceValue] = "";
-      changed = true;
-    }
-
-    deviceValue += " ";
-    deviceValue += String(DS18B20.getTempCByIndex(i));
+    //measure temperature
+    String temp = String(DS18B20.getTempCByIndex(i));
     DS18B20.requestTemperatures();
 
-    logging.debug(deviceValue);
-    topicQueue.put(eventPrefix + "/" + deviceValue);
 
+    //publish
+    //use alias name from ffs is exists
+    String alias = ffs.deviceCFG.readItem(strAddr);
+    if (alias == "") alias = strAddr;
+    topicQueue.put(eventPrefix + "/" + alias + " " + temp);
+
+    //assemble json
+    sensoren[strAddr] = "";  //add item
   }
+
   if (changed) {
     sensorenJson = "";
     sensoren.printTo(sensorenJson);
     //sensoren.prettyPrintTo(Serial);
     topicQueue.put("~/event/device/sensorsChanged " + sensorenJson);
   }
-
 }
-//-------------------------------------------------------------------------------
-//  GPIO private
-//-------------------------------------------------------------------------------

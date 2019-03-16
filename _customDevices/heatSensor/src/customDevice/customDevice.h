@@ -8,16 +8,17 @@
 #include "customDeviceSetup.h"
 
 // modules required by device
-// ...your includes here...
+#include <Wire.h>
+#include "modules/oneWire.h"
+#include "Adafruit_BMP085.h"
+#include "Adafruit_Si7021.h"
 
 //###############################################################################
 //  Device
 //###############################################################################
 
-#define DEVICETYPE "yourDeviceName"
-#define DEVICEVERSION "yourVersionString"
-
-// maintainer: ...your name...
+#define DEVICETYPE "heatSensor"
+#define DEVICEVERSION "V1.00"
 
 class customDevice : public Device {
 
@@ -31,9 +32,12 @@ public:
   void on_events(Topic &topic);
 
 private:
-  // ...your sensor objects, modules, functions here...
-  unsigned long configItem= DEFAULT_VALUE; // exammple
-  float measure(); // example
-  void inform(); // example
-  unsigned long lastPoll= 0;
+  OW ow;
+  int sensorPollTime;
+  unsigned long lastPoll = 0;
+  String sensors = "";
+  void handleSensors(String sen);
+
+  void readBMP180(String name);
+  void readSi7021(String name);
 };
