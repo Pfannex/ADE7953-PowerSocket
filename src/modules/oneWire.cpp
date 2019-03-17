@@ -16,14 +16,6 @@ OW::OW(string name, LOGGING &logging, TopicQueue &topicQueue, int owPin, FFS &ff
 //...............................................................................
 void OW::start() {
   Module::start();
-/*
-  logging.info("starting 1 Wire");
-  scanBus();
-  if (count == 0)
-    logging.error("no 1 Wire devices found!!");
-  else
-  logging.info("1 Wire scan done, found " + String(count) + " devices");
-  count = 0; //reset for first real loop run*/
 }
 
 //...............................................................................
@@ -69,8 +61,9 @@ void OW::scanBus() {
 //...............................................................................
 void OW::readDS18B20() {
   DynamicJsonBuffer root;
-  //JsonObject& sensoren = root.parseObject(sensorenJson);
-  JsonObject& sensoren = root.createObject();
+  JsonObject& sensors = root.createObject();
+  DynamicJsonBuffer ffs_root;
+  JsonObject& ffs_sensors = root.parseObject(ffs.deviceCFG.root);
 
   scanBus();
 
@@ -93,21 +86,20 @@ void OW::readDS18B20() {
     String temp = String(DS18B20.getTempCByIndex(i));
     DS18B20.requestTemperatures();
 
-
     //publish
     //use alias name from ffs is exists
-    String alias = ffs.deviceCFG.readItem(strAddr);
-    if (alias == "") alias = strAddr;
+    String alias = strAddr;
+    if (ffs_sensors.containsKey(strAddr)) alias = ffs.deviceCFG.readItem(strAddr);
     topicQueue.put(eventPrefix + "/" + alias + " " + temp);
 
     //assemble json
-    sensoren[strAddr] = "";  //add item
+    sensors[strAddr] = "";  //add item
   }
 
   if (changed) {
-    sensorenJson = "";
-    sensoren.printTo(sensorenJson);
-    //sensoren.prettyPrintTo(Serial);
-    topicQueue.put("~/event/device/sensorsChanged " + sensorenJson);
+    sensorsJson = "";
+    sensors.printTo(sensorsJson);
+    //sensors.prettyPrintTo(Serial);
+    topicQueue.put("~/event/device/sensorsChanged " + sensorsJson);
   }
 }

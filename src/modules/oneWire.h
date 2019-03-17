@@ -13,7 +13,7 @@
 //###############################################################################
 
 #define OW_Name    "module::OW"
-#define OW_Version "0.1.0"
+#define OW_Version "0.2.0"
 
 //###############################################################################
 //  I2C
@@ -38,7 +38,7 @@ public:
   int owPoll = 5000;
   int count = 0;
   int countOld = 0;
-  String sensorenJson;
+  String sensorsJson;
 
 protected:
   FFS &ffs;
