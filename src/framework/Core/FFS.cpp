@@ -343,6 +343,7 @@ bool FFSjsonFile::saveFile() {
       return false;
     }
     json.printTo(jsonFile);
+    itemsCount = json.size();
     jsonFile.close();
     return true;
   } else {
@@ -407,6 +408,7 @@ bool FFSjsonFile::writeItem(String itemName, String value) {
     json[itemName] = value;
     root = ""; // printTo(String) is additive!!
     json.printTo(root);
+    itemsCount = json.size();
     // json.printTo(Serial);
     return true;
   } else {
