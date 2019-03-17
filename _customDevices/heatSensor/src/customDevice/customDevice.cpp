@@ -65,14 +65,23 @@ String customDevice::set(Topic &topic) {
 
   logging.debug("device set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
+  String ret = TOPIC_NO;
 
-  if (topic.getItemCount() != 4) // ~/set/device/yourItem
-    return TOPIC_NO;
-  if (topic.itemIs(3, "yourItem")) {
-    return TOPIC_OK;
-  } else {
-    return TOPIC_NO;
+  if (topic.itemIs(3, "deviceCFG")) {
+    //index-------------------
+    if (topic.itemIs(4, "index")) {
+      int count = ffs.deviceCFG.itemsCount;
+      String strIndex = topic.getArg(0);
+      if (strIndex == "next"){
+        (index < count) ? (index++) : (index = 1);
+      }else if (strIndex == "previous"){
+        (index > 1) ? (index--) : (index = count);
+      }
+      pub_deviceCFGItem(index);
+    }
   }
+
+  return ret;
 }
 
 //...............................................................................
@@ -102,7 +111,7 @@ String customDevice::get(Topic &topic) {
 //...............................................................................
 void customDevice::on_events(Topic &topic) {
   if (topic.modifyTopic(0) == "event/device/sensorsChanged") {
-    handleSensors(topic.arg_asString());
+    on_sensorsChanged(topic.arg_asString());
   }
 }
 
@@ -110,9 +119,8 @@ void customDevice::on_events(Topic &topic) {
 //  on request, fillDashboard with values
 //...............................................................................
 String customDevice::fillDashboard() {
-  //topicQueue.put("~/event/device/drawer/index 1");
-  //topicQueue.put("~/set/device/drawer/index 1");
 
+  pub_deviceCFGItem(1);
   logging.debug("dashboard filled with values");
   return TOPIC_OK;
 }
@@ -120,9 +128,47 @@ String customDevice::fillDashboard() {
 //...............................................................................
 // read BMP180
 //...............................................................................
-void customDevice::handleSensors(String sen) {
-  Serial.println("SensorsChanged");
-  Serial.println(sen);
+void customDevice::on_sensorsChanged(String sen) {
+  logging.info("SensorsChanged");
+
+  DynamicJsonBuffer root;
+  JsonObject& sensors = root.parseObject(sen);
+  DynamicJsonBuffer ffs_root;
+  JsonObject& ffs_sensors = root.parseObject(ffs.deviceCFG.root);
+
+  for (auto kv : sensors) {
+    String key = String(kv.key);
+    String value = String(kv.value.as<char*>());
+
+    if (!ffs_sensors.containsKey(key)){
+      ffs_sensors[key] = "NEW_" + key;
+    }
+  }
+  ffs.deviceCFG.root = "";
+  ffs_sensors.printTo(ffs.deviceCFG.root);
+  ffs.deviceCFG.saveFile();
+  //Serial.println(ffs.deviceCFG.root);
+}
+
+//...............................................................................
+// read BMP180
+//...............................................................................
+void customDevice::pub_deviceCFGItem(int index){
+  //deviceCFG json
+  DynamicJsonBuffer ffs_root;
+  JsonObject& ffs_deviceCFG = ffs_root.parseObject(ffs.deviceCFG.root);
+
+  int i = 1;
+  String key = "";
+  String value = "";
+  for (auto kv : ffs_deviceCFG) {
+    key = String(kv.key);
+    value = String(kv.value.as<char*>());
+    if (i == index) break;
+    i++;
+  }
+  topicQueue.put("~/event/device/deviceCFG/key " + key);
+  topicQueue.put("~/event/device/deviceCFG/value " + value);
 }
 
 //...............................................................................

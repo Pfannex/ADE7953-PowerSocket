@@ -1,33 +1,52 @@
 [
   {
-    "type": "group",
-    "name": "dashboard",
-    "caption": "Dashboard",
-    "data": [
-      {
-        "type": "text",
-        "name": "clock",
-        "caption": "Time",
-        "readonly": 1,
-        "event": "~/event/clock/time",
-        "inputtype": "datetime"
-      },
-      {
-        "type": "text",
-        "name": "sensor1",
-        "caption": "Sensor 1",
-        "readonly": 1,
-        "event": "~/event/device/sensor1",
-        "suffix": " mA"
-      },
-      {
-        "type": "text",
-        "name": "sensor2",
-        "caption": "Sensor 2",
-        "readonly": 1,
-        "event": "~/event/device/sensor2",
-        "suffix": " °C"
-      }
-    ]
-  }
+     "type":"text",
+     "name":"clock",
+     "caption":"Time",
+     "readonly":1,
+     "event":"~/event/clock/time",
+     "inputtype":"datetime"
+  },
+  {
+     "type":"group",
+     "name":"sensors",
+     "caption":"Sensorenmesswerte Heizung",
+     "data":[
+     ]
+   },
+   {
+     "type":"group",
+     "name":"config",
+     "caption":"Konfiguration",
+     "data":[
+       {
+         "type": "button",
+         "name": "previous",
+         "caption": "<--",
+         "action": "~/set/device/deviceCFG/index previous"
+       },
+       {
+         "type": "button",
+         "name": "next",
+         "caption": "-->",
+         "action": "~/set/device/deviceCFG/index next"
+       },
+       {
+          "type":"text",
+          "name":"deviceCFG_key",
+          "caption":"Key",
+          "inputtype":"Text",
+          "action":"~/set/device/deviceCFG/key",
+          "event":"~/event/device/deviceCFG/key"
+       },
+       {
+          "type":"text",
+          "name":"deviceCFG_value",
+          "caption":"Value",
+          "inputtype":"Text",
+          "action":"~/set/device/deviceCFG/value",
+          "event":"~/event/device/deviceCFG/value"
+       }
+     ]
+   }
 ]

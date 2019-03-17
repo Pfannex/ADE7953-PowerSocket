@@ -36,7 +36,10 @@ private:
   int sensorPollTime;
   unsigned long lastPoll = 0;
   String sensors = "";
-  void handleSensors(String sen);
+  void on_sensorsChanged(String sen);
+  int index = 1;
+
+  void pub_deviceCFGItem(int index);
 
   void readBMP180(String name);
   void readSi7021(String name);
