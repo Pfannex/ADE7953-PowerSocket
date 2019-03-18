@@ -65,6 +65,9 @@ void OW::readDS18B20() {
   DynamicJsonBuffer ffs_root;
   JsonObject& ffs_sensors = root.parseObject(ffs.deviceCFG.root);
 
+  DynamicJsonBuffer data_root;
+  JsonObject& data_sensors = data_root.createObject();
+
   scanBus();
 
   String eventPrefix= "~/event/device/" + String(name) + "/";
@@ -93,9 +96,17 @@ void OW::readDS18B20() {
     topicQueue.put(eventPrefix + "/" + alias + " " + temp);
 
     //assemble json
-    sensors[strAddr] = "";  //add item
-  }
+    sensors[alias] = "";        //add item
+    //assemble data_json
+    data_sensors[alias] = temp; //add item
 
+  }
+  //publish messured data
+  sensorsJson = "";
+  data_sensors.printTo(sensorsJson);
+  //sensors.prettyPrintTo(Serial);
+  topicQueue.put("~/event/device/sensorsData " + sensorsJson + " " + String(changed));
+  //publish sensors if items changed
   if (changed) {
     sensorsJson = "";
     sensors.printTo(sensorsJson);
