@@ -104,8 +104,8 @@ void OW::readDS18B20() {
   //publish messured data
   sensorsJson = "";
   data_sensors.printTo(sensorsJson);
-  //sensors.prettyPrintTo(Serial);
-  topicQueue.put("~/event/device/sensorsData " + sensorsJson + " " + String(changed));
+  //data_sensors.prettyPrintTo(Serial);
+  topicQueue.put("~/event/device/sensorsData " + sensorsJson);
   //publish sensors if items changed
   if (changed) {
     sensorsJson = "";
