@@ -178,14 +178,23 @@ function dashboardGetText(w) {
 }
 
 // http://api.jquerymobile.com/button/
+// http://demos.jquerymobile.com/1.4.5/icons/
 function dashboardGetButton(w) {
 
   var caption = w.caption;
+  if(!caption) caption= "";
   var name = w.name;
   var id = name;
+  var icon = w.icon;
+
+
+  var uiicon= icon ?
+    (" ui-icon-" + icon + " ui-btn-icon-" +
+      ( caption ? "left" :  "notext")
+    ) : "";
 
   var content = '<!-- widget: button ' + name + ' -->\n' +
-    '<button class="ui-btn ui-btn-inline" ' +
+    '<button class="ui-btn ui-btn-inline' + uiicon+'" ' +
     'onClick="dashboardAction(\'' + name + '\')">' + caption + '</button>\n';
   return content;
 }

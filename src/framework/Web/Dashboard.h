@@ -25,6 +25,7 @@ public:
   String type;
   String value;
   String caption;
+  String icon;
   String action;
   String event;
   String inputtype;
@@ -87,6 +88,8 @@ public:
   virtual Widget *insertWidget(String &type, String &group, int position = -1);
   virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
   virtual void fromJsonObject(JsonObject &);
+  // removes the named widget from anywhere in the structure
+  bool removeWidget(String &name);
 };
 
 //
