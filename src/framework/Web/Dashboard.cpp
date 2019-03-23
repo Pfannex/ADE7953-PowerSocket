@@ -117,13 +117,11 @@ void WidgetArray::deserialize(JsonArray &A) {
 bool WidgetArray::removeWidget(String &name) {
   for (auto it = widgets.begin(); it != widgets.end();) {
     Widget *w = *it;
-    D((w->name).c_str());
     if (w->name.equals(name)) {
       it = widgets.erase(it);
       return true;
     } else {
       if (w->type.equals("group")) {
-        D("recursion");
         WidgetGroup *g= (WidgetGroup*) (w);
         if(g->removeWidget(name))
           return true;
