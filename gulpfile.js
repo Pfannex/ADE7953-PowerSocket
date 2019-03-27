@@ -84,7 +84,10 @@ gulp.task('getDevicetype', function() {
         reject();
       }
     });
-    resolve();
+    // Do not resolve here! The readFile calls the function asynchronously,
+    // thus devicetype is not necessarily set when we come here.
+    // see https://stackoverflow.com/questions/10058814/get-data-from-fs-readfile
+    // resolve();
   });
 });
 
