@@ -30,16 +30,24 @@ public:
   String get(Topic &topic);
   String fillDashboard();
   void on_events(Topic &topic);
+  void on_SensorChanged(String json);
+  void on_SensorData(String json);
 
 private:
   OW ow;
   int sensorPollTime;
   unsigned long lastPoll = 0;
-  String sensors = "";
-  void on_sensorsChanged(String sen);
+  String owSensors = "";
   int index = 1;
 
-  void pub_deviceCFGItem(int index);
+  void pub_deviceCFGItem();                    //publish key:value to edit
+  void set_deviceCFGItem(String value);        //store key:value to ffs
+  void updateDashboard(String json);           //update measured data
+  void modifySensorConfiguration(String json); //modify ffs
+  void modifyDashboard();                      //modify dynamicDashboard
+  bool containsKey(String key);                //search for key in dynamicDashboard
+  // grid for sensors
+  WidgetGrid* grid;
 
   void readBMP180(String name);
   void readSi7021(String name);

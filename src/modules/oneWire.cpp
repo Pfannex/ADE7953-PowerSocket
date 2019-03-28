@@ -27,6 +27,7 @@ void OW::set_callbacks(String_CallbackFunction sensorChanged,
 //...............................................................................
 void OW::start() {
   Module::start();
+  scanBus();
 }
 
 //...............................................................................
@@ -37,10 +38,10 @@ void OW::handle() {
   unsigned long now = millis();
 
 //poll measurement values
-  if (now - tPoll > owPoll){
-    tPoll = now;
+  //if (now - tPoll > owPoll){
+    //tPoll = now;
     readDS18B20();
-  }
+  //}
 }
 
 //...............................................................................
@@ -80,6 +81,7 @@ void OW::readDS18B20() {
   JsonObject& data_sensors = data_root.createObject();
 
   scanBus();
+  delay(200);
 
   String eventPrefix= "~/event/device/" + String(name) + "/";
   String strAddr = "";
@@ -98,7 +100,6 @@ void OW::readDS18B20() {
 
     //measure temperature
     String temp = String(DS18B20.getTempCByIndex(i));
-    DS18B20.requestTemperatures();
 
     //publish
     //assemble json
@@ -107,6 +108,10 @@ void OW::readDS18B20() {
     data_sensors[strAddr] = temp; //add item
 
   }
+  DS18B20.requestTemperatures();
+
+
+
   //publish messured data
   sensorsJson = "";
   data_sensors.printTo(sensorsJson);
