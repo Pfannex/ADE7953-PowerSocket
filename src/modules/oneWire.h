@@ -8,6 +8,9 @@
 #include "OneWire.h" //1-Wire
 #include "DallasTemperature.h"
 
+#include <functional>
+typedef std::function<void(String&)> String_CallbackFunction;
+
 //###############################################################################
 //  I2C Tools
 //###############################################################################
@@ -27,7 +30,8 @@ class OW : public Module {
 public:
   OW(string name, LOGGING &logging, TopicQueue &topicQueue, int owPin, FFS &ffs);
   int owPin;
-
+  void set_callbacks(String_CallbackFunction sensorChanged,
+                     String_CallbackFunction sensorData);
 
   void start();
   void handle();
@@ -44,6 +48,9 @@ protected:
   FFS &ffs;
 
 private:
+  String_CallbackFunction on_SensorChanged;
+  String_CallbackFunction on_SensorData;
+
   OneWire oneWire;
   DallasTemperature DS18B20;
   DeviceAddress addr;

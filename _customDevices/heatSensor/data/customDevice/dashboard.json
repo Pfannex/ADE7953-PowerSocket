@@ -8,45 +8,46 @@
      "inputtype":"datetime"
   },
   {
-     "type":"group",
-     "name":"sensors",
-     "caption":"Sensorenmesswerte Heizung",
-     "data":[
-     ]
-   },
-   {
-     "type":"group",
-     "name":"config",
-     "caption":"Konfiguration",
-     "data":[
-       {
-         "type": "button",
-         "name": "previous",
-         "caption": "<--",
-         "action": "~/set/device/deviceCFG/index previous"
-       },
-       {
-         "type": "button",
-         "name": "next",
-         "caption": "-->",
-         "action": "~/set/device/deviceCFG/index next"
-       },
-       {
-          "type":"text",
-          "name":"deviceCFG_key",
-          "caption":"Key",
-          "inputtype":"Text",
-          "action":"~/set/device/deviceCFG/key",
-          "event":"~/event/device/deviceCFG/key"
-       },
-       {
-          "type":"text",
-          "name":"deviceCFG_value",
-          "caption":"Value",
-          "inputtype":"Text",
-          "action":"~/set/device/deviceCFG/value",
-          "event":"~/event/device/deviceCFG/value"
-       }
-     ]
-   }
+    "type":"group",
+    "name":"config",
+    "caption":"Konfigurationsfile: 'config.json'",
+    "data":[
+      {
+        "type": "button",
+        "name": "previous",
+        "icon": "carat-l",
+        "caption": "",
+        "action": "~/set/device/deviceCFG/index previous"
+      },
+      {
+        "type": "button",
+        "name": "next",
+        "icon": "carat-r",
+        "caption": "",
+        "action": "~/set/device/deviceCFG/index next"
+      },
+      {
+        "type": "button",
+        "name": "scan",
+        "caption": "scan 1W-Bus",
+        "action": "~/set/device/deviceCFG/scanBus"
+      },
+      {
+         "type":"text",
+         "name":"deviceCFG_key",
+         "caption":"Key",
+         "inputtype":"Text",
+         "action":"~/set/device/deviceCFG/key",
+         "event":"~/event/device/deviceCFG/key"
+      },
+      {
+         "type":"text",
+         "name":"deviceCFG_value",
+         "caption":"Value",
+         "inputtype":"Text",
+         "action":"~/set/device/deviceCFG/value",
+         "event":"~/event/device/deviceCFG/value"
+      }
+    ]
+  }
 ]

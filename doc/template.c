@@ -71,27 +71,25 @@ public:
   Master();
   CallbackClass callbackClass;
   void on_Callback1();
-  void on_Callback2();
+  void on_Callback2(String result);
 };
 
 //...............................................................................
 //  Master CLASS.cpp
 //...............................................................................
 #include <CLASS.h>
-//...............................................................................
-//  Master CLASS.cpp
-//...............................................................................
+
 Master::Master(){
 
 //callback Events
   callbackClass.set_callbacks(std::bind(&Master::on_Callback1, this),
-                              std::bind(&Master::on_Callback2, this));
+                              std::bind(&Master::on_Callback2, this, std::placeholders::_1));
 }
 
 void Master::on_Callback1(){
 
 }
-void Master::on_Callback2(){
+void Master::on_Callback2(String result){
 
 }
 
@@ -103,16 +101,17 @@ void Master::on_Callback2(){
 #pragma once
   #include <functional>
   typedef std::function<void(void)> CallbackFunction;
+  typedef std::function<void(String&)> String_CallbackFunction;
 
 class CallbackClass{
 public:
   CallbackClass();
   void set_callbacks(CallbackFunction Callback1,
-                     CallbackFunction Callback2);
+                     String_CallbackFunction Callback2);
   void anyFunction();
 private:
   CallbackFunction on_Callback1;
-  CallbackFunction on_Callback2;
+  String_CallbackFunction on_Callback2;
 };
 
 //...............................................................................
@@ -120,9 +119,6 @@ private:
 //...............................................................................
 #include <CallbackClass.h>
 
-//...............................................................................
-//  CallbackClass.cpp
-//...............................................................................
 CallbackClass::CallbackClass(){
 }
 
@@ -130,16 +126,17 @@ CallbackClass::CallbackClass(){
 //  set callbacks
 //...............................................................................
 void CallbackClass::set_callbacks(CallbackFunction Callback1,
-                                  CallbackFunction Callback2){
+                                  String_CallbackFunction Callback2){
   on_Callback1 = Callback1;
-  on_Callback2 = Callback1;
+  on_Callback2 = Callback2;
 }
 //...............................................................................
 //  set callbacks
 //...............................................................................
 void CallbackClass::anyFunction(){
   if (on_Callback1 != nullptr) on_Callback1();  //callback event
-  if (on_Callback2 != nullptr) on_Callback2();  //callback event
+  String result = "Callback information"
+  if (on_Callback2 != nullptr) on_Callback2(result);  //callback event
 }
 
 //###############################################################################

@@ -11,11 +11,23 @@ OW::OW(string name, LOGGING &logging, TopicQueue &topicQueue, int owPin, FFS &ff
 //-------------------------------------------------------------------------------
 //  1 Wire public
 //-------------------------------------------------------------------------------
+
+//...............................................................................
+// set callback
+//...............................................................................
+void OW::set_callbacks(String_CallbackFunction sensorChanged,
+                       String_CallbackFunction sensorData) {
+
+  on_SensorChanged = sensorChanged;
+  on_SensorData = sensorData;
+}
+
 //...............................................................................
 // start
 //...............................................................................
 void OW::start() {
   Module::start();
+  scanBus();
 }
 
 //...............................................................................
@@ -26,10 +38,10 @@ void OW::handle() {
   unsigned long now = millis();
 
 //poll measurement values
-  if (now - tPoll > owPoll){
-    tPoll = now;
+  //if (now - tPoll > owPoll){
+    //tPoll = now;
     readDS18B20();
-  }
+  //}
 }
 
 //...............................................................................
@@ -69,6 +81,7 @@ void OW::readDS18B20() {
   JsonObject& data_sensors = data_root.createObject();
 
   scanBus();
+  delay(200);
 
   String eventPrefix= "~/event/device/" + String(name) + "/";
   String strAddr = "";
@@ -87,30 +100,34 @@ void OW::readDS18B20() {
 
     //measure temperature
     String temp = String(DS18B20.getTempCByIndex(i));
-    DS18B20.requestTemperatures();
 
     //publish
-    //use alias name from ffs is exists
-    String alias = strAddr;
-    if (ffs_sensors.containsKey(strAddr)) alias = ffs.deviceCFG.readItem(strAddr);
-    topicQueue.put(eventPrefix + "/" + alias + " " + temp);
-
     //assemble json
-    sensors[alias] = "";        //add item
+    sensors[strAddr] = "";        //add item
     //assemble data_json
-    data_sensors[alias] = temp; //add item
+    data_sensors[strAddr] = temp; //add item
 
   }
+  DS18B20.requestTemperatures();
+
+
+
   //publish messured data
   sensorsJson = "";
   data_sensors.printTo(sensorsJson);
   //data_sensors.prettyPrintTo(Serial);
   topicQueue.put("~/event/device/sensorsData " + sensorsJson);
+  if (on_SensorData != nullptr) on_SensorData(sensorsJson);  //callback event
+
   //publish sensors if items changed
   if (changed) {
     sensorsJson = "";
     sensors.printTo(sensorsJson);
     //sensors.prettyPrintTo(Serial);
     topicQueue.put("~/event/device/sensorsChanged " + sensorsJson);
+    if (on_SensorChanged != nullptr) on_SensorChanged(sensorsJson);  //callback event
+
   }
+
+
 }

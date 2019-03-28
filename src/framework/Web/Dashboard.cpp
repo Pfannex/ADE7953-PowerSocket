@@ -38,6 +38,7 @@ void Widget::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
   setProperty(O, "name", name);
   setProperty(O, "value", value);
   setProperty(O, "caption", caption);
+  setProperty(O, "icon", icon);
   setProperty(O, "action", action);
   setProperty(O, "event", event);
   setProperty(O, "inputtype", inputtype);
@@ -53,6 +54,7 @@ void Widget::fromJsonObject(JsonObject &O) {
   name = getProperty(O, "name");
   value = getProperty(O, "value");
   caption = getProperty(O, "caption");
+  icon = getProperty(O, "icon");
   action = getProperty(O, "action");
   event = getProperty(O, "event");
   inputtype = getProperty(O, "inputtype");
@@ -120,8 +122,8 @@ bool WidgetArray::removeWidget(String &name) {
       return true;
     } else {
       if (w->type.equals("group")) {
-        WidgetArray *a = (WidgetArray *)(w);
-        if (a->removeWidget(name))
+        WidgetGroup *g= (WidgetGroup*) (w);
+        if(g->removeWidget(name))
           return true;
       }
       ++it;
@@ -224,6 +226,12 @@ Widget *WidgetGroup::insertWidget(String &type, String &group, int position) {
     return data.insertWidget(type, group, position);
   }
 }
+
+bool WidgetGroup::removeWidget(String &name) {
+  return data.removeWidget(name);
+}
+
+
 
 //###############################################################################
 //  WidgetControlGroup
