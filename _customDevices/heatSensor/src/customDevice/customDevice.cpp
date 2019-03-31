@@ -25,9 +25,25 @@ customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
 // sensors callback
 //...............................................................................
 void customDevice::on_SensorChanged(String json) {
+  DynamicJsonBuffer root;
+  JsonObject& sensors = root.parseObject(json);
+  Serial.println("----------------------------------------");
+  Serial.println("customDevice::on_SensorChanged");
+  sensors.prettyPrintTo(Serial);
+  Serial.println("");
+  Serial.println("----------------------------------------");
+
   modifySensorConfiguration(json);
 }
 void customDevice::on_SensorData(String json) {
+  DynamicJsonBuffer root;
+  JsonObject& sensors = root.parseObject(json);
+  Serial.println("----------------------------------------");
+  Serial.println("customDevice::on_SensorData");
+  sensors.prettyPrintTo(Serial);
+  Serial.println("");
+  Serial.println("----------------------------------------");
+
   updateDashboard(json);
 }
 
@@ -42,7 +58,7 @@ void customDevice::start() {
   logging.info("1wire sensors polling time: " + String(sensorPollTime));
   logging.info("starting device " + String(DEVICETYPE) + String(DEVICEVERSION));
 
-  //ow.start();
+  ow.start();
   ow.owPoll = sensorPollTime;
 
   logging.info("device running");
@@ -57,17 +73,12 @@ void customDevice::start() {
 //...............................................................................
 
 void customDevice::handle() {
-
+  ow.handle();
   unsigned long now = millis();
   if (now - lastPoll >= sensorPollTime) {
     lastPoll = now;
-    topicQueue.put("~/event/device/sensors/busy 1");
-    logging.info("1Wire start measuring");
-    ow.handle();
-    topicQueue.put("~/event/device/sensors/busy 0");
-    logging.info("1Wire measuring done");
     //readBMP180("sensor1");
-    readSi7021("Si7021");
+    //readSi7021("Si7021");
   }
 }
 
@@ -205,6 +216,12 @@ void customDevice::set_deviceCFGItem(String value){
     if (i == index) break;
     i++;
   }
+  //change polltime
+  if (key == "cfg_sensorPollTime"){
+    sensorPollTime = value.toInt();
+    ow.owPoll = sensorPollTime;
+  }
+
   //if (!ffs_deviceCFG.containsKey(key)){
     ffs.deviceCFG.writeItem(key, value);
     ffs.deviceCFG.saveFile();
@@ -214,10 +231,32 @@ void customDevice::set_deviceCFGItem(String value){
   //modify Dashboard
   //Serial.println(ffs.deviceCFG.root);
 
-  modifyDashboard();
-  dashboardChanged();
+  //modifyDashboard();
+  //dashboardChanged();
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //...............................................................................
 // update dashboard with measured data
@@ -254,7 +293,8 @@ void customDevice::updateDashboard(String json){
 //modify ffs & dashboard
 //...............................................................................
 void customDevice::modifySensorConfiguration(String json){
-  logging.info("SensorsChanged");
+  //logging.info("SensorsChanged");
+  //Serial.println(json);
   //owSensors = json;
 
   DynamicJsonBuffer root;
@@ -329,8 +369,8 @@ void customDevice::modifyDashboard(){
     }
   }
 
-  DynamicJsonBuffer dashboard_root;
-  JsonArray& dashboard_array = dashboard.serialize(dashboard_root);
+  //DynamicJsonBuffer dashboard_root;
+  //JsonArray& dashboard_array = dashboard.serialize(dashboard_root);
   //JsonArray& sensor_data = dashboard_array[1]["data"];
 
   //Serial.println("--------------------------------------");
@@ -338,6 +378,8 @@ void customDevice::modifyDashboard(){
   //Serial.println("");
   //Serial.println("--------------------------------------");
 
+  Serial.println("dashboardChanged()");
+  //topicQueue.put("~/event/device/dashboardChanged");
   dashboardChanged();
 
 
@@ -353,6 +395,8 @@ void customDevice::modifyDashboard(){
     w->event = "~/event/device/sensors/" + key;
   }
 */
+
+
 }
 
 //...............................................................................
@@ -371,6 +415,8 @@ bool customDevice::containsKey(String key){
   Serial.println("");
   Serial.println("--------------------------------------");
 */
+
+
   //Serial.println("searching for key: " + key);
   for (auto array_element : sensor_data) {
     if (array_element.is<JsonObject &>()){
@@ -449,6 +495,7 @@ bool customDevice::containsKey(String key){
   String delName = "banane";
   dashboard.removeWidget(delName);
 */
+
 
 
 //...............................................................................

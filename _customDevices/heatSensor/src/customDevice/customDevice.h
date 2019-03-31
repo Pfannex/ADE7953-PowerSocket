@@ -47,7 +47,7 @@ private:
   void modifyDashboard();                      //modify dynamicDashboard
   bool containsKey(String key);                //search for key in dynamicDashboard
   // grid for sensors
-  WidgetGrid* grid;
+  //WidgetGrid* grid;
 
   void readBMP180(String name);
   void readSi7021(String name);

@@ -25,6 +25,12 @@ typedef std::function<void(String&)> String_CallbackFunction;
 #define OWDIFF 1
 #define OWINT 1
 
+typedef struct{
+  String strAddr;
+  DeviceAddress addr;
+  int value;
+} DSdevice;
+
 class OW : public Module {
 
 public:
@@ -38,11 +44,12 @@ public:
   String getVersion();
 
   void scanBus();
+  void requestData();
   void readDS18B20();
   int owPoll = 5000;
   int count = 0;
   int countOld = 0;
-  String sensorsJson;
+  //String sensorsJson;
 
 protected:
   FFS &ffs;
@@ -53,7 +60,11 @@ private:
 
   OneWire oneWire;
   DallasTemperature DS18B20;
+  //DSdevice dsDevice[30];
+  DSdevice *dsDevices;
+  bool requestRunning = false;
+  //int runs = 0;
   DeviceAddress addr;
   int tPoll = 0;
-  bool changed = true;
+  //bool changed = true;
 };
