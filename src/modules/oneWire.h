@@ -49,7 +49,6 @@ public:
   int owPoll = 5000;
   int count = 0;
   int countOld = 0;
-  //String sensorsJson;
 
 protected:
   FFS &ffs;
@@ -60,11 +59,8 @@ private:
 
   OneWire oneWire;
   DallasTemperature DS18B20;
-  //DSdevice dsDevice[30];
-  DSdevice *dsDevices;
+  DSdevice dsDevice[5];
   bool requestRunning = false;
-  //int runs = 0;
   DeviceAddress addr;
   int tPoll = 0;
-  //bool changed = true;
 };
