@@ -69,6 +69,10 @@ void Widget::fromJsonObject(JsonObject &O) {
 //  WidgetArray
 //###############################################################################
 
+WidgetArray::~WidgetArray() {
+    widgets.clear();
+}
+
 Widget *WidgetArray::createWidget(String &type) const {
   // here we need to create descendants of widgets depending on O["type"]
   if (type.equals("group")) {
@@ -206,6 +210,9 @@ WidgetArray* WidgetGrid::addRow() {
 //###############################################################################
 
 WidgetGroup::WidgetGroup() : Widget("group") {}
+
+WidgetGroup::~WidgetGroup()  {
+}
 
 void WidgetGroup::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
   // D("WidgetGroup::toJsonObject");
