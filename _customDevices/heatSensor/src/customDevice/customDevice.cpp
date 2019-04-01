@@ -10,7 +10,7 @@
 //-------------------------------------------------------------------------------
 customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
     : Device(logging, topicQueue, ffs),
-      ow("oneWire", logging, topicQueue, OWPIN, ffs)
+      ow("oneWire", logging, topicQueue, OWPIN)
       {
 
   //callback Events
@@ -25,10 +25,13 @@ customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
 // sensors callback
 //...............................................................................
 void customDevice::on_SensorChanged(String json) {
-  modifySensorConfiguration(json);
+  Serial.println(json);
+  modifyDashboard();
+  //modifySensorConfiguration(json);
 }
 void customDevice::on_SensorData(String json) {
-  updateDashboard(json);
+  Serial.println(json);
+  //updateDashboard(json);
 }
 
 //...............................................................................
@@ -91,17 +94,17 @@ String customDevice::set(Topic &topic) {
       String strIndex = topic.getArg(0);
       if (strIndex == "next"){
         (index < count) ? (index++) : (index = 1);
-        pub_deviceCFGItem();
+        //pub_deviceCFGItem();
         return TOPIC_OK;
       }else if (strIndex == "previous"){
         (index > 1) ? (index--) : (index = count);
-        pub_deviceCFGItem();
+        //pub_deviceCFGItem();
         return TOPIC_OK;
       }
     }
     //set key value-------------------
     if (topic.itemIs(4, "value")) {
-      set_deviceCFGItem(topic.getArg(0));
+      //set_deviceCFGItem(topic.getArg(0));
       return TOPIC_OK;
     }
     //scan 1W-bus-------------------
@@ -146,11 +149,12 @@ void customDevice::on_events(Topic &topic) {
 //...............................................................................
 String customDevice::fillDashboard() {
 
-  pub_deviceCFGItem();
+  //pub_deviceCFGItem();
   logging.debug("dashboard filled with values");
   return TOPIC_OK;
 }
 
+/*
 //...............................................................................
 // publish key:value to dashboard by index
 //...............................................................................
@@ -258,13 +262,50 @@ void customDevice::modifySensorConfiguration(String json){
   ffs.deviceCFG.saveFile();
   modifyDashboard();
 }
-
+*/
 //...............................................................................
 // mofify dynamicDashboard
 //...............................................................................
 void customDevice::modifyDashboard(){
   logging.info("modify Dashboard");
 
+  String groupName = "sensors";
+  dashboard.removeWidget(groupName);
+  Widget* w = dashboard.insertWidget("group", 1);
+    w->name= groupName;
+    w->caption = "Sensorenmesswerte Heizung";
+
+
+  for (size_t i = 0; i < index; i++) {
+
+      Widget* w1 = dashboard.insertWidget("text", "sensors");
+      w1->name = "Hallo_" + String(i);
+      w1->caption = "World";
+      w1->value = "";
+      w1->event = "~/event/device/sensors/";
+  }
+  index++;
+
+  Serial.println("");
+  Serial.println("");
+  Serial.println(dashboard.asJsonDocument());
+  Serial.println("");
+  Serial.println("");
+  DynamicJsonBuffer dashboard_root;
+  JsonArray& dashboard_array = dashboard.serialize(dashboard_root);
+
+  Serial.println("");
+  Serial.println("");
+  dashboard_array.prettyPrintTo(Serial);
+  Serial.println("");
+  Serial.println("");
+
+
+  dashboardChanged();
+
+
+
+/*
   DynamicJsonBuffer ffs_root;
   JsonObject& ffs_sensors = ffs_root.parseObject(ffs.deviceCFG.root);
 
@@ -288,9 +329,11 @@ void customDevice::modifyDashboard(){
 
     }
   }
-  dashboardChanged();
-}
+*/
 
+  //dashboardChanged();
+}
+/*
 //...............................................................................
 // search for key in dynamicDashboard
 //...............................................................................
@@ -316,7 +359,7 @@ bool customDevice::containsKey(String key){
 
   return false;
 }
-
+*/
 //...............................................................................
 // read BMP180
 //...............................................................................

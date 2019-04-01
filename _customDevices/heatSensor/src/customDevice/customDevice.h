@@ -40,12 +40,13 @@ private:
   String owSensors = "";
   int index = 1;
 
-  void pub_deviceCFGItem();                    //publish key:value to edit
-  void set_deviceCFGItem(String value);        //store key:value to ffs
-  void updateDashboard(String json);           //update measured data
-  void modifySensorConfiguration(String json); //modify ffs
+
+  //void pub_deviceCFGItem();                    //publish key:value to edit
+  //void set_deviceCFGItem(String value);        //store key:value to ffs
+  //void updateDashboard(String json);           //update measured data
+  //void modifySensorConfiguration(String json); //modify ffs
   void modifyDashboard();                      //modify dynamicDashboard
-  bool containsKey(String key);                //search for key in dynamicDashboard
+  //bool containsKey(String key);                //search for key in dynamicDashboard
 
   void readBMP180(String name);
   void readSi7021(String name);

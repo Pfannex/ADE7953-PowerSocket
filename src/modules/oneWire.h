@@ -34,7 +34,7 @@ typedef struct{
 class OW : public Module {
 
 public:
-  OW(string name, LOGGING &logging, TopicQueue &topicQueue, int owPin, FFS &ffs);
+  OW(string name, LOGGING &logging, TopicQueue &topicQueue, int owPin);
   int owPin;
   void set_callbacks(String_CallbackFunction sensorChanged,
                      String_CallbackFunction sensorData);
@@ -44,14 +44,10 @@ public:
   String getVersion();
 
   void scanBus();
-  void requestData();
-  void readDS18B20();
+  //void requestData();
+  //void readDS18B20();
   int owPoll = 5000;
   int count = 0;
-  int countOld = 0;
-
-protected:
-  FFS &ffs;
 
 private:
   String_CallbackFunction on_SensorChanged;
@@ -59,8 +55,7 @@ private:
 
   OneWire oneWire;
   DallasTemperature DS18B20;
-  DSdevice dsDevice[5];
+  DSdevice *dsDevices;
   bool requestRunning = false;
-  DeviceAddress addr;
   int tPoll = 0;
 };
