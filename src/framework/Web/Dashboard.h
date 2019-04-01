@@ -44,6 +44,8 @@ public:
 
 class WidgetArray {
 public:
+  ~WidgetArray();
+
   virtual JsonArray &serialize(DynamicJsonBuffer &);
   virtual void deserialize(JsonArray &);
 
@@ -84,6 +86,7 @@ private:
   WidgetArray data;
 public:
   WidgetGroup();
+  ~WidgetGroup();
   // add the widget to the named group at given position
   virtual Widget *insertWidget(String &type, String &group, int position = -1);
   virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
