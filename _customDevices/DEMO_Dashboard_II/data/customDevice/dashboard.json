@@ -8,46 +8,9 @@
      "inputtype":"datetime"
   },
   {
-    "type":"group",
-    "name":"config",
-    "caption":"Konfigurationsfile: 'config.json'",
-    "data":[
-      {
-        "type": "button",
-        "name": "previous",
-        "icon": "carat-l",
-        "caption": "",
-        "action": "~/set/device/deviceCFG/index previous"
-      },
-      {
-        "type": "button",
-        "name": "next",
-        "icon": "carat-r",
-        "caption": "",
-        "action": "~/set/device/deviceCFG/index next"
-      },
-      {
-        "type": "button",
-        "name": "scan",
-        "caption": "scan 1W-Bus",
-        "action": "~/set/device/deviceCFG/scanBus"
-      },
-      {
-         "type":"text",
-         "name":"deviceCFG_key",
-         "caption":"Key",
-         "inputtype":"Text",
-         "action":"~/set/device/deviceCFG/key",
-         "event":"~/event/device/deviceCFG/key"
-      },
-      {
-         "type":"text",
-         "name":"deviceCFG_value",
-         "caption":"Value",
-         "inputtype":"Text",
-         "action":"~/set/device/deviceCFG/value",
-         "event":"~/event/device/deviceCFG/value"
-      }
-    ]
+    "type": "button",
+    "name": "add",
+    "caption": "add Item to Dashboard",
+    "action": "~/set/device/deviceCFG/addItem"
   }
 ]

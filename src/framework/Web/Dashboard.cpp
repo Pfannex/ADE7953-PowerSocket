@@ -70,7 +70,9 @@ void Widget::fromJsonObject(JsonObject &O) {
 //###############################################################################
 
 WidgetArray::~WidgetArray() {
+  DF("before clear");
     widgets.clear();
+    DF("after clear");
 }
 
 Widget *WidgetArray::createWidget(String &type) const {
