@@ -23,8 +23,12 @@
 
 
 //###############################################################################
-// Sensors
+// sensors and actors
 //###############################################################################
+
+//
+// i2c
+//
 
 #define SDA 4
 #define SCL 5
@@ -73,3 +77,13 @@
 struct relays {
         static const char* names[];
 };
+
+//
+// button D7
+//
+#define PIN_BUTTON 13
+
+//
+// built-in LED 
+//
+#define PIN_LED 2

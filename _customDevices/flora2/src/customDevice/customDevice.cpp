@@ -5,21 +5,17 @@
 //  Device
 //===============================================================================
 
-const char* relays::names[] = {
-        "pump",
-        "valve1",
-        "valve2",
-        "valve3",
-        "lamp",
-        "camera"
-};
+const char *relays::names[] = {"pump",   "valve1", "valve2",
+                               "valve3", "lamp",   "camera"};
 
 //-------------------------------------------------------------------------------
 //  constructor
 //-------------------------------------------------------------------------------
 customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
     : Device(logging, topicQueue, ffs), pressureSensor(),
-      lightSensor(ADDRESS_LS), uvSensor(), mcp(), ads(ADDRESS_ADS) {
+      lightSensor(ADDRESS_LS), uvSensor(), mcp(), ads(ADDRESS_ADS),
+      button("button", logging, topicQueue, PIN_BUTTON),
+      led("led", logging, topicQueue, PIN_LED, INVERSE) {
 
   type = String(DEVICETYPE);
   version = String(DEVICEVERSION);
@@ -39,6 +35,15 @@ void customDevice::logPollInterval() {
 
 void customDevice::start() {
 
+  // button
+  logging.info("starting " +
+               button.getVersion()); // only first time a class is started
+  button.start();
+
+  // LED
+  led.start();
+  setLedMode(0);
+
   // number of sensors
   int count = 0;
 
@@ -48,6 +53,7 @@ void customDevice::start() {
 
   // inherited start
   Device::start();
+  logging.info("starting device " + String(DEVICETYPE));
 
   //
   // initialize sensors
@@ -138,12 +144,36 @@ float customDevice::measureVoltage(int channel) {
   return ads.readADC_SingleEnded(channel) * 0.000125;
 }
 
+// https://www.vishay.com/docs/84277/veml6070.pdf, BASIC CHARACTERISTICS
+float customDevice::UVreadingToUVmuWpercm2(uint16_t UVreading) {
+  return UVreading * 5.0;
+}
+
+// https://www.vishay.com/docs/84310/designingveml6070.pdf
+// 0= LOW, 1= MODERATE, 2= HIGH, 3= VERY_HIGH, 4= EXTREME
+// Rset = 270 kOhm (274)
+uint16_t customDevice::UVreadingToUVRiskLevel(uint16_t UVreading) {
+  // 4T
+  uint16_t risk_level_mapping_table[4] = {2240, 4482, 5976, 8216};
+  uint16_t i;
+  //Di("UVreading", UVreading);
+  for (i = 0; i < 4; i++) {
+    //Di("risk_level_mapping_table[i]", risk_level_mapping_table[i]);
+    if (UVreading <= risk_level_mapping_table[i]) {
+      break;
+    }
+  }
+  return i;
+}
+
 void customDevice::inform() {
 
   float temperature = measureTemperatureCelsius();
   float pressure = measurePressurehPa();
   float illuminance = measureIlluminanceLux();
-  float uv = measureUVmuWpercm2();
+  int uv = measureUVLevel();
+  float uvIntensity = UVreadingToUVmuWpercm2(uv);
+  uint16_t uvRiskLevel = UVreadingToUVRiskLevel(uv);
   float voltage[4];
   for (int channel = 0; channel < 4; channel++)
     voltage[channel] = measureVoltage(channel);
@@ -151,19 +181,21 @@ void customDevice::inform() {
   topicQueue.put("~/event/device/temperature", temperature, "%.2f");
   topicQueue.put("~/event/device/pressure", pressure, "%.2f");
   topicQueue.put("~/event/device/illuminance", illuminance, "%.2f");
-  topicQueue.put("~/event/device/uv", uv, "%g");
+  topicQueue.put("~/event/device/uvIntensity", uvIntensity, "%g");
+  topicQueue.put("~/event/device/uvRiskLevel", uvRiskLevel*1.0, "%g");
   topicQueue.put("~/event/device/voltage0", voltage[0], "%g");
   topicQueue.put("~/event/device/voltage1", voltage[1], "%g");
   topicQueue.put("~/event/device/voltage2", voltage[2], "%g");
   topicQueue.put("~/event/device/voltage3", voltage[3], "%g");
-  logging.info("temperature: " + String(temperature, 2) + " °C");
-  logging.info("pressure   : " + String(pressure, 2) + " hPa");
-  logging.info("illuminance: " + String(illuminance, 2) + " lux");
-  logging.info("uv         : " + String(uv, 2) + " µW/cm²");
-  logging.info("voltage0   : " + String(voltage[0], 3) + " V");
-  logging.info("voltage1   : " + String(voltage[1], 3) + " V");
-  logging.info("voltage2   : " + String(voltage[2], 3) + " V");
-  logging.info("voltage3   : " + String(voltage[3], 3) + " V");
+  logging.info("temperature  : " + String(temperature, 2) + " °C");
+  logging.info("pressure     : " + String(pressure, 2) + " hPa");
+  logging.info("illuminance  : " + String(illuminance, 2) + " lux");
+  logging.info("uv intensity : " + String(uvIntensity, 2) + " µW/cm²");
+  logging.info("uv risk level: " + String(uvRiskLevel));
+  logging.info("voltage0     : " + String(voltage[0], 3) + " V");
+  logging.info("voltage1     : " + String(voltage[1], 3) + " V");
+  logging.info("voltage2     : " + String(voltage[2], 3) + " V");
+  logging.info("voltage3     : " + String(voltage[3], 3) + " V");
 }
 
 //...............................................................................
@@ -171,10 +203,12 @@ void customDevice::inform() {
 //...............................................................................
 
 void customDevice::switchRelay(int relay, int state) {
-  Di("relay=", relay); Di("state=", state);
-  //mcp.digitalWrite(relay, state);
+  Di("relay=", relay);
+  Di("state=", state);
+  // mcp.digitalWrite(relay, state);
   mcp.digitalWrite(0, state ? HIGH : LOW);
-  topicQueue.put("~/event/device/" + String(relays::names[relay]) + " " + String(state));
+  topicQueue.put("~/event/device/" + String(relays::names[relay]) + " " +
+                 String(state));
 }
 
 //...............................................................................
@@ -182,6 +216,10 @@ void customDevice::switchRelay(int relay, int state) {
 //...............................................................................
 
 void customDevice::handle() {
+
+  button.handle();
+  led.handle();
+
   if (!pollInterval)
     return;
   unsigned long now = millis();
@@ -258,5 +296,69 @@ String customDevice::get(Topic &topic) {
 //...............................................................................
 void customDevice::on_events(Topic &topic) {
 
+  // listen to ~/device/led/setmode
+  if (led.isForModule(topic)) {
+    if (led.isItem(topic, "setmode"))
+      setLedMode(topic.getArgAsLong(0));
+  }
+
   // central business logic
+  if (button.isForModule(topic)) {
+    // events from button
+    //
+    // - click
+    if (button.isItem(topic, "click")) {
+      // -- short
+      if (topic.argIs(0, "short")) {
+        if (configMode)
+          setConfigMode(0);
+        else
+          inform();
+      }
+      // -- long
+      if (topic.argIs(0, "long"))
+        setConfigMode(!configMode);
+    }
+    // - idle
+    if (button.isItem(topic, "idle"))
+      setConfigMode(0);
+  }
+}
+
+//-------------------------------------------------------------------------------
+//  Device private
+//-------------------------------------------------------------------------------
+
+//...............................................................................
+//  mode setter
+//...............................................................................
+
+void customDevice::setConfigMode(int value) {
+  if (configMode == value)
+    return;
+  configMode = value;
+  topicQueue.put("~/event/device/configMode", configMode);
+
+  if (configMode == 1) {
+    setLedMode(2);
+  } else {
+    setLedMode(0);
+  }
+}
+
+void customDevice::setLedMode(int value) {
+  switch (value) {
+  case 0:
+    led.setOutputMode(OFF);
+    break;
+  case 1:
+    led.setOutputMode(ON);
+    break;
+  case 2:
+    led.setOutputMode(BLINK, 100);
+    break;
+  case 3:
+    led.setOutputMode(BLINK, 1000);
+    break;
+  }
 }
