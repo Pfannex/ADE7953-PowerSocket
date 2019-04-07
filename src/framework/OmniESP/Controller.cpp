@@ -427,6 +427,20 @@ String Controller::call(Topic &topic) {
       } else {
         return device.set(topic);
       }
+    } else if (topic.itemIs(2, "controller")) {
+      if (topic.itemIs(3, "reconnectDelay")) {
+        D("set reconnectDelay");
+        Di("arg=", topic.getArgAsLong(0));
+        reconnectDelay = topic.getArgAsLong(0);
+        if (reconnectDelay < 1)
+          reconnectDelay = 1;
+        if (reconnectDelay > RECONNECT_DELAY_MAX)
+          reconnectDelay = RECONNECT_DELAY_MAX;
+        reconnectDelayed = 0;
+        return TOPIC_OK;
+      } else {
+        return TOPIC_NO;
+      }
     } else {
       return TOPIC_NO;
     }
@@ -469,7 +483,7 @@ void Controller::t_1s_Update() {
     if (reconnectDelayed >= reconnectDelay) {
       logging.debug("MQTT try reconnect (delayed " +
                     String(reconnectDelayed, DEC) + " s)");
-      topicQueue.put("~/event/mqtt/reconnect");
+      topicQueue.put("~/set/mqtt/reconnect");
       reconnectDelay *= 2;
       if (reconnectDelay > RECONNECT_DELAY_MAX) {
         reconnectDelay = RECONNECT_DELAY_MAX;
