@@ -95,7 +95,7 @@
     <div data-role="footer">
   		<div class="ui-grid-a">
   			<div class="ui-block-a">
-  				%DEVICENAME%<br>%MACADDRESS%
+          %DEVICENAME%<br>%DEVICELOCATION%<br>%MACADDRESS%
   			</div>
   			<div class="ui-block-b">
   				%TYPE% %VERSION%<br>%TITLE% %FIRMWARE%
@@ -132,6 +132,10 @@
           <div data-role="fieldcontain">
             <label for="device_name">Name</label>
             <input type="text" id="device_name" name="device_name" placeholder="hostname and MQTT device name" />
+          </div>
+          <div data-role="fieldcontain">
+            <label for="device_location">Location</label>
+            <input type="text" id="device_location" name="device_location" placeholder="physical device location" />
           </div>
           <div data-role="fieldcontain">
             <label for="device_username">Username</label>
@@ -329,7 +333,7 @@
     <div data-role="footer">
   		<div class="ui-grid-a">
   			<div class="ui-block-a">
-  				%DEVICENAME%<br>%MACADDRESS%
+          %DEVICENAME%<br>%DEVICELOCATION%<br>%MACADDRESS%
   			</div>
   			<div class="ui-block-b">
   				%TYPE% %VERSION%<br>%TITLE% %FIRMWARE%
@@ -401,7 +405,7 @@
     <div data-role="footer">
   		<div class="ui-grid-a">
   			<div class="ui-block-a">
-  				%DEVICENAME%<br>%MACADDRESS%
+          %DEVICENAME%<br>%DEVICELOCATION%<br>%MACADDRESS%
   			</div>
   			<div class="ui-block-b">
   				%TYPE% %VERSION%<br>%TITLE% %FIRMWARE%

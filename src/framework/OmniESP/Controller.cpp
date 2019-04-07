@@ -544,6 +544,8 @@ void Controller::setConfigDefaults() {
     f = true;
   if (setConfigDefault("device_password", PASSWORD))
     f = true;
+    if (setConfigDefault("device_location", ""))
+      f = true;
   if (setConfigDefault("update", "manual"))
     f = true;
   if (setConfigDefault("ap", "auto"))
