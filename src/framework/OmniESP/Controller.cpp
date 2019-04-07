@@ -466,8 +466,21 @@ void Controller::t_1s_Update() {
   // Check MQTT state and try reconnect if necessary
   if (netState == NET_CONNECTED and mqtt_state == 0 and
       ffs.cfg.readItem("mqtt") == "on") {
-    logging.debug("MQTT try reconnect");
-    topicQueue.put("~/event/mqtt/reconnect");
+    if (reconnectDelayed >= reconnectDelay) {
+      logging.debug("MQTT try reconnect (delayed " +
+                    String(reconnectDelayed, DEC) + " s)");
+      topicQueue.put("~/event/mqtt/reconnect");
+      reconnectDelay *= 2;
+      if (reconnectDelay > RECONNECT_DELAY_MAX) {
+        reconnectDelay = RECONNECT_DELAY_MAX;
+        reconnectDelayed = 0;
+      }
+    } else {
+      reconnectDelayed++;
+    }
+  } else {
+    reconnectDelay = 1;
+    reconnectDelayed = 0;
   }
 
   // topicQueue.put("~/event/timer/1sUpdate");
