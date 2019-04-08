@@ -13,6 +13,8 @@ Widget::Widget(String &t) { type = t; }
 
 Widget::Widget(const char *t) { type = String(t); }
 
+Widget::~Widget() { }
+
 String Widget::getProperty(JsonObject &O, const char *property) {
   if (O.containsKey(property)) {
     String value = O[property].as<String>();
@@ -70,9 +72,11 @@ void Widget::fromJsonObject(JsonObject &O) {
 //###############################################################################
 
 WidgetArray::~WidgetArray() {
-  DF("before clear");
+    for(auto it= widgets.begin(); it != widgets.end(); it++) {
+      Widget *w = *it;
+      delete w;
+    }
     widgets.clear();
-    DF("after clear");
 }
 
 Widget *WidgetArray::createWidget(String &type) const {
@@ -124,6 +128,7 @@ bool WidgetArray::removeWidget(String &name) {
   for (auto it = widgets.begin(); it != widgets.end();) {
     Widget *w = *it;
     if (w->name.equals(name)) {
+      delete w;
       it = widgets.erase(it);
       return true;
     } else {
