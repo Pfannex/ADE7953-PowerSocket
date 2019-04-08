@@ -22,6 +22,7 @@ private:
   // stores variables for template
   String macAddress;
   String deviceName;
+  String deviceLocation;
   String deviceType;
   String deviceVersion;
   String firmwareVersion;

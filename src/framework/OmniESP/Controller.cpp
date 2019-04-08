@@ -427,6 +427,20 @@ String Controller::call(Topic &topic) {
       } else {
         return device.set(topic);
       }
+    } else if (topic.itemIs(2, "controller")) {
+      if (topic.itemIs(3, "reconnectDelay")) {
+        D("set reconnectDelay");
+        Di("arg=", topic.getArgAsLong(0));
+        reconnectDelay = topic.getArgAsLong(0);
+        if (reconnectDelay < 1)
+          reconnectDelay = 1;
+        if (reconnectDelay > RECONNECT_DELAY_MAX)
+          reconnectDelay = RECONNECT_DELAY_MAX;
+        reconnectDelayed = 0;
+        return TOPIC_OK;
+      } else {
+        return TOPIC_NO;
+      }
     } else {
       return TOPIC_NO;
     }
@@ -466,8 +480,21 @@ void Controller::t_1s_Update() {
   // Check MQTT state and try reconnect if necessary
   if (netState == NET_CONNECTED and mqtt_state == 0 and
       ffs.cfg.readItem("mqtt") == "on") {
-    logging.debug("MQTT try reconnect");
-    topicQueue.put("~/event/mqtt/reconnect");
+    if (reconnectDelayed >= reconnectDelay) {
+      logging.debug("MQTT try reconnect (delayed " +
+                    String(reconnectDelayed, DEC) + " s)");
+      topicQueue.put("~/set/mqtt/reconnect");
+      reconnectDelay *= 2;
+      if (reconnectDelay > RECONNECT_DELAY_MAX) {
+        reconnectDelay = RECONNECT_DELAY_MAX;
+        reconnectDelayed = 0;
+      }
+    } else {
+      reconnectDelayed++;
+    }
+  } else {
+    reconnectDelay = 1;
+    reconnectDelayed = 0;
   }
 
   // topicQueue.put("~/event/timer/1sUpdate");
@@ -517,6 +544,8 @@ void Controller::setConfigDefaults() {
     f = true;
   if (setConfigDefault("device_password", PASSWORD))
     f = true;
+    if (setConfigDefault("device_location", ""))
+      f = true;
   if (setConfigDefault("update", "manual"))
     f = true;
   if (setConfigDefault("ap", "auto"))

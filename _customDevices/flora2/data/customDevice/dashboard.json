@@ -36,11 +36,18 @@
     },
     {
       "type": "text",
-      "name": "uv",
-      "caption": "UV-A",
+      "name": "uvIntensity",
+      "caption": "UV-A Intensity",
       "readonly": 1,
-      "event": "~/event/device/uv",
+      "event": "~/event/device/uvIntensity",
       "suffix": " µW/cm²"
+    },
+    {
+      "type": "text",
+      "name": "uvRiskLevel",
+      "caption": "UV Risk Level",
+      "readonly": 1,
+      "event": "~/event/device/uvRiskLevel"
     },
     {
       "type": "grid",

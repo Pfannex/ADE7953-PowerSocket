@@ -8,6 +8,7 @@
 #include "customDeviceSetup.h"
 
 // modules required by device
+#include "modules/GPIO.h"
 #include "Adafruit_BMP280.h"
 #include "AS_BH1750.h"
 #include "Adafruit_VEML6070.h"
@@ -48,6 +49,9 @@ private:
   float measurePressurehPa();
   uint16_t measureUVLevel();
   float measureUVmuWpercm2();
+  uint16_t UVreadingToUVRiskLevel(uint16_t);
+  float UVreadingToUVmuWpercm2(uint16_t);
+
   float measureVoltage(int channel);
   void switchRelay(int relay, int state);
   void inform();
@@ -57,4 +61,13 @@ private:
   bool uvSensorIsPresent= false;
   bool mcpIsPresent= false;
   bool adsIsPresent= false;
+
+  GPIOinput button;
+  int configMode = 0;
+
+  GPIOoutput led;
+  void setLedMode(int value);
+
+  void setConfigMode(int value);
+
 };
