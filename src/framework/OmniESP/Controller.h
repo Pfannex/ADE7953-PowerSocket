@@ -104,6 +104,10 @@ private:
   bool startFtp();
   bool startNtp();
 
+  // reconnect delay
+  long reconnectDelay= 1; // in seconds
+  long reconnectDelayed= 0; // in seconds
+
   //WiFi
   sta_state_t staState = STA_UNKNOWN;
   ap_state_t  apState  = AP_UNKNOWN;
