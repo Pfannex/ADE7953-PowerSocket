@@ -86,6 +86,7 @@ void WebServer::start() {
   // get variables for templates
   macAddress= api.call("~/get/wifi/macAddress");
   deviceName= api.call("~/get/ffs/cfg/item/device_name");
+  deviceLocation= api.call("~/get/ffs/cfg/item/device_location");
   deviceType= api.call("~/get/device/type");
   deviceVersion= api.call("~/get/device/version");
   firmwareVersion= api.call("~/get/ffs/version/item/version");
@@ -228,6 +229,8 @@ String WebServer::subst(const String &var) {
     return macAddress;
   else if (var == "DEVICENAME")
     return deviceName;
+    else if (var == "DEVICELOCATION")
+      return deviceLocation;
   else if (var == "TYPE")
     return deviceType;
   else if (var == "VERSION")

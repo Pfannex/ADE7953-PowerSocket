@@ -511,17 +511,30 @@ void Controller::setConfigDefaults() {
   // we need to do this the hard way because the compiler optimizes the
   // the setConfigDefault() calls away if f is already true in a f= f || ..
   // sequence
-  if(setConfigDefault("device_username", USERNAME)) f= true;
-  if(setConfigDefault("device_password", PASSWORD)) f= true;
-  if(setConfigDefault("update", "manual")) f= true;
-  if(setConfigDefault("ap", "auto")) f= true;
-  if(setConfigDefault("ap_ssid", deviceName)) f= true;
-  if(setConfigDefault("ap_password", APPASSWORD)) f= true;
-  if(setConfigDefault("wifi", "off")) f= true;
-  if(setConfigDefault("lan", "off")) f= true;
-  if(setConfigDefault("ntp", "off")) f= true;
-  if(setConfigDefault("ftp", "off")) f= true;
-  if(setConfigDefault("mqtt", "off")) f= true;
+  if (setConfigDefault("device_username", USERNAME))
+    f = true;
+  if (setConfigDefault("device_password", PASSWORD))
+    f = true;
+    if (setConfigDefault("device_location", ""))
+      f = true;
+  if (setConfigDefault("update", "manual"))
+    f = true;
+  if (setConfigDefault("ap", "auto"))
+    f = true;
+  if (setConfigDefault("ap_ssid", deviceName))
+    f = true;
+  if (setConfigDefault("ap_password", APPASSWORD))
+    f = true;
+  if (setConfigDefault("wifi", "off"))
+    f = true;
+  if (setConfigDefault("lan", "off"))
+    f = true;
+  if (setConfigDefault("ntp", "off"))
+    f = true;
+  if (setConfigDefault("ftp", "off"))
+    f = true;
+  if (setConfigDefault("mqtt", "off"))
+    f = true;
   // ensure minimum length of AP password
   String appassword= ffs.cfg.readItem("ap_password");
   if(appassword.length()< 8) {
