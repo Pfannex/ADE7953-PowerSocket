@@ -39,7 +39,7 @@ void FFS::mount() {
     sprintf(txt, "%luKiB/%luKiB used, block size: %luB, page size: %luB",
       fs_info.usedBytes/1024, fs_info.totalBytes/1024,
       fs_info.blockSize, fs_info.pageSize);
-    logging.debug(String(txt));
+    logging.info(String(txt));
 
 
     // load rootStrings
@@ -174,7 +174,7 @@ String FFS::get(Topic &topic) {
   } else if (topic.itemIs(3, "version")) {
     tmpFile = &vers;
   }
-  
+
   if (tmpFile != NULL) {
     // filePath
     if (topic.itemIs(4, "filePath")) {
