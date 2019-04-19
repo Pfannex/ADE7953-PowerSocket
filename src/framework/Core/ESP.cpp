@@ -28,8 +28,16 @@ void ESP_Tools::start() {
   logging.debug(String(txt));
 
   checkFlash();
-  //sprintf(deviceName, "%06x", chipId());
+  sprintf(deviceName, "%06x", chipId());
 
+}
+
+//...............................................................................
+//  physical memory in kiB
+//...............................................................................
+
+uint32_t ESP_Tools::physicalMemory() {
+  return ESP.getFlashChipRealSize()/1024;
 }
 
 //...............................................................................

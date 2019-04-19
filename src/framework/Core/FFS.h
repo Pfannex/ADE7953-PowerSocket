@@ -71,6 +71,9 @@ public:
 //API
   String set(Topic& topic);
   String get(Topic& topic);
+
+  uint32_t totalMemory();
+
 private:
 
 };

@@ -92,6 +92,9 @@ public:
   // deviceName
   String getDeviceName();
 
+  // firmware and hardware config
+  String fwConfig();
+
 private:
   String deviceName;
 
