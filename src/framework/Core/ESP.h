@@ -42,6 +42,8 @@ public:
   bool updateRequested();
   String update();
 
+  uint32_t physicalMemory();
+
   String set(Topic &topic);
   String get(Topic &topic);
 

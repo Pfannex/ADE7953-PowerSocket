@@ -26,6 +26,7 @@ private:
   String deviceType;
   String deviceVersion;
   String firmwareVersion;
+  String flags;
 
   bool uploadOk = true; // flag for upload running fine
 
