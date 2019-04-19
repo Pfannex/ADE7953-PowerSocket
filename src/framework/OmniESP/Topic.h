@@ -61,7 +61,7 @@ typedef std::function<void(const time_t, Topic&)> TopicFunction;
 //  Topic Queue
 //###############################################################################
 
-#define TOPIC_QUEUE_MAX 10
+#define TOPIC_QUEUE_MAX 20
 
 struct element_t {
   struct element_t* prev;
