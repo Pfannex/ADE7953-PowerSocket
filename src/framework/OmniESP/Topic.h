@@ -33,6 +33,7 @@ public:
   // overloaded. We thus choose another name.
   // detects and converts hex (0x) and octal (0..) values
   long getArgAsLong(unsigned int index);
+  float getArgAsFloat(unsigned int index);
 
   String modifyTopic(unsigned int index);
   void setItem(unsigned int index, const string topicName);
