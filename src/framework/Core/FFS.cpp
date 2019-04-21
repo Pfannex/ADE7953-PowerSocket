@@ -321,6 +321,52 @@ String FFSjsonFile::readItem(String itemName) {
   }
 }
 
+long FFSjsonFile::readItemLong(String itemName) {
+  if(!itemName) {
+    logging.error("software error: calling FFSjsonFile::readItem() without argument");
+    return 0;
+  }
+  //D(itemName.c_str());
+  DynamicJsonBuffer JsonBuffer;
+  JsonObject &rootObject = JsonBuffer.parseObject(root);
+  if (rootObject.success()) {
+    //Dl;
+    JsonVariant value= rootObject[itemName];
+    if(value.success()) {
+      return value.as<long>();
+    } else {
+      logging.error("no item "+itemName+" in file "+filePath);
+      return 0;
+    }
+  } else {
+    logging.error("FFSjsonFile::readItem(String): could not access root object for item "+itemName+" in file "+filePath);
+    return 0;
+  }
+}
+
+float FFSjsonFile::readItemFloat(String itemName) {
+  if(!itemName) {
+    logging.error("software error: calling FFSjsonFile::readItem() without argument");
+    return 0.0;
+  }
+  //D(itemName.c_str());
+  DynamicJsonBuffer JsonBuffer;
+  JsonObject &rootObject = JsonBuffer.parseObject(root);
+  if (rootObject.success()) {
+    //Dl;
+    JsonVariant value= rootObject[itemName];
+    if(value.success()) {
+      return value.as<float>();
+    } else {
+      logging.error("no item "+itemName+" in file "+filePath);
+      return 0.0;
+    }
+  } else {
+    logging.error("FFSjsonFile::readItem(String): could not access root object for item "+itemName+" in file "+filePath);
+    return 0.0;
+  }
+}
+
 //...............................................................................
 //  read Item from jsonArrayString
 //...............................................................................
@@ -357,6 +403,39 @@ bool FFSjsonFile::writeItem(String itemName, String value) {
     return false;
   }
 }
+
+bool FFSjsonFile::writeItemLong(String itemName, long value) {
+  // logging.info(itemName + ":" + value);
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject &json = jsonBuffer.parseObject(root);
+  if (json.success()) {
+    // json.printTo(Serial);
+    json[itemName] = value;
+    root = ""; // printTo(String) is additive!!
+    json.printTo(root);
+    // json.printTo(Serial);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool FFSjsonFile::writeItemFloat(String itemName, float value) {
+  // logging.info(itemName + ":" + value);
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject &json = jsonBuffer.parseObject(root);
+  if (json.success()) {
+    // json.printTo(Serial);
+    json[itemName] = value;
+    root = ""; // printTo(String) is additive!!
+    json.printTo(root);
+    // json.printTo(Serial);
+    return true;
+  } else {
+    return false;
+  }
+}
+
 
 //-------------------------------------------------------------------------------
 //  FFSjsonFile private

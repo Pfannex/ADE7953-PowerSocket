@@ -39,8 +39,12 @@ public:
 
   void loadFile();
   String readItem(String itemName);
+  long readItemLong(String itemName);
+  float readItemFloat(String itemName);
   String readItem(int item);
   bool writeItem(String itemName, String value);
+  bool writeItemLong(String itemName, long value);
+  bool writeItemFloat(String itemName, float value);
   bool saveFile();
 
 private:
