@@ -405,7 +405,6 @@ bool FFSjsonFile::writeItem(String itemName, String value) {
 }
 
 bool FFSjsonFile::writeItemLong(String itemName, long value) {
-  Di(itemName.c_str(), value);
   // logging.info(itemName + ":" + value);
   DynamicJsonBuffer jsonBuffer;
   JsonObject &json = jsonBuffer.parseObject(root);
@@ -422,8 +421,6 @@ bool FFSjsonFile::writeItemLong(String itemName, long value) {
 }
 
 bool FFSjsonFile::writeItemFloat(String itemName, float value) {
-  D("writeItemFloat");
-  Df(itemName.c_str(), value);
   // logging.info(itemName + ":" + value);
   DynamicJsonBuffer jsonBuffer;
   JsonObject &json = jsonBuffer.parseObject(root);
