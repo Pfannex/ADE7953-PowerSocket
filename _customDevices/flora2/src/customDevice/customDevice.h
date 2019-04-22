@@ -34,6 +34,8 @@ public:
   String set(Topic &topic);
   String get(Topic &topic);
   void on_events(Topic &topic);
+  String getDashboard();
+  String fillDashboard();
 
 private:
   Adafruit_BMP280 pressureSensor;
@@ -51,6 +53,8 @@ private:
   float measureUVmuWpercm2();
   uint16_t UVreadingToUVRiskLevel(uint16_t);
   float UVreadingToUVmuWpercm2(uint16_t);
+  float voltageToVolumeLiter(float);
+  float voltageToMoisturePercent(float);
 
   float measureVoltage(int channel);
   void switchRelay(int relay, int state);
@@ -61,6 +65,14 @@ private:
   bool uvSensorIsPresent= false;
   bool mcpIsPresent= false;
   bool adsIsPresent= false;
+
+  void getConfig();
+  void setConfig();
+  void calcConfig();
+  // config tank volume
+  float tVoltage1, tVoltage2, tVolume1, tVolume2, tSlope;
+  // config moisture sensor
+  float mVoltage1, mVoltage2, mMoisture1, mMoisture2, mSlope;
 
   GPIOinput button;
   int configMode = 0;
