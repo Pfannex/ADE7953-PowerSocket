@@ -17,6 +17,10 @@
 #define Di(msg, value)                                                         \
   Serial.printf("  >>> %s %ld (%d %s)\r\n", msg, (value), __LINE__, __FILE__);
 
+// print a message and a floating point value
+#define Df(msg, value)                                                         \
+  Serial.printf("  >>> %s %g (%d %s)\r\n", msg, (value), __LINE__, __FILE__);
+
 // print a message and string value
 #define Ds(msg, value)                                                         \
   Serial.printf("  >>> %s %s (%d %s)\r\n", msg, (value), __LINE__, __FILE__);
