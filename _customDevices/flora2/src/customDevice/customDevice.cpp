@@ -178,8 +178,11 @@ float customDevice::measureUVmuWpercm2()
 
 float customDevice::measureVoltage(int channel)
 {
+        float voltage;
         Di("measure voltage", channel);
-        return ads.readADC_SingleEnded(channel) * 0.000125;
+        voltage= ads.readADC_SingleEnded(channel) * 0.000125;
+        Df("voltage= ", voltage);
+        return voltage;
 }
 
 // https://www.vishay.com/docs/84277/veml6070.pdf, BASIC CHARACTERISTICS
@@ -268,8 +271,7 @@ void customDevice::switchRelay(int relay, int state)
 {
         Di("relay=", relay);
         Di("state=", state);
-        // mcp.digitalWrite(relay, state);
-        mcp.digitalWrite(0, state ? HIGH : LOW);
+        mcp.digitalWrite(relay, state ? LOW : HIGH);
         topicQueue.put("~/event/device/" + String(relays::names[relay]) + " " +
                        String(state));
 }
@@ -340,7 +342,6 @@ String customDevice::set(Topic &topic)
                 tVoltage1 = measureVoltage(TANK_VOLTAGE);
                 tVolume1 = topic.getArgAsFloat(0);
                 setConfig();
-                D("ahjajaja");
                 return TOPIC_OK;
         }
         else if (topic.itemIs(3, "volume2"))
