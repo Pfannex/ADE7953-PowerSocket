@@ -21,6 +21,7 @@ public:
   Widget();
   Widget(String &type);
   Widget(const char* type);
+  virtual ~Widget();
   String name; // must be unique across the whole structure
   String type;
   String value;
@@ -44,6 +45,8 @@ public:
 
 class WidgetArray {
 public:
+  ~WidgetArray();
+
   virtual JsonArray &serialize(DynamicJsonBuffer &);
   virtual void deserialize(JsonArray &);
 
@@ -84,6 +87,7 @@ private:
   WidgetArray data;
 public:
   WidgetGroup();
+  virtual ~WidgetGroup();
   // add the widget to the named group at given position
   virtual Widget *insertWidget(String &type, String &group, int position = -1);
   virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);

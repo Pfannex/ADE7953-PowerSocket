@@ -1,0 +1,16 @@
+[
+  {
+     "type":"text",
+     "name":"clock",
+     "caption":"Time",
+     "readonly":1,
+     "event":"~/event/clock/time",
+     "inputtype":"datetime"
+  },
+  {
+    "type": "button",
+    "name": "add",
+    "caption": "add Item to Dashboard",
+    "action": "~/set/device/deviceCFG/addItem"
+  }
+]

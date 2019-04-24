@@ -82,6 +82,12 @@ String SysUtils::strTime(time_t t) {
   return String(txt);
 }
 
+String SysUtils::strTimeHHMM(time_t t) {
+  char txt[6];
+  sprintf(txt, "%02d:%02d", hour(t), minute(t));
+  return String(txt);
+}
+
 String SysUtils::strTime_ms(unsigned long long t) {
   char txt[128];
   time_t td = t / 1000;

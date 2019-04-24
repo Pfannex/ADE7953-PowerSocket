@@ -81,9 +81,9 @@ unsigned long long Clock::nowMillis() {
   if (ntpClient == nullptr) {
     return uptimeMillis();
   } else {
-    unsigned long long t= ntpClient->getEpochMillis();
-    unsigned long long ts= t/1000;
-    return t+(tz.toLocal(ts)-ts)*1000;
+    unsigned long long t = ntpClient->getEpochMillis();
+    unsigned long long ts = t / 1000;
+    return t + (tz.toLocal(ts) - ts) * 1000;
   }
 }
 
@@ -95,7 +95,7 @@ unsigned long long Clock::nowMillis() {
 void Clock::handle() {
 
   updateUptime();
-  unsigned long t;
+  time_t t;
   if (ntpClient != nullptr) {
     // this polls the NTP server only if NTP_UPDATE_INTERVAL has elapsed
     ntpClient->update();
@@ -103,8 +103,14 @@ void Clock::handle() {
   t = now();
   if (t != lastTime) {
     lastTime = t;
-    topicQueue.put("~/event/clock/time " + SysUtils::strDateTime(now()));
-    // topicQueue.put("~/event/clock/time", t);
+#if defined(CLOCKTICK_MINUTE)
+    struct tm *tp = localtime(&t);
+    if (!tp->tm_sec)
+      topicQueue.put("~/event/clock/time " + SysUtils::strDate(t) + " " +
+                     SysUtils::strTimeHHMM(t));
+#else
+    topicQueue.put("~/event/clock/time " + SysUtils::strDateTime(t));
+#endif
   }
 }
 
