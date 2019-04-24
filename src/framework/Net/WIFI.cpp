@@ -166,33 +166,38 @@ void WIFI::startSTA() {
 //...............................................................................
 void WIFI::startAP(int state) {
   if (state) {
+    logging.debug("starting access point");
+    //Dl;
     WiFi.mode(WIFI_AP);
+    //Dl;
     IPAddress apIP(192,168,4,1);
     IPAddress gateway(192,168,4,1);
     IPAddress subnet(255,255,255,0);
+    //Dl;
     String apSSID = ffs.cfg.readItem("ap_ssid");
     String apPSK = ffs.cfg.readItem("ap_password");
+    //Dl;
 
-    logging.info("set Accesspoint configuration");
+    logging.info("configuring access point");
+    logging.debug("  IP address: " + apIP.toString());
+    logging.debug("  gateway:    " + gateway.toString());
+    logging.debug("  subnet:     " + subnet.toString());
     if (WiFi.softAPConfig(apIP, gateway, subnet)){
-      logging.debug("  IP address: " + apIP.toString());
-      logging.debug("  gateway:    " + gateway.toString());
-      logging.debug("  subnet:     " + subnet.toString());
-
       if (WiFi.softAP(apSSID.c_str(), apPSK.c_str())) {
-        logging.info("Accesspoint is now ON");
+        logging.info("access point is now on");
       } else {
-        logging.error("starting Accesspoint FAILED");
+        logging.error("starting access point failed");
       }
     } else {
-      logging.error("set Accesspoint configuration FAILED");
+      logging.error("access point configuration failed");
     }
     if (on_ap_no_stations_connected != nullptr) on_ap_no_stations_connected();
 
   } else {
+    logging.debug("stopping access point");
     WiFi.mode(WIFI_STA);
     WiFi.softAPdisconnect(true);
-    logging.info("Accesspoint is now OFF");
+    logging.info("access point is now off");
   }
 }
 
