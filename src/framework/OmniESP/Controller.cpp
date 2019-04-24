@@ -479,6 +479,9 @@ String Controller::call(Topic &topic) {
     } else if (topic.itemIs(2, "wifi")) {
       return wifi.get(topic);
     } else if (topic.itemIs(2, "device")) {
+      if(topic.itemIs(3, "flags")) {
+        return fwConfig();
+      } else if(topic.itemIs(3, "version")) {
         return device.getVersion();
       } else if (topic.itemIs(3, "type")) {
         return device.getType();
@@ -494,9 +497,6 @@ String Controller::call(Topic &topic) {
     return TOPIC_NO;
   }
   // D("Controller: end call");
-                        if(topic.itemIs(3, "flags")) {
-                          return fwConfig();
-                        } else if(topic.itemIs(3, "version")) {
 }
 
 //...............................................................................
