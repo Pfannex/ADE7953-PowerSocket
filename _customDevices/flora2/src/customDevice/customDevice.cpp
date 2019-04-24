@@ -268,8 +268,7 @@ void customDevice::switchRelay(int relay, int state)
 {
         Di("relay=", relay);
         Di("state=", state);
-        // mcp.digitalWrite(relay, state);
-        mcp.digitalWrite(0, state ? HIGH : LOW);
+        mcp.digitalWrite(relay, state ? LOW : HIGH);
         topicQueue.put("~/event/device/" + String(relays::names[relay]) + " " +
                        String(state));
 }
