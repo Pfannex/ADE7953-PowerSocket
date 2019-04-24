@@ -48,38 +48,62 @@ void Controller::setTopicFunction(TopicFunction topicFn) {
 //-------------------------------------------------------------------------------
 //  start
 //-------------------------------------------------------------------------------
+
+String Controller::fwConfig() {
+
+        char txt[128];
+        sprintf(txt, "%u kiB/%u kiB%s%s",
+                espTools.physicalMemory(),
+                ffs.totalMemory(),
+  #ifndef NO_OTA
+                ", OTA",
+  #else
+                "",
+  #endif
+  #ifdef CLOCKTICK_MINUTE
+                ", tick=min"
+  #else
+                ", tick=sec"
+  #endif
+                );
+        return String(txt);
+}
+//-------------------------------------------------------------------------------
+//  start
+//-------------------------------------------------------------------------------
 void Controller::start() {
 
-  //
-  // bootstrapping
-  //
+        //
+        // bootstrapping
+        //
 
-  // start the clock
-  clock.start();
+        // start the clock
+        clock.start();
 
-  // enable the logging subsystem
-  logging.start();
-  logging.info(SysUtils::fullVersion()); // framework version
+        // enable the logging subsystem
+        logging.start();
+        logging.info(SysUtils::fullVersion()); // framework version
 
-  // start esp tools
-  espTools.start();
+        // start esp tools
+        espTools.start();
 
-  // fire up the FFS
-  ffs.mount();
+        // fire up the FFS
+        ffs.mount();
 
-  // show the versioning
-  logging.info("version: " + ffs.vers.readItem("version"));
-  logging.info("date   : " + ffs.vers.readItem("date"));
+        // show the versioning
+        logging.info("version: "+ffs.vers.readItem("version"));
+        logging.info("date   : "+ffs.vers.readItem("date"));
+        logging.info("config : "+fwConfig());
 
-  // set config defaults
-  setConfigDefaults();
+        // set config defaults
+        setConfigDefaults();
 
   // start FTP-Server and Web-server
   startFtp();
   // topicQueue.put("~/set/webserver/state", 1);
 
-  // start WiFi for the first time
-  wifi.start();
+        // start WiFi for the first time
+        wifi.start();
 
   // startup the device
   device.start();
@@ -97,13 +121,13 @@ String Controller::getDeviceName() { return deviceName; }
 //...............................................................................
 void Controller::handle() {
 
-  wifi.handle();
-  on_wifi_state_change();
-  handleWifiTimout();
+        wifi.handle();
+        on_wifi_state_change();
+        handleWifiTimout();
 
-  ftpSrv.handleFTP();
-  clock.handle();
-  device.handle();
+        ftpSrv.handleFTP();
+        clock.handle();
+        device.handle();
 
   // flash?
   if (espTools.updateRequested()) {
@@ -143,9 +167,9 @@ void Controller::handleEvent(String &topicsArgs) {
   // logging.debug("handling event " + topicsArgs);
   Topic topic(topicsArgs);
 
-  // propagate event to views and the device
-  viewsUpdate(t, topic);
-  device.on_events(topic);
+        // propagate event to views and the device
+        viewsUpdate(t, topic);
+        device.on_events(topic);
 
   // configMode request from devices, only if supported by device
   if (topic.modifyTopic(0) == "event/device/configMode") {
@@ -166,43 +190,43 @@ void Controller::on_wl_connected() {
   logging.info("STA connected to " + WiFi.SSID() + " | IP " +
                WiFi.localIP().toString());
 
-  startNtp();
-  on_netConnected();
+        startNtp();
+        on_netConnected();
 }
 //...............................................................................
 //  EVENT wifi has disconnected
 //...............................................................................
 void Controller::on_wl_connect_failed() {
-  on_wifi_state_change();
-  logging.info("WiFi STA has failed to connect");
-  topicQueue.put("~/event/wifi/wl_connect_failed");
-  on_netDisconnected();
+        on_wifi_state_change();
+        logging.info("WiFi STA has failed to connect");
+        topicQueue.put("~/event/wifi/wl_connect_failed");
+        on_netDisconnected();
 }
 //...............................................................................
 //  EVENT wifi no SSID avail
 //...............................................................................
 void Controller::on_wl_no_ssid_avail() {
-  on_wifi_state_change();
-  logging.info("WiFi STA SSID is not avail");
-  topicQueue.put("~/event/wifi/no_ssid_avail");
-  on_netDisconnected();
+        on_wifi_state_change();
+        logging.info("WiFi STA SSID is not avail");
+        topicQueue.put("~/event/wifi/no_ssid_avail");
+        on_netDisconnected();
 }
 
 //...............................................................................
 //  EVENT AP has connected with stations
 //...............................................................................
 void Controller::on_ap_stations_connected() {
-  on_wifi_state_change();
-  logging.info("WiFi AP open with connected stations");
-  topicQueue.put("~/event/wifi/ap_stations_connected");
+        on_wifi_state_change();
+        logging.info("WiFi AP open with connected stations");
+        topicQueue.put("~/event/wifi/ap_stations_connected");
 }
 //...............................................................................
 //  EVENT AP has opened without stations
 //...............................................................................
 void Controller::on_ap_no_stations_connected() {
-  on_wifi_state_change();
-  logging.info("WiFi AP open without connected stations");
-  topicQueue.put("~/event/wifi/ap_no_stations_connected");
+        on_wifi_state_change();
+        logging.info("WiFi AP open without connected stations");
+        topicQueue.put("~/event/wifi/ap_no_stations_connected");
 
   // is this the right place?
   staState = STA_DISCONNECTED;
@@ -213,49 +237,49 @@ void Controller::on_ap_no_stations_connected() {
 //  EVENT WiFi-Scan result
 //...............................................................................
 void Controller::on_wifi_scan_result(String result) {
-  logging.info("Networkscan done");
-  logging.info(result);
+        logging.info("Networkscan done");
+        logging.info(result);
 
-  topicQueue.put("~/event/wifi/scanResult " + result);
+        topicQueue.put("~/event/wifi/scanResult " + result);
 }
 
 //...............................................................................
 //  EVENT LAN has connected
 //...............................................................................
 void Controller::on_lanConnected() {
-  lanState = LAN_CONNECTED;
-  logging.info("LAN has connected");
-  topicQueue.put("~/event/lan/connected", 1);
-  on_netConnected();
+        lanState = LAN_CONNECTED;
+        logging.info("LAN has connected");
+        topicQueue.put("~/event/lan/connected", 1);
+        on_netConnected();
 }
 
 //...............................................................................
 //  EVENT lan has disconnected
 //...............................................................................
 void Controller::on_lanDisconnected() {
-  lanState = LAN_DISCONNECTED;
-  logging.info("LAN has disconnected");
-  topicQueue.put("~/event/lan/connected", 0);
-  on_netDisconnected();
+        lanState = LAN_DISCONNECTED;
+        logging.info("LAN has disconnected");
+        topicQueue.put("~/event/lan/connected", 0);
+        on_netDisconnected();
 }
 //...............................................................................
 //  EVENT Network has connected
 //...............................................................................
 void Controller::on_netConnected() {
-  netState = NET_CONNECTED;
-  logging.info("Network connection established");
-  topicQueue.put("~/event/net/connected", 1);
+        netState = NET_CONNECTED;
+        logging.info("Network connection established");
+        topicQueue.put("~/event/net/connected", 1);
 }
 
 //...............................................................................
 //  EVENT lan has disconnected
 //...............................................................................
 void Controller::on_netDisconnected() {
-  if (staState != STA_CONNECTED and lanState != LAN_CONNECTED) {
-    netState = NET_DISCONNECTED;
-    logging.info("Network connection aborted");
-    topicQueue.put("~/event/net/connected", 0);
-  }
+        if (staState != STA_CONNECTED and lanState != LAN_CONNECTED) {
+                netState = NET_DISCONNECTED;
+                logging.info("Network connection aborted");
+                topicQueue.put("~/event/net/connected", 0);
+        }
 }
 
 //...............................................................................
@@ -271,32 +295,32 @@ void Controller::on_config_mode_on() {
 //  EVENT config mode OFF
 //...............................................................................
 void Controller::on_config_mode_off() {
-  logging.info("config mode OFF");
-  if (staState != STA_CONNECTED and apState == AP_OPEN_WITHOUT_STATION) {
-    wifi.startAP(false);
-    wifi.startSTA();
-  }
+        logging.info("config mode OFF");
+        if (staState != STA_CONNECTED and apState == AP_OPEN_WITHOUT_STATION) {
+                wifi.startAP(false);
+                wifi.startSTA();
+        }
 }
 
 //...............................................................................
 //  EVENT STA timeout
 //...............................................................................
 void Controller::on_staTimeout() {
-  if (wifi.apMode != "off") {
-    logging.info("STA timeout starting access point");
-    wifi.startAP(true);
-  }
+        if (wifi.apMode != "off") {
+                logging.info("STA timeout starting access point");
+                wifi.startAP(true);
+        }
 }
 
 //...............................................................................
 //  EVENT AP timeout
 //...............................................................................
 void Controller::on_apTimeout() {
-  if (wifi.apMode == "auto") {
-    logging.info("AP timeout try STA reconnect");
-    wifi.startAP(false);
-    wifi.startSTA();
-  }
+        if (wifi.apMode == "auto") {
+                logging.info("AP timeout try STA reconnect");
+                wifi.startAP(false);
+                wifi.startSTA();
+        }
 }
 
 //...............................................................................
@@ -339,9 +363,9 @@ void Controller::on_wifi_state_change() {
       // change blink frequency
       topicQueue.put("~/event/device/led/setmode", 2);
 
-      logging.info("WiFi state changed to AP_OPEN_WITHOUT_STATION");
-      logging.debug("  STA_DISCONNECTED");
-      logging.debug("  AP_OPEN_WITHOUT_STATION");
+                        logging.info("WiFi state changed to AP_OPEN_WITHOUT_STATION");
+                        logging.debug("  STA_DISCONNECTED");
+                        logging.debug("  AP_OPEN_WITHOUT_STATION");
 
       // turn off staTimeout
       staTimeoutActive = false;
@@ -357,9 +381,9 @@ void Controller::on_wifi_state_change() {
       // change blink frequency
       topicQueue.put("~/event/device/led/setmode", 3);
 
-      logging.info("WiFi state changed to AP_OPEN_WITH_STATION");
-      logging.debug("  STA_DISCONNECTED");
-      logging.debug("  AP_OPEN_WITH_STATION");
+                        logging.info("WiFi state changed to AP_OPEN_WITH_STATION");
+                        logging.debug("  STA_DISCONNECTED");
+                        logging.debug("  AP_OPEN_WITH_STATION");
 
       // turn off apTimeout
       apTimeoutActive = false;
@@ -380,7 +404,7 @@ void Controller::on_mqtt_disconnected() { mqtt_state = 0; }
 //  handle WiFi timeout
 //...............................................................................
 void Controller::handleWifiTimout() {
-  unsigned long long now = clock.nowMillis();
+        unsigned long long now = clock.nowMillis();
 
   if (staTimeoutActive)
     if (now - staTimeout_t > staTimeout) {
@@ -455,7 +479,6 @@ String Controller::call(Topic &topic) {
     } else if (topic.itemIs(2, "wifi")) {
       return wifi.get(topic);
     } else if (topic.itemIs(2, "device")) {
-      if (topic.itemIs(3, "version")) {
         return device.getVersion();
       } else if (topic.itemIs(3, "type")) {
         return device.getType();
@@ -471,6 +494,9 @@ String Controller::call(Topic &topic) {
     return TOPIC_NO;
   }
   // D("Controller: end call");
+                        if(topic.itemIs(3, "flags")) {
+                          return fwConfig();
+                        } else if(topic.itemIs(3, "version")) {
 }
 
 //...............................................................................
@@ -580,9 +606,9 @@ void Controller::setConfigDefaults() {
 //...............................................................................
 void Controller::viewsUpdate(time_t t, Topic &topic) {
 
-  if (topicFunction != nullptr)
-    // this is done in the API topic.setItem(0, deviceName.c_str());
-    topicFunction(t, topic);
+        if (topicFunction != nullptr)
+                // this is done in the API topic.setItem(0, deviceName.c_str());
+                topicFunction(t, topic);
 }
 
 //...............................................................................
@@ -604,18 +630,18 @@ bool Controller::startFtp() {
 //  Start NTP
 //...............................................................................
 bool Controller::startNtp() {
-  if (ffs.cfg.readItem("ntp") == "on") {
-    // start the clock with NTP updater
-    String ntpServer = ffs.cfg.readItem("ntp_serverip");
-    char txt[128];
-    sprintf(txt, "starting NTP client for %.127s", ntpServer.c_str());
-    logging.info(txt);
-    // TODO: to have a configurable time zone, a set of timezones needs to
-    // be defined in Clock.h. The right pair of TimeChangeRules need to
-    // be determined based on what's in the configuration and set in
-    // Clock's tz variable.
-    clock.start(ntpServer.c_str(), NO_TIME_OFFSET, NTP_UPDATE_INTERVAL);
-  } else {
-    logging.info("NTP client is off");
-  }
+        if (ffs.cfg.readItem("ntp") == "on") {
+                // start the clock with NTP updater
+                String ntpServer = ffs.cfg.readItem("ntp_serverip");
+                char txt[128];
+                sprintf(txt, "starting NTP client for %.127s", ntpServer.c_str());
+                logging.info(txt);
+                // TODO: to have a configurable time zone, a set of timezones needs to
+                // be defined in Clock.h. The right pair of TimeChangeRules need to
+                // be determined based on what's in the configuration and set in
+                // Clock's tz variable.
+                clock.start(ntpServer.c_str(), NO_TIME_OFFSET, NTP_UPDATE_INTERVAL);
+        } else {
+                logging.info("NTP client is off");
+        }
 }
