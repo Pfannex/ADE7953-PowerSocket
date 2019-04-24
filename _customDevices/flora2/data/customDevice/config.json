@@ -1,3 +1,11 @@
 {
-    "pollInterval":"5000"
+    "pollInterval":"5000",
+    "tVoltage1": 0.000,
+    "tVolume1": 0.0,
+    "tVoltage2": 0.000,
+    "tVolume2": 3000.0,
+    "mVoltage1": 0.000,
+    "mMoisture1": 0.0,
+    "mVoltage2": 0.000,
+    "mMoisture2": 100.0
 }

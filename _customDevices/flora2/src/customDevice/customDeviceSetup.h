@@ -57,7 +57,7 @@
 // GPIO MCP23017
 //
 // 0x20 default
-#define ADDRESS_MCP (0x21)
+#define ADDRESS_MCP (0x20)
 
 //
 // voltage sensor ADS1115
@@ -79,11 +79,21 @@ struct relays {
 };
 
 //
+// tank measured as voltage
+//
+#define TANK_VOLTAGE (1)
+
+//
+// moisture measured as voltage
+//
+#define MOISTURE_VOLTAGE (0)
+
+//
 // button D7
 //
 #define PIN_BUTTON 13
 
 //
-// built-in LED 
+// built-in LED
 //
 #define PIN_LED 2

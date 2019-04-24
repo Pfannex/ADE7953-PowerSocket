@@ -33,6 +33,7 @@ public:
   // overloaded. We thus choose another name.
   // detects and converts hex (0x) and octal (0..) values
   long getArgAsLong(unsigned int index);
+  float getArgAsFloat(unsigned int index);
 
   String modifyTopic(unsigned int index);
   void setItem(unsigned int index, const string topicName);
@@ -61,7 +62,7 @@ typedef std::function<void(const time_t, Topic&)> TopicFunction;
 //  Topic Queue
 //###############################################################################
 
-#define TOPIC_QUEUE_MAX 10
+#define TOPIC_QUEUE_MAX 20
 
 struct element_t {
   struct element_t* prev;

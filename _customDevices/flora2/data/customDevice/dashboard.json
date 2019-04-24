@@ -1,101 +1,171 @@
 [{
-  "type": "group",
-  "name": "dasboard",
-  "caption": "Dashboard",
-  "data": [{
-      "type": "text",
-      "name": "clock",
-      "caption": "Time",
-      "readonly": 1,
-      "event": "~/event/clock/time",
-      "inputtype": "datetime"
-    },
-    {
-      "type": "text",
-      "name": "pressure",
-      "caption": "Pressure",
-      "readonly": 1,
-      "event": "~/event/device/pressure",
-      "suffix": " hPa"
-    },
-    {
-      "type": "text",
-      "name": "temperature",
-      "caption": "Temperature",
-      "readonly": 1,
-      "event": "~/event/device/temperature",
-      "suffix": " °C"
-    },
-    {
-      "type": "text",
-      "name": "illuminance",
-      "caption": "Illuminance",
-      "readonly": 1,
-      "event": "~/event/device/illuminance",
-      "suffix": " lux"
-    },
-    {
-      "type": "text",
-      "name": "uvIntensity",
-      "caption": "UV-A Intensity",
-      "readonly": 1,
-      "event": "~/event/device/uvIntensity",
-      "suffix": " µW/cm²"
-    },
-    {
-      "type": "text",
-      "name": "uvRiskLevel",
-      "caption": "UV Risk Level",
-      "readonly": 1,
-      "event": "~/event/device/uvRiskLevel"
-    },
-    {
-      "type": "grid",
-      "data": [
-        [{
-            "type": "checkbox",
-            "name": "pump",
-            "caption": "Pump",
-            "action": "~/set/device/pump",
-            "event": "~/event/device/pump"
-          },
-          {
-            "type": "checkbox",
-            "name": "valve1",
-            "caption": "Valve 1",
-            "action": "~/set/device/valve1",
-            "event": "~/event/device/valve1"
-          },
-          {
-            "type": "checkbox",
-            "name": "valve2",
-            "caption": "Valve 2",
-            "action": "~/set/device/valve2",
-            "event": "~/event/device/valve2"
-          },
-          {
-            "type": "checkbox",
-            "name": "valve3",
-            "caption": "Valve 3",
-            "action": "~/set/device/valve3",
-            "event": "~/event/device/valve3"
-          }
+    "type": "group",
+    "name": "dasboard",
+    "caption": "Dashboard",
+    "data": [{
+        "type": "text",
+        "name": "clock",
+        "caption": "Time",
+        "readonly": 1,
+        "event": "~/event/clock/time",
+        "inputtype": "datetime"
+      },
+      {
+        "type": "text",
+        "name": "pressure",
+        "caption": "Pressure",
+        "readonly": 1,
+        "event": "~/event/device/pressure",
+        "suffix": " hPa"
+      },
+      {
+        "type": "text",
+        "name": "temperature",
+        "caption": "Temperature",
+        "readonly": 1,
+        "event": "~/event/device/temperature",
+        "suffix": " °C"
+      },
+      {
+        "type": "text",
+        "name": "illuminance",
+        "caption": "Illuminance",
+        "readonly": 1,
+        "event": "~/event/device/illuminance",
+        "suffix": " lux"
+      },
+      {
+        "type": "text",
+        "name": "uvIntensity",
+        "caption": "UV-A Intensity",
+        "readonly": 1,
+        "event": "~/event/device/uvIntensity",
+        "suffix": " µW/cm²"
+      },
+      {
+        "type": "text",
+        "name": "uvRiskLevel",
+        "caption": "UV Risk Level",
+        "readonly": 1,
+        "event": "~/event/device/uvRiskLevel"
+      },
+      {
+        "type": "text",
+        "name": "moisture",
+        "caption": "Moisture",
+        "readonly": 1,
+        "event": "~/event/device/moisture",
+        "suffix": " %"
+      },
+      {
+        "type": "text",
+        "name": "volume",
+        "caption": "Volume",
+        "readonly": 1,
+        "event": "~/event/device/volume",
+        "suffix": " l"
+      },
+      {
+        "type": "grid",
+        "data": [
+          [{
+              "type": "checkbox",
+              "name": "pump",
+              "caption": "Pump",
+              "action": "~/set/device/pump",
+              "event": "~/event/device/pump"
+            },
+            {
+              "type": "checkbox",
+              "name": "valve1",
+              "caption": "Valve 1",
+              "action": "~/set/device/valve1",
+              "event": "~/event/device/valve1"
+            },
+            {
+              "type": "checkbox",
+              "name": "valve2",
+              "caption": "Valve 2",
+              "action": "~/set/device/valve2",
+              "event": "~/event/device/valve2"
+            },
+            {
+              "type": "checkbox",
+              "name": "valve3",
+              "caption": "Valve 3",
+              "action": "~/set/device/valve3",
+              "event": "~/event/device/valve3"
+            }
+          ]
         ]
-      ]
-    },
-    {
-      "type": "checkbox",
-      "name": "lamp",
-      "caption": "Lamp",
-      "action": "~/set/device/lamp",
-      "event": "~/event/device/lamp"
-    },
-    {
-      "type": "checkbox",
-      "name": "camera",
-      "caption": "Camera",
-      "action": "~/set/device/camera",
-      "event": "~/event/device/camera"
-    }
-  ]
-}]
+      },
+      {
+        "type": "checkbox",
+        "name": "lamp",
+        "caption": "Lamp",
+        "action": "~/set/device/lamp",
+        "event": "~/event/device/lamp"
+      },
+      {
+        "type": "checkbox",
+        "name": "camera",
+        "caption": "Camera",
+        "action": "~/set/device/camera",
+        "event": "~/event/device/camera"
+      }
+    ]
+  },
+  {
+    "type": "group",
+    "name": "config",
+    "caption": "Configuration",
+    "data": [{
+      "type": "grid",
+      "data": [[{
+          "type": "text",
+          "readonly": 1,
+          "name": "voltage1",
+          "caption": "Voltage",
+          "event": "~/event/device/voltage1",
+          "suffix": " V"
+        },
+        {
+          "type": "text",
+          "name": "tVolume1",
+          "caption": "Volume 1",
+          "event": "~/event/device/volume1",
+          "action": "~/set/device/volume1"
+        },
+        {
+          "type": "text",
+          "name": "tVolume2",
+          "caption": "Volume 2",
+          "event": "~/event/device/volume2",
+          "action": "~/set/device/volume2"
+        }
+      ],[{
+          "type": "text",
+          "readonly": 1,
+          "name": "voltage0",
+          "caption": "Voltage",
+          "event": "~/event/device/voltage0",
+          "suffix": " V"
+        },
+        {
+          "type": "text",
+          "name": "mMoisture1",
+          "caption": "Moisture 1",
+          "event": "~/event/device/moisture1",
+          "action": "~/set/device/moisture1"
+        },
+        {
+          "type": "text",
+          "name": "mMoisture2",
+          "caption": "Moisture 2",
+          "event": "~/event/device/moisture2",
+          "action": "~/set/device/moisture2"
+        }
+      ]]
+    }]
+  }
+]

@@ -181,6 +181,13 @@ long Topic::getArgAsLong(unsigned int index) {
     return 0;
 }
 
+float Topic::getArgAsFloat(unsigned int index) {
+  if (index < arg.getCount())
+    return strtof(arg.string[index], NULL);
+  else
+    return 0.0;
+}
+
 
 //-------------------------------------------------------------------------------
 //  Topic private
