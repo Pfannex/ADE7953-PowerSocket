@@ -9,11 +9,13 @@
 //  constructor
 //-------------------------------------------------------------------------------
 customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
-    : Device(logging, topicQueue, ffs) {
+    : Device(logging, topicQueue, ffs)
+      {
 
   type = String(DEVICETYPE);
   version = String(DEVICEVERSION);
 }
+
 
 //...............................................................................
 // device start
@@ -21,25 +23,8 @@ customDevice::customDevice(LOGGING &logging, TopicQueue &topicQueue, FFS &ffs)
 
 void customDevice::start() {
 
-  Device::start(); // mandatory
-
-  // ... your code here ...
-  configItem = ffs.deviceCFG.readItem("configItem").toInt();
-  logging.info("configItem is "+String(configItem));
+  Device::start();
   logging.info("device running");
-}
-
-//...............................................................................
-// measure
-//...............................................................................
-
-float customDevice::measure() {
-  return 0.815;
-}
-
-void customDevice::inform() {
-  topicQueue.put("~/event/device/sensor1", measure());
-  topicQueue.put("~/event/device/sensor2 foobar");
 }
 
 //...............................................................................
@@ -47,12 +32,6 @@ void customDevice::inform() {
 //...............................................................................
 
 void customDevice::handle() {
-
-  unsigned long now = millis();
-  if (now - lastPoll >= 3000) {
-    lastPoll = now;
-    inform();
-  }
 }
 
 //...............................................................................
@@ -63,19 +42,25 @@ String customDevice::set(Topic &topic) {
   /*
   ~/set
   └─device             (level 2)
-    └─yourItem         (level 3)
-  */
+    └─deviceCFG        (level 3)
+    └─index            (level 4) individual setting
+    └─value            (level 4) individual setting
+    └─scanBus          (level 4) scan 1W-Bus for new devices
+*/
+
 
   logging.debug("device set topic " + topic.topic_asString() + " to " +
                 topic.arg_asString());
+  String ret = TOPIC_NO;
 
-  if (topic.getItemCount() != 4) // ~/set/device/yourItem
-    return TOPIC_NO;
-  if (topic.itemIs(3, "yourItem")) {
-    return TOPIC_OK;
-  } else {
-    return TOPIC_NO;
+  if (topic.itemIs(3, "deviceCFG")) {
+    //modify dashboard-------------------
+    if (topic.itemIs(4, "addItem")) {
+      modifyDashboard();
+      return TOPIC_OK;
+    }
   }
+  return ret;
 }
 
 //...............................................................................
@@ -94,7 +79,7 @@ String customDevice::get(Topic &topic) {
   if (topic.getItemCount() != 4) // ~/get/device/sensor1
     return TOPIC_NO;
   if (topic.itemIs(3, "sensor1")) {
-    return String(measure());
+    return "";
   } else {
     return TOPIC_NO;
   }
@@ -104,17 +89,58 @@ String customDevice::get(Topic &topic) {
 // event handler - called by the controller after receiving a topic (event)
 //...............................................................................
 void customDevice::on_events(Topic &topic) {
-
-  // central business logic
 }
 
 //...............................................................................
 //  on request, fillDashboard with values
 //...............................................................................
 String customDevice::fillDashboard() {
-  //topicQueue.put("~/event/device/drawer/index 1");
-  //topicQueue.put("~/set/device/drawer/index 1");
-
   logging.debug("dashboard filled with values");
   return TOPIC_OK;
+}
+
+//...............................................................................
+// mofify dynamicDashboard
+//...............................................................................
+void customDevice::modifyDashboard(){
+  logging.info("modify Dashboard");
+
+  String groupName = "sensors";
+
+  DF("before remove");
+  Serial.println("removeResult = " + String(dashboard.removeWidget(groupName)));
+  DF("after remove");
+
+  Widget* w = dashboard.insertWidget("group", 1);
+    w->name= groupName;
+    w->caption = "Sensorenmesswerte Heizung";
+
+  //index=10;
+  for (size_t i = 0; i < index; i++) {
+    Widget* w1 = dashboard.insertWidget("text", "sensors");
+    w1->name = "text_" + String(i);
+    w1->caption = "World";
+    w1->value = "";
+    w1->event = "~/event/device/sensors/";
+  }
+  index++;
+
+  //Serial.println("");
+  //Serial.println("");
+  //Serial.println(dashboard.asJsonDocument());
+  //Serial.println("");
+  //Serial.println("");
+  //DynamicJsonBuffer dashboard_root;
+  //JsonArray& dashboard_array = dashboard.serialize(dashboard_root);
+
+  //Serial.println("");
+  //Serial.println("");
+  //dashboard_array.prettyPrintTo(Serial);
+  //Serial.println("");
+  DF("after adding new Items");
+  Serial.println("");
+  Serial.println("dashboard length = " + String(dashboard.asJsonDocument().length()));
+
+  dashboardChanged();
+
 }

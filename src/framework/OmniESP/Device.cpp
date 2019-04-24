@@ -25,8 +25,8 @@ void Device::start() {
   // preload dashboard
   // D("preloading dashboard");
   dashboard.load();
-  String jsonDocument = dashboard.asJsonDocument();
-  logging.info("dashboard=" + jsonDocument);
+  //String jsonDocument = dashboard.asJsonDocument();
+  //logging.info("dashboard=" + jsonDocument);
 }
 //...............................................................................
 // handle - periodically called by the controller

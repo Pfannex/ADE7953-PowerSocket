@@ -11,18 +11,23 @@ OW::OW(string name, LOGGING &logging, TopicQueue &topicQueue, int owPin)
 //-------------------------------------------------------------------------------
 //  1 Wire public
 //-------------------------------------------------------------------------------
+
+//...............................................................................
+// set callback
+//...............................................................................
+void OW::set_callbacks(String_CallbackFunction sensorChanged,
+                       String_CallbackFunction sensorData) {
+
+  on_SensorChanged = sensorChanged;
+  on_SensorData = sensorData;
+}
+
 //...............................................................................
 // start
 //...............................................................................
 void OW::start() {
   Module::start();
-
-  logging.info("starting 1 Wire");
   scanBus();
-  if (count == 0)
-    logging.error("no 1 Wire devices found!!");
-  else
-  logging.info("1 Wire scan done, found " + String(count) + " devices");
 }
 
 //...............................................................................
@@ -30,13 +35,21 @@ void OW::start() {
 //...............................................................................
 void OW::handle() {
   Module::handle();
-  unsigned long now = millis();
-
-//poll measurement values
-  if (now - tPoll > OWPOLL){
-    tPoll = now;
-    readDS18B20();
-  }
+/*
+  if (requestRunning){
+    if (DS18B20.isConversionComplete()){
+      readDS18B20();
+      requestRunning = false;
+      Serial.println("request complete");
+    }
+  }else{
+    //poll measurement values
+    unsigned long now = millis();
+    if (now - tPoll > owPoll){
+      tPoll = now;
+      requestData();
+    }
+  }*/
 }
 
 //...............................................................................
@@ -50,16 +63,49 @@ String OW::getVersion() {
 //  scan OW-Bus for devices
 //...............................................................................
 void OW::scanBus() {
+  Serial.println("OW::scanBus()");
   DS18B20.begin();
-  delay(100);
   DS18B20.setResolution(12);  //##
-  delay(100);
+  count = DS18B20.getDS18Count();
+  logging.debug("found DS18-devices = " + String(count));
+  DynamicJsonBuffer root;
+  JsonObject& sensors = root.createObject();
 
-  countOld = count;
-  count = DS18B20.getDeviceCount();
-  delay(100);
+  if (dsDevices != 0) {
+    delete [] dsDevices;
+  }
+  dsDevices = new DSdevice [count];
+
+  for (size_t i = 0; i < count; i++) {
+    DS18B20.getAddress(dsDevices[i].addr, i);
+    dsDevices[i].strAddr = "";
+    char str[5];
+    for (size_t j = 0; j < 8; j++) {
+      sprintf(str, "%02X", dsDevices[i].addr[j]);
+      dsDevices[i].strAddr += str;
+      if (j < 7) dsDevices[i].strAddr += "-";
+    }
+    sensors[dsDevices[i].strAddr] = "";        //add item
+  }
+
+  String strSensors = "";
+  sensors.printTo(strSensors);
+  topicQueue.put("~/event/device/sensorsChanged " + strSensors);
+  if (on_SensorChanged != nullptr) on_SensorChanged(strSensors);  //callback event
+
+  //requestData();
+}
+/*
+//...............................................................................
+//  request Data from DS18
+//...............................................................................
+void OW::requestData() {
+  requestRunning = true;
+  unsigned long start = millis();
+  DS18B20.setWaitForConversion(false);
   DS18B20.requestTemperatures();
-  delay(100);
+  DS18B20.setWaitForConversion(true);
+  logging.debug("request time = " + String(millis() - start) + "ms");
 }
 
 //...............................................................................
@@ -67,48 +113,15 @@ void OW::scanBus() {
 //...............................................................................
 void OW::readDS18B20() {
   DynamicJsonBuffer root;
-  JsonObject& sensoren = root.parseObject(sensorenJson);
-
-  bool changed = false;
-  scanBus();
-  if (countOld != count) changed = true;
-
-  String eventPrefix= "~/event/device/" + String(name) + "/";
-  for (int i = 0; i < count; i++) {
-    DS18B20.getAddress(DS18B20device, i);
-    delay(100);
-
-//TODO check for alias name
-
-    String deviceValue = "";
-    char str[5];
-    for (int j = 0; j < 8; j++) {
-      sprintf(str, "%02X", DS18B20device[j]);
-      deviceValue += str;
-      if (j < 7) deviceValue += "-";
-    }
-
-    if (!sensoren.containsKey(deviceValue)) {
-      sensoren[deviceValue] = "";
-      changed = true;
-    }
-
-    deviceValue += " ";
-    deviceValue += String(DS18B20.getTempCByIndex(i));
-    DS18B20.requestTemperatures();
-
-    logging.debug(deviceValue);
-    topicQueue.put(eventPrefix + "/" + deviceValue);
-
+  JsonObject& sensors = root.createObject();
+  for (size_t i = 0; i < count; i++) {
+    String temp = String(DS18B20.getTempC(dsDevice[i].addr));
+    logging.debug(temp + "°C");
+    sensors[dsDevice[i].strAddr] = temp;
   }
-  if (changed) {
-    sensorenJson = "";
-    sensoren.printTo(sensorenJson);
-    //sensoren.prettyPrintTo(Serial);
-    topicQueue.put("~/event/device/sensorsChanged " + sensorenJson);
-  }
-
+  String strSensors = "";
+  sensors.printTo(strSensors);
+  topicQueue.put("~/event/device/sensorsData " + strSensors);
+  if (on_SensorData != nullptr) on_SensorData(strSensors);  //callback event
 }
-//-------------------------------------------------------------------------------
-//  GPIO private
-//-------------------------------------------------------------------------------
+*/
