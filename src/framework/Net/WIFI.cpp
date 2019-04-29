@@ -17,7 +17,7 @@ void WIFI::start() {
   staMode     = ffs.cfg.readItem("wifi"); // off, dhcp, manual
   apMode      = ffs.cfg.readItem("ap");   // on, off, auto
 
-  logging.info("MAC address: "+macAddress());
+  logging.info("MAC address: "+WiFi.macAddress());
 
   // some workaround for WiFi.status() showing disconnect although WiFi
   // is connected
@@ -38,6 +38,17 @@ void WIFI::start() {
   } else {  //staMode dhcp or auto
     startSTA();
   }
+}
+
+void WIFI::logIPConfig() {
+
+    logging.info("  MAC address: " + WiFi.macAddress());
+    logging.info("  IP address:  " + WiFi.localIP().toString());
+    logging.info("  netmask:     " + WiFi.subnetMask().toString());
+    logging.info("  gateway:     " + WiFi.gatewayIP().toString());
+    logging.info("  DNS server:  " + WiFi.dnsIP().toString());
+    logging.info("  hostname:    " + WiFi.hostname());
+    logging.info("  RSSI:        " + String(WiFi.RSSI(),DEC)+" dBm");
 }
 
 //...............................................................................
@@ -64,18 +75,6 @@ void WIFI::set_callback(CallbackFunction wl_connected,
   on_ap_stations_connected    = ap_stations_connected;
   on_ap_no_stations_connected = ap_no_stations_connected;
   on_wifi_scan_result         = wifi_scan_result;
-}
-
-//...............................................................................
-//  get MACAddress
-//...............................................................................
-String WIFI::macAddress() {
-  uint8_t mac[6];
-  char maddr[18];
-  WiFi.macAddress(mac);
-  sprintf(maddr, "%02x:%02x:%02x:%02x:%02x:%02x", mac[0], mac[1], mac[2],
-          mac[3], mac[4], mac[5]);
-  return String(maddr);
 }
 
 //...............................................................................
@@ -108,7 +107,7 @@ String WIFI::set(Topic &topic) {
 
 String WIFI::get(Topic &topic) {
   if (topic.itemIs(3, "macAddress")) {
-    return macAddress();
+    return WiFi.macAddress();
   } else if (topic.itemIs(3, "scanResult")){
     return scanResult();
   } else {
@@ -120,6 +119,7 @@ String WIFI::get(Topic &topic) {
 //  start STA
 //...............................................................................
 void WIFI::startSTA() {
+  String hostname = ffs.cfg.readItem("device_name");
   String ssid = ffs.cfg.readItem("wifi_ssid");
   String psk  = ffs.cfg.readItem("wifi_password");
   staMode     = ffs.cfg.readItem("wifi"); // off, dhcp, manual
@@ -133,7 +133,6 @@ void WIFI::startSTA() {
   validSSID = ssid != "" ? true : false;
 
   WiFi.softAPdisconnect(true);
-  WiFi.mode(WIFI_STA);
 
   if (staMode == "dhcp") {
     logging.info("WiFi staMode=dhcp");
@@ -143,10 +142,12 @@ void WIFI::startSTA() {
     netmask.fromString(ffs.cfg.readItem("wifi_netmask"));
     dns.fromString(ffs.cfg.readItem("wifi_dns"));
     logging.info("WiFi staMode=manual");
-    logging.debug("  IP address: " + address.toString());
-    logging.debug("  gateway:    " + gateway.toString());
-    logging.debug("  netmask:    " + netmask.toString());
-    logging.debug("  DNS server: " + dns.toString());
+    logging.debug("  hostname:    " + hostname);
+    logging.debug("  MAC address: " + WiFi.macAddress());
+    logging.debug("  IP address:  " + address.toString());
+    logging.debug("  gateway:     " + gateway.toString());
+    logging.debug("  netmask:     " + netmask.toString());
+    logging.debug("  DNS server:  " + dns.toString());
 
     if (WiFi.config(address, gateway, netmask, dns)) {
       logging.debug("WiFi configuration applied");
@@ -159,40 +160,41 @@ void WIFI::startSTA() {
 
   logging.info("try to connect to SSID: " + ssid);
   WiFi.begin(ssid.c_str(), psk.c_str());
+  WiFi.hostname(hostname);
 }
 
 //...............................................................................
-//  start accesspoint
+//  start access point
 //...............................................................................
 void WIFI::startAP(int state) {
   if (state) {
-    WiFi.mode(WIFI_AP);
     IPAddress apIP(192,168,4,1);
     IPAddress gateway(192,168,4,1);
     IPAddress subnet(255,255,255,0);
     String apSSID = ffs.cfg.readItem("ap_ssid");
     String apPSK = ffs.cfg.readItem("ap_password");
-
-    logging.info("set Accesspoint configuration");
-    if (WiFi.softAPConfig(apIP, gateway, subnet)){
-      logging.debug("  IP address: " + apIP.toString());
-      logging.debug("  gateway:    " + gateway.toString());
-      logging.debug("  subnet:     " + subnet.toString());
-
+    logging.info("setting access point configuration");
+    WiFi.disconnect(true);
+    logging.debug("station mode turned off");
+    if (WiFi.softAPConfig(apIP, gateway, subnet)) {
+      logging.debug("access point configured");
+      logging.debug("  MAC address: " + WiFi.softAPmacAddress());
+      logging.debug("  IP address:  " + WiFi.softAPIP().toString());
+      logging.debug("  gateway:     " + gateway.toString());
+      logging.debug("  subnet:      " + subnet.toString());
+      logging.debug("opening access point with SSID "+apSSID+" and PSK "+apPSK);
       if (WiFi.softAP(apSSID.c_str(), apPSK.c_str())) {
-        logging.info("Accesspoint is now ON");
+        logging.info("access point is now on");
       } else {
-        logging.error("starting Accesspoint FAILED");
+        logging.error("starting access point failed");
       }
     } else {
-      logging.error("set Accesspoint configuration FAILED");
+      logging.error("access point configuration failed");
     }
-    if (on_ap_no_stations_connected != nullptr) on_ap_no_stations_connected();
 
   } else {
-    WiFi.mode(WIFI_STA);
     WiFi.softAPdisconnect(true);
-    logging.info("Accesspoint is now OFF");
+    logging.info("access point is now off");
   }
 }
 

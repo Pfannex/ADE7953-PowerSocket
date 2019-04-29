@@ -56,7 +56,6 @@ public:
 
   void start();
   void handle();
-  String macAddress();
 
   // API
   String set(Topic &topic);
@@ -71,6 +70,8 @@ public:
 
   void startSTA();
   void startAP(int state);
+
+  void logIPConfig();
 
 private:
   // true if status has changed since last update

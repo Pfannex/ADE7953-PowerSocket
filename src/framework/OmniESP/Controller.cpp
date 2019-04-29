@@ -189,9 +189,8 @@ void Controller::on_wl_connected() {
         on_wifi_state_change();
         logging.info("WiFi STA has connected");
         topicQueue.put("~/event/wifi/wl_connected");
-        logging.info("STA connected to " + WiFi.SSID() + " | IP "
-                     + WiFi.localIP().toString());
-
+        logging.info("STA connected to SSID " + WiFi.SSID());
+        wifi.logIPConfig();
         startNtp();
         on_netConnected();
 }
