@@ -49,5 +49,5 @@
 //  Other
 //###############################################################################
 
-// try at least every 30 minutes
-#define RECONNECT_DELAY_MAX (1800)
+// try at least every 5 minutes
+#define RECONNECT_DELAY_MAX (300)
