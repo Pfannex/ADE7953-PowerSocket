@@ -50,8 +50,9 @@ public:
   // Callback Events
     // WiFi
     void on_wl_connected();
-    void on_wl_connect_failed();
+    void on_wl_disconnected();
     void on_wl_no_ssid_avail();
+    void on_ap_closed();
     void on_ap_stations_connected();
     void on_ap_no_stations_connected();
     void on_wifi_scan_result(String result);
@@ -112,8 +113,10 @@ private:
   long reconnectDelayed= 0; // in seconds
 
   //WiFi
-  sta_state_t staState = STA_UNKNOWN;
-  ap_state_t  apState  = AP_UNKNOWN;
+  void startApTimer();
+  void stopApTimer();
+  void startStaTimer();
+  void stopStaTimer();
   long staTimeout = STA_TIMEOUT;
   long apTimeout  = AP_TIMEOUT;
   unsigned long long staTimeout_t = 0;

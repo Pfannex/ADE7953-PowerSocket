@@ -7,19 +7,11 @@
 #include "framework/Utils/Logger.h"
 //#include "I2C.h"
 
-//wl_status_t  = STA StatusEvents in WiFiClient
-//sta_state_t  = STA state
 typedef enum {
   STA_DISCONNECTED,
   STA_CONNECTED,
   STA_UNKNOWN
 } sta_state_t;
-
-//ap_status_t  = AP StatusEvents
-typedef enum {
-  AP_STATIONS_CONNECTED,
-  AP_NO_STATIONS_CONNECTED
-} ap_status_t;
 
 //ap_state_t  = AP state
 typedef enum {
@@ -49,6 +41,7 @@ public:
   void set_callback(CallbackFunction wl_connected,
                     CallbackFunction wl_connect_failed,
                     CallbackFunction wl_no_ssid_avail,
+                    CallbackFunction ap_closed,
                     CallbackFunction ap_stations_connected,
                     CallbackFunction ap_no_stations_connected,
                     String_CallbackFunction wifi_scan_result
@@ -61,22 +54,24 @@ public:
   String set(Topic &topic);
   String get(Topic &topic);
 
-  sta_state_t staState = STA_DISCONNECTED;
-  ap_state_t  apState  = AP_CLOSED;
-  String      staMode;
-  String      apMode;
-  int         apStationsCount = 0;
-  int         validSSID = false;
+  sta_state_t getStaState();
+  ap_state_t getApState();
+  bool hasValidSSID();
 
-  void startSTA();
+  void startSTA(int state);
   void startAP(int state);
 
   void logIPConfig();
 
 private:
+  sta_state_t staState = STA_UNKNOWN;
+  ap_state_t  apState  = AP_UNKNOWN;
+
   // true if status has changed since last update
-  bool updateStaStatus();
+  bool updateStaStatus(bool); 
   bool updateApStatus();
+
+  wl_status_t wlState= WL_DISCONNECTED;
 
   String scanWifi();
   String scanResult();
@@ -84,15 +79,13 @@ private:
   int scanStatus = -2; //in progress: -1; not been triggered: -2; >0 = found
 
   CallbackFunction on_wl_connected;
-  CallbackFunction on_wl_connect_failed;
+  CallbackFunction on_wl_disconnected;
   CallbackFunction on_wl_no_ssid_avail;
+  CallbackFunction on_ap_closed;
   CallbackFunction on_ap_stations_connected;
   CallbackFunction on_ap_no_stations_connected;
   String_CallbackFunction on_wifi_scan_result;
 
   // https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/include/wl_definitions.h
-  wl_status_t wl_status     = WL_DISCONNECTED;
-  wl_status_t wl_status_old = WL_DISCONNECTED;
-  ap_status_t ap_status     = AP_NO_STATIONS_CONNECTED;
-  ap_status_t ap_status_old = AP_NO_STATIONS_CONNECTED;
+  
 };
