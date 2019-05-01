@@ -22,10 +22,7 @@ $(document).on("pagecreate", "#page1", function(event, ui) {
 $(document).on("pagecreate", "#page2", function(event, ui) {
   logmsg("Page 2 created.");
   logmsg('Initializing configuration page...');
-  setRadioHandlers();
-  //set_select_handlers();
   var json = retrieveConfig(setConfig);
-  //json= retrieveVersion(setVersion);
 })
 
 // ---------------------------

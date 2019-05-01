@@ -262,16 +262,19 @@ function setCheckbox(name, value) {
 
 // set version
 function setVersion(json) {
-  logmsg("Setting version information...")
+  logmsg("Setting version information...");
   var version= JSON.parse(json);
   setStaticText("current_version", version.version);
 }
 
 // set inputs from config
+
 function setConfig(json) {
-  logmsg("Setting inputs from configuration...")
+  logmsg("Setting inputs from configuration...");
+  setRadioHandlers();
   var config= JSON.parse(json);
-  var configForm= $("#config");
+  var configForm= $("#OmniESPconfigForm *");
+  //$('#OmniESPconfigForm *').filter(':input').each(function() { logmsg(this.name); });
   // set text inputs
   configForm.find('input:text').val(function() {
     //logmsg("Setting text input " + this.name + " to " + config[this.name]);
@@ -323,7 +326,7 @@ function getConfig() {
   logmsg("Getting configuration from inputs...");
 
   var config = {};
-  var configForm= $("#config");
+  var configForm= $("#OmniESPconfigForm *");
   // get text inputs
   configForm.find('input:text').each(function() {
     config[$(this).attr("id")]= $(this).val();
