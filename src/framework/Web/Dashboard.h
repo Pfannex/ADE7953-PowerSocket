@@ -13,30 +13,34 @@
 
 class Widget {
 
-private:
+protected:
   String getProperty(JsonObject &O, const char *property);
   void setProperty(JsonObject &O, const char *property, String value);
 
 public:
   Widget();
   Widget(String &type);
-  Widget(const char* type);
+  Widget(const char *type);
   virtual ~Widget();
+  // properties
   String name; // must be unique across the whole structure
-  String type;
-  String value;
-  String caption;
-  String icon;
-  String action;
-  String event;
-  String inputtype;
-  String readonly;
-  String min;
-  String max;
-  String prefix;
-  String suffix;
+  String type; 
   virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
   virtual void fromJsonObject(JsonObject &);
+};
+
+//
+// WidgetCaptioned
+//
+
+class WidgetCaptioned : public Widget {
+
+public:
+  WidgetCaptioned(const char*);
+  virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
+  virtual void fromJsonObject(JsonObject &);
+  // properties
+  String caption;
 };
 
 //
@@ -55,10 +59,11 @@ public:
   // add the widget at given position
   // position is counted from the end if negative
   virtual Widget *insertWidget(String &type, int position = -1);
-  virtual Widget *insertWidget(const char* type, int position = -1);
+  virtual Widget *insertWidget(const char *type, int position = -1);
   // add the widget to the named group at given position
   virtual Widget *insertWidget(String &type, String &group, int position = -1);
-  virtual Widget *insertWidget(const char* type, const char* group, int position = -1);
+  virtual Widget *insertWidget(const char *type, const char *group,
+                               int position = -1);
 
   /*
   usage:
@@ -82,12 +87,14 @@ private:
 // WidgetGroup
 //
 
-class WidgetGroup : public Widget {
+class WidgetGroup : public WidgetCaptioned {
 private:
   WidgetArray data;
+
 public:
   WidgetGroup();
   virtual ~WidgetGroup();
+  // properties
   // add the widget to the named group at given position
   virtual Widget *insertWidget(String &type, String &group, int position = -1);
   virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
@@ -101,12 +108,13 @@ public:
 //
 class WidgetGrid : public Widget {
 private:
-    std::vector<WidgetArray*> data;
+  std::vector<WidgetArray *> data;
+
 public:
-    WidgetGrid();
-    virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
-    virtual void fromJsonObject(JsonObject &);
-    WidgetArray* addRow();
+  WidgetGrid();
+  virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
+  virtual void fromJsonObject(JsonObject &);
+  WidgetArray *addRow();
 };
 
 //
@@ -114,21 +122,90 @@ public:
 //
 
 struct WidgetControlGroupElement {
-    String label;
-    String value;
+  String label;
+  String value;
 };
 
-class WidgetControlGroup : public Widget {
+class WidgetControlGroup : public WidgetCaptioned {
 private:
   std::vector<WidgetControlGroupElement> data;
+
 public:
   WidgetControlGroup();
+  // properties
+  String direction;
   virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
   virtual void fromJsonObject(JsonObject &);
-  void appendElement(String&, String&);
-  void appendElement(const char*, const char*);
+  void appendElement(String &, String &);
+  void appendElement(const char *, const char *);
 };
 
+//
+// WidgetButton
+//
+
+class WidgetButton : public WidgetCaptioned {
+public:
+  WidgetButton();
+  // properties
+  String icon;
+  virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
+  virtual void fromJsonObject(JsonObject &);
+};
+
+//
+// WidgetInput
+//
+
+class WidgetInput : public WidgetCaptioned {
+public:
+  WidgetInput(const char*);
+  // properties
+  String value;
+  String readonly;
+  String action;
+  String event;
+  virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
+  virtual void fromJsonObject(JsonObject &);
+};
+
+//
+// WidgetText
+//
+
+class WidgetText : public WidgetInput {
+public:
+  WidgetText();
+  // properties
+  String inputtype;
+  String prefix;
+  String suffix;
+  virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
+  virtual void fromJsonObject(JsonObject &);
+};
+
+//
+// WidgetCheckbox
+//
+
+class WidgetCheckbox : public WidgetInput {
+public:
+  WidgetCheckbox();
+};
+
+//
+// WidgetSlider
+//
+
+class WidgetSlider : public WidgetInput {
+public:
+  WidgetSlider();
+  // properties
+  String min;
+  String max;
+  virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
+  virtual void fromJsonObject(JsonObject &);
+};
 
 //
 // Dashboard
