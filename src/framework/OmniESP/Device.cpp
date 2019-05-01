@@ -23,10 +23,8 @@ void Device::start() {
   logging.info("version: " + getVersion());
 
   // preload dashboard
-  // D("preloading dashboard");
+  logging.debug("loading dashboard");
   dashboard.load();
-  //String jsonDocument = dashboard.asJsonDocument();
-  //logging.info("dashboard=" + jsonDocument);
 }
 //...............................................................................
 // handle - periodically called by the controller
@@ -53,11 +51,9 @@ String Device::getType() { return type; }
 
 String Device::getVersion() { return version; }
 
-String Device::getDashboard() {
-  return dashboard.asJsonDocument();
-}
+String Device::getDashboard() { return dashboard.asJsonDocument(); }
 
-String Device::fillDashboard() {}
+String Device::fillDashboard() { return TOPIC_OK; }
 
 void Device::dashboardChanged() { // fire event
   topicQueue.put("~/event/device/dashboardChanged");
