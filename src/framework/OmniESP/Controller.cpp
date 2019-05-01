@@ -30,6 +30,7 @@ Controller::Controller()
   // callback Events
   // WiFi
   wifi.set_callback(
+      std::bind(&Controller::on_wifi_init, this),
       std::bind(&Controller::on_wl_connected, this),
       std::bind(&Controller::on_wl_disconnected, this),
       std::bind(&Controller::on_wl_no_ssid_avail, this),
@@ -367,40 +368,44 @@ void Controller::stopStaTimer() {
   staTimeoutActive = false;
 }
 
+void Controller::on_wifi_init() { on_wifi_state_change(); }
+
 void Controller::on_wifi_state_change() {
 
   sta_state_t staState = wifi.getStaState();
   ap_state_t apState = wifi.getApState();
-  
-  logging.info("WiFi state changed");
+
+  String staS, apS;
   switch (staState) {
   case STA_UNKNOWN:
-    logging.debug("  STA_UNKNOWN");
+    staS = "STA_UNKNOWN";
     break;
   case STA_CONNECTED:
-    logging.debug("  STA_CONNECTED");
+    staS = "STA_CONNECTED";
     break;
   case STA_DISCONNECTED:
-    logging.debug("  STA_DISCONNECTED");
+    staS = "STA_DISCONNECTED";
     break;
   }
   switch (apState) {
   case AP_UNKNOWN:
-    logging.debug("  AP_UNKNOWN");
+    apS = "AP_UNKNOWN";
     break;
   case AP_TIMEOUT:
-    logging.debug("  AP_TIMEOUT");
+    apS = "AP_TIMEOUT";
     break;
   case AP_OPEN_WITH_STATION:
-    logging.debug("  AP_OPEN_WITH_STATION");
+    apS = "AP_OPEN_WITH_STATION";
     break;
   case AP_OPEN_WITHOUT_STATION:
-    logging.debug("  AP_OPEN_WITHOUT_STATION");
+    apS = "AP_OPEN_WITHOUT_STATION";
     break;
   case AP_CLOSED:
-    logging.debug("  AP_CLOSED");
+    apS = "AP_CLOSED";
     break;
   }
+
+  logging.info("WiFi state changed to ("+staS+","+apS+")");
 
   // STA_DISCONNECTED or STA_UNKNOWN
   if (staState != STA_CONNECTED and

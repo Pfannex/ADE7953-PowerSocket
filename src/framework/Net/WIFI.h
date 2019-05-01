@@ -38,7 +38,8 @@ public:
   FFS& ffs;
 
   WiFiClient client;
-  void set_callback(CallbackFunction wl_connected,
+  void set_callback(CallbackFunction wifi_init,
+                    CallbackFunction wl_connected,
                     CallbackFunction wl_connect_failed,
                     CallbackFunction wl_no_ssid_avail,
                     CallbackFunction ap_closed,
@@ -68,7 +69,7 @@ private:
   ap_state_t  apState  = AP_UNKNOWN;
 
   // true if status has changed since last update
-  bool updateStaStatus(bool); 
+  bool updateStaStatus(); 
   bool updateApStatus();
 
   wl_status_t wlState= WL_DISCONNECTED;
@@ -78,6 +79,7 @@ private:
   void on_scanWifi_complete();
   int scanStatus = -2; //in progress: -1; not been triggered: -2; >0 = found
 
+  CallbackFunction on_wifi_init;
   CallbackFunction on_wl_connected;
   CallbackFunction on_wl_disconnected;
   CallbackFunction on_wl_no_ssid_avail;

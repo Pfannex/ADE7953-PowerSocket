@@ -31,8 +31,8 @@ void WIFI::start() {
   WiFi.mode(WIFI_OFF);
 
   // initial status update
-  updateStaStatus(1); // init
-  updateApStatus();
+  if (on_wifi_init != nullptr)
+    on_wifi_init();
 
   if (staMode == "off" and apMode == "off") {
     logging.info(
@@ -63,24 +63,27 @@ void WIFI::logIPConfig() {
 //  WiFi handle connection
 //...............................................................................
 void WIFI::handle() {
-  updateStaStatus(true);
+  updateStaStatus();
   updateApStatus();
 }
 
 //...............................................................................
 //  WiFi set callbacks
 //...............................................................................
-void WIFI::set_callback(CallbackFunction wl_connected,
-                        CallbackFunction wl_connect_failed,
+void WIFI::set_callback(CallbackFunction wifi_init,
+                        CallbackFunction wl_connected,
+                        CallbackFunction wl_disconnected,
                         CallbackFunction wl_no_ssid_avail,
                         CallbackFunction ap_closed,
                         CallbackFunction ap_stations_connected,
                         CallbackFunction ap_no_stations_connected,
                         String_CallbackFunction wifi_scan_result) {
 
+  on_wifi_init = wifi_init;
   on_wl_connected = wl_connected;
-  on_wl_disconnected = wl_connect_failed;
+  on_wl_disconnected = wl_disconnected;
   on_wl_no_ssid_avail = wl_no_ssid_avail;
+  on_ap_closed = ap_closed;
   on_ap_stations_connected = ap_stations_connected;
   on_ap_no_stations_connected = ap_no_stations_connected;
   on_wifi_scan_result = wifi_scan_result;
@@ -170,7 +173,7 @@ void WIFI::startSTA(int state) {
     logging.info("disconnecting WiFi");
     WiFi.disconnect(true);
   }
-  updateStaStatus(false);
+  updateStaStatus();
 }
 
 //...............................................................................
@@ -226,7 +229,7 @@ bool WIFI::hasValidSSID() { return ffs.cfg.readItem("wifi_ssid") != ""; }
 //...............................................................................
 //  update STA status and send callback event
 //...............................................................................
-bool WIFI::updateStaStatus(bool init) {
+bool WIFI::updateStaStatus() {
 
   // our state of the station
   sta_state_t staStateOld = staState;
@@ -235,7 +238,7 @@ bool WIFI::updateStaStatus(bool init) {
   wl_status_t wlStateOld = wlState;
   wlState = WiFi.status();
 
-  if (wlState != wlStateOld || init)
+  if (wlState != wlStateOld)
     switch (wlState) {
     case WL_NO_SHIELD:
       staState = STA_DISCONNECTED;

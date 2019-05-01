@@ -49,6 +49,7 @@ public:
   void handle();
   // Callback Events
     // WiFi
+    void on_wifi_init();
     void on_wl_connected();
     void on_wl_disconnected();
     void on_wl_no_ssid_avail();
