@@ -3,9 +3,17 @@
 
 // #include <ESP.h> no need to include this because here are only macros!
 
+#define SOFTWAREERROR                                                          \
+  {                                                                            \
+    Serial.printf("  >>> software error (%d %s)\r\n", __LINE__, __FILE__);                                                       \
+    exit(9);                                                                   \
+  }
+
 //###############################################################################
 //  macros for development
 //###############################################################################
+
+#ifdef DEBUG
 
 // print a message
 #define D(msg) Serial.printf("  >>> %s (%d %s)\r\n", msg, __LINE__, __FILE__);
@@ -28,3 +36,5 @@
 // print the free heap
 #define DF(msg)                                                                \
   Serial.printf("  >>> %s free heap= %d\r\n", msg, ESP.getFreeHeap());
+
+#endif
