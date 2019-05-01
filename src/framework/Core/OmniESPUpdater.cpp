@@ -176,8 +176,8 @@ bool OmniESPUpdater::extract(Tarball &tarball, char *fname, int l,
   chksum(b, chk);
   if (strncmp(b + CHK, chk, 6)) {
     setErrorMsg("wrong checksum for " + filename);
-    Ds("actual: ", chk);
-    Ds("tar   : ", b + CHK);
+    //Ds("actual: ", chk);
+    //Ds("tar   : ", b + CHK);
     return false;
   }
 

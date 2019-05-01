@@ -500,8 +500,6 @@ String Controller::call(Topic &topic) {
       }
     } else if (topic.itemIs(2, "controller")) {
       if (topic.itemIs(3, "reconnectDelay")) {
-        D("set reconnectDelay");
-        Di("arg=", topic.getArgAsLong(0));
         reconnectDelay = topic.getArgAsLong(0);
         if (reconnectDelay < 1)
           reconnectDelay = 1;
