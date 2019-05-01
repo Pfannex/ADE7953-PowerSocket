@@ -5,7 +5,7 @@
 
 #define SOFTWAREERROR                                                          \
   {                                                                            \
-    Serial.printf("  >>> software error (%d %s)\r\n", __LINE__, __FILE__);                                                       \
+    Serial.printf("  >>> software error (%d %s)\r\n", __LINE__, __FILE__);     \
     exit(9);                                                                   \
   }
 
@@ -35,6 +35,7 @@
 
 // print the free heap
 #define DF(msg)                                                                \
-  Serial.printf("  >>> %s free heap= %d\r\n", msg, ESP.getFreeHeap());
+  Serial.printf("  >>> %s free heap= %d (%d %s)\r\n", msg, ESP.getFreeHeap(),  \
+                __LINE__, __FILE__);
 
 #endif
