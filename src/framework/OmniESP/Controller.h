@@ -119,8 +119,8 @@ private:
   void stopApTimer();
   void startStaTimer();
   void stopStaTimer();
-  long staTimeout = STA_TIMEOUT;
-  long apTimeout  = AP_TIMEOUT;
+  unsigned long long staTimeout = STA_TIMEOUT;
+  unsigned long long apTimeout  = AP_TIMEOUT;
   unsigned long long staTimeout_t = 0;
   unsigned long long apTimeout_t  = 0;
   int  staTimeoutActive = false;
