@@ -111,13 +111,36 @@ void WidgetArray::deserialize(JsonArray &A) {
   // D("deserializing widget array");
   widgets.clear();
   for (JsonObject &O : A) {
-    //DF("");
+    // DF("");
     Widget *w = createWidget(O);
     // D("  widget created");
     w->fromJsonObject(O);
     widgets.push_back(w);
   }
   // D("deserializing done");
+}
+
+Widget *WidgetArray::findWidget(String &name) {
+  for (auto it = widgets.begin(); it != widgets.end();) {
+    Widget *w = *it;
+    if (w->name.equals(name)) {
+      return w;
+    } else {
+      if (w->type.equals("group")) {
+        WidgetGroup *g = (WidgetGroup *)(w);
+        w = g->findWidget(name);
+        if (w)
+          return w;
+      }
+      ++it;
+    }
+  }
+  return nullptr;
+}
+
+Widget *WidgetArray::findWidget(const char *name) {
+  String n = name;
+  return findWidget(n);
 }
 
 bool WidgetArray::removeWidget(String &name) {
@@ -179,7 +202,7 @@ Widget *WidgetArray::insertWidget(const char *type, const char *group,
 //  WidgetCaptioned
 //###############################################################################
 
-WidgetCaptioned::WidgetCaptioned(const char*) : Widget(type) {}
+WidgetCaptioned::WidgetCaptioned(const char *) : Widget(type) {}
 
 void WidgetCaptioned::toJsonObject(DynamicJsonBuffer &jsonBuffer,
                                    JsonObject &O) {
@@ -256,11 +279,19 @@ Widget *WidgetGroup::insertWidget(String &type, String &group, int position) {
 
 bool WidgetGroup::removeWidget(String &name) { return data.removeWidget(name); }
 
+// returns the named widget
+Widget *WidgetGroup::findWidget(const char *name) {
+  String n = name;
+  return findWidget(n);
+}
+
+Widget *WidgetGroup::findWidget(String &name) { return data.findWidget(name); }
+
 //###############################################################################
 //  WidgetAction
 //###############################################################################
 
-WidgetAction::WidgetAction(const char* type) : WidgetCaptioned(type) {};
+WidgetAction::WidgetAction(const char *type) : WidgetCaptioned(type){};
 
 void WidgetAction::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
   WidgetCaptioned::toJsonObject(jsonBuffer, O);
@@ -292,7 +323,7 @@ void WidgetButton::fromJsonObject(JsonObject &O) {
 //  WidgetInput
 //###############################################################################
 
-WidgetInput::WidgetInput(const char* type) : WidgetAction(type) {};
+WidgetInput::WidgetInput(const char *type) : WidgetAction(type){};
 
 void WidgetInput::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
   WidgetAction::toJsonObject(jsonBuffer, O);
@@ -312,7 +343,7 @@ void WidgetInput::fromJsonObject(JsonObject &O) {
 //  WidgetControlGroup
 //###############################################################################
 
-WidgetControlGroup::WidgetControlGroup() : WidgetInput("controlgroup") {};
+WidgetControlGroup::WidgetControlGroup() : WidgetInput("controlgroup"){};
 
 void WidgetControlGroup::toJsonObject(DynamicJsonBuffer &jsonBuffer,
                                       JsonObject &O) {
@@ -357,13 +388,11 @@ void WidgetControlGroup::appendElement(const char *label, const char *value) {
   appendElement(l, v);
 }
 
-
-
 //###############################################################################
 //  WidgetText
 //###############################################################################
 
-WidgetText::WidgetText() : WidgetInput("text") {};
+WidgetText::WidgetText() : WidgetInput("text"){};
 
 void WidgetText::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
   WidgetInput::toJsonObject(jsonBuffer, O);
@@ -383,13 +412,13 @@ void WidgetText::fromJsonObject(JsonObject &O) {
 //  WidgetCheckbox
 //###############################################################################
 
-WidgetCheckbox::WidgetCheckbox() : WidgetInput("checkbox") {};
+WidgetCheckbox::WidgetCheckbox() : WidgetInput("checkbox"){};
 
 //###############################################################################
 //  WidgetSlider
 //###############################################################################
 
-WidgetSlider::WidgetSlider() : WidgetInput("slider") {};
+WidgetSlider::WidgetSlider() : WidgetInput("slider"){};
 
 void WidgetSlider::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
   WidgetInput::toJsonObject(jsonBuffer, O);

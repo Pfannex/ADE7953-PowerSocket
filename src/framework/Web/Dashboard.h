@@ -54,6 +54,9 @@ public:
   virtual JsonArray &serialize(DynamicJsonBuffer &);
   virtual void deserialize(JsonArray &);
 
+  // returns the named widget
+  Widget *findWidget(String &name);
+  Widget *findWidget(const char* name);
   // removes the named widget from anywhere in the structure
   bool removeWidget(String &name);
   // add the widget at given position
@@ -101,6 +104,9 @@ public:
   virtual void fromJsonObject(JsonObject &);
   // removes the named widget from anywhere in the structure
   bool removeWidget(String &name);
+  // returns the named widget
+  Widget *findWidget(String &name);
+  Widget *findWidget(const char* name);
 };
 
 //
