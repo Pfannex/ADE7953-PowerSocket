@@ -20,7 +20,7 @@ ESP8266 file system builder with PlatformIO support
 
 const htmldir = "html";
 const datadir = "data";
-const bindir = ".pioenvs/d1_mini";
+const bindir = ".pio/build/d1_mini";
 const updatedir = "update";
 const webdir = datadir + "/web";
 const customDeviceh = "src/customDevice/customDevice.h";
