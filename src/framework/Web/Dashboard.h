@@ -117,6 +117,48 @@ public:
   WidgetArray *addRow();
 };
 
+
+//
+// WidgetAction
+//
+
+class WidgetAction : public WidgetCaptioned {
+public:
+  WidgetAction(const char*);
+  // properties
+  String action;
+  virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
+  virtual void fromJsonObject(JsonObject &);
+};
+
+//
+// WidgetButton
+//
+
+class WidgetButton : public WidgetAction {
+public:
+  WidgetButton();
+  // properties
+  String icon;
+  virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
+  virtual void fromJsonObject(JsonObject &);
+};
+
+//
+// WidgetInput
+//
+
+class WidgetInput : public WidgetAction {
+public:
+  WidgetInput(const char*);
+  // properties
+  String value;
+  String readonly;
+  String event;
+  virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
+  virtual void fromJsonObject(JsonObject &);
+};
+
 //
 // WidgetControlGroup
 //
@@ -126,7 +168,7 @@ struct WidgetControlGroupElement {
   String value;
 };
 
-class WidgetControlGroup : public WidgetCaptioned {
+class WidgetControlGroup : public WidgetInput {
 private:
   std::vector<WidgetControlGroupElement> data;
 
@@ -140,34 +182,6 @@ public:
   void appendElement(const char *, const char *);
 };
 
-//
-// WidgetButton
-//
-
-class WidgetButton : public WidgetCaptioned {
-public:
-  WidgetButton();
-  // properties
-  String icon;
-  virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
-  virtual void fromJsonObject(JsonObject &);
-};
-
-//
-// WidgetInput
-//
-
-class WidgetInput : public WidgetCaptioned {
-public:
-  WidgetInput(const char*);
-  // properties
-  String value;
-  String readonly;
-  String action;
-  String event;
-  virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
-  virtual void fromJsonObject(JsonObject &);
-};
 
 //
 // WidgetText

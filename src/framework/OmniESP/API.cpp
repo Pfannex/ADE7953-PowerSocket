@@ -88,8 +88,8 @@ String API::call(String topicsArgs) { return call(topicsArgs.c_str()); }
 
 // convenience function
 String API::call(string topicsArgs) {
-  // D("API: call");
-  // D(topicsArgs);
+   D("API: call");
+   D(topicsArgs);
   Topic topic(topicsArgs);
   // Dl;
   return call(topic);

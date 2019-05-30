@@ -257,15 +257,67 @@ Widget *WidgetGroup::insertWidget(String &type, String &group, int position) {
 bool WidgetGroup::removeWidget(String &name) { return data.removeWidget(name); }
 
 //###############################################################################
+//  WidgetAction
+//###############################################################################
+
+WidgetAction::WidgetAction(const char* type) : WidgetCaptioned(type) {};
+
+void WidgetAction::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
+  WidgetCaptioned::toJsonObject(jsonBuffer, O);
+  setProperty(O, "action", action);
+}
+
+void WidgetAction::fromJsonObject(JsonObject &O) {
+  WidgetCaptioned::fromJsonObject(O);
+  action = getProperty(O, "action");
+}
+
+//###############################################################################
+//  WidgetButton
+//###############################################################################
+
+WidgetButton::WidgetButton() : WidgetAction("button"){};
+
+void WidgetButton::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
+  WidgetAction::toJsonObject(jsonBuffer, O);
+  setProperty(O, "icon", icon);
+}
+
+void WidgetButton::fromJsonObject(JsonObject &O) {
+  WidgetAction::fromJsonObject(O);
+  icon = getProperty(O, "icon");
+}
+
+//###############################################################################
+//  WidgetInput
+//###############################################################################
+
+WidgetInput::WidgetInput(const char* type) : WidgetAction(type) {};
+
+void WidgetInput::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
+  WidgetAction::toJsonObject(jsonBuffer, O);
+  setProperty(O, "value", value);
+  setProperty(O, "readonly", readonly);
+  setProperty(O, "event", event);
+}
+
+void WidgetInput::fromJsonObject(JsonObject &O) {
+  WidgetAction::fromJsonObject(O);
+  value = getProperty(O, "value");
+  readonly = getProperty(O, "readonly");
+  event = getProperty(O, "event");
+}
+
+//###############################################################################
 //  WidgetControlGroup
 //###############################################################################
 
-WidgetControlGroup::WidgetControlGroup() : WidgetCaptioned("controlgroup") {};
+WidgetControlGroup::WidgetControlGroup() : WidgetInput("controlgroup") {};
 
 void WidgetControlGroup::toJsonObject(DynamicJsonBuffer &jsonBuffer,
                                       JsonObject &O) {
   // D("WidgetControlGroup::toJsonObject");
-  WidgetCaptioned::toJsonObject(jsonBuffer, O);
+  WidgetInput::toJsonObject(jsonBuffer, O);
   setProperty(O, "direction", direction);
   // D("serializing WidgetControlGroup elements");
   JsonArray &A = jsonBuffer.createArray();
@@ -279,7 +331,7 @@ void WidgetControlGroup::toJsonObject(DynamicJsonBuffer &jsonBuffer,
 
 void WidgetControlGroup::fromJsonObject(JsonObject &O) {
   // D("WidgetControlGroup::fromJsonObject");
-  WidgetCaptioned::fromJsonObject(O);
+  WidgetInput::fromJsonObject(O);
   direction = getProperty(O, "direction");
   // D("deserializing WidgetControlGroup elements");
   JsonArray &A = O["data"];
@@ -305,43 +357,7 @@ void WidgetControlGroup::appendElement(const char *label, const char *value) {
   appendElement(l, v);
 }
 
-//###############################################################################
-//  WidgetButton
-//###############################################################################
 
-WidgetButton::WidgetButton() : WidgetCaptioned("button"){};
-
-void WidgetButton::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
-  WidgetCaptioned::toJsonObject(jsonBuffer, O);
-  setProperty(O, "icon", icon);
-}
-
-void WidgetButton::fromJsonObject(JsonObject &O) {
-  WidgetCaptioned::fromJsonObject(O);
-  icon = getProperty(O, "icon");
-}
-
-//###############################################################################
-//  WidgetInput
-//###############################################################################
-
-WidgetInput::WidgetInput(const char* type) : WidgetCaptioned(type) {};
-
-void WidgetInput::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
-  WidgetCaptioned::toJsonObject(jsonBuffer, O);
-  setProperty(O, "value", value);
-  setProperty(O, "readonly", readonly);
-  setProperty(O, "action", action);
-  setProperty(O, "event", event);
-}
-
-void WidgetInput::fromJsonObject(JsonObject &O) {
-  WidgetCaptioned::fromJsonObject(O);
-  value = getProperty(O, "value");
-  readonly = getProperty(O, "readonly");
-  action = getProperty(O, "action");
-  event = getProperty(O, "event");
-}
 
 //###############################################################################
 //  WidgetText
