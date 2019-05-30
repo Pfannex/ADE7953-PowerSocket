@@ -73,9 +73,11 @@ function dashboardGetGroup(w) {
   var id = name;
   var caption = w.caption;
   var data = w.data; // array of elements
+  var collapsed = w.collapsed ? w.collapsed : "false";
 
   var content = '<!-- widget: group ' + name + '-->\n' +
-    '<div data-role="collapsible" data-inset="true" data-collapsed="false" id="' + id + '">' +
+    '<div data-role="collapsible" data-inset="true" data-collapsed="'+
+    collapsed+'" id="' + id + '">' +
     '<h2>' + caption + '</h2>\n' +
     dashboardGetWidgets(data) +
     '</div>\n';

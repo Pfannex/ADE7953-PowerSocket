@@ -258,14 +258,14 @@ WidgetGroup::~WidgetGroup() {}
 void WidgetGroup::toJsonObject(DynamicJsonBuffer &jsonBuffer, JsonObject &O) {
   // D("WidgetGroup::toJsonObject");
   WidgetCaptioned::toJsonObject(jsonBuffer, O);
-  setProperty(O, "caption", O["caption"]);
+  setProperty(O, "collapsed", collapsed);
   O["data"] = data.serialize(jsonBuffer);
 }
 
 void WidgetGroup::fromJsonObject(JsonObject &O) {
   // D("WidgetGroup::fromJsonObject");
   WidgetCaptioned::fromJsonObject(O);
-  caption = getProperty(O, "caption");
+  collapsed = getProperty(O, "collapsed");
   data.deserialize(O["data"]);
 }
 

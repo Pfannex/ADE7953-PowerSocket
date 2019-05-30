@@ -98,6 +98,7 @@ public:
   WidgetGroup();
   virtual ~WidgetGroup();
   // properties
+  String collapsed;
   // add the widget to the named group at given position
   virtual Widget *insertWidget(String &type, String &group, int position = -1);
   virtual void toJsonObject(DynamicJsonBuffer &, JsonObject &);
