@@ -66,7 +66,7 @@ String Controller::fwConfig() {
 #else
           ", tick=sec"
 #endif
-  );
+          );
   return String(txt);
 }
 //-------------------------------------------------------------------------------
@@ -343,29 +343,38 @@ void Controller::on_apTimeout() {
 //...............................................................................
 
 void Controller::startApTimer() {
-  logging.debug("starting AP timeout timer");
-  // set apTimeoutActive to false if no valid SSID is available
-  apTimeoutActive = wifi.hasValidSSID() ? true : false;
-  apTimeout_t = clock.nowMillis();
+  if (!apTimeoutActive) {
+    logging.debug("starting AP timeout timer");
+    // set apTimeoutActive to false if no valid SSID is available
+    apTimeoutActive = wifi.hasValidSSID() ? true : false;
+    apTimeout = AP_TIMEOUT;
+    apTimeout_t = clock.uptimeMillis();
+  }
 }
 
 void Controller::stopApTimer() {
-  logging.debug("stopping AP timeout timer");
-  apTimeoutActive = false;
-  topicQueue.put("~/event/device/led/setmode", 0);
+  if (apTimeoutActive) {
+    logging.debug("stopping AP timeout timer");
+    apTimeoutActive = false;
+    topicQueue.put("~/event/device/led/setmode", 0);
+  }
 }
 
 void Controller::startStaTimer() {
-  logging.debug("starting STA timeout timer");
-  // set staTimeout to 0 if no valid SSID is available
-  staTimeout = wifi.hasValidSSID() ? STA_TIMEOUT : 0;
-  staTimeout_t = clock.nowMillis();
-  staTimeoutActive = true;
+  if (!staTimeoutActive) {
+    logging.debug("starting STA timeout timer");
+    // set staTimeout to 0 if no valid SSID is available
+    staTimeout = wifi.hasValidSSID() ? STA_TIMEOUT : 0;
+    staTimeout_t = clock.uptimeMillis();
+    staTimeoutActive = true;
+  }
 }
 
 void Controller::stopStaTimer() {
-  logging.debug("stopping STA timeout timer");
-  staTimeoutActive = false;
+  if (staTimeoutActive) {
+    logging.debug("stopping STA timeout timer");
+    staTimeoutActive = false;
+  }
 }
 
 void Controller::on_wifi_init() { on_wifi_state_change(); }
@@ -405,7 +414,9 @@ void Controller::on_wifi_state_change() {
     break;
   }
 
-  logging.info("WiFi state changed to ("+staS+","+apS+")");
+  logging.info("WiFi state changed to (" + staS + "," + apS + ")");
+  logging.debug("  " + staS);
+  logging.debug("  " + apS);
 
   // STA_DISCONNECTED or STA_UNKNOWN
   if (staState != STA_CONNECTED and
@@ -451,7 +462,7 @@ void Controller::on_mqtt_disconnected() { mqtt_state = 0; }
 //  handle WiFi timeout
 //...............................................................................
 void Controller::handleWifiTimout() {
-  unsigned long long now = clock.nowMillis();
+  unsigned long long now = clock.uptimeMillis();
 
   if (staTimeoutActive)
     if (now - staTimeout_t > staTimeout) {
@@ -524,9 +535,9 @@ String Controller::call(Topic &topic) {
     } else if (topic.itemIs(2, "wifi")) {
       return wifi.get(topic);
     } else if (topic.itemIs(2, "device")) {
-      if(topic.itemIs(3, "flags")) {
+      if (topic.itemIs(3, "flags")) {
         return fwConfig();
-      } else if(topic.itemIs(3, "version")) {
+      } else if (topic.itemIs(3, "version")) {
         return device.getVersion();
       } else if (topic.itemIs(3, "type")) {
         return device.getType();

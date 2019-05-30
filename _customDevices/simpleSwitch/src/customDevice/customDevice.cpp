@@ -33,6 +33,7 @@ void customDevice::start() {
   relay.start();
   setLedMode(50);
 
+/*
   // EXAMPLE ----
   Widget* w= dashboard.insertWidget("group");
   w->name= "group_sensors";
@@ -42,6 +43,7 @@ void customDevice::start() {
   // ----
 
   logging.info("device running");
+*/
 }
 
 //...............................................................................
@@ -139,6 +141,7 @@ void customDevice::on_events(Topic &topic) {
       if (topic.argIs(0, "long"))
         setConfigMode(!configMode);
       if (topic.argIs(0, "double")) {
+        /*
         // EXAMPLE -----
         // NOTE: only use characters which are valid IDs in HTML, e.g. no dots
         String id= "xx"+String(millis());
@@ -161,6 +164,7 @@ void customDevice::on_events(Topic &topic) {
         //
         dashboardChanged();
         // -------------
+        */
       }
     }
     // - idle
