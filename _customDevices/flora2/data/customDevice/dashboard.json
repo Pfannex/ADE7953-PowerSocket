@@ -1,8 +1,10 @@
-[{
+[
+  {
     "type": "group",
-    "name": "dasboard",
+    "name": "dashboard",
     "caption": "Dashboard",
-    "data": [{
+    "data": [
+      {
         "type": "text",
         "name": "clock",
         "caption": "Time",
@@ -68,7 +70,8 @@
       {
         "type": "grid",
         "data": [
-          [{
+          [
+            {
               "type": "checkbox",
               "name": "pump",
               "caption": "Pump",
@@ -119,53 +122,48 @@
     "type": "group",
     "name": "config",
     "caption": "Configuration",
-    "data": [{
-      "type": "grid",
-      "data": [[{
-          "type": "text",
-          "readonly": 1,
-          "name": "voltage1",
-          "caption": "Voltage",
-          "event": "~/event/device/voltage1",
-          "suffix": " V"
-        },
-        {
-          "type": "text",
-          "name": "tVolume1",
-          "caption": "Volume 1",
-          "event": "~/event/device/volume1",
-          "action": "~/set/device/volume1"
-        },
-        {
-          "type": "text",
-          "name": "tVolume2",
-          "caption": "Volume 2",
-          "event": "~/event/device/volume2",
-          "action": "~/set/device/volume2"
-        }
-      ],[{
-          "type": "text",
-          "readonly": 1,
-          "name": "voltage0",
-          "caption": "Voltage",
-          "event": "~/event/device/voltage0",
-          "suffix": " V"
-        },
-        {
-          "type": "text",
-          "name": "mMoisture1",
-          "caption": "Moisture 1",
-          "event": "~/event/device/moisture1",
-          "action": "~/set/device/moisture1"
-        },
-        {
-          "type": "text",
-          "name": "mMoisture2",
-          "caption": "Moisture 2",
-          "event": "~/event/device/moisture2",
-          "action": "~/set/device/moisture2"
-        }
-      ]]
-    }]
+    "collapsed": "true",
+    "data": [
+      {
+        "type": "button",
+        "name": "config_back",
+        "icon": "carat-l",
+        "action": "~/set/device/config_back"
+      },
+      {
+        "type": "button",
+        "name": "config_forward",
+        "icon": "carat-r",
+        "action": "~/set/device/config_forward"
+      },
+      {
+        "type": "group",
+        "name": "config_group",
+        "caption": "Moisture Point 1",
+        "data": [
+          {
+            "type": "text",
+            "name": "config_voltage",
+            "caption": "Voltage",
+            "readonly": 1,
+            "event": "~/event/device/config_voltage",
+            "suffix": " V"
+          },
+          {
+            "type": "text",
+            "name": "config_value",
+            "caption": "Value",
+            "event": "~/event/device/config_value",
+            "action": "~/set/device/config_value"
+          },
+          {
+            "type": "button",
+            "name": "config_apply",
+            "icon": "check",
+            "action": "~/set/device/config_apply"
+          }
+        ]
+      }
+    ]
   }
 ]
