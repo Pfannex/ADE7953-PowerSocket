@@ -79,6 +79,7 @@ private:
   float uvIntensity;
   uint16_t uvRiskLevel;
   float voltage[4];
+  int relayState[RELAY_COUNT];
   float moisture;
   float volume;
 

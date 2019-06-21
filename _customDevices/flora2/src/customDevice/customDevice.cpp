@@ -99,6 +99,8 @@ void customDevice::start() {
   logging.info("MCP23017 found");
   for (int relay = 0; relay < RELAY_COUNT; relay++) {
     mcp.pinMode(relay, OUTPUT);
+    mcp.digitalWrite(relay, HIGH); // HIGH = off
+    relayState[relay] = 0;
   }
 
   // ADS1115
@@ -214,6 +216,10 @@ void customDevice::inform() {
   topicQueue.put("~/event/device/voltage3", voltage[3], "%g");
   topicQueue.put("~/event/device/moisture", moisture, "%g");
   topicQueue.put("~/event/device/volume", volume, "%g");
+  for (int relay = 0; relay < RELAY_COUNT; relay++) {
+    topicQueue.put("~/event/device/" + String(relays::names[relay]) + " " +
+                   String(relayState[relay]));
+  }
   topicQueue.put("~/event/device/config_voltage", getConfigVoltage(configPoint),
                  "%g");
 
@@ -238,6 +244,7 @@ void customDevice::inform() {
 
 void customDevice::switchRelay(int relay, int state) {
   mcp.digitalWrite(relay, state ? LOW : HIGH);
+  relayState[relay]= state;
   topicQueue.put("~/event/device/" + String(relays::names[relay]) + " " +
                  String(state));
 }
