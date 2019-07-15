@@ -6,8 +6,8 @@
 //  Device
 //===============================================================================
 
-const char *relays::names[] = {"pump",   "valve1", "valve2",
-                               "valve3", "lamp",   "camera"};
+const char *relays::names[] = {"valve1", "valve2", "valve3",
+                               "pump",   "lamp",   "camera"};
 
 //-------------------------------------------------------------------------------
 //  constructor
@@ -244,7 +244,7 @@ void customDevice::inform() {
 
 void customDevice::switchRelay(int relay, int state) {
   mcp.digitalWrite(relay, state ? LOW : HIGH);
-  relayState[relay]= state;
+  relayState[relay] = state;
   topicQueue.put("~/event/device/" + String(relays::names[relay]) + " " +
                  String(state));
 }
