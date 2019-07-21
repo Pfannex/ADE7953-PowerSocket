@@ -353,6 +353,8 @@ String customDevice::get(Topic &topic) {
     return String(measurePressurehPa()); // result in hPa
   } else if (topic.itemIs(3, "temperature")) {
     return String(measureTemperatureCelsius()); // result in °C
+  } else if (topic.itemIs(3, "i2cbus")) {
+    return String(Wire.i2c.scanBus()); 
   } else {
     return TOPIC_NO;
   }
