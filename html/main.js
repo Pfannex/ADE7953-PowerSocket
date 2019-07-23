@@ -53,7 +53,6 @@ function message_clear() {
 // ---------------------------
 
 var connection;
-var lastIndex = 0;
 
 function startListener() {
 
@@ -74,10 +73,30 @@ function openConnection() {
   }
   logmsg("Connecting to " + url + "...");
   connection = new WebSocket(url) /*, [], { headers: { "token": "foobar"}});*/
-  connection.onclose =
-    connection.onerror =
-    connection.onmessage = updateListener;
+  connection.onopen= onOpen;
+  connection.onclose = onClose;
+  connection.onerror = onError;
+  connection.onmessage = onMessage;
 
+}
+
+function onOpen() {
+  logmsg("Websocket connection established.");
+}
+
+function onMessage(evt) {
+  debugmsg("Message received: '"+evt.data+"'");
+  dispatchContent(evt.data);
+}
+
+function onError() {
+  message("Connection lost, trying to reconnect every 5 seconds.");
+  closeConnection();
+  setTimeout(openConnection, 5000);
+}
+
+function onClose() {
+  logmsg("Websocket connection closed.");  
 }
 
 function closeConnection() {
@@ -88,46 +107,6 @@ function closeConnection() {
   else if (typeof connection.abort == "function")
     connection.abort();
   connection = undefined;
-}
-
-function updateListener(evt) {
-  var errstr = "Connection lost, trying to reconnect every 5 seconds.";
-  var new_content = "";
-
-  if ((typeof WebSocket == "function" || typeof WebSocket == "object") && evt &&
-    evt.target instanceof WebSocket) {
-    if (evt.type == 'close') {
-      message(errstr);
-      closeConnection();
-      setTimeout(openConnection, 5000);
-      return;
-    }
-    new_content = evt.data;
-    lastIndex = 0;
-
-  } else {
-    if (connection.readyState == 4) {
-      message(errstr);
-      setTimeout(openConnection, 5000);
-      return;
-    }
-
-    if (connection.readyState != 3)
-      return;
-
-    var len = connection.responseText.length;
-    if (lastIndex == len) // No new data
-      return;
-
-    new_content = connection.responseText.substring(lastIndex, len);
-    lastIndex = len;
-  }
-  if (new_content == undefined || new_content.length == 0)
-    return;
-  message("data received");
-
-  dispatchContent(new_content);
-
 }
 
 // ---------------------------
