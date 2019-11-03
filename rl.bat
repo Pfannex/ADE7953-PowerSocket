@@ -249,8 +249,8 @@ REM ----------------------------------------------------------------------------
   SET /P moduleName=
 
   ECHO creating files for %deviceName%
-  XCOPY src\modules\_template\module.h src\modules\%moduleName%.h*
-  XCOPY src\modules\_template\module.cpp src\modules\%moduleName%.cpp*
+  XCOPY src\modules\_template\module.h src\modules\%moduleName%.h
+  XCOPY src\modules\_template\module.cpp src\modules\%moduleName%.cpp
 
   ECHO.
   GOTO end
