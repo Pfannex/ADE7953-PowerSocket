@@ -86,7 +86,8 @@ function onOpen() {
 
 function onMessage(evt) {
   debugmsg("Message received: '"+evt.data+"'");
-  dispatchContent(evt.data);
+  var msgs= evt.data.split("\r\n");
+  msgs.forEach(dispatchContent);
 }
 
 function onError() {

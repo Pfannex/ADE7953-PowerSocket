@@ -11,6 +11,8 @@ public:
   WebServer(API &api);
   void start();
   void stop();
+  void cleanup();
+  void runPeriodicTasks();
 
 private:
   int isRunning = false;
@@ -18,6 +20,9 @@ private:
   AsyncWebSocket webSocket;
   API &api;
   Tarball tarball;
+
+  // delayed message for websocket
+  String delayedMessage; 
 
   // stores variables for template
   String macAddress;
@@ -60,7 +65,9 @@ private:
   void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client,
                AwsEventType type, void *arg, uint8_t *data, size_t len);
 
-  // send Topics abd log entries to websocket
+  // send Topics and log entries to websocket
+  String eventToString(const String &type, const String &subtype,
+                 const String &value);
   void broadcast(const String &type, const String &subtype,
                  const String &value);
   void logFunction(const String &channel, const String &msg);

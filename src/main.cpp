@@ -58,6 +58,9 @@ void Loop(Task *me) {
   mqtt.handle();
 }
 
-void t_1s(Task *me) { controller.t_1s_Update(); }
+void t_1s(Task *me) { 
+    controller.t_1s_Update(); 
+    webServer.runPeriodicTasks();
+}
 void t_short(Task *me) { controller.t_short_Update(); }
 void t_long(Task *me) { controller.t_long_Update(); }
