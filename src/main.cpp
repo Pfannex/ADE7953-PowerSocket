@@ -6,11 +6,30 @@
 #include "framework/Web/WebServer.h"
 #include "framework/MQTT/MQTT.h"
 #include "framework/Utils/Debug.h"
+#include <W5500lwIP.h>
 
 Controller controller;
 API api(controller);
 WebServer webServer(api);
 MQTT mqtt(api);
+
+//####################################################
+#define CSPIN 4 // GPIO4
+Wiznet5500lwIP eth(SPI, CSPIN);
+int present = 0;
+
+#include <osapi.h>
+LOCAL os_timer_t eth_timer;
+int led = 0;
+//....................................................
+void ICACHE_RAM_ATTR eth_loop(void) {
+  digitalWrite(LED_BUILTIN, led);
+  led = 1 - led;
+  //if(present) eth.loop();
+}
+
+bool schedule_function_us(const std::function<bool(void)>& fn, uint32_t repeat_ms = 0);
+//####################################################
 
 
 // Timer
@@ -40,6 +59,35 @@ void setup() {
   // done
   api.info("startup finished");
 
+//####################################################
+  // starting ethernet
+  // enable Ethernet here-------------------
+  pinMode(LED_BUILTIN, OUTPUT);
+
+  Serial.println("starting ethernet...");
+  SPI.begin();
+  //SPI.setClockDivider(SPI_CLOCK_DIV4); // 4 MHz?
+  //SPI.setBitOrder(MSBFIRST);
+  //SPI.setDataMode(SPI_MODE0);
+
+  eth.setDefault(); // use ethernet for default route
+  present = eth.begin();
+  if (!present) {
+    Serial.println("no ethernet hardware present");
+    //return;
+  } else {
+    Serial.print("connecting ethernet");
+    while (!eth.connected()) {
+      Serial.print(".");
+      delay(1000);
+    }
+    Serial.println();
+    Serial.print("ethernet ip address: ");
+    Serial.println(eth.localIP());
+  }
+//####################################################
+
+
   // Timer
   SoftTimer.add(&t1);
   SoftTimer.add(&t2);
@@ -59,6 +107,10 @@ void Loop(Task *me) {
 }
 
 void t_1s(Task *me) { 
+//####################################################
+      Serial.print("ethernet ip address: ");
+      Serial.println(eth.localIP());
+//####################################################
     controller.t_1s_Update(); 
     webServer.runPeriodicTasks();
 }
