@@ -128,7 +128,7 @@ void Controller::handle() {
 
   wifi.handle();
   handleWifiTimout();
-  //eth.handle();
+  eth.handle();
 
   ftpSrv.handleFTP();
   clock.handle();
