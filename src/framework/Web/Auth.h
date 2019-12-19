@@ -57,6 +57,8 @@ class Auth {
     SessionPtr getSession(String sessionId);
     // removes a session
     void deleteSession(String sessionId);
+    // removes all expired sessions
+    void cleanupSessions();
 
   private:
     API& api;
