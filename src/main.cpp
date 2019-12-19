@@ -6,7 +6,7 @@
 #include "framework/Web/WebServer.h"
 #include "framework/MQTT/MQTT.h"
 #include "framework/Utils/Debug.h"
-#include <W5500lwIP.h>
+//#include <W5500lwIP.h>
 
 Controller controller;
 API api(controller);
@@ -14,13 +14,13 @@ WebServer webServer(api);
 MQTT mqtt(api);
 
 //####################################################
-#define CSPIN 4 // GPIO4
+//#define CSPIN 2 // GPIO4
 Wiznet5500lwIP eth(SPI, CSPIN);
 int present = 0;
 
-#include <osapi.h>
-LOCAL os_timer_t eth_timer;
-int led = 0;
+//#include <osapi.h>
+//LOCAL os_timer_t eth_timer;
+//int led = 0;
 //....................................................
 //void ICACHE_RAM_ATTR eth_loop(void) {
   //digitalWrite(LED_BUILTIN, led);
@@ -62,8 +62,9 @@ void setup() {
 //####################################################
   // starting ethernet
   // enable Ethernet here-------------------
-  pinMode(LED_BUILTIN, OUTPUT);
+  //pinMode(LED_BUILTIN, OUTPUT);
 
+/*
   Serial.println("starting ethernet...");
   SPI.begin();
   //SPI.setClockDivider(SPI_CLOCK_DIV4); // 4 MHz?
@@ -84,7 +85,9 @@ void setup() {
     Serial.println();
     Serial.print("ethernet ip address: ");
     Serial.println(eth.localIP());
+  
   }
+  */
 //####################################################
 
 

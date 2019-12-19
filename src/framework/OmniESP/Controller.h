@@ -9,6 +9,7 @@
 #include "framework/Utils/Logger.h"
 #include "framework/OmniESP/Topic.h"
 #include "framework/Net/WIFI.h"
+#include "framework/Net/ETH.h"
 #include "framework/Utils/SysUtils.h"
 #include <ESP8266FtpServer.h>
 
@@ -80,6 +81,7 @@ public:
   LOGGING logging;
   FFS ffs;
   WIFI wifi;
+  ETH eth;
   FtpServer ftpSrv;
   ESP_Tools espTools;
   customDevice device;

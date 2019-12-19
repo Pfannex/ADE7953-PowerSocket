@@ -25,7 +25,8 @@
 //...............................................................................
 Controller::Controller()
     : logging(clock), ffs(logging), clock(topicQueue), espTools(logging),
-      wifi(logging, ffs), device(logging, topicQueue, ffs) {
+//      wifi(logging, ffs), device(logging, topicQueue, ffs) {
+      wifi(logging, ffs), eth(logging, ffs), device(logging, topicQueue, ffs) {
 
   // callback Events
   // WiFi
@@ -106,6 +107,9 @@ void Controller::start() {
   // start WiFi for the first time
   wifi.start();
 
+  // start Ethernet
+  eth.start();
+
   // startup the device
   device.start();
   logging.info("controller started");
@@ -124,6 +128,7 @@ void Controller::handle() {
 
   wifi.handle();
   handleWifiTimout();
+  //eth.handle();
 
   ftpSrv.handleFTP();
   clock.handle();
