@@ -15,8 +15,8 @@ MQTT mqtt(api);
 
 //####################################################
 //#define CSPIN 2 // GPIO4
-Wiznet5500lwIP eth(SPI, CSPIN);
-int present = 0;
+//Wiznet5500lwIP eth(SPI, CSPIN);
+//int present = 0;
 
 //#include <osapi.h>
 //LOCAL os_timer_t eth_timer;
@@ -28,7 +28,7 @@ int present = 0;
   //if(present) eth.loop();
 //}
 
-bool schedule_function_us(const std::function<bool(void)>& fn, uint32_t repeat_ms = 0);
+//bool schedule_function_us(const std::function<bool(void)>& fn, uint32_t repeat_ms = 0);
 //####################################################
 
 

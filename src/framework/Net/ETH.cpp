@@ -11,10 +11,10 @@ void ICACHE_RAM_ATTR eth_loop(void) {
   digitalWrite(LED_BUILTIN, _builtin_led_state);
   _builtin_led_state = 1 - _builtin_led_state;
 }
-
+*/
 bool schedule_function_us(const std::function<bool(void)> &fn,
                           uint32_t repeat_ms = 0);
-*/
+
 //###############################################################################
 
 ETH::ETH(LOGGING &logging, FFS &ffs)
