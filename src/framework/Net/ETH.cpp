@@ -29,11 +29,68 @@ void ETH::start() {
   //SPI.setDataMode(SPI_MODE0);
 
   eth.setDefault(); // use ethernet for default route
+
   present = eth.begin();
+
+  if (!present) {
+    logging.info("no ethernet hardware present");
+    return;
+  } else {
+#define MAXTRIES 10
+    int i = 0;
+    int c;
+    logging.info("connecting ethernet...");
+    while (i < MAXTRIES) {
+      c = eth.connected();
+      if (c)
+        break;
+      delay(1000);
+      i++;
+    }
+    if (c) {
+      logging.info("ethernet ip address: " + eth.localIP().toString());
+      logging.info("ethernet gw address: " + eth.gatewayIP().toString());
+      logging.info("ethernet netmask   : " + eth.subnetMask().toString());
+      eth.setDefault();
+    } else {
+      logging.error("could not connect ethernet");
+    }
+  }
+ 
+ 
+ 
+ /*
   if (!present) {
     Serial.println("no ethernet hardware present");
     //return;
   } else {
+
+#define MAXTRIES 10
+    int i = 0;
+    int c;
+    logging.info("connecting ethernet...");
+    while (i < MAXTRIES) {
+      c = eth.connected();
+      if (c)
+        break;
+      delay(1000);
+      i++;
+    }
+    if (c) {
+      logging.info("ethernet ip address: " + eth.localIP().toString());
+      logging.info("ethernet gw address: " + eth.gatewayIP().toString());
+      logging.info("ethernet netmask   : " + eth.subnetMask().toString());
+      eth.setDefault();
+    } else {
+      logging.error("could not connect ethernet");
+    }
+  }
+*/
+
+
+
+/*
+
     Serial.print("connecting ethernet");
     while (!eth.connected()) {
       Serial.print(".");
@@ -43,7 +100,7 @@ void ETH::start() {
     Serial.print("ethernet ip address: ");
     Serial.println(eth.localIP());
   }
-
+*/
 
 
 
@@ -86,9 +143,9 @@ void ETH::start() {
 }
 
 void ETH::stop() {
-//  if (present) {
- //   eth.end();
-//  }
+  if (present) {
+    eth.end();
+  }
 }
 
 void ETH::handle() {
@@ -96,6 +153,6 @@ void ETH::handle() {
 }
 
 int ETH::isPresent() {
-    //return present;
+    return present;
 }
 
