@@ -22,11 +22,11 @@ int present = 0;
 LOCAL os_timer_t eth_timer;
 int led = 0;
 //....................................................
-void ICACHE_RAM_ATTR eth_loop(void) {
-  digitalWrite(LED_BUILTIN, led);
-  led = 1 - led;
+//void ICACHE_RAM_ATTR eth_loop(void) {
+  //digitalWrite(LED_BUILTIN, led);
+  //led = 1 - led;
   //if(present) eth.loop();
-}
+//}
 
 bool schedule_function_us(const std::function<bool(void)>& fn, uint32_t repeat_ms = 0);
 //####################################################
@@ -108,8 +108,8 @@ void Loop(Task *me) {
 
 void t_1s(Task *me) { 
 //####################################################
-      Serial.print("ethernet ip address: ");
-      Serial.println(eth.localIP());
+      //Serial.print("ethernet ip address: ");
+      //Serial.println(eth.localIP());
 //####################################################
     controller.t_1s_Update(); 
     webServer.runPeriodicTasks();
