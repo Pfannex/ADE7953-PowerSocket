@@ -14,10 +14,8 @@ ETH::ETH(LOGGING &logging, FFS &ffs)
 
 void ETH::start() {
 
-  Serial.println("starting ethernet...");
+  logging.info("starting ethernet...");
   SPI.begin();
-
-  eth.setDefault(); // use ethernet for default route
 
   present = eth.begin();
 
@@ -25,12 +23,14 @@ void ETH::start() {
     logging.info("no ethernet hardware present");
     return;
   } else {
-#define MAXTRIES 10
+      Serial.println(eth.plugged());
+
+    //check for cable
     int i = 0;
     int c;
     logging.info("connecting ethernet...");
     while (i < MAXTRIES) {
-      c = eth.connected();
+      c = eth.connected();  //move to handle!!!
       if (c)
         break;
       delay(1000);
@@ -54,9 +54,14 @@ void ETH::stop() {
 }
 
 void ETH::handle() {
+  //check connection state like WiFi
+
   yield();
 }
 
 int ETH::isPresent() {
   return present;
+}
+int ETH::isPluggedIn() {
+  //return present;
 }
