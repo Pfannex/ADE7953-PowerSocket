@@ -119,17 +119,20 @@ void WebServer::stop() {
 //  cleanup: purge idle websocket connections
 //...............................................................................
 
-void WebServer::cleanup() { webSocket.cleanupClients(); }
+void WebServer::cleanup() {
+  webSocket.cleanupClients();
+  auth.cleanupSessions();
+}
 
 //...............................................................................
 //  run periodic task (every second)
 //...............................................................................
 
 void WebServer::runPeriodicTasks() {
-  //Ds("runPeriodicTasks", delayedMessage.c_str());
+  // Ds("runPeriodicTasks", delayedMessage.c_str());
   cleanup();
   webSocket.textAll(delayedMessage);
-  delayedMessage= "";
+  delayedMessage = "";
 }
 
 //-------------------------------------------------------------------------------

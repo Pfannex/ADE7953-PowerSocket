@@ -1,58 +1,50 @@
-#include <Arduino.h>
 #include "framework/Web/Auth.h"
 #include "framework/Utils/SysUtils.h"
+#include <Arduino.h>
 
 //###############################################################################
 //  Session
 //###############################################################################
 
-OmniESPSession::OmniESPSession(String username, API& api):
-  username(username),
-  api(api) {
+OmniESPSession::OmniESPSession(String username, API &api)
+    : username(username), api(api) {
 
   // the session id should be as random as possible
-  sessionId= "";
-  for(int i= 0; i< 32; i++) {
+  sessionId = "";
+  for (int i = 0; i < 32; i++) {
     sessionId.concat(String(SysUtils::rand(256), HEX));
   }
   touch();
 }
 
-String OmniESPSession::getSessionId() {
-  return sessionId;
-}
+String OmniESPSession::getSessionId() { return sessionId; }
 
-String OmniESPSession::getUsername() {
-  return username;
-}
+String OmniESPSession::getUsername() { return username; }
 
 bool OmniESPSession::isExpired() {
-  bool expired= millis() - lastTouch > sessionLifetime;
-  if(expired) {
-    api.debug("session "+sessionId+" has expired.");
+  bool expired = millis() - lastTouch > sessionLifetime;
+  if (expired) {
+    api.debug("session " + sessionId + " has expired.");
   }
   return expired;
 }
 
 void OmniESPSession::touch() {
-  lastTouch= millis();
-  //api.debug("session "+sessionId+" renewed.");
+  lastTouch = millis();
+  // api.debug("session "+sessionId+" renewed.");
 }
 
 //###############################################################################
 //  Authentification
 //###############################################################################
 
-Auth::Auth(API& api):
-  api(api) {
+Auth::Auth(API &api) : api(api) {
 
-  sessions= new SessionPtr[maxSessions];
-  numSessions= 0;
+  sessions = new SessionPtr[maxSessions];
+  numSessions = 0;
 }
 
-Auth::~Auth() {
-  delete[] sessions;
-}
+Auth::~Auth() { delete[] sessions; }
 
 //-------------------------------------------------------------------------------
 //  Authentification public
@@ -63,10 +55,10 @@ Auth::~Auth() {
 //...............................................................................
 
 void Auth::reset() {
-  for(int i= 0; i< numSessions; i++) {
+  for (int i = 0; i < numSessions; i++) {
     delete sessions[i];
   }
-  numSessions= 0;
+  numSessions = 0;
 }
 
 //...............................................................................
@@ -75,14 +67,15 @@ void Auth::reset() {
 
 bool Auth::checkPassword(String username, String password) {
 
-  String sha1hash= sha1(password); // todo
-  api.info("authentificating user "+username+" with SHA1 hash "+sha1hash+"... ");
+  String sha1hash = sha1(password); // todo
+  api.info("authentificating user " + username + " with SHA1 hash " + sha1hash +
+           "... ");
 
   String device_username = api.call("~/get/ffs/cfg/item/device_username");
   String device_password = api.call("~/get/ffs/cfg/item/device_password");
 
-  //D(username.c_str()); D(device_username.c_str());
-  //D(password.c_str()); D(device_password.c_str());
+  // D(username.c_str()); D(device_username.c_str());
+  // D(password.c_str()); D(device_password.c_str());
   return (username == device_username) && (password == device_password);
 }
 
@@ -92,17 +85,16 @@ bool Auth::checkPassword(String username, String password) {
 
 SessionPtr Auth::createSession(String username) {
 
-  if(numSessions== maxSessions) {
+  if (numSessions == maxSessions) {
     api.error("maximum number of sessions reached.");
     return nullptr;
   } else {
-    SessionPtr session= new OmniESPSession(username, api);
-    sessions[numSessions++]= session;
-    api.info("session " + session->getSessionId() +
-      " created for user " + session->getUsername());
+    SessionPtr session = new OmniESPSession(username, api);
+    sessions[numSessions++] = session;
+    api.info("session " + session->getSessionId() + " created for user " +
+             session->getUsername());
     return session;
   }
-
 };
 
 //...............................................................................
@@ -112,15 +104,27 @@ SessionPtr Auth::createSession(String username) {
 void Auth::deleteSession(String sessionId) {
 
   api.info("deleting session " + sessionId);
-  for(int i= 0; i< numSessions; i++) {
-      if(sessions[i]->getSessionId()== sessionId) {
-        delete sessions[i];
-        for(int j= i+1; j< numSessions; j++) {
-          sessions[j-1]= sessions[j];
-        }
-        numSessions--;
-        return;
+  for (int i = 0; i < numSessions; i++) {
+    if (sessions[i]->getSessionId() == sessionId) {
+      delete sessions[i];
+      for (int j = i + 1; j < numSessions; j++) {
+        sessions[j - 1] = sessions[j];
       }
+      numSessions--;
+      return;
+    }
+  }
+}
+
+//...............................................................................
+//  cleanupSessions
+//...............................................................................
+
+void Auth::cleanupSessions() {
+
+  for (int i = numSessions - 1; i >= 0; i--) {
+    if (sessions[i]->isExpired())
+      deleteSession(sessions[i]->getSessionId());
   }
 }
 
@@ -131,12 +135,12 @@ void Auth::deleteSession(String sessionId) {
 SessionPtr Auth::getSession(String sessionId) {
 
   // check if we have a session with this ID
-  //api.debug("checking session " + sessionId);
-  for(int i= 0; i< numSessions; i++) {
-    //String sessionIdi= sessions[i]->getSessionId();
-    //sysUtils.logging.debug("session has sessionId "+sessionIdi);
-    if(sessions[i]->getSessionId()== sessionId) {
-      //sysUtils.logging.debug("session found.");
+  // api.debug("checking session " + sessionId);
+  for (int i = 0; i < numSessions; i++) {
+    // String sessionIdi= sessions[i]->getSessionId();
+    // sysUtils.logging.debug("session has sessionId "+sessionIdi);
+    if (sessions[i]->getSessionId() == sessionId) {
+      // sysUtils.logging.debug("session found.");
       return sessions[i];
     }
   }
