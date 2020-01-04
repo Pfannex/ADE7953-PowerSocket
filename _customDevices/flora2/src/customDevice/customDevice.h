@@ -43,7 +43,7 @@ private:
   void logPollInterval();
 
   // sensors
-  Adafruit_BMP280 pressureSensor;
+  Adafruit_BME280 pressureSensor;
   AS_BH1750 lightSensor;
   Adafruit_VEML6070 uvSensor;
   Adafruit_MCP23017 mcp;

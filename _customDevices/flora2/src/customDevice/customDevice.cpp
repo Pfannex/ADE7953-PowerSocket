@@ -1,6 +1,7 @@
 #include "customDevice.h"
 #include "framework/Utils/Debug.h"
 #include <Arduino.h>
+#include "debug.h"
 
 //===============================================================================
 //  Device
@@ -64,10 +65,10 @@ void customDevice::start() {
   pressureSensorIsPresent = pressureSensor.begin(ADDRESS_PS);
   if (pressureSensorIsPresent) {
     count++;
-    logging.info("BMP pressure sensor found at I2C address 0x" +
+    logging.info("BME pressure sensor found at I2C address 0x" +
                  String(ADDRESS_PS, HEX));
   } else {
-    logging.error("no BMP pressure sensor found at I2C address 0x" +
+    logging.error("no BME pressure sensor found at I2C address 0x" +
                   String(ADDRESS_PS, HEX));
   }
 
@@ -144,6 +145,7 @@ float customDevice::measureIlluminanceLux() {
 }
 
 float customDevice::measureTemperatureCelsius() {
+  //D(String(pressureSensor.readTemperature()).c_str());
   return 0.01 * round(100.0 * pressureSensor.readTemperature());
 }
 

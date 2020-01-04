@@ -34,9 +34,9 @@
 #define SCL 5
 
 //
-// pressure sensor BMP 280
+// pressure sensor BME 280
 //
-#include "Adafruit_BMP280.h"
+#include "Adafruit_BME280.h"
 // 0x76 default, 0x77 secondary
 #define ADDRESS_PS (0x76)
 
