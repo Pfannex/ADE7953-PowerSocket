@@ -97,7 +97,10 @@ String I2C::scanBus() {
                   bus stall (SDA remains 0)
       */
       devices = "";
-      if (address == 0x76 | address == 0x77) deviceAdd(devices,  "BMP280");
+      if (address == 0x76 | address == 0x77) { 
+        deviceAdd(devices,  "BMP280");
+        deviceAdd(devices,  "BME280");
+      }
       if (address == 0x3c) deviceAdd(devices,  "SSD1306");
       if (address >= 0x20 & address <= 0x27) deviceAdd(devices,  "MCP23017");
       if (address == 0x40) deviceAdd(devices,  "SI7021");
