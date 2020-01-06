@@ -30,6 +30,14 @@
       },
       {
         "type": "text",
+        "name": "humidity",
+        "caption": "Humidity",
+        "readonly": 1,
+        "event": "~/event/device/humidity",
+        "suffix": " %"
+      },
+      {
+        "type": "text",
         "name": "illuminance",
         "caption": "Illuminance",
         "readonly": 1,
