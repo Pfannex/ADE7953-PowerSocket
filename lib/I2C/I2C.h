@@ -28,6 +28,7 @@ public:
   void start(uint8_t _i2cAddr, int _clockSpeed);
   uint8_t stop();
   String scanBus();   //returns a json
+  bool isPresent(uint8_t _i2cAddr);
 
 //write
   //write various size of register/buffer, incl. start/stop
@@ -72,5 +73,6 @@ public:
   void testI2C();
 
 private:
+  bool addresses[128];
   String deviceAdd(String& devices, String device);
 };

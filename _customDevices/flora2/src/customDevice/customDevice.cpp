@@ -1,4 +1,5 @@
 #include "customDevice.h"
+#include "debug.h"
 #include "framework/Utils/Debug.h"
 #include <Arduino.h>
 
@@ -61,13 +62,15 @@ void customDevice::start() {
   //
 
   // pressure sensor
-  pressureSensorIsPresent = pressureSensor.begin(ADDRESS_PS);
+  pressureSensorIsPresent = pressureSensor.begin(ADDRESS_PS, &Wire);
   if (pressureSensorIsPresent) {
     count++;
-    logging.info("BMP pressure sensor found at I2C address 0x" +
+    logging.info("BME pressure sensor found at I2C address 0x" +
                  String(ADDRESS_PS, HEX));
+    logging.info("BME Sensor ID is 0x" +
+                 String(pressureSensor.sensorID(), HEX));
   } else {
-    logging.error("no BMP pressure sensor found at I2C address 0x" +
+    logging.error("no BME pressure sensor found at I2C address 0x" +
                   String(ADDRESS_PS, HEX));
   }
 
@@ -85,7 +88,8 @@ void customDevice::start() {
 
   // uv sensor
   uvSensor.begin(VEML6070_4_T);
-  uvSensorIsPresent = uvSensor.clearAck();
+  uvSensorIsPresent = Wire.i2c.isPresent(VEML6070_ADDR_L);
+  uvSensor.clearAck();
   if (uvSensorIsPresent) {
     count++;
     logging.info("VEML6070 uv sensor found");
@@ -95,20 +99,34 @@ void customDevice::start() {
 
   // MCP23017
   mcp.begin(ADDRESS_MCP - 0x20);
-  mcpIsPresent = true; // how to check?
-  logging.info("MCP23017 found");
-  for (int relay = 0; relay < RELAY_COUNT; relay++) {
-    mcp.pinMode(relay, OUTPUT);
-    mcp.digitalWrite(relay, HIGH); // HIGH = off
-    relayState[relay] = 0;
+  mcpIsPresent = Wire.i2c.isPresent(ADDRESS_MCP);
+  if (mcpIsPresent) {
+    logging.info("MCP23017 device found at I2C address 0x" +
+                 String(ADDRESS_MCP, HEX));
+    for (int relay = 0; relay < RELAY_COUNT; relay++) {
+      mcp.pinMode(relay, OUTPUT);
+      mcp.digitalWrite(relay, HIGH); // HIGH = off
+      relayState[relay] = 0;
+    }
+  } else {
+    logging.error("no MCP23017 device found at I2C address 0x" +
+                 String(ADDRESS_MCP, HEX));
   }
 
   // ADS1115
-  ads.begin();
-  ads.setGain(GAIN_ONE); // 4.096 V
-  adsIsPresent = true;   // how to check?
-  adsGain_t gain = ads.getGain();
-  logging.info("ADS1115 found");
+  adsIsPresent = Wire.i2c.isPresent(ADDRESS_ADS);
+  if (adsIsPresent) {
+    ads.begin();
+    count++;
+    logging.info("ADS1115 sensor found at I2C address 0x" +
+                 String(ADDRESS_ADS, HEX));
+    ads.setGain(GAIN_ONE); // 4.096 V
+    adsIsPresent = Wire.i2c.isPresent(ADDRESS_ADS);
+    adsGain_t gain = ads.getGain();
+  } else {
+    logging.error("no ADS1115 sensor found at I2C address 0x" +
+                 String(ADDRESS_ADS, HEX));
+  }
 
   // poll if any sensors found
   if (count) {
@@ -144,12 +162,18 @@ float customDevice::measureIlluminanceLux() {
 }
 
 float customDevice::measureTemperatureCelsius() {
+  // D(String(pressureSensor.readTemperature()).c_str());
   return 0.01 * round(100.0 * pressureSensor.readTemperature());
 }
 
 float customDevice::measurePressurehPa() {
   return 0.01 * round(pressureSensor.readPressure());
 }
+
+float customDevice::measureHumidityPercent() {
+  return round(pressureSensor.readHumidity());
+}
+
 uint16_t customDevice::measureUVLevel() { return uvSensor.readUV(); }
 
 float customDevice::measureUVmuWpercm2() { return measureUVLevel() * 5.0; }
@@ -191,34 +215,54 @@ float customDevice::voltageToMoisturePercent(float voltage) {
 
 void customDevice::measure() {
 
-  temperature = measureTemperatureCelsius();
-  pressure = measurePressurehPa();
-  illuminance = measureIlluminanceLux();
-  uv = measureUVLevel();
-  uvIntensity = UVreadingToUVmuWpercm2(uv);
-  uint16_t uvRiskLevel = UVreadingToUVRiskLevel(uv);
-  for (int channel = 0; channel < 4; channel++)
-    voltage[channel] = measureVoltage(channel);
-  moisture = voltageToMoisturePercent(voltage[MOISTURE_VOLTAGE]);
-  volume = voltageToVolumeLiter(voltage[TANK_VOLTAGE]);
+  if (pressureSensorIsPresent) {
+    temperature = measureTemperatureCelsius();
+    pressure = measurePressurehPa();
+    humidity = measureHumidityPercent();
+  }
+  if (lightSensorIsPresent) {
+    illuminance = measureIlluminanceLux();
+  }
+  if (uvSensorIsPresent) {
+    uv = measureUVLevel();
+    uvIntensity = UVreadingToUVmuWpercm2(uv);
+    uint16_t uvRiskLevel = UVreadingToUVRiskLevel(uv);
+  }
+  if (adsIsPresent) {
+    for (int channel = 0; channel < 4; channel++)
+      voltage[channel] = measureVoltage(channel);
+    moisture = voltageToMoisturePercent(voltage[MOISTURE_VOLTAGE]);
+    volume = voltageToVolumeLiter(voltage[TANK_VOLTAGE]);
+  }
 }
 
 void customDevice::inform() {
 
-  topicQueue.put("~/event/device/temperature", temperature, "%.2f");
-  topicQueue.put("~/event/device/pressure", pressure, "%.2f");
-  topicQueue.put("~/event/device/illuminance", illuminance, "%.2f");
-  topicQueue.put("~/event/device/uvIntensity", uvIntensity, "%g");
-  topicQueue.put("~/event/device/uvRiskLevel", uvRiskLevel * 1.0, "%g");
-  topicQueue.put("~/event/device/voltage0", voltage[0], "%g");
-  topicQueue.put("~/event/device/voltage1", voltage[1], "%g");
-  topicQueue.put("~/event/device/voltage2", voltage[2], "%g");
-  topicQueue.put("~/event/device/voltage3", voltage[3], "%g");
-  topicQueue.put("~/event/device/moisture", moisture, "%g");
-  topicQueue.put("~/event/device/volume", volume, "%g");
-  for (int relay = 0; relay < RELAY_COUNT; relay++) {
-    topicQueue.put("~/event/device/" + String(relays::names[relay]) + " " +
-                   String(relayState[relay]));
+  if (pressureSensorIsPresent) {
+    topicQueue.put("~/event/device/temperature", temperature, "%.2f");
+    topicQueue.put("~/event/device/pressure", pressure, "%.2f");
+    topicQueue.put("~/event/device/humidity", humidity, "%.2f");
+  }
+  if (lightSensorIsPresent) {
+    topicQueue.put("~/event/device/illuminance", illuminance, "%.2f");
+  }
+  if (uvSensorIsPresent) {
+    topicQueue.put("~/event/device/uvIntensity", uvIntensity, "%g");
+    topicQueue.put("~/event/device/uvRiskLevel", uvRiskLevel * 1.0, "%g");
+  }
+  if (adsIsPresent) {
+    topicQueue.put("~/event/device/voltage0", voltage[0], "%g");
+    topicQueue.put("~/event/device/voltage1", voltage[1], "%g");
+    topicQueue.put("~/event/device/voltage2", voltage[2], "%g");
+    topicQueue.put("~/event/device/voltage3", voltage[3], "%g");
+    topicQueue.put("~/event/device/moisture", moisture, "%g");
+    topicQueue.put("~/event/device/volume", volume, "%g");
+  }
+  if (mcpIsPresent) {
+    for (int relay = 0; relay < RELAY_COUNT; relay++) {
+      topicQueue.put("~/event/device/" + String(relays::names[relay]) + " " +
+                     String(relayState[relay]));
+    }
   }
   topicQueue.put("~/event/device/config_voltage", getConfigVoltage(configPoint),
                  "%g");
@@ -243,10 +287,12 @@ void customDevice::inform() {
 //...............................................................................
 
 void customDevice::switchRelay(int relay, int state) {
-  mcp.digitalWrite(relay, state ? LOW : HIGH);
-  relayState[relay] = state;
-  topicQueue.put("~/event/device/" + String(relays::names[relay]) + " " +
-                 String(state));
+  if (mcpIsPresent) {
+    mcp.digitalWrite(relay, state ? LOW : HIGH);
+    relayState[relay] = state;
+    topicQueue.put("~/event/device/" + String(relays::names[relay]) + " " +
+                   String(state));
+  }
 }
 
 //...............................................................................
@@ -354,7 +400,7 @@ String customDevice::get(Topic &topic) {
   } else if (topic.itemIs(3, "temperature")) {
     return String(measureTemperatureCelsius()); // result in °C
   } else if (topic.itemIs(3, "i2cbus")) {
-    return String(Wire.i2c.scanBus()); 
+    return String(Wire.i2c.scanBus());
   } else {
     return TOPIC_NO;
   }

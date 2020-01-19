@@ -8,13 +8,14 @@
 #include "customDeviceSetup.h"
 
 // modules required by device
+#include <Wire.h>
 #include "AS_BH1750.h"
+#include "Adafruit_Sensor.h"
 #include "Adafruit_ADS1015.h"
-#include "Adafruit_BMP280.h"
+#include "Adafruit_BME280.h"
 #include "Adafruit_MCP23017.h"
 #include "Adafruit_VEML6070.h"
 #include "modules/GPIO.h"
-#include <Wire.h>
 
 //###############################################################################
 //  Device
@@ -43,7 +44,7 @@ private:
   void logPollInterval();
 
   // sensors
-  Adafruit_BMP280 pressureSensor;
+  Adafruit_BME280 pressureSensor;
   AS_BH1750 lightSensor;
   Adafruit_VEML6070 uvSensor;
   Adafruit_MCP23017 mcp;
@@ -63,6 +64,7 @@ private:
   float measureIlluminanceLux();
   float measureTemperatureCelsius();
   float measurePressurehPa();
+  float measureHumidityPercent();
   uint16_t measureUVLevel();
   float measureUVmuWpercm2();
   uint16_t UVreadingToUVRiskLevel(uint16_t);
@@ -74,6 +76,7 @@ private:
 
   float temperature;
   float pressure;
+  float humidity;
   float illuminance;
   int uv;
   float uvIntensity;

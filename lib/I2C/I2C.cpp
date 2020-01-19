@@ -4,6 +4,8 @@
 //  I2C
 //===============================================================================
 I2C::I2C(){
+  for(uint8_t _i2cAddr= 0; _i2cAddr< 128; _i2cAddr++)
+    addresses[_i2cAddr]= false;
 }
 
 //-------------------------------------------------------------------------------
@@ -51,6 +53,12 @@ void I2C::setDevice(uint8_t _i2cAddr, int _clockSpeed){
 //  scan I2C-Bus for devices
 //...............................................................................
 
+// need to run scanBus() first to detect devices
+bool I2C::isPresent(uint8_t _i2cAddr) {
+  return addresses[_i2cAddr];
+}
+
+
 String I2C::deviceAdd(String& devices, String device) {
   if(devices.length()) devices.concat(",");
   devices.concat(device);
@@ -81,6 +89,7 @@ String I2C::scanBus() {
     brzo_i2c_write(buffer, 1, false);
     error = brzo_i2c_end_transaction();
 
+    addresses[address]= false;
     if (error == 0) {
       /*
       returns 0 if transaction completed successfully or error code encoded as
@@ -96,8 +105,12 @@ String I2C::scanBus() {
     	            Command not sent to the slave, since this could yield to a
                   bus stall (SDA remains 0)
       */
+      addresses[address]= true;
       devices = "";
-      if (address == 0x76 | address == 0x77) deviceAdd(devices,  "BMP280");
+      if (address == 0x76 | address == 0x77) { 
+        deviceAdd(devices,  "BMP280");
+        deviceAdd(devices,  "BME280");
+      }
       if (address == 0x3c) deviceAdd(devices,  "SSD1306");
       if (address >= 0x20 & address <= 0x27) deviceAdd(devices,  "MCP23017");
       if (address == 0x40) deviceAdd(devices,  "SI7021");

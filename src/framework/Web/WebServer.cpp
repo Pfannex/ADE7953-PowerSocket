@@ -97,22 +97,44 @@ void WebServer::start() {
   api.info("webserver started.");
   isRunning = true;
 }
+
 //...............................................................................
 //   stop
 //...............................................................................
 void WebServer::stop() {
   // how to stop that thing?
 
-  api.info("stoping webserver");
+  api.info("stopping webserver");
 
   // Authentificator
   auth.reset();
 
   // start serving requests
   // webServer.reset();
-  api.info("webserver stoped");
+  api.info("webserver stopped");
   isRunning = false;
 }
+
+//...............................................................................
+//  cleanup: purge idle websocket connections
+//...............................................................................
+
+void WebServer::cleanup() {
+  webSocket.cleanupClients();
+  auth.cleanupSessions();
+}
+
+//...............................................................................
+//  run periodic task (every second)
+//...............................................................................
+
+void WebServer::runPeriodicTasks() {
+  // Ds("runPeriodicTasks", delayedMessage.c_str());
+  cleanup();
+  webSocket.textAll(delayedMessage);
+  delayedMessage = "";
+}
+
 //-------------------------------------------------------------------------------
 //  WebServer private
 //-------------------------------------------------------------------------------
@@ -142,8 +164,9 @@ void WebServer::onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client,
 //  push Topics and log entries to websocket
 //...............................................................................
 
-void WebServer::broadcast(const String &type, const String &subtype,
-                          const String &value) {
+String WebServer::eventToString(const String &type, const String &subtype,
+                                const String &value) {
+
   String msg;
   String v = value;
   v.replace("\"", "\\\"");
@@ -151,7 +174,13 @@ void WebServer::broadcast(const String &type, const String &subtype,
   if (subtype != "")
     msg += "\"subtype\":\"" + subtype + "\",";
   msg += "\"value\":\"" + v + "\"}";
-  webSocket.textAll(msg);
+  return msg;
+}
+
+void WebServer::broadcast(const String &type, const String &subtype,
+                          const String &value) {
+
+  webSocket.textAll(eventToString(type, subtype, value));
 }
 
 void WebServer::logFunction(const String &channel, const String &msg) {
@@ -170,11 +199,25 @@ void WebServer::topicFunction(const time_t, Topic &topic) {
   if (topicStr == "~/event/wifi/start")
     start();
 
+  /*
+    Broadcasting events as they come in looses events if too much events come in
+    at once. After some time, the websockets stops working after all.
+    
+    We thus collect the events and add them to the message string first as they 
+    come in. The message string is broadcasted in the runPeriodicTasks() function.
+    
+    This limits the rate of broadcasting to the frequency of calling
+    runPeriodicTasks() from the main program, usually to one broadcast
+    per seconds.
+  */
   if (isRunning) {
     String type("event");
     String subtype("");
     String msg = topic.asString();
-    broadcast(type, subtype, msg);
+    if(delayedMessage.length()< 2048)
+      if(delayedMessage.length()> 0)
+        delayedMessage += "\r\n";  
+      delayedMessage += eventToString(type, subtype, msg);
   }
 }
 
