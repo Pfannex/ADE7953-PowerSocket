@@ -114,6 +114,7 @@ void customDevice::start() {
   }
 
   // ADS1115
+  adsIsPresent = Wire.i2c.isPresent(ADDRESS_ADS);
   if (adsIsPresent) {
     ads.begin();
     count++;
