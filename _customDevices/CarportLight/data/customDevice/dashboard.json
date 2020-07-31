@@ -1,0 +1,83 @@
+[
+  {
+     "type":"text",
+     "name":"clock",
+     "caption":"Time",
+     "readonly":1,
+     "event":"~/event/clock/time",
+     "inputtype":"datetime"
+  },
+  {
+     "type":"group",
+     "name":"color",
+     "caption":"übergeordnete Farbeinstellungen",
+     "data":[
+       {
+          "type":"text",
+          "name":"drawer_color",
+          "caption":"Drawer Color",
+          "inputtype":"color",
+          "action":"~/set/device/drawer/color",
+          "event":"~/event/device/drawer/color"
+       },
+       {
+          "type":"text",
+          "name":"floor_color",
+          "caption":"Floor Color",
+          "inputtype":"color",
+          "action":"~/set/device/floor/color",
+          "event":"~/event/device/floor/color"
+       }
+     ]
+   },
+   {
+     "type":"group",
+     "name":"drawer",
+     "caption":"Drawer Einstellungen",
+     "data":[
+       {
+         "type": "button",
+         "name": "previous",
+         "caption": "<--",
+         "action": "~/set/device/drawer/index previous"
+       },
+       {
+         "type": "button",
+         "name": "next",
+         "caption": "-->",
+         "action": "~/set/device/drawer/index next"
+       },
+       {
+          "type":"text",
+          "name":"drawer_index",
+          "caption":"Index",
+          "inputtype":"Text",
+          "action":"~/set/device/drawer/index",
+          "event":"~/event/device/drawer/index"
+       },
+       {
+          "type":"text",
+          "name":"drawer_name",
+          "caption":"Name",
+          "inputtype":"Text",
+          "action":"~/set/device/drawer/name",
+          "event":"~/event/device/drawer/name"
+       },
+       {
+          "type":"text",
+          "name":"individual_color",
+          "caption":"color",
+          "inputtype":"color",
+          "action":"~/set/device/drawer/individualColor",
+          "event":"~/event/device/drawer/individualColor"
+       },
+       {
+         "type": "checkbox",
+         "name": "drawer_usecase",
+         "caption": "Floorlight",
+         "action":"~/set/device/drawer/usecase",
+         "event":"~/event/device/drawer/usecase"
+       }
+     ]
+   }
+]
