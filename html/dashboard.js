@@ -266,7 +266,7 @@ function dashboardBuild(json) {
 // dashboard action
 // -------------------------------
 
-var MIN_MSECS_BETWEEN_CALLS = 200;
+var MIN_MSECS_BETWEEN_CALLS = 2000;
 var lastCallTime = 0;
 var lastTopicsArgs = "";
 var delayActive = 0;
