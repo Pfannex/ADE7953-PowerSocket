@@ -693,7 +693,7 @@ bool Controller::startNtp() {
     // start the clock with NTP updater
     String ntpServer = ffs.cfg.readItem("ntp_serverip");
     char txt[128];
-    sprintf(txt, "starting NTP client for %.127s", ntpServer.c_str());
+    sprintf(txt, "starting NTP client for %.100s", ntpServer.c_str());
     logging.info(txt);
     // TODO: to have a configurable time zone, a set of timezones needs to
     // be defined in Clock.h. The right pair of TimeChangeRules need to
